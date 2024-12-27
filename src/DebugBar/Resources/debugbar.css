@@ -106,13 +106,6 @@ a.phpdebugbar-restore-btn {
   border-right: 1px solid #ddd;
 }
 
-.phpdebugbar-dragging a.phpdebugbar-restore-btn {
-  cursor: move;
-  cursor: grabbing;
-  cursor: -moz-grabbing;
-  cursor: -webkit-grabbing;
-}
-
 div.phpdebugbar-resize-handle {
   display: none;
   height: 4px;
