@@ -83,7 +83,7 @@ div.phpdebugbar code, div.phpdebugbar pre, div.phpdebugbar samp {
   background: none;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   font-size: 1em;
-  border: 0;
+  border: 0 !important;
   padding: 0;
   margin: 0;
 }
