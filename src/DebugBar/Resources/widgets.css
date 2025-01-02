@@ -165,11 +165,11 @@ div.phpdebugbar-widgets-messages {
         background: #7cacd5;
         margin: 0 2px;
         border-radius: 4px;
-        color: #fff;
+        color: var(--color-background);
         text-decoration: none;
       }
       div.phpdebugbar-widgets-messages div.phpdebugbar-widgets-toolbar a.phpdebugbar-widgets-filter.phpdebugbar-widgets-excluded {
-        background: var(--color-border);
+        background: var(--color-active);
         color: var(--color-text-muted);
       }
 
