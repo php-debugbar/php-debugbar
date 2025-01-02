@@ -11,6 +11,7 @@ div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item.phpdebugbar-
   color: red;
 }
 
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-code-format,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory,
@@ -29,6 +30,7 @@ div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugb
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-stmt-id {
   color: #555;
 }
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-code-format:before,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory:before,
@@ -39,6 +41,9 @@ div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link:before {
   font-family: PhpDebugbarFontAwesome;
   margin-right: 4px;
   font-size: 12px;
+}
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-code-format:before {
+  content: "\f121";
 }
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before {
   content: "\f1c0";

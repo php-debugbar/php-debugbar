@@ -233,7 +233,10 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
     {
         return array(
             'css' => 'widgets/sqlqueries/widget.css',
-            'js' => 'widgets/sqlqueries/widget.js'
+            'js' => array(
+                'vendor/sql-formatter/dist/sql-formatter.min.js',
+                'widgets/sqlqueries/widget.js',
+            )
         );
     }
 }
