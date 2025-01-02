@@ -218,6 +218,8 @@ div.phpdebugbar-header-right > * {
 div.phpdebugbar-header-right > select {
   padding: 0;
   line-height: 1em;
+  background-color: var(--color-header);
+  color: var(--color-header-text);
 }
 
 /* -------------------------------------- */
