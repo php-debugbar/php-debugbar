@@ -122,11 +122,11 @@ div.phpdebugbar table, .phpdebugbar-openhandler table {
   color: inherit;
 }
 
-div.phpdebugbar input[type='text'], div.phpdebugbar input[type='password'] {
+div.phpdebugbar input[type='text'], div.phpdebugbar input[type='password'], div.phpdebugbar select {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background: #fff;
+  background: var(--color-background);
   font-size: 14px;
-  color: #000;
+  color: var(--color-text);
   border: 0;
   padding: 0;
   margin: 0;

@@ -27,7 +27,7 @@ div.phpdebugbar-openhandler {
     font-size: 14px;
     padding-bottom: 10px;
 }
-    div.phpdebugbar-openhandler input, select {
+    div.phpdebugbar-openhandler input, div.phpdebugbar-openhandler select {
         background-color: var(--color-background);
         color: var(--color-text);
     }
