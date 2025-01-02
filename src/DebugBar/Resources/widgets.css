@@ -228,7 +228,7 @@ ul.phpdebugbar-widgets-timeline {
       position: absolute;
       font-size: 12px;
       font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-      color: var(--color-primary);
+      color: var(--color-text);
       top: 4px;
       left: 5px;
       background: none;

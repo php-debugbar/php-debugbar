@@ -3,7 +3,7 @@ div.phpdebugbar-widgets-sqlqueries .phpdebugbar-widgets-status {
   padding: 6px 6px;
   border-bottom: 1px solid var(--color-border);
   font-weight: bold;
-  color: var(--color-primary);
+  color: var(--color-text);
   background: var(--color-hover-bg);
 }
 
@@ -19,7 +19,7 @@ div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id {
   float: right;
   margin-left: 8px;
-  color: var(--color-tertiary);
+  color: var(--color-text-muted);
 }
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-database,
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-duration,
@@ -27,7 +27,7 @@ div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugb
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-row-count,
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-copy-clipboard,
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-stmt-id {
-  color: var(--color-primary);
+  color: var(--color-text);
 }
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before,
@@ -65,7 +65,7 @@ div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link:before {
   content: "\f08e";
 }
 div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link {
-  color: var(--color-tertiary);
+  color: var(--color-link);
 }
 div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link:hover {
   color: var(--color-hover);
@@ -126,8 +126,8 @@ div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-toolbar a.phpdebugbar
   text-decoration: none;
 }
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-toolbar a.phpdebugbar-widgets-filter.phpdebugbar-widgets-excluded {
-  background: var(--color-accent);
-  color: var(--color-tertiary);
+  background: var(--color-background);
+  color: var(--color-text);
 }
 div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-duplicates {
   font-weight: bold;
@@ -152,5 +152,5 @@ div.phpdebugbar-widgets-sqlqueries td.phpdebugbar-widgets-value li.phpdebugbar-w
   padding-left: 6px;
 }
 div.phpdebugbar-widgets-sqlqueries .phpdebugbar-text-muted {
-  color: var(--color-tertiary);
+  color: var(--color-text-muted);
 }

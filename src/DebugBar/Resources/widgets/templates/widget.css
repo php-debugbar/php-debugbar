@@ -4,7 +4,7 @@ div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status {
   padding: 6px 6px;
   border-bottom: 1px solid var(--color-border);
   font-weight: bold;
-  color: var(--color-primary);
+  color: var(--color-text);
   background: var(--color-hover-bg);
 }
 
@@ -15,14 +15,14 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type {
   float: right;
   margin-left: 8px;
-  color: var(--color-tertiary);
+  color: var(--color-text);
 }
 div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-render-time,
 div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-memory,
 div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-param-count,
 div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status a.phpdebugbar-widgets-editor-link,
 div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-type {
-  color: var(--color-primary);
+  color: var(--color-text);
 }
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time:before,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory:before,
