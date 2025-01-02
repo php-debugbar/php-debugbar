@@ -464,11 +464,18 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 const mediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
                 theme = mediaQueryList.matches ? 'dark' : 'light';
                 mediaQueryList.addEventListener('change', event => {
-                    this.$el.attr('data-theme', event.matches ? 'dark' : 'light')
+                    theme = event.matches ? 'dark' : 'light';
+                    this.$el.attr('data-theme', theme)
+                    if (this.openHandler) {
+                        this.openHandler.$el.attr('data-theme', theme)
+                    }
                 })
             }
 
             this.$el.attr('data-theme', theme)
+            if (this.openHandler) {
+                this.openHandler.$el.attr('data-theme', theme)
+            }
         },
 
         /**

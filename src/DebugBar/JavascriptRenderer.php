@@ -1149,10 +1149,6 @@ class JavascriptRenderer
                 json_encode($this->hideEmptyTabs));
         }
 
-        if ($this->theme !== null) {
-            $js .= sprintf("%s.setTheme(%s);\n", $this->variableName, json_encode($this->theme));
-        }
-
         if (($this->initialization & self::INITIALIZE_CONTROLS) === self::INITIALIZE_CONTROLS) {
             $js .= $this->getJsControlsDefinitionCode($this->variableName);
         }
@@ -1178,6 +1174,10 @@ class JavascriptRenderer
             $js .= sprintf("%s.setOpenHandler(new %s(%s));\n", $this->variableName,
                 $this->openHandlerClass,
                 json_encode(array("url" => $this->openHandlerUrl)));
+        }
+
+        if ($this->theme !== null) {
+            $js .= sprintf("%s.setTheme(%s);\n", $this->variableName, json_encode($this->theme));
         }
 
         return $js;
