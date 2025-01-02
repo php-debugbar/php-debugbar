@@ -17,7 +17,7 @@ div.phpdebugbar {
   font-size: 14px;
   color: #000;
   text-align: left;
-  line-height: 1;
+  line-height: 1.2em;
   letter-spacing: normal;
   direction: ltr;
 }
