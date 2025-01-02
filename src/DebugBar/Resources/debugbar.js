@@ -459,6 +459,18 @@ if (typeof(PhpDebugBar) == 'undefined') {
             setTimeout(f, 20);
         },
 
+        setTheme: function(theme) {
+            if (theme === 'auto') {
+                const mediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
+                theme = mediaQueryList.matches ? 'dark' : 'light';
+                mediaQueryList.addEventListener('change', event => {
+                    this.$el.attr('data-theme', event.matches ? 'dark' : 'light')
+                })
+            }
+
+            this.$el.attr('data-theme', theme)
+        },
+
         /**
          * Resizes the debugbar to fit the current browser window
          */
