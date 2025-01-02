@@ -23,7 +23,7 @@ div.phpdebugbar-openhandler {
 div.phpdebugbar[data-theme='dark'],
 div.phpdebugbar-openhandler[data-theme='dark'] {
 
-  --color-background: #18181b;
+  --color-background: #222;
   --color-text: #ccc;
   --color-text-alt: #ccc;
   --color-primary: #ccc;
@@ -503,15 +503,15 @@ div.phpdebugbar[data-theme='dark'] .hljs-number {
 }
 
 .phpdebugbar-widgets-dataset-history table tr.phpdebugbar-widgets-active {
-  background-color: var(--color-gray-700);
-  color: white;
+  background-color: var(--color-background);
+  color: var(--color-text);
 }
 
 .phpdebugbar-widgets-dataset-history table th,
 .phpdebugbar-widgets-dataset-history table td {
-  border-color: var(--color-gray-600);
+  border-color: var(--color-border);
 }
 
 ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params td {
-  border-color: var(--color-gray-700);
+  border-color: var(--color-border);
 }

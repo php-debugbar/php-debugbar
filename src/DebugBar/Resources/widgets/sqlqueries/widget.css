@@ -126,7 +126,7 @@ div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-toolbar a.phpdebugbar
   text-decoration: none;
 }
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-toolbar a.phpdebugbar-widgets-filter.phpdebugbar-widgets-excluded {
-  background: #eee;
+  background: var(--color-accent);
   color: var(--color-tertiary);
 }
 div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-duplicates {

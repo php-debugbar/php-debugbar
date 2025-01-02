@@ -66,7 +66,7 @@ ul.phpdebugbar-widgets-list {
 }
   ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item {
     padding: 3px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--color-border);
     position: relative;
     overflow: hidden;
   }
@@ -169,7 +169,7 @@ div.phpdebugbar-widgets-messages {
         text-decoration: none;
       }
       div.phpdebugbar-widgets-messages div.phpdebugbar-widgets-toolbar a.phpdebugbar-widgets-filter.phpdebugbar-widgets-excluded {
-        background: #eee;
+        background: var(--color-border);
         color: #888;
       }
 
@@ -182,7 +182,7 @@ dl.phpdebugbar-widgets-kvlist {
     float: left;
     width: 150px;
     padding: 5px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--color-border);
     font-weight: bold;
     clear: both;
     overflow: hidden;
@@ -192,7 +192,7 @@ dl.phpdebugbar-widgets-kvlist {
   dl.phpdebugbar-widgets-kvlist dd {
     margin-left: 160px;
     padding: 5px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--color-border);
     cursor: pointer;
     min-height: 17px;
   }
@@ -217,7 +217,7 @@ ul.phpdebugbar-widgets-timeline {
   ul.phpdebugbar-widgets-timeline .phpdebugbar-widgets-measure {
     height: 20px;
     position: relative;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--color-border);
     display: block;
   }
   ul.phpdebugbar-widgets-timeline li:hover {
