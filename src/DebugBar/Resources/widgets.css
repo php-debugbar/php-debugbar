@@ -133,13 +133,14 @@ div.phpdebugbar-widgets-messages {
     position: fixed;
     bottom: 0;
     width: 100%;
-    background: #fff;
+    background: var(--color-background);
+    color: var(--color-text)
   }
   div.phpdebugbar-widgets-messages li .phpdebugbar-widgets-label-called-from {
     float: right;
-    color: #666;
+    color: var(--color-text-muted);
     padding-left: 5px;
-    border-bottom: 1px dotted #666;
+    border-bottom: 1px dotted var(--color-border);
   }
   div.phpdebugbar-widgets-messages li .phpdebugbar-widgets-label-called-from:before {
     content: "\f08d";
@@ -169,7 +170,7 @@ div.phpdebugbar-widgets-messages {
       }
       div.phpdebugbar-widgets-messages div.phpdebugbar-widgets-toolbar a.phpdebugbar-widgets-filter.phpdebugbar-widgets-excluded {
         background: var(--color-border);
-        color: #888;
+        color: var(--color-text-muted);
       }
 
 /* -------------------------------------- */
