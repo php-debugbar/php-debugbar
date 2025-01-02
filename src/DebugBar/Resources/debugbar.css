@@ -5,6 +5,38 @@
   }
 }
 
+div.phpdebugbar,
+div.phpdebugbar-openhandler {
+  --color-background: #fff;
+  --color-text: #000;
+  --color-text-alt: #666;
+  --color-primary: #555;
+  --color-secondary: #444;
+  --color-tertiary: #888;
+  --color-accent: #ccc;
+  --color-accent-alt: #efefef;
+  --color-border: #ddd;
+  --color-hover: #aaa;
+  --color-hover-bg: #fafafa;
+}
+
+div.phpdebugbar[data-theme='dark'],
+div.phpdebugbar-openhandler[data-theme='dark'] {
+
+  --color-background: #18181b;
+  --color-text: #ccc;
+  --color-text-alt: #ccc;
+  --color-primary: #ccc;
+  --color-secondary: #888;
+  --color-tertiary: #777;
+  --color-accent: #333;
+  --color-accent-alt: #444;
+  --color-border: #444;
+  --color-hover: #666;
+  --color-hover-bg: #333;
+}
+
+
 div.phpdebugbar {
   position: fixed;
   bottom: 0;
@@ -12,10 +44,10 @@ div.phpdebugbar {
   width: 100%;
   border-top: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background: #fff;
+  background: var(--color-background);
   z-index: 10000;
   font-size: 14px;
-  color: #000;
+  color: var(--color-text);
   text-align: left;
   line-height: 1;
   letter-spacing: normal;
@@ -89,7 +121,7 @@ div.phpdebugbar code, div.phpdebugbar pre, div.phpdebugbar samp {
 }
 
 div.phpdebugbar code, div.phpdebugbar pre {
-  color: #000;
+  color: var(--color-text);
 }
 
 div.phpdebugbar pre.sf-dump {
@@ -101,9 +133,9 @@ a.phpdebugbar-restore-btn {
   float: left;
   padding: 5px 8px;
   font-size: 14px;
-  color: #555;
+  color: var(--color-primary);
   text-decoration: none;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid var(--color-border);
 }
 
 div.phpdebugbar-resize-handle {
@@ -112,19 +144,20 @@ div.phpdebugbar-resize-handle {
   margin-top: -4px;
   width: 100%;
   background: none;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--color-accent);
   cursor: ns-resize;
 }
 
 div.phpdebugbar-closed, div.phpdebugbar-minimized{
-  border-top: 1px solid #ccc;
+  border-top: 1px solid var(--color-border);
 }
 /* -------------------------------------- */
 
 a.phpdebugbar-restore-btn {
-    background: #efefef url(data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2020%2020%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20fill%3D%22%23000%22%20cx%3D%2210%22%20cy%3D%2210%22%20r%3D%229%22%2F%3E%3Cpath%20d%3D%22M6.039%208.342c.463%200%20.772.084.927.251.154.168.191.455.11.862-.084.424-.247.727-.487.908-.241.182-.608.272-1.1.272h-.743l.456-2.293h.837zm-2.975%204.615h1.22l.29-1.457H5.62c.461%200%20.84-.047%201.139-.142.298-.095.569-.254.812-.477.205-.184.37-.387.497-.608.127-.222.217-.466.27-.734.13-.65.032-1.155-.292-1.518-.324-.362-.84-.543-1.545-.543H4.153l-1.089%205.479zM9.235%206.02h1.21l-.289%201.458h1.079c.679%200%201.147.115%201.405.347.258.231.335.607.232%201.125l-.507%202.55h-1.23l.481-2.424c.055-.276.035-.464-.06-.565-.095-.1-.298-.15-.608-.15H9.98L9.356%2011.5h-1.21l1.089-5.48M15.566%208.342c.464%200%20.773.084.928.251.154.168.19.455.11.862-.084.424-.247.727-.488.908-.24.182-.607.272-1.1.272h-.742l.456-2.293h.836zm-2.974%204.615h1.22l.29-1.457h1.046c.461%200%20.84-.047%201.139-.142.298-.095.569-.254.812-.477.205-.184.37-.387.497-.608.127-.222.217-.466.27-.734.129-.65.032-1.155-.292-1.518-.324-.362-.84-.543-1.545-.543H13.68l-1.089%205.479z%22%20fill%3D%22%23FFF%22%2F%3E%3C%2Fsvg%3E)  no-repeat center / 20px 20px;
+    background: var(--color-accent-alt) url(data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2020%2020%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20fill%3D%22%23000%22%20cx%3D%2210%22%20cy%3D%2210%22%20r%3D%229%22%2F%3E%3Cpath%20d%3D%22M6.039%208.342c.463%200%20.772.084.927.251.154.168.191.455.11.862-.084.424-.247.727-.487.908-.241.182-.608.272-1.1.272h-.743l.456-2.293h.837zm-2.975%204.615h1.22l.29-1.457H5.62c.461%200%20.84-.047%201.139-.142.298-.095.569-.254.812-.477.205-.184.37-.387.497-.608.127-.222.217-.466.27-.734.13-.65.032-1.155-.292-1.518-.324-.362-.84-.543-1.545-.543H4.153l-1.089%205.479zM9.235%206.02h1.21l-.289%201.458h1.079c.679%200%201.147.115%201.405.347.258.231.335.607.232%201.125l-.507%202.55h-1.23l.481-2.424c.055-.276.035-.464-.06-.565-.095-.1-.298-.15-.608-.15H9.98L9.356%2011.5h-1.21l1.089-5.48M15.566%208.342c.464%200%20.773.084.928.251.154.168.19.455.11.862-.084.424-.247.727-.488.908-.24.182-.607.272-1.1.272h-.742l.456-2.293h.836zm-2.974%204.615h1.22l.29-1.457h1.046c.461%200%20.84-.047%201.139-.142.298-.095.569-.254.812-.477.205-.184.37-.387.497-.608.127-.222.217-.466.27-.734.129-.65.032-1.155-.292-1.518-.324-.362-.84-.543-1.545-.543H13.68l-1.089%205.479z%22%20fill%3D%22%23FFF%22%2F%3E%3C%2Fsvg%3E)  no-repeat center / 20px 20px;
 }
 div.phpdebugbar-header {
+  background-color: var(--color-accent-alt);
   min-height: 26px;
   line-height: 16px;
 }
@@ -146,7 +179,7 @@ div.phpdebugbar-header > div > * {
   padding: 5px;
   font-size: 14px;
   height: 16px;
-  color: #555;
+  color: var(--color-text-alt);
   text-decoration: none;
 }
 div.phpdebugbar-header-left > *,
@@ -171,18 +204,12 @@ div.phpdebugbar-header-right > select {
 span.phpdebugbar-indicator,
 a.phpdebugbar-indicator
 {
-  border-right: 1px solid #ddd;
+  border-right: 1px solid var(--color-border);
 }
 
 a.phpdebugbar-tab.phpdebugbar-active {
-  background: #ccc;
-  color: #444;
-  background-image: linear-gradient(bottom, rgb(173,173,173) 41%, rgb(209,209,209) 71%);
-  background-image: -o-linear-gradient(bottom, rgb(173,173,173) 41%, rgb(209,209,209) 71%);
-  background-image: -moz-linear-gradient(bottom, rgb(173,173,173) 41%, rgb(209,209,209) 71%);
-  background-image: -webkit-linear-gradient(bottom, rgb(173,173,173) 41%, rgb(209,209,209) 71%);
-  background-image: -ms-linear-gradient(bottom, rgb(173,173,173) 41%, rgb(209,209,209) 71%);
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.41, rgb(173,173,173)), color-stop(0.71, rgb(209,209,209)));
+  background: var(--color-accent);
+  color: var(--color-text-alt);
 }
   a.phpdebugbar-tab span.phpdebugbar-badge {
     display: none;
@@ -190,15 +217,15 @@ a.phpdebugbar-tab.phpdebugbar-active {
     font-size: 11px;
     line-height: 14px;
     padding: 0 6px;
-    background: #ccc;
+    background: var(--color-accent);
     border-radius: 4px;
-    color: #555;
+    color: var(--color-primary);
     font-weight: normal;
     text-shadow: none;
   }
   a.phpdebugbar-tab.phpdebugbar-active  span.phpdebugbar-badge {
-    background: #555;
-    color: #fff;
+    background: var(--color-primary);
+    color: var(--color-background);
   }
   a.phpdebugbar-tab i {
     display: none;
@@ -252,9 +279,9 @@ a.phpdebugbar-open-btn {
     display: none;
     position: absolute;
     bottom: 30px;
-    background: #efefef70;
-    border: 1px solid #ccc;
-    color: #555;
+    background: rgba(var(--color-secondary), 0.4);
+    border: 1px solid var(--color-accent);
+    color: var(--color-primary);
     font-size: 11px;
     padding: 2px 6px;
     z-index: 1000;
@@ -295,7 +322,7 @@ select.phpdebugbar-datasets-switcher {
 /* -------------------------------------- */
 
 div.phpdebugbar-body {
-  border-top: 1px solid #ccc;
+  border-top: 1px solid var(--color-accent);
   display: none;
   position: relative;
   height: 300px;
@@ -317,7 +344,7 @@ div.phpdebugbar-panel.phpdebugbar-active {
 
 div.phpdebugbar-mini-design a.phpdebugbar-tab {
   position: relative;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid var(--color-border);
 }
   div.phpdebugbar-mini-design a.phpdebugbar-tab span.phpdebugbar-text {
     display: none;
@@ -326,10 +353,10 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
     display: block;
     position: absolute;
     top: -30px;
-    background: #efefef70;
+    background: rgba(var(--color-secondary), 0.4);
     opacity: 1;
-    border: 1px solid #ccc;
-    color: #555;
+    border: 1px solid var(--color-accent);
+    color: var(--color-primary);
     font-size: 11px;
     padding: 2px 6px;
     z-index: 1000;
@@ -369,7 +396,7 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
     }
     .phpdebugbar-widgets-dataset-history table td, .phpdebugbar-widgets-dataset-history table th {
         padding: 6px 3px;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid var(--color-border);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -380,17 +407,17 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
         text-overflow: ellipsis;
     }
     .phpdebugbar-widgets-dataset-history table tr.phpdebugbar-widgets-active {
-        background: #ccc;
-        color: #444;
+        background: var(--color-accent);
+        color: var(--color-secondary);
     }
     .phpdebugbar-widgets-dataset-history span.phpdebugbar-badge {
         margin: 0 5px 0 2px;
         font-size: 11px;
         line-height: 14px;
         padding: 0 6px;
-        background: #ccc;
+        background: var(--color-accent);
         border-radius: 4px;
-        color: #555;
+        color: var(--color-primary);
         font-weight: normal;
         text-shadow: none;
         vertical-align: middle;
@@ -400,7 +427,7 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
         padding: 7px 0;
         position: sticky;
         top: 0;
-        background: #fff;
+        background: var(--color-background);
     }
     .phpdebugbar-widgets-dataset-history .phpdebugbar-widgets-dataset-actions a {
         margin: 0 10px;
@@ -409,3 +436,79 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
         appearance: checkbox !important;
         margin: 5px;
     }
+
+/* Dracula Theme v1.2.5
+*
+* https://github.com/dracula/highlightjs
+*
+* Copyright 2016-present, All rights reserved
+*
+* Code licensed under the MIT license
+*
+* @author Denis Ciccale <dciccale@gmail.com>
+* @author Zeno Rocha <hi@zenorocha.com>
+*/
+
+div.phpdebugbar[data-theme='dark'] .hljs-built_in,
+div.phpdebugbar[data-theme='dark'] .hljs-selector-tag,
+div.phpdebugbar[data-theme='dark'] .hljs-section,
+div.phpdebugbar[data-theme='dark'] .hljs-link {
+  color: #8be9fd;
+}
+
+div.phpdebugbar[data-theme='dark'] .hljs-keyword {
+  color: #ff79c6;
+}
+
+div.phpdebugbar[data-theme='dark'] .hljs,
+div.phpdebugbar[data-theme='dark'] .hljs-subst {
+  color: #f8f8f2;
+}
+
+div.phpdebugbar[data-theme='dark'] .hljs-title,
+div.phpdebugbar[data-theme='dark'] .hljs-meta-keyword {
+  color: #50fa7b;
+}
+
+div.phpdebugbar[data-theme='dark'] .hljs-string,
+div.phpdebugbar[data-theme='dark'] .hljs-meta,
+div.phpdebugbar[data-theme='dark'] .hljs-name,
+div.phpdebugbar[data-theme='dark'] .hljs-type,
+div.phpdebugbar[data-theme='dark'] .hljs-attr,
+div.phpdebugbar[data-theme='dark'] .hljs-symbol,
+div.phpdebugbar[data-theme='dark'] .hljs-bullet,
+div.phpdebugbar[data-theme='dark'] .hljs-addition,
+div.phpdebugbar[data-theme='dark'] .hljs-variable,
+div.phpdebugbar[data-theme='dark'] .hljs-template-tag,
+div.phpdebugbar[data-theme='dark'] .hljs-template-variable {
+  color: #f1fa8c;
+}
+
+div.phpdebugbar[data-theme='dark'] .hljs-comment,
+div.phpdebugbar[data-theme='dark'] .hljs-quote,
+div.phpdebugbar[data-theme='dark'] .hljs-deletion {
+  color: #6272a4;
+}
+
+div.phpdebugbar[data-theme='dark'] .hljs-strong {
+  font-weight: bold;
+}
+
+div.phpdebugbar[data-theme='dark'] .hljs-literal,
+div.phpdebugbar[data-theme='dark'] .hljs-number {
+  color: #bd93f9;
+}
+
+.phpdebugbar-widgets-dataset-history table tr.phpdebugbar-widgets-active {
+  background-color: var(--color-gray-700);
+  color: white;
+}
+
+.phpdebugbar-widgets-dataset-history table th,
+.phpdebugbar-widgets-dataset-history table td {
+  border-color: var(--color-gray-600);
+}
+
+ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params td {
+  border-color: var(--color-gray-700);
+}

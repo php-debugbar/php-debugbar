@@ -71,7 +71,7 @@ ul.phpdebugbar-widgets-list {
     overflow: hidden;
   }
   ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item:hover {
-    background: #fafafa;
+    background: var(--color-hover-bg);
   }
 
 /* -------------------------------------- */
@@ -221,14 +221,14 @@ ul.phpdebugbar-widgets-timeline {
     display: block;
   }
   ul.phpdebugbar-widgets-timeline li:hover {
-    background: #fafafa;
+    background: var(--color-hover-bg);
   }
     ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-label,
     ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-collector {
       position: absolute;
       font-size: 12px;
       font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-      color: #555;
+      color: var(--color-primary);
       top: 4px;
       left: 5px;
       background: none;
@@ -253,12 +253,12 @@ ul.phpdebugbar-widgets-timeline {
       display: none;
       width: 70%;
       margin: 10px;
-      border: 1px solid #ddd;
+      border: 1px solid var(--color-border);
       font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
       border-collapse: collapse;
     }
       ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params td {
-        border: 1px solid #ddd;
+        border: 1px solid var(--color-border);
         padding: 0 5px;
       }
       ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params .phpdebugbar-widgets-name {
@@ -288,7 +288,7 @@ div.phpdebugbar-widgets-exceptions li.phpdebugbar-widgets-list-item {
     display: none;
     margin: 10px;
     padding: 5px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border);
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   }
 
