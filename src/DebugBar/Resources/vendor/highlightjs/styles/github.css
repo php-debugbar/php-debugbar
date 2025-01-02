@@ -1,8 +1,3 @@
-/*
-
-github.com style (c) Vasily Polovnyov <vast@whiteants.net>
-
-*/
 div.phpdebugbar pre code.hljs {
   display: block;
   overflow-x: auto;
@@ -11,72 +6,113 @@ div.phpdebugbar pre code.hljs {
 div.phpdebugbar code.hljs {
   padding: 3px 5px;
 }
+/*!
+  Theme: GitHub
+  Description: Light theme as seen on github.com
+  Author: github.com
+  Maintainer: @Hirse
+  Updated: 2021-05-15
+
+  Outdated base version: https://github.com/primer/github-syntax-light
+  Current colors taken from GitHub's CSS
+*/
 div.phpdebugbar .hljs {
-  background: #f3f3f3;
-  color: #444;
+  color: #24292e;
+  /*background: #ffffff*/
 }
-div.phpdebugbar .hljs-comment {
-  color: #697070;
-}
-div.phpdebugbar .hljs-punctuation,
-div.phpdebugbar .hljs-tag {
-  color: #444a;
-}
-div.phpdebugbar .hljs-tag .hljs-attr,
-div.phpdebugbar .hljs-tag .hljs-name {
-  color: #444;
-}
-div.phpdebugbar .hljs-attribute,
 div.phpdebugbar .hljs-doctag,
 div.phpdebugbar .hljs-keyword,
-div.phpdebugbar .hljs-meta .hljs-keyword,
-div.phpdebugbar .hljs-name,
-div.phpdebugbar .hljs-selector-tag {
-  font-weight: 700;
-}
-div.phpdebugbar .hljs-deletion,
-div.phpdebugbar .hljs-number,
-div.phpdebugbar .hljs-quote,
-div.phpdebugbar .hljs-selector-class,
-div.phpdebugbar .hljs-selector-id,
-div.phpdebugbar .hljs-string,
+div.phpdebugbar .hljs-meta div.phpdebugbar .hljs-keyword,
 div.phpdebugbar .hljs-template-tag,
-div.phpdebugbar .hljs-type {
-  color: #800;
-}
-div.phpdebugbar .hljs-section,
-div.phpdebugbar .hljs-title {
-  color: #800;
-  font-weight: 700;
-}
-div.phpdebugbar .hljs-link,
-div.phpdebugbar .hljs-operator,
-div.phpdebugbar .hljs-regexp,
-div.phpdebugbar .hljs-selector-attr,
-div.phpdebugbar .hljs-selector-pseudo,
-div.phpdebugbar .hljs-symbol,
 div.phpdebugbar .hljs-template-variable,
-div.phpdebugbar .hljs-variable {
-  color: #ab5656;
+div.phpdebugbar .hljs-type,
+div.phpdebugbar .hljs-variable.language_ {
+  /* prettylights-syntax-keyword */
+  color: #d73a49
 }
-div.phpdebugbar .hljs-literal {
-  color: #695;
+div.phpdebugbar .hljs-title,
+div.phpdebugbar .hljs-title.class_,
+div.phpdebugbar .hljs-title.class_.inherited__,
+div.phpdebugbar .hljs-title.function_ {
+  /* prettylights-syntax-entity */
+  color: #6f42c1
 }
-div.phpdebugbar .hljs-addition,
+div.phpdebugbar .hljs-attr,
+div.phpdebugbar .hljs-attribute,
+div.phpdebugbar .hljs-literal,
+div.phpdebugbar .hljs-meta,
+div.phpdebugbar .hljs-number,
+div.phpdebugbar .hljs-operator,
+div.phpdebugbar .hljs-variable,
+div.phpdebugbar .hljs-selector-attr,
+div.phpdebugbar .hljs-selector-class,
+div.phpdebugbar .hljs-selector-id {
+  /* prettylights-syntax-constant */
+  color: #005cc5
+}
+div.phpdebugbar .hljs-regexp,
+div.phpdebugbar .hljs-string,
+div.phpdebugbar .hljs-meta div.phpdebugbar .hljs-string {
+  /* prettylights-syntax-string */
+  color: #032f62
+}
 div.phpdebugbar .hljs-built_in,
-div.phpdebugbar .hljs-bullet,
-div.phpdebugbar .hljs-code {
-  color: #397300;
+div.phpdebugbar .hljs-symbol {
+  /* prettylights-syntax-variable */
+  color: #e36209
 }
-div.phpdebugbar .hljs-meta {
-  color: #1f7199;
+div.phpdebugbar .hljs-comment,
+div.phpdebugbar .hljs-code,
+div.phpdebugbar .hljs-formula {
+  /* prettylights-syntax-comment */
+  color: #6a737d
 }
-div.phpdebugbar .hljs-meta .hljs-string {
-  color: #38a;
+div.phpdebugbar .hljs-name,
+div.phpdebugbar .hljs-quote,
+div.phpdebugbar .hljs-selector-tag,
+div.phpdebugbar .hljs-selector-pseudo {
+  /* prettylights-syntax-entity-tag */
+  color: #22863a
+}
+div.phpdebugbar .hljs-subst {
+  /* prettylights-syntax-storage-modifier-import */
+  color: #24292e
+}
+div.phpdebugbar .hljs-section {
+  /* prettylights-syntax-markup-heading */
+  color: #005cc5;
+  font-weight: bold
+}
+div.phpdebugbar .hljs-bullet {
+  /* prettylights-syntax-markup-list */
+  color: #735c0f
 }
 div.phpdebugbar .hljs-emphasis {
-  font-style: italic;
+  /* prettylights-syntax-markup-italic */
+  color: #24292e;
+  font-style: italic
 }
 div.phpdebugbar .hljs-strong {
-  font-weight: 700;
+  /* prettylights-syntax-markup-bold */
+  color: #24292e;
+  font-weight: bold
+}
+div.phpdebugbar .hljs-addition {
+  /* prettylights-syntax-markup-inserted */
+  color: #22863a;
+  background-color: #f0fff4
+}
+div.phpdebugbar .hljs-deletion {
+  /* prettylights-syntax-markup-deleted */
+  color: #b31d28;
+  background-color: #ffeef0
+}
+div.phpdebugbar .hljs-char.escape_,
+div.phpdebugbar .hljs-link,
+div.phpdebugbar .hljs-params,
+div.phpdebugbar .hljs-property,
+div.phpdebugbar .hljs-punctuation,
+div.phpdebugbar .hljs-tag {
+  /* purposely ignored */
+
 }
