@@ -26,8 +26,7 @@ pre.phpdebugbar-widgets-code-block {
     position: static;
     float: left;
     padding: 5px;
-    background: #cacaca;
-    border-right: 1px solid #aaa;
+    border-right: 1px solid var(--color-header-border);
     text-align: right;
   }
 
@@ -66,12 +65,12 @@ ul.phpdebugbar-widgets-list {
 }
   ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item {
     padding: 3px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--color-border);
     position: relative;
     overflow: hidden;
   }
   ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item:hover {
-    background: #fafafa;
+    background: var(--color-hover-bg);
   }
 
 /* -------------------------------------- */
@@ -134,13 +133,14 @@ div.phpdebugbar-widgets-messages {
     position: fixed;
     bottom: 0;
     width: 100%;
-    background: #fff;
+    background: var(--color-background);
+    color: var(--color-text)
   }
   div.phpdebugbar-widgets-messages li .phpdebugbar-widgets-label-called-from {
     float: right;
-    color: #666;
+    color: var(--color-text-muted);
     padding-left: 5px;
-    border-bottom: 1px dotted #666;
+    border-bottom: 1px dotted var(--color-border);
   }
   div.phpdebugbar-widgets-messages li .phpdebugbar-widgets-label-called-from:before {
     content: "\f08d";
@@ -165,12 +165,12 @@ div.phpdebugbar-widgets-messages {
         background: #7cacd5;
         margin: 0 2px;
         border-radius: 4px;
-        color: #fff;
+        color: var(--color-background);
         text-decoration: none;
       }
       div.phpdebugbar-widgets-messages div.phpdebugbar-widgets-toolbar a.phpdebugbar-widgets-filter.phpdebugbar-widgets-excluded {
-        background: #eee;
-        color: #888;
+        background: var(--color-active);
+        color: var(--color-text-muted);
       }
 
 /* -------------------------------------- */
@@ -182,7 +182,7 @@ dl.phpdebugbar-widgets-kvlist {
     float: left;
     width: 150px;
     padding: 5px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--color-border);
     font-weight: bold;
     clear: both;
     overflow: hidden;
@@ -192,7 +192,7 @@ dl.phpdebugbar-widgets-kvlist {
   dl.phpdebugbar-widgets-kvlist dd {
     margin-left: 160px;
     padding: 5px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--color-border);
     cursor: pointer;
     min-height: 17px;
   }
@@ -217,18 +217,18 @@ ul.phpdebugbar-widgets-timeline {
   ul.phpdebugbar-widgets-timeline .phpdebugbar-widgets-measure {
     height: 20px;
     position: relative;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--color-border);
     display: block;
   }
   ul.phpdebugbar-widgets-timeline li:hover {
-    background: #fafafa;
+    background: var(--color-hover-bg);
   }
     ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-label,
     ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-collector {
       position: absolute;
       font-size: 12px;
       font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-      color: #555;
+      color: var(--color-text);
       top: 4px;
       left: 5px;
       background: none;
@@ -253,12 +253,12 @@ ul.phpdebugbar-widgets-timeline {
       display: none;
       width: 70%;
       margin: 10px;
-      border: 1px solid #ddd;
+      border: 1px solid var(--color-border);
       font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
       border-collapse: collapse;
     }
       ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params td {
-        border: 1px solid #ddd;
+        border: 1px solid var(--color-border);
         padding: 0 5px;
       }
       ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params .phpdebugbar-widgets-name {
@@ -288,7 +288,7 @@ div.phpdebugbar-widgets-exceptions li.phpdebugbar-widgets-list-item {
     display: none;
     margin: 10px;
     padding: 5px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border);
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   }
 
