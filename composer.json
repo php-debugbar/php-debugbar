@@ -1,7 +1,7 @@
 {
     "name": "maximebf/debugbar",
     "description": "Debug bar in the browser for php application",
-    "keywords": ["debug", "debugbar"],
+    "keywords": ["debug", "debugbar", "dev"],
     "homepage": "https://github.com/php-debugbar/php-debugbar",
     "type": "library",
     "license": "MIT",
