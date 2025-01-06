@@ -12,7 +12,7 @@ $debugbarRenderer = $debugbar->getJavascriptRenderer()
                              ->setBaseUrl('../src/DebugBar/Resources')
                              ->setAjaxHandlerEnableTab(true)
                              ->setEnableJqueryNoConflict(false)
-                             ->setTheme('auto');
+                             ->setDefaultTheme('auto');
 
 //
 // create a writable profiles folder in the demo directory to uncomment the following lines

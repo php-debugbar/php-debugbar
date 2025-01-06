@@ -424,7 +424,9 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
         options: {
             bodyMarginBottom: true,
-            bodyMarginBottomHeight: 0
+            bodyMarginBottomHeight: 0,
+            theme: null,
+            defaultTheme: null,
         },
 
         initialize: function() {
@@ -443,6 +445,12 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 this.isIframe = false;
             }
             this.registerResizeHandler();
+            this.registerMediaListener();
+
+            // Attach settings
+            this.settings = new PhpDebugBar.DebugBar.Tab({"icon":"sliders", "title":"Settings", "widget": new PhpDebugBar.Widgets.SettingsWidget({
+                    'debugbar': this
+                })});
         },
 
         /**
@@ -459,23 +467,49 @@ if (typeof(PhpDebugBar) == 'undefined') {
             setTimeout(f, 20);
         },
 
-        setTheme: function(theme) {
-            if (theme === 'auto') {
-                const mediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
-                theme = mediaQueryList.matches ? 'dark' : 'light';
-                mediaQueryList.addEventListener('change', event => {
-                    theme = event.matches ? 'dark' : 'light';
-                    this.$el.attr('data-theme', theme)
-                    if (this.openHandler) {
-                        this.openHandler.$el.attr('data-theme', theme)
-                    }
-                })
-            }
+        registerMediaListener: function() {
+            const mediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
+            mediaQueryList.addEventListener('change', event => {
+                if (this.theme === 'auto') {
+                    this.updateTheme(event.matches ? 'dark' : 'light');
+                }
+            })
+        },
 
+        updateTheme: function(theme) {
             this.$el.attr('data-theme', theme)
             if (this.openHandler) {
                 this.openHandler.$el.attr('data-theme', theme)
             }
+        },
+
+        setDefaultTheme: function(theme) {
+            this.options.defaultTheme = theme;
+            this.setTheme(theme);
+        },
+
+        setTheme: function(theme, persist = false) {
+            // Override with UI value
+            if (persist) {
+                if (theme) {
+                    localStorage.setItem('debugbar-theme', theme);
+                } else {
+                    localStorage.removeItem('debugbar-theme');
+                    theme = this.options.defaultTheme || 'auto';
+                }
+
+            } else if (localStorage.getItem('debugbar-theme')) {
+                theme = localStorage.getItem('debugbar-theme');
+            }
+
+            this.theme = theme;
+
+            if (theme === 'auto') {
+                const mediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
+                theme = mediaQueryList.matches ? 'dark' : 'light';
+            }
+
+            this.updateTheme(theme);
         },
 
         /**
@@ -516,6 +550,9 @@ if (typeof(PhpDebugBar) == 'undefined') {
             }
 
             var self = this;
+            if (!this.options.defaultTheme) {
+                this.setDefaultTheme('auto');
+            }
             this.$el.appendTo('body');
             this.$dragCapture = $('<div />').addClass(csscls('drag-capture')).appendTo(this.$el);
             this.$resizehdle = $('<div />').addClass(csscls('resize-handle')).appendTo(this.$el);
@@ -585,6 +622,20 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.$datasets.change(function() {
                 self.showDataSet(this.value);
             });
+
+            this.controls['__settings'] = this.settings;
+            this.settings.$tab.addClass(csscls('tab-settings'));
+            this.settings.$tab.attr('data-collector', '__settings');
+            this.settings.$el.attr('data-collector', '__settings');
+            this.settings.$tab.insertAfter(this.$minimizebtn).show();
+            this.settings.$tab.click(() => {
+                if (!this.isMinimized() && this.activePanelName == '__settings') {
+                    this.minimize();
+                } else {
+                    this.showTab('__settings');
+                }
+            });
+            this.settings.$el.appendTo(this.$body);
         },
 
         /**
@@ -1113,7 +1164,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.datasetTab.$el.attr('data-collector', '__datasets');
             this.datasetTab.$tab.insertAfter(this.$openbtn).hide();
             this.datasetTab.$tab.click(() => {
-                if (!this.isMinimized() && self.activePanelName == '__datasets') {
+                if (!this.isMinimized() && this.activePanelName == '__datasets') {
                     this.minimize();
                 } else {
                     this.showTab('__datasets');
@@ -1122,7 +1173,6 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.datasetTab.$el.appendTo(this.$body);
             this.controls['__datasets'] = this.datasetTab;
         },
-
     });
 
     DebugBar.Tab = Tab;

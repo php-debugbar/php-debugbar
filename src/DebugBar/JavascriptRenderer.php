@@ -62,7 +62,7 @@ class JavascriptRenderer
 
     protected $useRequireJs = false;
 
-    protected $theme = null;
+    protected $defaultTheme = null;
 
     protected $hideEmptyTabs = null;
 
@@ -161,8 +161,8 @@ class JavascriptRenderer
         if (array_key_exists('use_requirejs', $options)) {
             $this->setUseRequireJs($options['use_requirejs']);
         }
-        if (array_key_exists('theme', $options)) {
-            $this->setTheme($options['theme']);
+        if (array_key_exists('default_theme', $options)) {
+            $this->setDefaultTheme($options['default_theme']);
         }
         if (array_key_exists('hide_empty_tabs', $options)) {
             $this->setHideEmptyTabs($options['hide_empty_tabs']);
@@ -413,9 +413,9 @@ class JavascriptRenderer
      * @param boolean $hide
      * @return $this
      */
-    public function setTheme($theme='auto')
+    public function setDefaultTheme($theme='auto')
     {
-        $this->theme = $theme;
+        $this->defaultTheme = $theme;
         return $this;
     }
 
@@ -1176,8 +1176,8 @@ class JavascriptRenderer
                 json_encode(array("url" => $this->openHandlerUrl)));
         }
 
-        if ($this->theme !== null) {
-            $js .= sprintf("%s.setTheme(%s);\n", $this->variableName, json_encode($this->theme));
+        if ($this->defaultTheme !== null) {
+            $js .= sprintf("%s.setDefaultTheme(%s);\n", $this->variableName, json_encode($this->defaultTheme));
         }
 
         return $js;

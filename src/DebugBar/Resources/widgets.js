@@ -849,5 +849,43 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
     });
 
+    /**
+     * Displays datasets in a table
+     *
+     */
+    var SettingsWidget = PhpDebugBar.Widgets.SettingsWidget = KVListWidget.extend({
+
+
+        initialize: function(options) {
+            if (!options['itemRenderer']) {
+                options['itemRenderer'] = this.itemRenderer;
+            }
+            this.set(options);
+            this.render();
+        },
+
+        render: function() {
+            this.$el.empty();
+
+            console.log('REnder');
+            var self = this;
+
+            var fields = {};
+
+            fields["Theme"] = $('<select name="method" style="width:100px"><option value="">(default)</option><option value="auto">Auto (System preference)</option><option value="light">Light</option><option value="dark">Dark</option></select>')
+                .val(localStorage.getItem('debugbar-theme'))
+                .on('change', function() {
+                    self.get('debugbar').setTheme($(this).val(), true);
+                });
+
+            $.each(fields, function(key, value) {
+                console.log(key, value);
+                $('<dt />').addClass(csscls('key')).appendTo(self.$el).text(key);
+                $('<dd />').addClass(csscls('value')).appendTo(self.$el).html(value);
+            })
+        },
+
+    });
+
 
 })(PhpDebugBar.$);

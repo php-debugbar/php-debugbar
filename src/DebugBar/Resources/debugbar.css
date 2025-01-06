@@ -400,7 +400,8 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
 
 /* -------------------------------------- */
 
-  a.phpdebugbar-tab.phpdebugbar-tab-history {
+  a.phpdebugbar-tab.phpdebugbar-tab-history,
+  a.phpdebugbar-tab.phpdebugbar-tab-settings {
     min-width: 16px;
     height: 16px;
     display: flex;
@@ -408,11 +409,13 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
     align-items: center;
   }
 
-  a.phpdebugbar-tab.phpdebugbar-tab-history .phpdebugbar-text {
+  a.phpdebugbar-tab.phpdebugbar-tab-history .phpdebugbar-text,
+  a.phpdebugbar-tab.phpdebugbar-tab-settings .phpdebugbar-text {
       display: none;
       white-space: nowrap;
   }
-  a.phpdebugbar-tab.phpdebugbar-tab-history i {
+  a.phpdebugbar-tab.phpdebugbar-tab-history i,
+  a.phpdebugbar-tab.phpdebugbar-tab-settings i{
     display:inline-block;
   }
   .phpdebugbar-widgets-dataset-history table {
