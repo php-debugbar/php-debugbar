@@ -29,6 +29,10 @@ div.phpdebugbar-openhandler {
   --color-link: #888;
   --color-hover: #aaa;
   --color-hover-bg: #fafafa;
+
+  --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
 }
 
 div.phpdebugbar[data-theme='dark'],
@@ -64,7 +68,7 @@ div.phpdebugbar {
   left: 0;
   width: 100%;
   border-top: 0;
-  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: var(--font-sans);
   background: var(--color-background);
   z-index: 10000;
   font-size: 14px;
@@ -128,7 +132,7 @@ div.phpdebugbar table, .phpdebugbar-openhandler table {
 }
 
 div.phpdebugbar input[type='text'], div.phpdebugbar input[type='password'], div.phpdebugbar select {
-  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: var(--font-sans);
   background: var(--color-background);
   font-size: 14px;
   color: var(--color-text);
@@ -139,7 +143,7 @@ div.phpdebugbar input[type='text'], div.phpdebugbar input[type='password'], div.
 
 div.phpdebugbar code, div.phpdebugbar pre, div.phpdebugbar samp {
   background: none;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: var(--font-mono);
   font-size: 1em;
   border: 0 !important;
   padding: 0;

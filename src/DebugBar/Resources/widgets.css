@@ -61,7 +61,7 @@ ul.phpdebugbar-widgets-list {
   margin: 0;
   padding: 0;
   list-style: none;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: var(--font-mono);
 }
   ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item {
     padding: 3px;
@@ -201,7 +201,7 @@ dl.phpdebugbar-widgets-kvlist {
 
 dl.phpdebugbar-widgets-varlist,
 dl.phpdebugbar-widgets-htmlvarlist {
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: var(--font-mono);
 }
   dl.phpdebugbar-widgets-htmlvarlist dd {
     cursor: initial;
@@ -217,7 +217,7 @@ ul.phpdebugbar-widgets-timeline {
   ul.phpdebugbar-widgets-timeline .phpdebugbar-widgets-measure {
     height: 20px;
     position: relative;
-    border-bottom: 1px solid var(--color-border);
+    border: none;
     display: block;
   }
   ul.phpdebugbar-widgets-timeline li:hover {
@@ -227,7 +227,7 @@ ul.phpdebugbar-widgets-timeline {
     ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-collector {
       position: absolute;
       font-size: 12px;
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      font-family: var(--font-mono);
       color: var(--color-text);
       top: 4px;
       left: 5px;
@@ -243,22 +243,30 @@ ul.phpdebugbar-widgets-timeline {
     ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-value {
       display: block;
       position: absolute;
-      height: 10px;
-      background: #3db9ec;
-      top: 5px;
-      border-radius: 2px;
-      min-width: 1px;
+      height: calc(100% - 4px);
+      background-color: #6BB7D8;
+      border-bottom: 2px solid #477e96;
+      top: 2px;
+      border-radius: 3px;
+      min-width: 2px;
     }
+    .phpdebugbar[data-theme='dark'] ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-value {
+        background-color: #4F8FB3;
+        border-bottom: 2px solid #3F7A94;
+    }
+
     ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params {
       display: none;
       width: 70%;
       margin: 10px;
       border: 1px solid var(--color-border);
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      font-family: var(--font-mono);
       border-collapse: collapse;
     }
       ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params td {
         border: 1px solid var(--color-border);
+        border-left: none ;
+        border-right: none;
         padding: 0 5px;
       }
       ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params .phpdebugbar-widgets-name {
@@ -289,7 +297,7 @@ div.phpdebugbar-widgets-exceptions li.phpdebugbar-widgets-list-item {
     margin: 10px;
     padding: 5px;
     border: 1px solid var(--color-border);
-    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-family: var(--font-mono);
   }
 
   div.phpdebugbar-widgets-exceptions li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-filename {

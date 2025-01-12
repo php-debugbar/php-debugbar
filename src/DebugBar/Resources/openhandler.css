@@ -23,7 +23,7 @@ div.phpdebugbar-openhandler {
     border: 2px solid var(--color-header-border);
     overflow: auto;
     z-index: 20001;
-    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-family: var(--font-sans);
     font-size: 14px;
     padding: 10px;
 }

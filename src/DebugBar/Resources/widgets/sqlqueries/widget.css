@@ -1,5 +1,5 @@
 div.phpdebugbar-widgets-sqlqueries .phpdebugbar-widgets-status {
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: var(--font-mono);
   padding: 6px 6px;
   border-bottom: 1px solid var(--color-border);
   font-weight: bold;
@@ -75,7 +75,7 @@ div.phpdebugbar-widgets-sqlqueries table.phpdebugbar-widgets-params {
   width: 70%;
   margin: 10px;
   border: 1px solid var(--color-border);
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: var(--font-mono);
   border-collapse: collapse;
 }
   div.phpdebugbar-widgets-sqlqueries table.phpdebugbar-widgets-params td {
