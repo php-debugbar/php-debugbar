@@ -94,9 +94,9 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
             $('<form />')
                 .append('<br/><b>Filter results</b><br/>')
-                .append('Method: <select name="method"><option></option><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select><br/>')
-                .append('Uri: <input type="text" name="uri"><br/>')
-                .append('IP: <input type="text" name="ip"><br/>')
+                .append('<select name="method"><option selected>(Method)</option><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select>')
+                .append('<input type="text" name="uri" placeholder="URI">')
+                .append('<input type="text" name="ip" placeholder="IP">')
                 .append(searchBtn)
                 .appendTo(this.$actions);
         },

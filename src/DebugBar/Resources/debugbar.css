@@ -79,9 +79,10 @@ div.phpdebugbar {
   direction: ltr;
 }
 
-div.phpdebugbar * {
+div.phpdebugbar, div.phpdebugbar *,  {
     direction: ltr;
     text-align: left;
+    box-sizing:border-box;
 }
 
 div.phpdebugbar a,
@@ -136,8 +137,9 @@ div.phpdebugbar input[type='text'], div.phpdebugbar input[type='password'], div.
   background: var(--color-background);
   font-size: 14px;
   color: var(--color-text);
-  border: 0;
   padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
   margin: 0;
 }
 

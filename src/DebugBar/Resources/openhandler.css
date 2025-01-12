@@ -28,8 +28,20 @@ div.phpdebugbar-openhandler {
     padding: 10px;
 }
     div.phpdebugbar-openhandler input, div.phpdebugbar-openhandler select {
-        background-color: var(--color-background);
-        color: var(--color-text);
+        color: var(--color-header-text);
+        background-color: var(--color-header);
+        border: 1px solid var(--color-header-border);
+        border-radius: 0.25rem;
+        height: 20px;
+        margin: 0 5px;
+    }
+    
+    div.phpdebugbar-openhandler .phpdebugbar-openhandler-actions input[name="uri"] {
+        width: 200px;
+    }
+
+    div.phpdebugbar-openhandler .phpdebugbar-openhandler-actions input[name="ip"] {
+        width: 90px;
     }
     div.phpdebugbar-openhandler a {
         color: var(--color-header-text);
@@ -69,6 +81,21 @@ div.phpdebugbar-openhandler {
         padding: 7px 0;
     }
         div.phpdebugbar-openhandler .phpdebugbar-openhandler-actions a {
-            margin: 0 10px;
-            color: var(var(--color-header-text));
+            color: var(--color-header-text);
+            background-color: var(--color-header);
+            border: 1px solid var(--color-header-border);
+            border-radius: 0.25rem;
+            margin: 5px;
+            padding: 4px 12px 4px;
+        }
+
+        div.phpdebugbar-openhandler .phpdebugbar-openhandler-actions button {
+            color: var(--color-header-text);
+            background-color: var(--color-header);
+            border: 1px solid var(--color-header-border);
+            border-radius: 0.25rem;
+            margin: 0 5px;
+            padding: 0 12px;
+            height: 20px;
+            line-height: normal;
         }
