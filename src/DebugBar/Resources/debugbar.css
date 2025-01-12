@@ -79,7 +79,7 @@ div.phpdebugbar {
   direction: ltr;
 }
 
-div.phpdebugbar, div.phpdebugbar *,  {
+div.phpdebugbar, div.phpdebugbar * {
     direction: ltr;
     text-align: left;
     box-sizing:border-box;
