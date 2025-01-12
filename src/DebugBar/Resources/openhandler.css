@@ -25,7 +25,7 @@ div.phpdebugbar-openhandler {
     z-index: 20001;
     font-family: var(--font-sans);
     font-size: 14px;
-    padding: 10px;
+    padding: 0;
 }
     div.phpdebugbar-openhandler input, div.phpdebugbar-openhandler select {
         color: var(--color-header-text);
@@ -35,7 +35,7 @@ div.phpdebugbar-openhandler {
         height: 20px;
         margin: 0 5px;
     }
-    
+
     div.phpdebugbar-openhandler .phpdebugbar-openhandler-actions input[name="uri"] {
         width: 200px;
     }
