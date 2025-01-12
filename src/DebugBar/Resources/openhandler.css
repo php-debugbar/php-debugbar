@@ -16,16 +16,16 @@ div.phpdebugbar-openhandler {
     bottom: 0;
     left: 0;
     right: 0;
-    width: 70%;
+    width: 80%;
     height: 70%;
     background: var(--color-background);
     color: var(--color-text);
     border: 2px solid var(--color-header-border);
     overflow: auto;
     z-index: 20001;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     font-size: 14px;
-    padding-bottom: 10px;
+    padding: 10px;
 }
     div.phpdebugbar-openhandler input, div.phpdebugbar-openhandler select {
         background-color: var(--color-background);
