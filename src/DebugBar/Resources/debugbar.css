@@ -380,12 +380,12 @@ a.phpdebugbar-open-btn:after {
     text-align: left;
   }
 
-select.phpdebugbar-datasets-switcher {
+.phpdebugbar select.phpdebugbar-datasets-switcher {
   float: right;
   display: none;
   margin: 2px 0 0 7px;
   max-width: 200px;
-  max-height: 23px;
+  height: 100%;
   padding: 0;
 }
 
