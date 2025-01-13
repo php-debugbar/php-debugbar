@@ -346,6 +346,68 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
     });
 
+
+    /**
+     * Displays datasets in a table
+     *
+     */
+    var Settings = Widget.extend({
+
+        tagName: 'form',
+
+        className: csscls('settings'),
+
+        getSettings: function() {
+            return JSON.parse(localStorage.getItem('phpdebugbar-settings')) || {};
+        },
+
+        getSetting: function(key, defaultValue) {
+            return this.getSettings()[key] || defaultValue;
+        },
+
+        storeSetting: function(key, value) {
+            var settings = this.getSettings();
+
+            if (value !== null && value !== '') {
+                settings[key] = value;
+            } else {
+                delete settings[key];
+            }
+
+            localStorage.setItem('phpdebugbar-settings', JSON.stringify(settings));
+        },
+
+        render: function() {
+            this.$el.empty();
+
+            console.log('REnder');
+            var self = this;
+
+            var fields = {};
+
+            // Set Theme
+            var theme = this.getSetting('theme');
+            self.get('debugbar').setTheme(theme);
+
+            fields["Theme"] = $('<select name="method" style="width:100px"><option value="">(default)</option><option value="auto">Auto (System preference)</option><option value="light">Light</option><option value="dark">Dark</option></select>')
+                .val(theme)
+                .on('change', function() {
+                    self.storeSetting('theme', $(this).val())
+                    self.get('debugbar').setTheme($(this).val());
+                });
+
+            $.each(fields, function(key, value) {
+                console.log(key, value);
+                $('<div />').addClass(csscls('form-row')).append(
+                    $('<div />').addClass(csscls('form-label')).text(key),
+                    $('<div />').addClass(csscls('form-input')).html(value)
+                ).appendTo(self.$el);
+
+            })
+        },
+
+    });
+
     // ------------------------------------------------------------------
 
     /**
@@ -424,12 +486,11 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
         options: {
             bodyMarginBottom: true,
-            bodyMarginBottomHeight: 0,
-            theme: null,
-            defaultTheme: null,
+            defaultTheme: 'auto',
         },
 
-        initialize: function() {
+        initialize: function(options = {}) {
+            this.options = $.extend(this.options, options);
             this.controls = {};
             this.dataMap = {};
             this.datasets = {};
@@ -437,8 +498,9 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.activePanelName = null;
             this.activeDatasetId = null;
             this.hideEmptyTabs = false;
+            this.theme = null;
             this.datesetTitleFormater = new DatasetTitleFormater(this);
-            this.options.bodyMarginBottomHeight = parseInt($('body').css('margin-bottom'));
+            this.bodyMarginBottomHeight = parseInt($('body').css('margin-bottom'));
             try {
                 this.isIframe = window.self !== window.top && window.top.phpdebugbar;
             } catch (error) {
@@ -448,8 +510,8 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.registerMediaListener();
 
             // Attach settings
-            this.settings = new PhpDebugBar.DebugBar.Tab({"icon":"sliders", "title":"Settings", "widget": new PhpDebugBar.Widgets.SettingsWidget({
-                    'debugbar': this
+            this.settings = new PhpDebugBar.DebugBar.Tab({"icon":"sliders", "title":"Settings", "widget": new Settings({
+                    'debugbar': this,
                 })});
         },
 
@@ -471,37 +533,15 @@ if (typeof(PhpDebugBar) == 'undefined') {
             const mediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
             mediaQueryList.addEventListener('change', event => {
                 if (this.theme === 'auto') {
-                    this.updateTheme(event.matches ? 'dark' : 'light');
+                    this.setTheme(this.theme);
                 }
             })
         },
 
-        updateTheme: function(theme) {
-            this.$el.attr('data-theme', theme)
-            if (this.openHandler) {
-                this.openHandler.$el.attr('data-theme', theme)
+        setTheme: function(theme) {
+            if (!theme) {
+                theme = this.options.defaultTheme;
             }
-        },
-
-        setDefaultTheme: function(theme) {
-            this.options.defaultTheme = theme;
-            this.setTheme(theme);
-        },
-
-        setTheme: function(theme, persist = false) {
-            // Override with UI value
-            if (persist) {
-                if (theme) {
-                    localStorage.setItem('debugbar-theme', theme);
-                } else {
-                    localStorage.removeItem('debugbar-theme');
-                    theme = this.options.defaultTheme || 'auto';
-                }
-
-            } else if (localStorage.getItem('debugbar-theme')) {
-                theme = localStorage.getItem('debugbar-theme');
-            }
-
             this.theme = theme;
 
             if (theme === 'auto') {
@@ -509,7 +549,10 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 theme = mediaQueryList.matches ? 'dark' : 'light';
             }
 
-            this.updateTheme(theme);
+            this.$el.attr('data-theme', theme)
+            if (this.openHandler) {
+                this.openHandler.$el.attr('data-theme', theme)
+            }
         },
 
         /**
@@ -550,9 +593,6 @@ if (typeof(PhpDebugBar) == 'undefined') {
             }
 
             var self = this;
-            if (!this.options.defaultTheme) {
-                this.setDefaultTheme('auto');
-            }
             this.$el.appendTo('body');
             this.$dragCapture = $('<div />').addClass(csscls('drag-capture')).appendTo(this.$el);
             this.$resizehdle = $('<div />').addClass(csscls('resize-handle')).appendTo(this.$el);
@@ -953,10 +993,10 @@ if (typeof(PhpDebugBar) == 'undefined') {
         recomputeBottomOffset: function() {
             if (this.options.bodyMarginBottom) {
                 if (this.isClosed()) {
-                    return $('body').css('margin-bottom', this.options.bodyMarginBottomHeight || '');
+                    return $('body').css('margin-bottom', this.bodyMarginBottomHeight || '');
                 }
 
-                var offset = parseInt(this.$el.height()) + (this.options.bodyMarginBottomHeight || 0);
+                var offset = parseInt(this.$el.height()) + (this.bodyMarginBottomHeight || 0);
                 $('body').css('margin-bottom', offset);
             }
         },

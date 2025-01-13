@@ -1141,7 +1141,7 @@ class JavascriptRenderer
         $js = '';
 
         if (($this->initialization & self::INITIALIZE_CONSTRUCTOR) === self::INITIALIZE_CONSTRUCTOR) {
-            $js .= sprintf("var %s = new %s();\n", $this->variableName, $this->javascriptClass);
+            $js .= sprintf("var %s = new %s(%s);\n", $this->variableName, $this->javascriptClass, json_encode((object) $this->getInitializeOptions()));
         }
 
         if ($this->hideEmptyTabs !== null) {
@@ -1176,11 +1176,18 @@ class JavascriptRenderer
                 json_encode(array("url" => $this->openHandlerUrl)));
         }
 
+        return $js;
+    }
+
+    protected function getInitializeOptions()
+    {
+        $options = [];
+
         if ($this->defaultTheme !== null) {
-            $js .= sprintf("%s.setDefaultTheme(%s);\n", $this->variableName, json_encode($this->defaultTheme));
+            $options['defaultTheme'] = $this->defaultTheme;
         }
 
-        return $js;
+        return $options;
     }
 
     /**

@@ -317,28 +317,3 @@ ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params {
     width: 99%;
 }
 
-/* -------------------------------------- */
-
-.phpdebugbar-widgets-settings {
-  margin: 0;
-}
-.phpdebugbar-widgets-settings fieldset {
-  display: block;
-  width: 100%;
-  border-top: 1px solid var(--color-border);
-  min-height: 17px;
-  padding: 5px;
-}
-.phpdebugbar-widgets-settings legend,
-.phpdebugbar-widgets-settings label {
-  width: 200px;
-  font-weight: bold;
-  display: inline-block;
-  clear: none;
-}
-
-.phpdebugbar-widgets-settings input,
-.phpdebugbar-widgets-settings select
-{
-  margin: 0 5px;
-}

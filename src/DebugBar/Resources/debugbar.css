@@ -79,11 +79,6 @@ div.phpdebugbar {
   direction: ltr;
 }
 
-div.phpdebugbar, div.phpdebugbar * {
-    direction: ltr;
-    text-align: left;
-    box-sizing:border-box;
-}
 
 div.phpdebugbar a,
 div.phpdebugbar-openhandler {
@@ -114,6 +109,8 @@ div.phpdebugbar * {
   text-decoration: none;
   clear: initial;
   width: auto;
+  direction: ltr;
+  text-align: left;
   -moz-box-sizing: content-box;
        box-sizing: content-box;
 }
@@ -509,3 +506,31 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
         appearance: checkbox !important;
         margin: 5px;
     }
+
+
+/* -------------------------------------- */
+
+
+.phpdebugbar-settings .phpdebugbar-form-row {
+  display: block;
+  border-top: 1px solid var(--color-border);
+  min-height: 17px;
+  padding: 5px 10px;
+}
+.phpdebugbar-settings .phpdebugbar-form-label {
+  width: 200px;
+  font-weight: bold;
+  display: inline-block;
+  clear: none;
+}
+.phpdebugbar-settings .phpdebugbar-form-input {
+  font-weight: bold;
+  display: inline-block;
+  clear: none;
+}
+.phpdebugbar-settings input[type="text"],
+.phpdebugbar-settings select
+{
+  margin: 0 5px;
+  min-width: 200px;
+}
