@@ -11,6 +11,7 @@ $debugbar = new StandardDebugBar();
 $debugbarRenderer = $debugbar->getJavascriptRenderer()
                              ->setBaseUrl('../src/DebugBar/Resources')
                              ->setAjaxHandlerEnableTab(true)
+                             ->setHideEmptyTabs(true)
                              ->setEnableJqueryNoConflict(false)
                              ->setTheme('auto');
 

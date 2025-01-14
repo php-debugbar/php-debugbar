@@ -1145,11 +1145,6 @@ class JavascriptRenderer
             $js .= sprintf("var %s = new %s(%s);\n", $this->variableName, $this->javascriptClass, $initializeOptions ? json_encode((object) $initializeOptions) : '');
         }
 
-        if ($this->hideEmptyTabs !== null) {
-            $js .= sprintf("%s.setHideEmptyTabs(%s);\n", $this->variableName,
-                json_encode($this->hideEmptyTabs));
-        }
-
         if (($this->initialization & self::INITIALIZE_CONTROLS) === self::INITIALIZE_CONTROLS) {
             $js .= $this->getJsControlsDefinitionCode($this->variableName);
         }
@@ -1186,6 +1181,10 @@ class JavascriptRenderer
 
         if ($this->theme !== null) {
             $options['theme'] = $this->theme;
+        }
+
+        if ($this->hideEmptyTabs !== null) {
+            $options['hideEmptyTabs'] = $this->hideEmptyTabs;
         }
 
         return $options;

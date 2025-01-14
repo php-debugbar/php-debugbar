@@ -355,12 +355,35 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
         className: csscls('settings'),
 
+        settings: {},
+
+        initialize: function(options) {
+            this.set(options);
+
+            var debugbar = this.get('debugbar');
+            this.settings = JSON.parse(localStorage.getItem('phpdebugbar-settings')) || {};
+
+            $.each(debugbar.options, (key, value)=>  {
+                if (key in this.settings) {
+                    debugbar.options[key] = this.settings[key];
+                }
+
+                // Theme requires dark/light mode detection
+                if (key === 'theme') {
+                    debugbar.setTheme(debugbar.options[key]);
+                } else {
+                    debugbar.$el.attr('data-' + key, debugbar.options[key]);
+                }
+            })
+        },
+
         clearSettings: function() {
             var debugbar = this.get('debugbar');
 
             // Remove item from storage
             localStorage.removeItem('phpdebugbar-settings');
             localStorage.removeItem('phpdebugbar-ajaxhandler-autoshow');
+            this.settings = {};
 
             // Reset options
             debugbar.options = debugbar.defaultOptions;
@@ -377,24 +400,16 @@ if (typeof(PhpDebugBar) == 'undefined') {
             }
         },
 
-        getSettings: function() {
-            return JSON.parse(localStorage.getItem('phpdebugbar-settings')) || {};
-        },
-
-        getSetting: function(key, defaultValue) {
-            return this.getSettings()[key] || defaultValue;
-        },
-
         storeSetting: function(key, value) {
-            var settings = this.getSettings();
+            this.settings[key] = value;
 
-            if (value !== null && value !== '') {
-                settings[key] = value;
-            } else {
-                delete settings[key];
+            var debugbar = this.get('debugbar');
+            debugbar.options[key] = value;
+            if (key !== 'theme') {
+                debugbar.$el.attr('data-' + key, value);
             }
 
-            localStorage.setItem('phpdebugbar-settings', JSON.stringify(settings));
+            localStorage.setItem('phpdebugbar-settings', JSON.stringify(this.settings));
         },
 
         render: function() {
@@ -406,26 +421,35 @@ if (typeof(PhpDebugBar) == 'undefined') {
             var fields = {};
 
             // Set Theme
-            var theme = this.getSetting('theme', debugbar.options.theme);
-            self.get('debugbar').setTheme(theme);
-            fields["Theme"] = $('<select name="method" style="width:100px"><option value="auto">Auto (System preference)</option><option value="light">Light</option><option value="dark">Dark</option></select>')
-                .val(theme)
+            fields["Theme"] = $('<select>' +
+                '<option value="auto">Auto (System preference)</option>' +
+                '<option value="light">Light</option>' +
+                '<option value="dark">Dark</option>' +
+                '</select>')
+                .val(debugbar.options.theme)
                 .on('change', function() {
                     self.storeSetting('theme', $(this).val())
                     debugbar.setTheme($(this).val());
                 });
 
-            var openBtnPosition = this.getSetting('openBtnPosition', debugbar.options.openBtnPosition);
-            debugbar.options.openBtnPosition = openBtnPosition;
-            if (debugbar.isClosed()) {
-                debugbar.$el.attr('data-float', openBtnPosition);
-            }
-            fields["Open Button Position"] = $('<select name="method" style="width:100px"><option value="left">Left</option><option value="right">Right</option></select>')
-                .val(openBtnPosition)
+            fields["Open Button Position"] = $('<select>' +
+                '<option value="bottomLeft">Bottom Left</option>' +
+                '<option value="bottomRight">Bottom Right</option>' +
+                '<option value="topLeft">Top Left</option>' +
+                '<option value="topRight">Top Right</option>' +
+                '</select>')
+                .val(debugbar.options.openBtnPosition)
                 .on('change', function() {
                     self.storeSetting('openBtnPosition', $(this).val())
-                    debugbar.options.openBtnPosition = $(this).val();
                 });
+
+            this.$hideEmptyTabs = $('<input type=checkbox>')
+                .prop('checked', debugbar.options.hideEmptyTabs)
+                .on('click', function() {
+                    self.storeSetting('hideEmptyTabs', $(this).is(':checked'));
+                });
+
+            fields["Hide Empty Tabs"] = $('<label/>').append(this.$hideEmptyTabs, 'Hide empty tabs until they have data');
 
             this.$autoshow = $('<input type=checkbox>')
                 .prop('checked', debugbar.ajaxHandler && debugbar.ajaxHandler.autoShow)
@@ -439,22 +463,9 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 });
 
             this.bindAttr('autoshow', function() {
-                this.$autoshow.prop('checked', this.get('autoshow'));
+                this.$autoshow.prop('checked', this.get('autoshow')).closest('.form-row').show();
             })
-
             fields["Autoshow"] = $('<label/>').append(this.$autoshow, 'Automatically show new incoming Ajax requests');
-
-            var hideEmptyTabs = this.getSetting('hideEmptyTabs', debugbar.options.hideEmptyTabs);
-            debugbar.$el.attr('data-hide-empty-tabs', hideEmptyTabs);
-            this.$hideEmptyTabs = $('<input type=checkbox>')
-                .prop('checked', hideEmptyTabs)
-                .on('click', function() {
-                    self.storeSetting('hideEmptyTabs', $(this).is(':checked'));
-                    debugbar.$el.attr('data-hide-empty-tabs', $(this).is(':checked'))
-                });
-
-            fields["Hide Empty Tabs"] = $('<label/>').append(this.$hideEmptyTabs, 'Hide empty tabs until they have data');
-
 
             fields["Reset to defaults"] = $('<button>Reset settings</button>').on('click', function(e) {
                 e.preventDefault();
@@ -463,13 +474,16 @@ if (typeof(PhpDebugBar) == 'undefined') {
             })
 
             $.each(fields, function(key, value) {
-                console.log(key, value);
                 $('<div />').addClass(csscls('form-row')).append(
                     $('<div />').addClass(csscls('form-label')).text(key),
                     $('<div />').addClass(csscls('form-input')).html(value)
                 ).appendTo(self.$el);
 
             })
+
+            if (!this.ajaxHandler) {
+                this.$autoshow.closest('.form-row').hide();
+            }
         },
 
     });
@@ -553,7 +567,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
         options: {
             bodyMarginBottom: true,
             theme: 'auto',
-            openBtnPosition: 'left',
+            openBtnPosition: 'bottomLeft',
             hideEmptyTabs: false,
         },
 
@@ -1016,7 +1030,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.$body.hide();
             this.$restorebtn.show();
             localStorage.setItem('phpdebugbar-open', '0');
-            this.$el.addClass(csscls('closed')).attr('data-float', this.options.openBtnPosition);
+            this.$el.addClass(csscls('closed'));
             this.recomputeBottomOffset();
         },
 
@@ -1242,10 +1256,6 @@ if (typeof(PhpDebugBar) == 'undefined') {
             } else {
                 this.$openbtn.hide();
             }
-        },
-
-        setHideEmptyTabs: function(hideEmpty) {
-            this.options.hideEmptyTabs = hideEmpty;
         },
 
         /**
