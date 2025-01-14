@@ -357,6 +357,28 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
         className: csscls('settings'),
 
+        clearSettings: function() {
+            var debugbar = this.get('debugbar');
+
+            // Remove item from storage
+            localStorage.removeItem('phpdebugbar-settings');
+            localStorage.removeItem('phpdebugbar-ajaxhandler-autoshow');
+
+            // Reset options
+            debugbar.options = debugbar.defaultOptions;
+            debugbar.setTheme(debugbar.options.theme);
+
+            // Reset ajax handler
+            if (debugbar.ajaxHandler) {
+                var autoshow = debugbar.ajaxHandler.defaultAutoShow;
+                debugbar.ajaxHandler.setAutoShow(autoshow);
+                this.set('autoshow', autoshow);
+                if(debugbar.controls['__datasets']) {
+                    debugbar.controls['__datasets'].get('widget').set('autoshow', $(this).is(':checked'));
+                }
+            }
+        },
+
         getSettings: function() {
             return JSON.parse(localStorage.getItem('phpdebugbar-settings')) || {};
         },
@@ -380,21 +402,55 @@ if (typeof(PhpDebugBar) == 'undefined') {
         render: function() {
             this.$el.empty();
 
-            console.log('REnder');
+            var debugbar = this.get('debugbar');
             var self = this;
 
             var fields = {};
 
             // Set Theme
-            var theme = this.getSetting('theme');
+            var theme = this.getSetting('theme', debugbar.options.theme);
             self.get('debugbar').setTheme(theme);
-
-            fields["Theme"] = $('<select name="method" style="width:100px"><option value="">(default)</option><option value="auto">Auto (System preference)</option><option value="light">Light</option><option value="dark">Dark</option></select>')
+            fields["Theme"] = $('<select name="method" style="width:100px"><option value="auto">Auto (System preference)</option><option value="light">Light</option><option value="dark">Dark</option></select>')
                 .val(theme)
                 .on('change', function() {
                     self.storeSetting('theme', $(this).val())
-                    self.get('debugbar').setTheme($(this).val());
+                    debugbar.setTheme($(this).val());
                 });
+
+            var openBtnPosition = this.getSetting('openBtnPosition', debugbar.options.openBtnPosition);
+            debugbar.options.openBtnPosition = openBtnPosition;
+            if (debugbar.isClosed()) {
+                debugbar.$el.attr('data-float', openBtnPosition);
+            }
+            fields["Open Button Position"] = $('<select name="method" style="width:100px"><option value="left">Left</option><option value="right">Right</option></select>')
+                .val(openBtnPosition)
+                .on('change', function() {
+                    self.storeSetting('openBtnPosition', $(this).val())
+                    debugbar.options.openBtnPosition = $(this).val();
+                });
+
+            this.$autoshow = $('<input type=checkbox>')
+                .prop('checked', debugbar.ajaxHandler && debugbar.ajaxHandler.autoShow)
+                .on('click', function() {
+                    if (debugbar.ajaxHandler) {
+                        debugbar.ajaxHandler.setAutoShow($(this).is(':checked'));
+                    }
+                    if (debugbar.controls['__datasets']) {
+                        debugbar.controls['__datasets'].get('widget').set('autoshow', $(this).is(':checked'));
+                    }
+                });
+
+            this.bindAttr('autoshow', function() {
+                this.$autoshow.prop('checked', this.get('autoshow'));
+            })
+
+            fields["Autoshow"] = $('<label/>').append(this.$autoshow, 'Automatically show new incoming Ajax requests');
+
+            fields["Reset to defaults"] = $('<button>Reset settings</button>').on('click', function(e) {
+                e.preventDefault();
+                self.clearSettings();
+                self.render();
+            })
 
             $.each(fields, function(key, value) {
                 console.log(key, value);
@@ -486,11 +542,13 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
         options: {
             bodyMarginBottom: true,
-            defaultTheme: 'auto',
+            theme: 'auto',
+            openBtnPosition: 'left'
         },
 
         initialize: function(options = {}) {
             this.options = $.extend(this.options, options);
+            this.defaultOptions = { ...this.options };
             this.controls = {};
             this.dataMap = {};
             this.datasets = {};
@@ -540,7 +598,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
         setTheme: function(theme) {
             if (!theme) {
-                theme = this.options.defaultTheme;
+                theme = this.options.theme;
             }
             this.theme = theme;
 
@@ -673,6 +731,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                     this.minimize();
                 } else {
                     this.showTab('__settings');
+                    this.settings.get('widget').render();
                 }
             });
             this.settings.$el.appendTo(this.$body);
@@ -953,7 +1012,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.$body.hide();
             this.$restorebtn.show();
             localStorage.setItem('phpdebugbar-open', '0');
-            this.$el.addClass(csscls('closed'));
+            this.$el.addClass(csscls('closed')).attr('data-float', this.options.openBtnPosition);
             this.recomputeBottomOffset();
         },
 
@@ -1231,8 +1290,12 @@ if (typeof(PhpDebugBar) == 'undefined') {
         this.debugbar = debugbar;
         this.headerName = headerName || 'phpdebugbar';
         this.autoShow = typeof(autoShow) == 'undefined' ? true : autoShow;
+        this.defaultAutoShow = this.autoShow;
         if (localStorage.getItem('phpdebugbar-ajaxhandler-autoshow') !== null) {
             this.autoShow = localStorage.getItem('phpdebugbar-ajaxhandler-autoshow') == '1';
+        }
+        if (debugbar.controls['__settings']) {
+            debugbar.controls['__settings'].get('widget').set('autoshow', this.autoShow);
         }
     };
 

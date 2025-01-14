@@ -62,7 +62,7 @@ class JavascriptRenderer
 
     protected $useRequireJs = false;
 
-    protected $defaultTheme = null;
+    protected $theme = null;
 
     protected $hideEmptyTabs = null;
 
@@ -161,8 +161,8 @@ class JavascriptRenderer
         if (array_key_exists('use_requirejs', $options)) {
             $this->setUseRequireJs($options['use_requirejs']);
         }
-        if (array_key_exists('default_theme', $options)) {
-            $this->setDefaultTheme($options['default_theme']);
+        if (array_key_exists('theme', $options)) {
+            $this->setTheme($options['theme']);
         }
         if (array_key_exists('hide_empty_tabs', $options)) {
             $this->setHideEmptyTabs($options['hide_empty_tabs']);
@@ -408,14 +408,14 @@ class JavascriptRenderer
     }
 
     /**
-     * Sets whether to hide empty tabs or not
+     * Sets the default theme
      *
      * @param boolean $hide
      * @return $this
      */
-    public function setDefaultTheme($theme='auto')
+    public function setTheme($theme='auto')
     {
-        $this->defaultTheme = $theme;
+        $this->theme = $theme;
         return $this;
     }
 
@@ -1183,8 +1183,8 @@ class JavascriptRenderer
     {
         $options = [];
 
-        if ($this->defaultTheme !== null) {
-            $options['defaultTheme'] = $this->defaultTheme;
+        if ($this->theme !== null) {
+            $options['theme'] = $this->theme;
         }
 
         return $options;

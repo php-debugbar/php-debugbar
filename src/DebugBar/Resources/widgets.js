@@ -679,11 +679,15 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.$actions = $('<div />').addClass(csscls('dataset-actions')).appendTo(this.$el);
 
             var self = this;
+            var debugbar = self.get('debugbar');
 
             this.$autoshow = $('<input type=checkbox>')
                 .on('click', function() {
-                    if (self.get('debugbar').ajaxHandler) {
-                        self.get('debugbar').ajaxHandler.setAutoShow($(this).is(':checked'));
+                    if (debugbar.ajaxHandler) {
+                        debugbar.ajaxHandler.setAutoShow($(this).is(':checked'));
+                    }
+                    if (debugbar.controls['__settings']) {
+                        debugbar.controls['__settings'].get('widget').set('autoshow', this.autoShow);
                     }
                 });
 

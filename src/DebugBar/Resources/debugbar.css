@@ -79,6 +79,10 @@ div.phpdebugbar {
   direction: ltr;
 }
 
+div.phpdebugbar.phpdebugbar-closed[data-float="right"] {
+  left:auto;
+  right: 0;
+}
 
 div.phpdebugbar a,
 div.phpdebugbar-openhandler {
@@ -164,7 +168,12 @@ a.phpdebugbar-restore-btn {
   font-size: 14px;
   color: var(--color-icons);
   text-decoration: none;
+}
+.phpdebugbar-closed[data-float="left"] {
   border-right: 1px solid var(--color-header-border);
+}
+.phpdebugbar-closed[data-float="right"] {
+  border-left: 1px solid var(--color-header-border);
 }
 
 div.phpdebugbar-resize-handle {
@@ -386,6 +395,19 @@ a.phpdebugbar-open-btn:after {
   padding: 0;
 }
 
+.phpdebugbar button,
+.phpdebugbar-openhandler button {
+  color: var(--color-header-text);
+  background-color: var(--color-header);
+  border: 1px solid var(--color-header-border);
+  border-radius: 0.25rem;
+  margin: 0 5px;
+  padding: 0 12px;
+  height: 20px;
+  line-height: normal;
+  cursor: pointer;
+}
+
 /* -------------------------------------- */
 
 div.phpdebugbar-body {
@@ -534,3 +556,5 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
   margin: 0 5px;
   min-width: 200px;
 }
+
+
