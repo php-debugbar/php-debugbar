@@ -284,9 +284,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.bindAttr('data', function(data) {
                 if (this.has('widget')) {
                     this.get('widget').set('data', data);
-                    if (!$.isEmptyObject(data)) {
-                        this.$tab.show();
-                    }
+                    this.$tab.attr('data-empty', $.isEmptyObject(data));
                 }
             })
         }
@@ -446,6 +444,18 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
             fields["Autoshow"] = $('<label/>').append(this.$autoshow, 'Automatically show new incoming Ajax requests');
 
+            var hideEmptyTabs = this.getSetting('hideEmptyTabs', debugbar.options.hideEmptyTabs);
+            debugbar.$el.attr('data-hide-empty-tabs', hideEmptyTabs);
+            this.$hideEmptyTabs = $('<input type=checkbox>')
+                .prop('checked', hideEmptyTabs)
+                .on('click', function() {
+                    self.storeSetting('hideEmptyTabs', $(this).is(':checked'));
+                    debugbar.$el.attr('data-hide-empty-tabs', $(this).is(':checked'))
+                });
+
+            fields["Hide Empty Tabs"] = $('<label/>').append(this.$hideEmptyTabs, 'Hide empty tabs until they have data');
+
+
             fields["Reset to defaults"] = $('<button>Reset settings</button>').on('click', function(e) {
                 e.preventDefault();
                 self.clearSettings();
@@ -543,7 +553,8 @@ if (typeof(PhpDebugBar) == 'undefined') {
         options: {
             bodyMarginBottom: true,
             theme: 'auto',
-            openBtnPosition: 'left'
+            openBtnPosition: 'left',
+            hideEmptyTabs: false,
         },
 
         initialize: function(options = {}) {
@@ -555,8 +566,6 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.firstTabName = null;
             this.activePanelName = null;
             this.activeDatasetId = null;
-            this.hideEmptyTabs = false;
-            this.theme = null;
             this.datesetTitleFormater = new DatasetTitleFormater(this);
             this.bodyMarginBottomHeight = parseInt($('body').css('margin-bottom'));
             try {
@@ -590,17 +599,14 @@ if (typeof(PhpDebugBar) == 'undefined') {
         registerMediaListener: function() {
             const mediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
             mediaQueryList.addEventListener('change', event => {
-                if (this.theme === 'auto') {
-                    this.setTheme(this.theme);
+                if (this.options.theme === 'auto') {
+                    this.setTheme('auto');
                 }
             })
         },
 
         setTheme: function(theme) {
-            if (!theme) {
-                theme = this.options.theme;
-            }
-            this.theme = theme;
+            this.options.theme = theme;
 
             if (theme === 'auto') {
                 const mediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
@@ -823,9 +829,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                     self.showTab(name);
                 }
             })
-            if (this.hideEmptyTabs) {
-                tab.$tab.hide();
-            }
+            tab.$tab.attr('data-empty', true);
             tab.$tab.attr('data-collector', name);
             tab.$el.attr('data-collector', name);
             tab.$el.appendTo(this.$body);
@@ -1241,7 +1245,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
         },
 
         setHideEmptyTabs: function(hideEmpty) {
-            this.hideEmptyTabs = hideEmpty;
+            this.options.hideEmptyTabs = hideEmpty;
         },
 
         /**

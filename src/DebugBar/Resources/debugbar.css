@@ -248,6 +248,10 @@ a.phpdebugbar-indicator
   border-right: 1px solid var(--color-header-border);
 }
 
+.phpdebugbar[data-hide-empty-tabs=true] .phpdebugbar-tab[data-empty=true] {
+  display: none;
+}
+
 a.phpdebugbar-tab.phpdebugbar-active {
   background: var(--color-active);
   color: var(--color-active-text);
@@ -557,4 +561,8 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
   min-width: 200px;
 }
 
+.phpdebugbar-settings input[type="checkbox"]
+{
+  margin: 0 5px;
+}
 
