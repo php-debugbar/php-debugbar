@@ -213,7 +213,7 @@ a.phpdebugbar-restore-btn:after {
 }
 div.phpdebugbar-header {
   background-color: var(--color-header);
-  min-height: 26px;
+  min-height: 32px;
   line-height: 16px;
 }
 div.phpdebugbar-header:before, div.phpdebugbar-header:after {
@@ -233,7 +233,7 @@ div.phpdebugbar-header-right {
 div.phpdebugbar-header > div > * {
   padding: 5px;
   font-size: 14px;
-  height: 16px;
+  height: 22px;
   color: var(--color-header-text);
   text-decoration: none;
 }
@@ -304,12 +304,12 @@ a.phpdebugbar-tab.phpdebugbar-active {
 a.phpdebugbar-close-btn,
 a.phpdebugbar-open-btn,
 a.phpdebugbar-restore-btn,
-a.phpdebugbar-minimize-btn ,
+a.phpdebugbar-minimize-btn,
 a.phpdebugbar-maximize-btn,
-a.phpdebugbar-tab.phpdebugbar-tab-history
+a.phpdebugbar-tab.phpdebugbar-tab-history,
 a.phpdebugbar-tab.phpdebugbar-tab-settings {
   width: 16px;
-  height: 16px;
+  height: 22px;
 }
 
 a.phpdebugbar-close-btn,
@@ -318,7 +318,7 @@ a.phpdebugbar-restore-btn,
 a.phpdebugbar-minimize-btn ,
 a.phpdebugbar-maximize-btn {
     width: 16px;
-    height: 16px;
+    height: 22px;
     position: relative;
 }
 
@@ -483,8 +483,6 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
 
   a.phpdebugbar-tab.phpdebugbar-tab-history,
   a.phpdebugbar-tab.phpdebugbar-tab-settings {
-    min-width: 16px;
-    height: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
