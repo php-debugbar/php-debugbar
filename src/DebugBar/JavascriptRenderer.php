@@ -1141,7 +1141,8 @@ class JavascriptRenderer
         $js = '';
 
         if (($this->initialization & self::INITIALIZE_CONSTRUCTOR) === self::INITIALIZE_CONSTRUCTOR) {
-            $js .= sprintf("var %s = new %s(%s);\n", $this->variableName, $this->javascriptClass, json_encode((object) $this->getInitializeOptions()));
+            $initializeOptions = $this->getInitializeOptions();
+            $js .= sprintf("var %s = new %s(%s);\n", $this->variableName, $this->javascriptClass, $initializeOptions ? json_encode((object) $initializeOptions) : '');
         }
 
         if ($this->hideEmptyTabs !== null) {
