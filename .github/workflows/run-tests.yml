@@ -39,3 +39,9 @@ jobs:
 
     - name: Execute Unit Tests
       run: vendor/bin/phpunit --testsuite=Unit
+
+    - name: Upload screenshots
+      uses: actions/upload-artifact@latest
+      with:
+        name: debugbar-screenshots
+        path: screenshots

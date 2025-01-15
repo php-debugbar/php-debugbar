@@ -3,12 +3,15 @@
 namespace DebugBar\Tests\Browser;
 
 use DebugBar\Browser\Bridge\WebDriverElement;
+use Facebook\WebDriver\WebDriverDimension;
 
 class PdoTest extends AbstractBrowserTest
 {
     public function testMonologCollector(): void
     {
         $client = static::createPantherClient();
+        $size = new WebDriverDimension(1920, 800);
+        $client->manage()->window()->setSize($size);
 
         $client->request('GET', '/demo/pdo.php');
 
@@ -29,6 +32,9 @@ class PdoTest extends AbstractBrowserTest
 
         $this->assertEquals('insert into users (name) values (?)', $statements[1]);
         $this->assertCount(7, $statements);
+
+        $client->takeScreenshot(__DIR__ .'/../../../screenshots/pdo.png');
+
     }
 
 }

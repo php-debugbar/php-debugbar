@@ -13,7 +13,7 @@ $debugbarRenderer = $debugbar->getJavascriptRenderer()
                              ->setAjaxHandlerEnableTab(true)
                              ->setHideEmptyTabs(true)
                              ->setEnableJqueryNoConflict(false)
-                             ->setTheme('auto');
+                             ->setTheme($_GET['theme'] ?? 'auto');
 
 //
 // create a writable profiles folder in the demo directory to uncomment the following lines

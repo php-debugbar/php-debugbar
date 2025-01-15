@@ -2,8 +2,10 @@ composer.lock
 /vendor
 /demo/bridge/*/vendor
 /demo/bridge/doctrine/db.sqlite
+/demo/profiles
 /src/DebugBar/Resources/vendor
 .phpunit.result.cache
 /drivers
 /chromedriver
 .phpunit.cache/
+/tests/screenshots
