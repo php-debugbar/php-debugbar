@@ -43,10 +43,3 @@ jobs:
 
       - name: Execute Unit Tests
         run: vendor/bin/phpunit --testsuite=Browser
-
-      - name: Upload screenshots
-        uses: actions/upload-artifact@v4
-        if: matrix.php == '8.4'
-        with:
-          name: debugbar-screenshots
-          path: screenshots
