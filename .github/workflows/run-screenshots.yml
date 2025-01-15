@@ -1,4 +1,4 @@
-name: Integration
+name: Screenshots
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
 
     strategy:
       matrix:
-        php: [8.4, 8.3, 8.2, 8.1, 8.0, 7.4, 7.3, 7.2]
+        php: [8.4]
 
     name: PHP${{ matrix.php }}
 
@@ -43,10 +43,3 @@ jobs:
 
       - name: Execute Unit Tests
         run: vendor/bin/phpunit --testsuite=Browser
-
-      - name: Upload screenshots
-        uses: actions/upload-artifact@v4
-        if: matrix.php == '8.4'
-        with:
-          name: debugbar-screenshots
-          path: screenshots
