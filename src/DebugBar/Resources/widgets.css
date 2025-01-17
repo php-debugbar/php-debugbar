@@ -26,7 +26,7 @@ pre.phpdebugbar-widgets-code-block {
     position: static;
     float: left;
     padding: 5px;
-    border-right: 1px solid var(--color-header-border);
+    border-right: 1px solid var(--debugbar-header-border);
     text-align: right;
   }
 
@@ -61,16 +61,16 @@ ul.phpdebugbar-widgets-list {
   margin: 0;
   padding: 0;
   list-style: none;
-  font-family: var(--font-mono);
+  font-family: var(--debugbar-font-mono);
 }
   ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item {
     padding: 3px;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--debugbar-border);
     position: relative;
     overflow: hidden;
   }
   ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item:hover {
-    background-color: var(--color-hover-bg);
+    background-color: var(--debugbar-hover-bg);
   }
 
 /* -------------------------------------- */
@@ -133,18 +133,18 @@ div.phpdebugbar-widgets-messages {
     position: fixed;
     bottom: 0;
     width: 100%;
-    background: var(--color-header);
-    color: var(--color-text);
-    border-top: 1px solid var(--color-border);
+    background: var(--debugbar-header);
+    color: var(--debugbar-text);
+    border-top: 1px solid var(--debugbar-border);
     border-bottom: 0px;
     height: 20px;
     padding: 4px 0px 4px;
   }
   div.phpdebugbar-widgets-messages li .phpdebugbar-widgets-label-called-from {
     float: right;
-    color: var(--color-text-muted);
+    color: var(--debugbar-text-muted);
     padding-left: 5px;
-    border-bottom: 1px dotted var(--color-border);
+    border-bottom: 1px dotted var(--debugbar-border);
   }
   div.phpdebugbar-widgets-messages li .phpdebugbar-widgets-label-called-from:before {
     content: "\f08d";
@@ -172,12 +172,12 @@ div.phpdebugbar-widgets-messages {
         background: #7cacd5;
         margin: 0 2px;
         border-radius: 4px;
-        color: var(--color-background);
+        color: var(--debugbar-background);
         text-decoration: none;
       }
       div.phpdebugbar-widgets-messages div.phpdebugbar-widgets-toolbar a.phpdebugbar-widgets-filter.phpdebugbar-widgets-excluded {
-        background: var(--color-active);
-        color: var(--color-text-muted);
+        background: var(--debugbar-active);
+        color: var(--debugbar-text-muted);
       }
 
 /* -------------------------------------- */
@@ -189,7 +189,7 @@ dl.phpdebugbar-widgets-kvlist {
     float: left;
     width: 150px;
     padding: 5px;
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--debugbar-border);
     font-weight: bold;
     clear: both;
     overflow: hidden;
@@ -199,7 +199,7 @@ dl.phpdebugbar-widgets-kvlist {
   dl.phpdebugbar-widgets-kvlist dd {
     margin-left: 160px;
     padding: 5px;
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--debugbar-border);
     cursor: pointer;
     min-height: 17px;
   }
@@ -208,7 +208,7 @@ dl.phpdebugbar-widgets-kvlist {
 
 dl.phpdebugbar-widgets-varlist,
 dl.phpdebugbar-widgets-htmlvarlist {
-  font-family: var(--font-mono);
+  font-family: var(--debugbar-font-mono);
 }
   dl.phpdebugbar-widgets-htmlvarlist dd {
     cursor: initial;
@@ -228,14 +228,14 @@ ul.phpdebugbar-widgets-timeline {
     display: block;
   }
   ul.phpdebugbar-widgets-timeline li:hover {
-    background: var(--color-hover-bg);
+    background: var(--debugbar-hover-bg);
   }
     ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-label,
     ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-collector {
       position: absolute;
       font-size: 12px;
-      font-family: var(--font-mono);
-      color: var(--color-text);
+      font-family: var(--debugbar-font-mono);
+      color: var(--debugbar-text);
       top: 4px;
       left: 5px;
       background: none;
@@ -266,12 +266,12 @@ ul.phpdebugbar-widgets-timeline {
       display: none;
       width: 70%;
       margin: 10px;
-      border: 1px solid var(--color-border);
-      font-family: var(--font-mono);
+      border: 1px solid var(--debugbar-border);
+      font-family: var(--debugbar-font-mono);
       border-collapse: collapse;
     }
       ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params td {
-        border: 1px solid var(--color-border);
+        border: 1px solid var(--debugbar-border);
         border-left: none ;
         border-right: none;
         padding: 0 5px;
@@ -303,8 +303,8 @@ div.phpdebugbar-widgets-exceptions li.phpdebugbar-widgets-list-item {
     display: none;
     margin: 10px;
     padding: 5px;
-    border: 1px solid var(--color-border);
-    font-family: var(--font-mono);
+    border: 1px solid var(--debugbar-border);
+    font-family: var(--debugbar-font-mono);
   }
 
   div.phpdebugbar-widgets-exceptions li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-filename {

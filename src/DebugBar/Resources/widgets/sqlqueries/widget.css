@@ -1,10 +1,10 @@
 div.phpdebugbar-widgets-sqlqueries .phpdebugbar-widgets-status {
-  font-family: var(--font-mono);
+  font-family: var(--debugbar-font-mono);
   padding: 6px 6px;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--debugbar-border);
   font-weight: bold;
-  color: var(--color-text);
-  background-color: var(--color-hover-bg);
+  color: var(--debugbar-text);
+  background-color: var(--debugbar-hover-bg);
 }
 
 div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item.phpdebugbar-widgets-error {
@@ -19,7 +19,7 @@ div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id {
   float: right;
   margin-left: 8px;
-  color: var(--color-text-muted);
+  color: var(--debugbar-text-muted);
 }
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-database,
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-duration,
@@ -27,7 +27,7 @@ div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugb
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-row-count,
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-copy-clipboard,
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-stmt-id {
-  color: var(--color-text);
+  color: var(--debugbar-text);
 }
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before,
@@ -65,21 +65,21 @@ div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link:before {
   content: "\f08e";
 }
 div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link {
-  color: var(--color-link);
+  color: var(--debugbar-link);
 }
 div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link:hover {
-  color: var(--color-hover);
+  color: var(--debugbar-hover);
 }
 div.phpdebugbar-widgets-sqlqueries table.phpdebugbar-widgets-params {
   display: none;
   width: 70%;
   margin: 10px;
-  border: 1px solid var(--color-border);
-  font-family: var(--font-mono);
+  border: 1px solid var(--debugbar-border);
+  font-family: var(--debugbar-font-mono);
   border-collapse: collapse;
 }
   div.phpdebugbar-widgets-sqlqueries table.phpdebugbar-widgets-params td {
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--debugbar-border);
     text-align: center;
   }
   div.phpdebugbar-widgets-sqlqueries table.phpdebugbar-widgets-params .phpdebugbar-widgets-name {
@@ -107,7 +107,7 @@ div.phpdebugbar[data-theme='dark'] div.phpdebugbar-widgets-sqlqueries li.phpdebu
 }
 
 div.phpdebugbar div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item.phpdebugbar-widgets-sql-duplicate:hover {
-    background-color: var(--color-hover-bg);
+    background-color: var(--debugbar-hover-bg);
 }
 
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-toolbar {
@@ -130,8 +130,8 @@ div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-toolbar a.phpdebugbar
   text-decoration: none;
 }
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-toolbar a.phpdebugbar-widgets-filter.phpdebugbar-widgets-excluded {
-  background: var(--color-background);
-  color: var(--color-text);
+  background: var(--debugbar-background);
+  color: var(--debugbar-text);
 }
 div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-duplicates {
   font-weight: bold;
@@ -156,5 +156,5 @@ div.phpdebugbar-widgets-sqlqueries td.phpdebugbar-widgets-value li.phpdebugbar-w
   padding-left: 6px;
 }
 div.phpdebugbar-widgets-sqlqueries .phpdebugbar-text-muted {
-  color: var(--color-text-muted);
+  color: var(--debugbar-text-muted);
 }

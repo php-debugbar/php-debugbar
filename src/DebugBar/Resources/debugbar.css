@@ -7,58 +7,58 @@
 
 div.phpdebugbar,
 div.phpdebugbar-openhandler {
-  --color-background: #fff;
-  --color-text: #222;
-  --color-text-muted: #888;
-  --color-border: #eee;
+  --debugbar-background: #fff;
+  --debugbar-text: #222;
+  --debugbar-text-muted: #888;
+  --debugbar-border: #eee;
 
-  --color-header: #efefef;
-  --color-header-text: #555;
-  --color-header-border: #ddd;
+  --debugbar-header: #efefef;
+  --debugbar-header-text: #555;
+  --debugbar-header-border: #ddd;
 
-  --color-active: #ccc;
-  --color-active-text: #666;
+  --debugbar-active: #ccc;
+  --debugbar-active-text: #666;
 
-  --color-icons: #555;
-  --color-badge: #ccc;
-  --color-badge-text: #555;
+  --debugbar-icons: #555;
+  --debugbar-badge: #ccc;
+  --debugbar-badge-text: #555;
 
-  --color-badge-active: #555;
-  --color-badge-active-text: #fff;
+  --debugbar-badge-active: #555;
+  --debugbar-badge-active-text: #fff;
 
-  --color-link: #888;
-  --color-hover: #aaa;
-  --color-hover-bg: #fafafa;
+  --debugbar-link: #888;
+  --debugbar-hover: #aaa;
+  --debugbar-hover-bg: #fafafa;
 
-  --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --debugbar-font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --debugbar-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
 }
 
 div.phpdebugbar[data-theme='dark'],
 div.phpdebugbar-openhandler[data-theme='dark'] {
-  --color-background: #2a2a2a;
-  --color-text: #e0e0e0;
-  --color-text-muted: #aaaaaa;
-  --color-border: #3a3a3a;
+  --debugbar-background: #2a2a2a;
+  --debugbar-text: #e0e0e0;
+  --debugbar-text-muted: #aaaaaa;
+  --debugbar-border: #3a3a3a;
 
-  --color-header: #1e1e1e;
-  --color-header-text: #cccccc;
-  --color-header-border: #444;
+  --debugbar-header: #1e1e1e;
+  --debugbar-header-text: #cccccc;
+  --debugbar-header-border: #444;
 
-  --color-active: #444;
-  --color-active-text: #e0e0e0;
+  --debugbar-active: #444;
+  --debugbar-active-text: #e0e0e0;
 
-  --color-icons: #cccccc;
-  --color-badge: #444;
-  --color-badge-text: #cccccc;
+  --debugbar-icons: #cccccc;
+  --debugbar-badge: #444;
+  --debugbar-badge-text: #cccccc;
 
-  --color-badge-active: #cccccc;
-  --color-badge-active-text: #1e1e1e;
+  --debugbar-badge-active: #cccccc;
+  --debugbar-badge-active-text: #1e1e1e;
 
-  --color-link: #aaaaaa;
-  --color-hover: #888888;
-  --color-hover-bg: #333333;
+  --debugbar-link: #aaaaaa;
+  --debugbar-hover: #888888;
+  --debugbar-hover-bg: #333333;
 }
 
 
@@ -68,11 +68,11 @@ div.phpdebugbar {
   left: 0;
   width: 100%;
   border-top: 0;
-  font-family: var(--font-sans);
-  background: var(--color-background);
+  font-family: var(--debugbar-font-sans);
+  background: var(--debugbar-background);
   z-index: 10000;
   font-size: 14px;
-  color: var(--color-text);
+  color: var(--debugbar-text);
   text-align: left;
   line-height: 1.2em;
   letter-spacing: normal;
@@ -89,21 +89,21 @@ div.phpdebugbar[data-openBtnPosition="topRight"].phpdebugbar-closed,
 div.phpdebugbar[data-openBtnPosition="topLeft"].phpdebugbar-closed {
   bottom:auto;
   top: 0;
-  border-bottom: 1px solid var(--color-header-border);
+  border-bottom: 1px solid var(--debugbar-header-border);
 }
 
 div.phpdebugbar[data-openBtnPosition="bottomRight"].phpdebugbar-closed,
 div.phpdebugbar[data-openBtnPosition="bottomLeft"].phpdebugbar-closed {
-  border-top: 1px solid var(--color-header-border);
+  border-top: 1px solid var(--debugbar-header-border);
 }
 
 .phpdebugbar-closed[data-openBtnPosition="bottomLeft"],
 .phpdebugbar-closed[data-openBtnPosition="topLeft"] {
-  border-right: 1px solid var(--color-header-border);
+  border-right: 1px solid var(--debugbar-header-border);
 }
 .phpdebugbar-closed[data-openBtnPosition="bottomRight"],
 .phpdebugbar-closed[data-openBtnPosition="topRight"] {
-  border-left: 1px solid var(--color-header-border);
+  border-left: 1px solid var(--debugbar-header-border);
 }
 
 div.phpdebugbar a,
@@ -156,19 +156,19 @@ div.phpdebugbar table, .phpdebugbar-openhandler table {
 }
 
 div.phpdebugbar input[type='text'], div.phpdebugbar input[type='password'], div.phpdebugbar select {
-  font-family: var(--font-sans);
-  background: var(--color-background);
+  font-family: var(--debugbar-font-sans);
+  background: var(--debugbar-background);
   font-size: 14px;
-  color: var(--color-text);
+  color: var(--debugbar-text);
   padding: 0;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--debugbar-border);
   border-radius: 0.25rem;
   margin: 0;
 }
 
 div.phpdebugbar code, div.phpdebugbar pre, div.phpdebugbar samp {
   background: none;
-  font-family: var(--font-mono);
+  font-family: var(--debugbar-font-mono);
   font-size: 1em;
   border: 0 !important;
   padding: 0;
@@ -176,7 +176,7 @@ div.phpdebugbar code, div.phpdebugbar pre, div.phpdebugbar samp {
 }
 
 div.phpdebugbar code, div.phpdebugbar pre {
-  color: var(--color-text);
+  color: var(--debugbar-text);
 }
 
 div.phpdebugbar pre.sf-dump {
@@ -188,7 +188,7 @@ a.phpdebugbar-restore-btn {
   float: left;
   padding: 5px 8px;
   font-size: 14px;
-  color: var(--color-icons);
+  color: var(--debugbar-icons);
   text-decoration: none;
 }
 
@@ -198,21 +198,21 @@ div.phpdebugbar-resize-handle {
   margin-top: -4px;
   width: 100%;
   background: none;
-  border-bottom: 1px solid var(--color-header-border);
+  border-bottom: 1px solid var(--debugbar-header-border);
   cursor: ns-resize;
 }
 
 div.phpdebugbar-minimized{
-  border-top: 1px solid var(--color-header-border);
+  border-top: 1px solid var(--debugbar-header-border);
 }
 
 /* -------------------------------------- */
 
 a.phpdebugbar-restore-btn:after {
-    background: var(--color-header) url(data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2020%2020%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20fill%3D%22%23000%22%20cx%3D%2210%22%20cy%3D%2210%22%20r%3D%229%22%2F%3E%3Cpath%20d%3D%22M6.039%208.342c.463%200%20.772.084.927.251.154.168.191.455.11.862-.084.424-.247.727-.487.908-.241.182-.608.272-1.1.272h-.743l.456-2.293h.837zm-2.975%204.615h1.22l.29-1.457H5.62c.461%200%20.84-.047%201.139-.142.298-.095.569-.254.812-.477.205-.184.37-.387.497-.608.127-.222.217-.466.27-.734.13-.65.032-1.155-.292-1.518-.324-.362-.84-.543-1.545-.543H4.153l-1.089%205.479zM9.235%206.02h1.21l-.289%201.458h1.079c.679%200%201.147.115%201.405.347.258.231.335.607.232%201.125l-.507%202.55h-1.23l.481-2.424c.055-.276.035-.464-.06-.565-.095-.1-.298-.15-.608-.15H9.98L9.356%2011.5h-1.21l1.089-5.48M15.566%208.342c.464%200%20.773.084.928.251.154.168.19.455.11.862-.084.424-.247.727-.488.908-.24.182-.607.272-1.1.272h-.742l.456-2.293h.836zm-2.974%204.615h1.22l.29-1.457h1.046c.461%200%20.84-.047%201.139-.142.298-.095.569-.254.812-.477.205-.184.37-.387.497-.608.127-.222.217-.466.27-.734.129-.65.032-1.155-.292-1.518-.324-.362-.84-.543-1.545-.543H13.68l-1.089%205.479z%22%20fill%3D%22%23FFF%22%2F%3E%3C%2Fsvg%3E)  no-repeat center / 20px 20px;
+    background: var(--debugbar-header) url(data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2020%2020%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20fill%3D%22%23000%22%20cx%3D%2210%22%20cy%3D%2210%22%20r%3D%229%22%2F%3E%3Cpath%20d%3D%22M6.039%208.342c.463%200%20.772.084.927.251.154.168.191.455.11.862-.084.424-.247.727-.487.908-.241.182-.608.272-1.1.272h-.743l.456-2.293h.837zm-2.975%204.615h1.22l.29-1.457H5.62c.461%200%20.84-.047%201.139-.142.298-.095.569-.254.812-.477.205-.184.37-.387.497-.608.127-.222.217-.466.27-.734.13-.65.032-1.155-.292-1.518-.324-.362-.84-.543-1.545-.543H4.153l-1.089%205.479zM9.235%206.02h1.21l-.289%201.458h1.079c.679%200%201.147.115%201.405.347.258.231.335.607.232%201.125l-.507%202.55h-1.23l.481-2.424c.055-.276.035-.464-.06-.565-.095-.1-.298-.15-.608-.15H9.98L9.356%2011.5h-1.21l1.089-5.48M15.566%208.342c.464%200%20.773.084.928.251.154.168.19.455.11.862-.084.424-.247.727-.488.908-.24.182-.607.272-1.1.272h-.742l.456-2.293h.836zm-2.974%204.615h1.22l.29-1.457h1.046c.461%200%20.84-.047%201.139-.142.298-.095.569-.254.812-.477.205-.184.37-.387.497-.608.127-.222.217-.466.27-.734.129-.65.032-1.155-.292-1.518-.324-.362-.84-.543-1.545-.543H13.68l-1.089%205.479z%22%20fill%3D%22%23FFF%22%2F%3E%3C%2Fsvg%3E)  no-repeat center / 20px 20px;
 }
 div.phpdebugbar-header {
-  background-color: var(--color-header);
+  background-color: var(--debugbar-header);
   min-height: 32px;
   line-height: 16px;
 }
@@ -234,7 +234,7 @@ div.phpdebugbar-header > div > * {
   padding: 5px;
   font-size: 13px;
   height: 22px;
-  color: var(--color-header-text);
+  color: var(--debugbar-header-text);
   text-decoration: none;
 }
 div.phpdebugbar-header-left > *,
@@ -252,8 +252,8 @@ div.phpdebugbar-header-right > * {
 div.phpdebugbar-header-right > select {
   padding: 0;
   line-height: 1em;
-  background-color: var(--color-header);
-  color: var(--color-header-text);
+  background-color: var(--debugbar-header);
+  color: var(--debugbar-header-text);
 }
 
 /* -------------------------------------- */
@@ -261,7 +261,7 @@ div.phpdebugbar-header-right > select {
 span.phpdebugbar-indicator,
 a.phpdebugbar-indicator
 {
-  border-right: 1px solid var(--color-header-border);
+  border-right: 1px solid var(--debugbar-header-border);
 }
 
 .phpdebugbar[data-hideEmptyTabs=true] .phpdebugbar-tab[data-empty=true] {
@@ -269,8 +269,8 @@ a.phpdebugbar-indicator
 }
 
 a.phpdebugbar-tab.phpdebugbar-active {
-  background: var(--color-active);
-  color: var(--color-active-text);
+  background: var(--debugbar-active);
+  color: var(--debugbar-active-text);
 }
   a.phpdebugbar-tab span.phpdebugbar-badge {
     display: none;
@@ -278,15 +278,15 @@ a.phpdebugbar-tab.phpdebugbar-active {
     font-size: 11px;
     line-height: 14px;
     padding: 0 6px;
-    background: var(--color-badge);
+    background: var(--debugbar-badge);
     border-radius: 4px;
-    color: var(--color-badge-text);
+    color: var(--debugbar-badge-text);
     font-weight: normal;
     text-shadow: none;
   }
   a.phpdebugbar-tab.phpdebugbar-active  span.phpdebugbar-badge {
-    background: var(--color-badge-active);
-    color: var(--color-badge-active-text);
+    background: var(--debugbar-badge-active);
+    color: var(--debugbar-badge-active-text);
   }
 
   a.phpdebugbar-tab i {
@@ -327,7 +327,7 @@ a.phpdebugbar-open-btn:after,
 a.phpdebugbar-restore-btn:after,
 a.phpdebugbar-minimize-btn:after,
 a.phpdebugbar-maximize-btn:after {
-    background-color: var(--color-icons);
+    background-color: var(--debugbar-icons);
     content: " ";
     display: block;
     left: 0;
@@ -337,7 +337,7 @@ a.phpdebugbar-maximize-btn:after {
     height: 100%;
 }
 a.phpdebugbar-restore-btn:after {
-    background-color: var(--color-header);
+    background-color: var(--debugbar-header);
 }
 
 a.phpdebugbar-maximize-btn { display: none}
@@ -375,9 +375,9 @@ a.phpdebugbar-open-btn:after {
     display: none;
     position: absolute;
     bottom: 38px;
-    background: var(--color-header);
-    border: 1px solid var(--color-header-border);
-    color: var(--color-header-text);
+    background: var(--debugbar-header);
+    border: 1px solid var(--debugbar-header-border);
+    color: var(--debugbar-header-text);
     font-size: 11px;
     padding: 2px 6px;
     z-index: 1000;
@@ -417,9 +417,9 @@ a.phpdebugbar-open-btn:after {
 
 .phpdebugbar button,
 .phpdebugbar-openhandler button {
-  color: var(--color-header-text);
-  background-color: var(--color-header);
-  border: 1px solid var(--color-header-border);
+  color: var(--debugbar-header-text);
+  background-color: var(--debugbar-header);
+  border: 1px solid var(--debugbar-header-border);
   border-radius: 0.25rem;
   margin: 0 5px;
   padding: 0 12px;
@@ -431,7 +431,7 @@ a.phpdebugbar-open-btn:after {
 /* -------------------------------------- */
 
 div.phpdebugbar-body {
-  border-top: 1px solid var(--color-header-border);
+  border-top: 1px solid var(--debugbar-header-border);
   display: none;
   position: relative;
   height: 300px;
@@ -453,7 +453,7 @@ div.phpdebugbar-panel.phpdebugbar-active {
 
 div.phpdebugbar-mini-design a.phpdebugbar-tab {
   position: relative;
-  border-right: 1px solid var(--color-header-border);
+  border-right: 1px solid var(--debugbar-header-border);
 }
   div.phpdebugbar-mini-design a.phpdebugbar-tab span.phpdebugbar-text {
     display: none;
@@ -462,10 +462,10 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
     display: block;
     position: absolute;
     top: -30px;
-    background: var(--color-background);
+    background: var(--debugbar-background);
     opacity: 1;
-    border: 1px solid var(--color-header-border);
-    color: var(--color-header-text);
+    border: 1px solid var(--debugbar-header-border);
+    color: var(--debugbar-header-text);
     font-size: 11px;
     padding: 2px 6px;
     z-index: 1000;
@@ -506,7 +506,7 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
     }
     .phpdebugbar-widgets-dataset-history table td, .phpdebugbar-widgets-dataset-history table th {
         padding: 6px 3px;
-        border-bottom: 1px solid var(--color-border);
+        border-bottom: 1px solid var(--debugbar-border);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -517,17 +517,17 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
         text-overflow: ellipsis;
     }
     .phpdebugbar-widgets-dataset-history table tr.phpdebugbar-widgets-active {
-        background: var(--color-active);
-        color: var(--color-active-text);
+        background: var(--debugbar-active);
+        color: var(--debugbar-active-text);
     }
     .phpdebugbar-widgets-dataset-history span.phpdebugbar-badge {
         margin: 0 5px 0 2px;
         font-size: 11px;
         line-height: 14px;
         padding: 0 6px;
-        background: var(--color-badge);
+        background: var(--debugbar-badge);
         border-radius: 4px;
-        color: var(--color-badge-text);
+        color: var(--debugbar-badge-text);
         font-weight: normal;
         text-shadow: none;
         vertical-align: middle;
@@ -537,7 +537,7 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
         padding: 7px 0;
         position: sticky;
         top: 0;
-        background: var(--color-background);
+        background: var(--debugbar-background);
     }
     .phpdebugbar-widgets-dataset-history .phpdebugbar-widgets-dataset-actions a {
         margin: 0 10px;
@@ -553,7 +553,7 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
 
 .phpdebugbar-settings .phpdebugbar-form-row {
   display: block;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--debugbar-border);
   min-height: 17px;
   padding: 5px 10px;
 }
