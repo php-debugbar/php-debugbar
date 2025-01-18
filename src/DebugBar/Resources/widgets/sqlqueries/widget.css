@@ -4,7 +4,7 @@ div.phpdebugbar-widgets-sqlqueries .phpdebugbar-widgets-status {
   border-bottom: 1px solid var(--debugbar-border);
   font-weight: bold;
   color: var(--debugbar-text);
-  background-color: var(--debugbar-hover-bg);
+  background-color: var(--debugbar-background-alt);
 }
 
 div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item.phpdebugbar-widgets-error {
@@ -99,15 +99,11 @@ code.phpdebugbar-widgets-sql {
 }
 
 div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item.phpdebugbar-widgets-sql-duplicate {
-  background-color: #edeff0;
+  background-color: #F7EDED;
 }
 
 div.phpdebugbar[data-theme='dark'] div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item.phpdebugbar-widgets-sql-duplicate {
     background-color: #473e00;
-}
-
-div.phpdebugbar div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item.phpdebugbar-widgets-sql-duplicate:hover {
-    background-color: var(--debugbar-hover-bg);
 }
 
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-toolbar {
@@ -140,6 +136,7 @@ div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-duplicates {
 div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item div.phpdebugbar-widgets-bg-measure {
   position: absolute;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -147,9 +144,14 @@ div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item div.phpdebug
 }
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-bg-measure div.phpdebugbar-widgets-value {
   position: absolute;
-  height: 100%;
-  opacity: 0.2;
-  background: red;
+  bottom: 0;
+  height: 2px;
+  opacity: 1;
+  background: #477e96;
+}
+
+.phpdebugbar[data-theme='dark'] div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-bg-measure div.phpdebugbar-widgets-value {
+  background:#3F7A94;
 }
 div.phpdebugbar-widgets-sqlqueries td.phpdebugbar-widgets-value li.phpdebugbar-widgets-table-list-item {
   text-align: left;

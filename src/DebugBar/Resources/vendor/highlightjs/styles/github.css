@@ -17,8 +17,7 @@ div.phpdebugbar code.hljs {
   Current colors taken from GitHub's CSS
 */
 div.phpdebugbar .hljs {
-  color: #24292e;
-  /*background: #ffffff*/
+  color: var(--debugbar-text);
 }
 div.phpdebugbar .hljs-doctag,
 div.phpdebugbar .hljs-keyword,
@@ -127,10 +126,6 @@ div.phpdebugbar .hljs-tag {
   Outdated base version: https://github.com/primer/github-syntax-dark
   Current colors taken from GitHub's CSS
 */
-div.phpdebugbar[data-theme='dark'] .hljs {
-  color: #c9d1d9;
-  /*background: #0d1117*/
-}
 div.phpdebugbar[data-theme='dark'] .hljs-doctag,
 div.phpdebugbar[data-theme='dark'] .hljs-keyword,
 div.phpdebugbar[data-theme='dark'] .hljs-meta div.phpdebugbar[data-theme='dark'] .hljs-keyword,

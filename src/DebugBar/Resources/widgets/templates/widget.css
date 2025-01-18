@@ -5,7 +5,7 @@ div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status {
   border-bottom: 1px solid var(--debugbar-border);
   font-weight: bold;
   color: var(--debugbar-text);
-  background-color: var(--debugbar-hover-bg);
+  background-color: var(--debugbar-background-alt);
 }
 
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time,
