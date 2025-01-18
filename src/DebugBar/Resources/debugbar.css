@@ -30,6 +30,9 @@ div.phpdebugbar-openhandler {
   --debugbar-link: #888;
   --debugbar-hover: #aaa;
 
+  --debugbar-accent: #6BB7D8;
+  --debugbar-accent-border: #477e96;
+
   --debugbar-font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --debugbar-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
@@ -55,6 +58,9 @@ div.phpdebugbar-openhandler[data-theme='dark'] {
 
   --debugbar-badge-active: #cccccc;
   --debugbar-badge-active-text: #1e1e1e;
+
+  --debugbar-accent: #4F8FB3;
+  --debugbar-accent-border: #3F7A94;
 
   --debugbar-link: #aaaaaa;
   --debugbar-hover: #888888;

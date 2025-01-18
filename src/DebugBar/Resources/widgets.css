@@ -17,7 +17,7 @@ pre.phpdebugbar-widgets-code-block {
   }
   pre.phpdebugbar-widgets-code-block ul li.phpdebugbar-widgets-highlighted-line span {
     position: absolute;
-    background: #800000;
+    background: var(--debugbar-text);
     min-width: calc(100% - 85px);
     margin-left: 10px;
     opacity: 0.15;
@@ -245,15 +245,11 @@ ul.phpdebugbar-widgets-timeline {
       display: block;
       position: absolute;
       height: calc(100% - 4px);
-      background-color: #6BB7D8;
-      border-bottom: 2px solid #477e96;
+      background-color: var(--debugbar-accent);
+      border-bottom: 2px solid var(--debugbar-accent-border);
       top: 2px;
       border-radius: 3px;
       min-width: 2px;
-    }
-    .phpdebugbar[data-theme='dark'] ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-value {
-        background-color: #4F8FB3;
-        border-bottom: 2px solid #3F7A94;
     }
 
     ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params {

@@ -147,12 +147,9 @@ div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-bg-measure div.phpdeb
   bottom: 0;
   height: 2px;
   opacity: 1;
-  background: #477e96;
+  background: var(--debugbar-accent-border);
 }
 
-.phpdebugbar[data-theme='dark'] div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-bg-measure div.phpdebugbar-widgets-value {
-  background:#3F7A94;
-}
 div.phpdebugbar-widgets-sqlqueries td.phpdebugbar-widgets-value li.phpdebugbar-widgets-table-list-item {
   text-align: left;
   padding-left: 6px;
