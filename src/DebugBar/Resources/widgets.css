@@ -69,9 +69,6 @@ ul.phpdebugbar-widgets-list {
     position: relative;
     overflow: hidden;
   }
-  ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item:hover {
-    background-color: var(--debugbar-hover-bg);
-  }
 
 /* -------------------------------------- */
 
@@ -226,9 +223,6 @@ ul.phpdebugbar-widgets-timeline {
     position: relative;
     border: none;
     display: block;
-  }
-  ul.phpdebugbar-widgets-timeline li:hover {
-    background: var(--debugbar-hover-bg);
   }
     ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-label,
     ul.phpdebugbar-widgets-timeline li span.phpdebugbar-widgets-collector {
