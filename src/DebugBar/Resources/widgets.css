@@ -36,11 +36,11 @@ pre.phpdebugbar-widgets-code-block {
     font-style: italic;
     float: right;
     margin-left: 8px;
-    color: #888;
+    color: var(--debugbar-link);
   }
 
   a.phpdebugbar-widgets-editor-link:hover {
-    color: #aaaaaa;
+    color: var(--debugbar-hover);
   }
 
   a.phpdebugbar-widgets-editor-link:before {
