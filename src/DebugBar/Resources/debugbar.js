@@ -870,6 +870,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
          * @param {String} icon
          * @param {String|Object} tooltip
          * @param {String} position "right" or "left", default is "right"
+         * @param {String} link to tab to show, default is null
          * @return {Indicator}
          */
         createIndicator: function(name, icon, tooltip, position, link) {
