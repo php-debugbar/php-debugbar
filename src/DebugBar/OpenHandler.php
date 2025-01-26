@@ -11,6 +11,9 @@
 namespace DebugBar;
 
 use DebugBar\DataCollector\Actionable;
+use DebugBar\DataCollector\DataCollector;
+use DebugBar\DataFormatter\DataFormatter;
+use DebugBar\DataFormatter\DataFormatterInterface;
 
 /**
  * Handler to list and open saved dataset
@@ -129,10 +132,14 @@ class OpenHandler
             throw new DebugBarException("Missing 'collector' and/or 'action' parameter in 'execute' operation");
         }
 
+        if (!DebugBar::hasDataHasher()) {
+            throw new DebugBarException("Not DataHasher is set in DebugBar, which is required for 'execute' operations");
+        }
+
         // Get the signature and remove if before checking the payload.
         $signature = $request['signature'];
-        unset ($request['signature']);
-        if (!hash_equals($this->debugBar->getHashSignature($request), $signature)) {
+
+        if (!DebugBar::getDataHasher()->verify($request, $signature)) {
             throw new DebugBarException("Signature does not match in 'execute' operation");
         }
 

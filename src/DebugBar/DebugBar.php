@@ -30,6 +30,8 @@ class DebugBar implements ArrayAccess
 {
     public static $useOpenHandlerWhenSendingDataHeaders = false;
 
+    public static DataHasher|null $dataHasher;
+
     protected $collectors = array();
 
     protected $data;
@@ -470,20 +472,38 @@ class DebugBar implements ArrayAccess
         return $this->jsRenderer;
     }
 
-    public function setHashKey($key)
+
+    /**
+     * Returns the default data formater
+     *
+     * @return DataHasher
+     */
+    public static function setDataHasher(DataHasher $dataHasher)
     {
-        $this->hashKey = $key;
+        static::$dataHasher = $dataHasher;
     }
 
-    public function getHashSignature($data)
+    /**
+     * Check if the data hasher is set
+     *
+     * @return bool
+     */
+    public static function hasDataHasher() : bool
     {
-        if ($this->hashKey === null) {
-            throw new DebugBarException('HashKey must be set before running actions');
+        return static::$dataHasher !== null;
+    }
+
+    /**
+     * Returns the data hasher
+     *
+     * @return DataHasher
+     */
+    public static function getDataHasher() : DataHasher
+    {
+        if (static::$dataHasher === null) {
+            throw new DebugBarException('DataHasher is not set');
         }
-
-        $data = json_encode($data);
-
-        return hash_hmac('sha256', $data, $this->hashKey);
+        return static::$dataHasher;
     }
 
     // --------------------------------------------
