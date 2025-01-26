@@ -1,8 +1,8 @@
 {
-    "name": "php-debugbar/debugbar",
+    "name": "php-debugbar/php-debugbar",
     "description": "Debug bar in the browser for php application",
     "keywords": ["debug", "debugbar", "debug bar", "dev"],
-    "homepage": "https://github.com/php-debugbar/debugbar",
+    "homepage": "https://github.com/php-debugbar/php-debugbar",
     "type": "library",
     "license": "MIT",
     "authors": [
