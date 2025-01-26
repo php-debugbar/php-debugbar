@@ -62,6 +62,10 @@ class JavascriptRenderer
 
     protected $useRequireJs = false;
 
+    protected $theme = null;
+
+    protected $hideEmptyTabs = null;
+
     protected $initialization;
 
     protected $controls = array();
@@ -156,6 +160,12 @@ class JavascriptRenderer
         }
         if (array_key_exists('use_requirejs', $options)) {
             $this->setUseRequireJs($options['use_requirejs']);
+        }
+        if (array_key_exists('theme', $options)) {
+            $this->setTheme($options['theme']);
+        }
+        if (array_key_exists('hide_empty_tabs', $options)) {
+            $this->setHideEmptyTabs($options['hide_empty_tabs']);
         }
         if (array_key_exists('controls', $options)) {
             foreach ($options['controls'] as $name => $control) {
@@ -395,6 +405,40 @@ class JavascriptRenderer
     public function isRequireJsUsed()
     {
         return $this->useRequireJs;
+    }
+
+    /**
+     * Sets the default theme
+     *
+     * @param boolean $hide
+     * @return $this
+     */
+    public function setTheme($theme='auto')
+    {
+        $this->theme = $theme;
+        return $this;
+    }
+
+    /**
+     * Sets whether to hide empty tabs or not
+     *
+     * @param boolean $hide
+     * @return $this
+     */
+    public function setHideEmptyTabs($hide = true)
+    {
+        $this->hideEmptyTabs = $hide;
+        return $this;
+    }
+
+    /**
+     * Checks if empty tabs are hidden or not
+     *
+     * @return boolean
+     */
+    public function areEmptyTabsHidden()
+    {
+        return $this->hideEmptyTabs;
     }
 
     /**
@@ -1036,7 +1080,7 @@ class JavascriptRenderer
     public function replaceTagInBuffer($here = true, $initialize = true, $renderStackedData = true, $head = false)
     {
         $render = ($head ? $this->renderHead() : "")
-                . $this->render($initialize, $renderStackedData);
+            . $this->render($initialize, $renderStackedData);
 
         $current = ($here && ob_get_level() > 0) ? ob_get_clean() : self::REPLACEABLE_TAG;
 
@@ -1075,7 +1119,7 @@ class JavascriptRenderer
 
         $nonce = $this->getNonceAttribute();
 
-	if ($nonce != '') {
+        if ($nonce != '') {
             $js = preg_replace("/<script>/", "<script nonce='{$this->cspNonce}'>", $js);
         }
 
@@ -1097,7 +1141,8 @@ class JavascriptRenderer
         $js = '';
 
         if (($this->initialization & self::INITIALIZE_CONSTRUCTOR) === self::INITIALIZE_CONSTRUCTOR) {
-            $js .= sprintf("var %s = new %s();\n", $this->variableName, $this->javascriptClass);
+            $initializeOptions = $this->getInitializeOptions();
+            $js .= sprintf("var %s = new %s(%s);\n", $this->variableName, $this->javascriptClass, $initializeOptions ? json_encode((object) $initializeOptions) : '');
         }
 
         if (($this->initialization & self::INITIALIZE_CONTROLS) === self::INITIALIZE_CONTROLS) {
@@ -1128,6 +1173,21 @@ class JavascriptRenderer
         }
 
         return $js;
+    }
+
+    protected function getInitializeOptions()
+    {
+        $options = [];
+
+        if ($this->theme !== null) {
+            $options['theme'] = $this->theme;
+        }
+
+        if ($this->hideEmptyTabs !== null) {
+            $options['hideEmptyTabs'] = $this->hideEmptyTabs;
+        }
+
+        return $options;
     }
 
     /**

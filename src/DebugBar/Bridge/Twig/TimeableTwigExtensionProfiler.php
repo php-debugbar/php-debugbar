@@ -36,7 +36,7 @@ class TimeableTwigExtensionProfiler extends ProfilerExtension
         $this->timeDataCollector = $timeDataCollector;
     }
 
-    public function __construct(Profile $profile, TimeDataCollector $timeDataCollector = null)
+    public function __construct(Profile $profile, ?TimeDataCollector $timeDataCollector = null)
     {
         parent::__construct($profile);
 

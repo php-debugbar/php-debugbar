@@ -120,11 +120,12 @@ trait HasXdebugLinks
             'vscode-remote' => 'vscode://vscode-remote/%f:%l',
             'vscode-insiders-remote' => 'vscode-insiders://vscode-remote/%f:%l',
             'vscodium' => 'vscodium://file/%f:%l',
-            'nova' => 'nova://core/open/file?filename=%f&line=%l',
+            'nova' => 'nova://open?path=%f&line=%l',
             'xdebug' => 'xdebug://%f@%l',
             'atom' => 'atom://core/open/file?filename=%f&line=%l',
             'espresso' => 'x-espresso://open?filepath=%f&lines=%l',
             'netbeans' => 'netbeans://open/?f=%f:%l',
+            'cursor' => 'cursor://file/%f:%l',
         );
 
         if (is_string($editor) && isset($editorLinkTemplates[$editor])) {

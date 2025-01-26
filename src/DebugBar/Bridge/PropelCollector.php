@@ -49,7 +49,7 @@ class PropelCollector extends DataCollector implements BasicLogger, Renderable, 
      *
      * @param PropelConfiguration $config Apply profiling on a specific config
      */
-    public static function enablePropelProfiling(PropelConfiguration $config = null)
+    public static function enablePropelProfiling(?PropelConfiguration $config = null)
     {
         if ($config === null) {
             $config = Propel::getConfiguration(PropelConfiguration::TYPE_OBJECT);
@@ -74,7 +74,7 @@ class PropelCollector extends DataCollector implements BasicLogger, Renderable, 
      * @param LoggerInterface $logger A logger to forward non-query log lines to
      * @param PropelPDO $conn Bound this collector to a connection only
      */
-    public function __construct(LoggerInterface $logger = null, PropelPDO $conn = null)
+    public function __construct(?LoggerInterface $logger = null, ?PropelPDO $conn = null)
     {
         if ($conn) {
             $conn->setLogger($this);

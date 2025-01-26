@@ -97,10 +97,21 @@ class ExceptionsCollector extends DataCollector implements Renderable
                 if (isset($track['file'])) {
                     $track['file'] = $this->normalizeFilePath($track['file']);
                 }
-
                 return $track;
             }, $trace);
         }
+
+        // Remove large objects from the trace
+        $trace = array_map(function ($track) {
+            if (isset($track['args'])) {
+                foreach ($track['args'] as $key => $arg) {
+                    if (is_object($arg)) {
+                        $track['args'][$key] = '[object ' . $this->getDataFormatter()->formatClassName($arg) . ']';
+                    }
+                }
+            }
+            return $track;
+        }, $trace);
 
         return $trace;
     }

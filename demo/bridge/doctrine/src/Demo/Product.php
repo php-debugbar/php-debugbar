@@ -11,6 +11,8 @@ class Product
     protected $id;
     /** @Column(type="string") **/
     protected $name;
+    /** @Column(type="datetime", nullable=true) **/
+    protected $updated;
 
     public function getId()
     {
@@ -25,5 +27,11 @@ class Product
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    public function setUpdated(): void
+    {
+        // will NOT be saved in the database
+        $this->updated = new \DateTime('now');
     }
 }

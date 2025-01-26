@@ -38,7 +38,7 @@ class CacheCacheCollector extends MonologCollector
      * @param bool $level
      * @param bool $bubble
      */
-    public function __construct(Cache $cache = null, Logger $logger = null, $level = Logger::DEBUG, $bubble = true)
+    public function __construct(?Cache $cache = null, ?Logger $logger = null, $level = Logger::DEBUG, $bubble = true)
     {
         parent::__construct(null, $level, $bubble);
 

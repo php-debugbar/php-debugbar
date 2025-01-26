@@ -60,7 +60,7 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
         foreach ($this->debugStack->queries as $q) {
             $queries[] = array(
                 'sql' => $q['sql'],
-                'params' => (object) $this->getParameters($q),
+                'params' => (object) $this->getParameters($q['params'] ?? []),
                 'duration' => $q['executionMS'],
                 'duration_str' => $this->formatDuration($q['executionMS'])
             );
@@ -80,13 +80,22 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
      *
      * @return array
      */
-    public function getParameters($query) : array
+    public function getParameters($params) : array
     {
-        $params = [];
-        foreach ($query['params'] ?? [] as $name => $param) {
-            $params[$name] = htmlentities($param?:"", ENT_QUOTES, 'UTF-8', false);
-        }
-        return $params;
+        return array_map(function ($param) {
+            if (is_string($param)) {
+                return htmlentities($param, ENT_QUOTES, 'UTF-8', false);
+            } elseif (is_array($param)) {
+                return '[' . implode(', ', $this->getParameters($param)) . ']';
+            } elseif (is_numeric($param)) {
+                return strval($param);
+            } elseif ($param instanceof \DateTimeInterface) {
+                return $param->format('Y-m-d H:i:s');
+            } elseif (is_object($param)) {
+                return json_encode($param);
+            }
+            return $param ?: '';
+        }, $params);
     }
 
     /**

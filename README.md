@@ -5,6 +5,8 @@
 Displays a debug bar in the browser with information from php.
 No more `var_dump()` in your code!
 
+> **Note: Debug Bar is for development use only. Never install this on websites that are publicly accessible.**
+
 ![Screenshot](https://raw.github.com/maximebf/php-debugbar/master/docs/screenshot.png)
 
 **Features:**
@@ -57,7 +59,9 @@ Integrations with other frameworks:
 The best way to install DebugBar is using [Composer](http://getcomposer.org)
 with the following command:
 
-```composer require maximebf/debugbar```
+```bash
+composer require maximebf/debugbar --dev
+```
 
 ## Quick start
 
