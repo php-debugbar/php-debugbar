@@ -611,7 +611,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
         },
 
         registerMediaListener: function() {
-            const mediaQueryList = window.matchMedia("(prefers-debugbar-scheme: dark)");
+            const mediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
             mediaQueryList.addEventListener('change', event => {
                 if (this.options.theme === 'auto') {
                     this.setTheme('auto');
@@ -623,7 +623,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.options.theme = theme;
 
             if (theme === 'auto') {
-                const mediaQueryList = window.matchMedia("(prefers-debugbar-scheme: dark)");
+                const mediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
                 theme = mediaQueryList.matches ? 'dark' : 'light';
             }
 

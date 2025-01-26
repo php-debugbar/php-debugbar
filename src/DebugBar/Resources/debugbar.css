@@ -277,6 +277,9 @@ a.phpdebugbar-tab.phpdebugbar-active {
   background: var(--debugbar-active);
   color: var(--debugbar-active-text);
 }
+  a.phpdebugbar-tab .phpdebugbar-text {
+    font-size: 14px;
+  }
   a.phpdebugbar-tab span.phpdebugbar-badge {
     display: none;
     margin-left: 5px;
@@ -414,10 +417,10 @@ a.phpdebugbar-open-btn:after {
 .phpdebugbar select.phpdebugbar-datasets-switcher {
   float: right;
   display: none;
-  margin: 2px 0 0 7px;
   max-width: 200px;
-  height: 100%;
-  padding: 0;
+  height: 22px;
+  padding: 4px 0;
+  border: none;
 }
 
 .phpdebugbar button,
@@ -486,6 +489,10 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
 
 /* -------------------------------------- */
 
+  a.phpdebugbar-tab.phpdebugbar-tab-history {
+    width: auto;
+    min-width: 22px;
+  }
   a.phpdebugbar-tab.phpdebugbar-tab-history,
   a.phpdebugbar-tab.phpdebugbar-tab-settings {
     display: flex;
