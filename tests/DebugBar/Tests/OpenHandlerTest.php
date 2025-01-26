@@ -83,7 +83,7 @@ class OpenHandlerTest extends DebugBarTestCase
         ];
 
         $this->expectExceptionMessage("Signature does not match in 'execute' operation");
-        
+
         $this->openHandler->handle($data, false, false);
     }
 }

@@ -2,7 +2,7 @@
 /*
  * This file is part of the DebugBar package.
  *
- * (c) 2013 Maxime Bouroumeau-Fuseau
+ * (c) 2025 Barry vd. Heuvel
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,7 +11,7 @@
 namespace DebugBar;
 
 /**
- * Request Hasher
+ * Data Hasher
  */
 class DataHasher
 {
