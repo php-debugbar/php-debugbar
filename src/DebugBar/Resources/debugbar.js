@@ -321,6 +321,13 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 }
             });
 
+            var self = this;
+            this.bindAttr('link', function(link) {
+               this.$el.css('cursor', 'pointer').click(function() {
+                   self.get('debugbar').showTab(link);
+               })
+            });
+
             this.bindAttr(['title', 'data'], $('<span />').addClass(csscls('text')).appendTo(this.$el));
 
             this.$tooltip = $('<span />').addClass(csscls('tooltip disabled')).appendTo(this.$el);
@@ -865,10 +872,11 @@ if (typeof(PhpDebugBar) == 'undefined') {
          * @param {String} position "right" or "left", default is "right"
          * @return {Indicator}
          */
-        createIndicator: function(name, icon, tooltip, position) {
+        createIndicator: function(name, icon, tooltip, position, link) {
             var indicator = new Indicator({
                 icon: icon,
-                tooltip: tooltip
+                tooltip: tooltip,
+                link: link
             });
             return this.addIndicator(name, indicator, position);
         },
@@ -885,6 +893,8 @@ if (typeof(PhpDebugBar) == 'undefined') {
             if (this.isControl(name)) {
                 throw new Error(name + ' already exists');
             }
+
+            indicator.set('debugbar', this);
 
             if (position == 'left') {
                 indicator.$el.insertBefore(this.$headerLeft.children().first());
