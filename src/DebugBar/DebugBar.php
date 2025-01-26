@@ -490,7 +490,7 @@ class DebugBar implements ArrayAccess
      */
     public static function hasDataHasher() : bool
     {
-        return static::$dataHasher !== null;
+        return isset(static::$dataHasher);
     }
 
     /**
@@ -500,7 +500,7 @@ class DebugBar implements ArrayAccess
      */
     public static function getDataHasher() : DataHasher
     {
-        if (static::$dataHasher === null) {
+        if (!isset(static::$dataHasher)) {
             throw new DebugBarException('DataHasher is not set');
         }
         return static::$dataHasher;

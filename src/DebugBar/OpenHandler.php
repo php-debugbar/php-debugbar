@@ -129,7 +129,7 @@ class OpenHandler
     protected function execute($request)
     {
         if (!isset($request['collector']) || !isset($request['action']) || !isset($request['signature'])) {
-            throw new DebugBarException("Missing 'collector' and/or 'action' parameter in 'execute' operation");
+            throw new DebugBarException("Missing 'collector', 'action' and/or 'signature' parameter in 'execute' operation");
         }
 
         if (!DebugBar::hasDataHasher()) {
