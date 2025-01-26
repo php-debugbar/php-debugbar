@@ -38,7 +38,11 @@ pre.phpdebugbar-widgets-code-block {
     margin-left: 8px;
     color: var(--debugbar-link);
   }
-
+  a.phpdebugbar-widgets-editor-link {
+    color: var(--debugbar-link);
+  }
+  .phpdebugbar-widgets-kvlist span.phpdebugbar-widgets-filename:hover,
+  li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-filename:hover,
   a.phpdebugbar-widgets-editor-link:hover {
     color: var(--debugbar-hover);
   }
