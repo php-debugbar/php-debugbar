@@ -145,7 +145,7 @@ div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item div.phpdebug
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-bg-measure div.phpdebugbar-widgets-value {
   position: absolute;
   bottom: 0;
-  height: 2px;
+  height: 1px;
   opacity: 1;
   background: var(--debugbar-accent-border);
 }
