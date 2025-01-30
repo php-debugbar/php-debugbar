@@ -1,5 +1,8 @@
 <?php
 
+use DebugBar\DataCollector\PDO\TraceablePDO;
+use DebugBar\DataCollector\PDO\PDOCollector;
+
 include 'bootstrap.php';
 
 $debugbar['messages']->addMessage('hello');
@@ -23,6 +26,26 @@ for ($i = 0; $i <=20; $i++) {
 }
 
 $debugbar['time']->startMeasure('render');
+
+$pdo = new TraceablePDO(new PDO('sqlite::memory:'));
+$debugbar->addCollector(new PDOCollector($pdo));
+$debugbar['pdo']->setDurationBackground(true);
+
+$pdo->exec('create table users (name varchar)');
+$stmt = $pdo->prepare('insert into users (name) values (?)');
+$stmt->execute(array('foo'));
+$stmt->execute(array('bar'));
+
+$users = $pdo->query('select * from users')->fetchAll();
+$stmt = $pdo->prepare('select * from users where name=?');
+$stmt->execute(array('foo'));
+$foo = $stmt->fetch();
+
+$stmt = $pdo->prepare('select * from users where name=?');
+$stmt->execute(array('<script>alert();</script>'));
+$foo = $stmt->fetch();
+
+$pdo->exec('delete from users');
 
 render_demo_page(function() {
 ?>

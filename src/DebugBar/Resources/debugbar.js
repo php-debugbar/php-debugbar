@@ -386,8 +386,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.settings = {};
 
             // Reset options
-            debugbar.options = debugbar.defaultOptions;
-            debugbar.setTheme(debugbar.options.theme);
+            debugbar.options = { ...debugbar.defaultOptions };
 
             // Reset ajax handler
             if (debugbar.ajaxHandler) {
@@ -398,6 +397,8 @@ if (typeof(PhpDebugBar) == 'undefined') {
                     debugbar.controls['__datasets'].get('widget').set('autoshow', $(this).is(':checked'));
                 }
             }
+
+            this.initialize(debugbar.options);
         },
 
         storeSetting: function(key, value) {
