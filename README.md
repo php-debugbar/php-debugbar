@@ -60,7 +60,7 @@ The best way to install DebugBar is using [Composer](http://getcomposer.org)
 with the following command:
 
 ```bash
-composer require maximebf/debugbar --dev
+composer require --dev php-debugbar/php-debugbar
 ```
 
 ## Quick start
