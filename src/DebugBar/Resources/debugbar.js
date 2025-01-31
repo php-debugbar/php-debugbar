@@ -1252,6 +1252,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
          */
         setOpenHandler: function(handler) {
             this.openHandler = handler;
+            this.openHandler.$el.attr('data-theme', this.$el.attr('data-theme'));
             if (handler !== null) {
                 this.$openbtn.show();
             } else {
