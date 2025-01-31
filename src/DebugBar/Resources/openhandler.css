@@ -89,6 +89,7 @@ div.phpdebugbar-openhandler {
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                cursor: pointer;
             }
     div.phpdebugbar-openhandler .phpdebugbar-openhandler-actions {
         text-align: center;
