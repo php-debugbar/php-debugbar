@@ -66,6 +66,20 @@ div.phpdebugbar-openhandler {
         table-layout: fixed;
         font-size: 14px;
     }
+        div.phpdebugbar-openhandler table td,
+        div.phpdebugbar-openhandler table th {
+            border: 0px solid var(--debugbar-border);
+            padding: 2px 8px;
+        }
+        div.phpdebugbar-openhandler table th,
+        div.phpdebugbar-openhandler table tr:nth-child(2n) {
+            background-color: var(--debugbar-background-alt);
+        }
+        div.phpdebugbar-openhandler table th:nth-child(2), div.phpdebugbar-openhandler table td:nth-child(2), /* Method */
+        div.phpdebugbar-openhandler table th:nth-child(4), div.phpdebugbar-openhandler table td:nth-child(4), /* IP */
+        div.phpdebugbar-openhandler table th:nth-child(5), div.phpdebugbar-openhandler table td:nth-child(5) { /* Filter */
+            text-align: center;
+        }
         div.phpdebugbar-openhandler table td {
             padding: 6px 3px;
             border-bottom: 1px solid var(--debugbar-border);
