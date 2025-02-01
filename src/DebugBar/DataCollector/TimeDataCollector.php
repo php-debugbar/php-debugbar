@@ -259,6 +259,7 @@ class TimeDataCollector extends DataCollector implements Renderable
                 "icon" => "clock-o",
                 "tooltip" => "Request Duration",
                 "map" => "time.duration_str",
+                'link' => 'timeline',
                 "default" => "'0ms'"
             ),
             "timeline" => array(
