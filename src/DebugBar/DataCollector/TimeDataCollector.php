@@ -73,15 +73,17 @@ class TimeDataCollector extends DataCollector implements Renderable
      * @param string $name Internal name, used to stop the measure
      * @param string|null $label Public name
      * @param string|null $collector The source of the collector
+     * @param string|null $group The group for aggregates
      */
-    public function startMeasure($name, $label = null, $collector = null)
+    public function startMeasure($name, $label = null, $collector = null, $group = null)
     {
         $start = microtime(true);
         $this->startedMeasures[$name] = array(
             'label' => $label ?: $name,
             'start' => $start,
             'memory' => $this->memoryMeasure ? memory_get_usage(false) : null,
-            'collector' => $collector
+            'collector' => $collector,
+            'group' => $group,
         );
     }
 
@@ -117,7 +119,8 @@ class TimeDataCollector extends DataCollector implements Renderable
             $this->startedMeasures[$name]['start'],
             $end,
             $params,
-            $this->startedMeasures[$name]['collector']
+            $this->startedMeasures[$name]['collector'],
+            $this->startedMeasures[$name]['group']
         );
         unset($this->startedMeasures[$name]);
     }
@@ -130,8 +133,9 @@ class TimeDataCollector extends DataCollector implements Renderable
      * @param float $end
      * @param array $params
      * @param string|null $collector
+     * @param string|null $group
      */
-    public function addMeasure($label, $start, $end, $params = array(), $collector = null)
+    public function addMeasure($label, $start, $end, $params = array(), $collector = null, $group = null)
     {
         if (isset($params['memoryUsage'])) {
             $memory = $this->memoryMeasure ? $params['memoryUsage'] : 0;
@@ -149,7 +153,8 @@ class TimeDataCollector extends DataCollector implements Renderable
             'memory' => $memory ?? 0,
             'memory_str' => $this->getDataFormatter()->formatBytes($memory ?? 0),
             'params' => $params,
-            'collector' => $collector
+            'collector' => $collector,
+            'group' => $group,
         );
     }
 

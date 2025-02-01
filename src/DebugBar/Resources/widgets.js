@@ -506,13 +506,15 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
                     for (var i = 0; i < data.measures.length; i++) {
                         var measure = data.measures[i];
+                        var group = measure.group || measure.label;
 
-                        if(!aggregate[measure.label])
-                            aggregate[measure.label] = { count: 0, duration: 0, memory : 0 };
+                        if(!aggregate[group]) {
+                            aggregate[group] = { count: 0, duration: 0, memory : 0 };
+                        }
 
-                        aggregate[measure.label]['count'] += 1;
-                        aggregate[measure.label]['duration'] += measure.duration;
-                        aggregate[measure.label]['memory'] += (measure.memory || 0);
+                        aggregate[group]['count'] += 1;
+                        aggregate[group]['duration'] += measure.duration;
+                        aggregate[group]['memory'] += (measure.memory || 0);
 
                         var m = $('<div />').addClass(csscls('measure')),
                             li = $('<li />'),
