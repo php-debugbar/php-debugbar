@@ -321,6 +321,16 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 }
             });
 
+            this.bindAttr('link', function(link) {
+                if (link) {
+                    this.$el.on('click', () => {
+                        this.get('debugbar').showTab(link);
+                    }).css('cursor', 'pointer')
+                } else {
+                    this.$el.off('click', false).css('cursor', '')
+                }
+            });
+
             this.bindAttr(['title', 'data'], $('<span />').addClass(csscls('text')).appendTo(this.$el));
 
             this.$tooltip = $('<span />').addClass(csscls('tooltip disabled')).appendTo(this.$el);
@@ -767,13 +777,13 @@ if (typeof(PhpDebugBar) == 'undefined') {
          * @this {DebugBar}
          */
         setHeight: function(height) {
-          var min_h = 40;
-          var max_h = $(window).innerHeight() - this.$header.height() - 10;
-          height = Math.min(height, max_h);
-          height = Math.max(height, min_h);
-          this.$body.css('height', height);
-          localStorage.setItem('phpdebugbar-height', height);
-          this.recomputeBottomOffset();
+            var min_h = 40;
+            var max_h = $(window).innerHeight() - this.$header.height() - 10;
+            height = Math.min(height, max_h);
+            height = Math.max(height, min_h);
+            this.$body.css('height', height);
+            localStorage.setItem('phpdebugbar-height', height);
+            this.recomputeBottomOffset();
         },
 
         /**
@@ -886,6 +896,8 @@ if (typeof(PhpDebugBar) == 'undefined') {
             if (this.isControl(name)) {
                 throw new Error(name + ' already exists');
             }
+
+            indicator.set('debugbar', this);
 
             if (position == 'left') {
                 indicator.$el.insertBefore(this.$headerLeft.children().first());
