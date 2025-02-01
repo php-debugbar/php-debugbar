@@ -526,7 +526,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                             width: width + "%"
                         }));
                         m.append($('<span />').addClass(csscls('label'))
-                            .text(measure.label + " (" + measure.duration_str +(measure.memory ? '/' + measure.memory_str: '') + ")"));
+                            .text(measure.label + ( measure.duration ? " (" + measure.duration_str +(measure.memory ? '/' + measure.memory_str: '') + ")" : "")));
 
                         if (measure.collector) {
                             $('<span />').addClass(csscls('collector')).text(measure.collector).appendTo(m);
