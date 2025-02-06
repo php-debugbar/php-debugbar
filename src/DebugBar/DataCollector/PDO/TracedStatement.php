@@ -125,18 +125,19 @@ class TracedStatement
             }
 
             $matchRule = "/({$marker}(?!\w))(?=(?:[^$quotationChar]|[$quotationChar][^$quotationChar]*[$quotationChar])*$)/";
-            $count = mb_substr_count($sql, $k);
-            if ($count < 1) {
-                $count = mb_substr_count($sql, $matchRule);
-            }
-            for ($i = 0; $i <= $count; $i++) {
-                $sql = preg_replace($matchRule, $v, $sql, 1);
+            $sqlSplit = explode(PHP_EOL, $sql);
+            $sql = null;
+            foreach ($sqlSplit as $pieces) {
+                for ($i = 0; $i <= mb_substr_count($pieces, $k); $i++) {
+                    $pieces = preg_replace($matchRule, $v, $pieces, 1);
+                }
+                $sql .= $pieces . PHP_EOL;
             }
         }
 
         $sql = strtr($sql, array_flip($cleanBackRefCharMap));
 
-        return $sql;
+        return trim($sql);
     }
 
     /**
