@@ -120,6 +120,37 @@ class TracedStatementTest extends DebugBarTestCase
     }
 
     /**
+     * Check if literal `NULL` query parameters are replaced without triggering a deprecation warning since PHP 8.0.0.
+     * This can happen when e.g. binding `PDO::PARAM_NULL` to your prepared statement.
+     *
+     * @link https://www.php.net/manual/en/migration81.deprecated.php#migration81.deprecated.core.null-not-nullable-internal
+     */
+    public function testReplacementParamsContainingLiteralNullValueGeneratesCorrectString()
+    {
+        $sql = 'UPDATE user SET login_failed_reason = :nullable_reason WHERE id = :id';
+
+        $params = [
+            'id' => 1234,
+            'nullable_reason' => 'Life happens',
+        ];
+
+        $traced = new TracedStatement($sql, $params);
+        $expected = 'UPDATE user SET login_failed_reason = "Life happens" WHERE id = "1234"';
+        $result = $traced->getSqlWithParams('"');
+        $this->assertEquals($expected, $result);
+
+        $params = [
+            'id' => 1234,
+            'nullable_reason' => null,
+        ];
+
+        $traced = new TracedStatement($sql, $params);
+        $expected = 'UPDATE user SET login_failed_reason = NULL WHERE id = "1234"';
+        $result = $traced->getSqlWithParams('"');
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Check if query parameters are being replaced in the correct way
      * @bugFix Before fix it : select *
      *                          from geral.person p
