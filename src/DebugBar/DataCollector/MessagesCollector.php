@@ -71,7 +71,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     public function addMessage($message, $label = 'info', $isString = true)
     {
         $messageText = $message;
-        $messageHtml = null;
+        $messageHtml = !$isString ? $message : null;
         if (!is_string($message)) {
             // Send both text and HTML representations; the text version is used for searches
             $messageText = $this->getDataFormatter()->formatVar($message);
