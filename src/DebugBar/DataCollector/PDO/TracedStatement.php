@@ -114,9 +114,12 @@ class TracedStatement
 
         foreach ($this->parameters as $k => $v) {
 
-            $backRefSafeV = strtr($v, $cleanBackRefCharMap);
-
-            $v = "$quoteLeft$backRefSafeV$quoteRight";
+            if (null === $v) {
+                $v = 'NULL';
+            } else {
+                $backRefSafeV = strtr($v, $cleanBackRefCharMap);
+                $v = "$quoteLeft$backRefSafeV$quoteRight";
+            }
 
             if (is_numeric($k)) {
                 $marker = "\?";
