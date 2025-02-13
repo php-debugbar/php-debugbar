@@ -1153,6 +1153,14 @@ if (typeof(PhpDebugBar) == 'undefined') {
          * @return {String} Dataset's id
          */
         addDataSet: function(data, id, suffix, show) {
+            // When data is null, load this async
+            if (id && data === null) {
+                window.setTimeout(() => {
+                    this.loadDataSet(id, suffix, undefined, show);
+                }, 0)
+                return id;
+            }
+
             if (!data || !data.__meta) return;
             if (this.isIframe) {
                 window.top.phpdebugbar.addDataSet(data, id, '(iframe)' + (suffix || ''), show);
