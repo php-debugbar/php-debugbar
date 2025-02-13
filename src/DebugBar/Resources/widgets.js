@@ -837,6 +837,8 @@ if (typeof(PhpDebugBar) == 'undefined') {
                             $a.append(debugbar.getControl(key[0]).$badge.clone().css('display', 'inline-block').text(d));
                         }
                         $a.appendTo($badges).click(clickHandler);
+                    } else if (key[1] === 'tooltip') {
+                        debugbar.getControl(key[0]).set('tooltip', d);
                     }
                 }
             });
