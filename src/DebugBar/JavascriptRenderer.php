@@ -1280,6 +1280,23 @@ class JavascriptRenderer
     }
 
     /**
+     * Returns the js code needed to load a dataset with the OpenHandler
+     *
+     * @param string $requestId
+     * @param mixed $suffix
+     * @return string
+     */
+    protected function getLoadDatasetCode($requestId, $suffix = null)
+    {
+        $js = sprintf("%s.loadDataSet(\"%s\"%s);\n",
+            $this->variableName,
+            $requestId,
+            $suffix ? ", " . json_encode($suffix) : ''
+        );
+        return $js;
+    }
+
+    /**
      * If a nonce it set, create the correct attribute
      * @return string
      */
