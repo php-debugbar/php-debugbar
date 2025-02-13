@@ -1208,9 +1208,11 @@ if (typeof(PhpDebugBar) == 'undefined') {
             }
             var self = this;
             this.openHandler.load(id, function(data) {
-                self.addDataSet(data, id, suffix, show);
-                self.resize();
-                callback && callback(data);
+                if (data) {
+                    self.addDataSet(data, id, suffix, show);
+                    self.resize();
+                    callback && callback(data);
+                }
             });
         },
 
