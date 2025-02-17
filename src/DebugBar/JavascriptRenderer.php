@@ -1148,6 +1148,7 @@ class JavascriptRenderer
 
         $suffix = !$initialize ? '(ajax)' : null;
         if ($this->areDatasetsDeferred()) {
+            $this->debugBar->getData();
             $js .= $this->getLoadDatasetCode($this->debugBar->getCurrentRequestId(), $suffix);
         } else {
             $js .= $this->getAddDatasetCode($this->debugBar->getCurrentRequestId(), $this->debugBar->getData(), $suffix);
