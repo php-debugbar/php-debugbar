@@ -146,6 +146,10 @@ div.phpdebugbar * {
        box-sizing: content-box;
 }
 
+div.phpdebugbar select, div.phpdebugbar input {
+  appearance: auto;
+}
+
 div.phpdebugbar ol, div.phpdebugbar ul {
   list-style: none;
 }
@@ -160,7 +164,7 @@ div.phpdebugbar table, .phpdebugbar-openhandler table {
   color: inherit;
 }
 
-div.phpdebugbar input[type='text'], div.phpdebugbar input[type='password'], div.phpdebugbar select {
+div.phpdebugbar input[type='text'], div.phpdebugbar input[type='password'], div.phpdebugbar select, div.phpdebugbar option {
   font-family: var(--debugbar-font-sans);
   background: var(--debugbar-background);
   font-size: 14px;
@@ -555,7 +559,6 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
         margin: 0 10px;
     }
     .phpdebugbar-widgets-dataset-history .phpdebugbar-widgets-dataset-actions input {
-        appearance: checkbox !important;
         margin: 5px;
     }
 
