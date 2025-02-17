@@ -164,7 +164,7 @@ div.phpdebugbar table, .phpdebugbar-openhandler table {
   color: inherit;
 }
 
-div.phpdebugbar input[type='text'], div.phpdebugbar input[type='password'], div.phpdebugbar select, div.phpdebugbar option {
+div.phpdebugbar input[type='text'], div.phpdebugbar input[type='password'], div.phpdebugbar select {
   font-family: var(--debugbar-font-sans);
   background: var(--debugbar-background);
   font-size: 14px;
