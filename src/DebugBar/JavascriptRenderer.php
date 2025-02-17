@@ -84,6 +84,8 @@ class JavascriptRenderer
 
     protected $ajaxHandlerEnableTab = false;
 
+    protected $deferDatasets = false;
+
     protected $openHandlerClass = 'PhpDebugBar.OpenHandler';
 
     protected $openHandlerUrl;
@@ -193,6 +195,9 @@ class JavascriptRenderer
         }
         if (array_key_exists('ajax_handler_enable_tab', $options)) {
             $this->setAjaxHandlerEnableTab($options['ajax_handler_enable_tab']);
+        }
+        if (array_key_exists('defer_datasets', $options)) {
+            $this->setDeferDatasets($options['defer_datasets']);
         }
         if (array_key_exists('open_handler_classname', $options)) {
             $this->setOpenHandlerClass($options['open_handler_classname']);
@@ -639,6 +644,28 @@ class JavascriptRenderer
     public function isAjaxHandlerTabEnabled()
     {
         return $this->ajaxHandlerEnableTab;
+    }
+
+
+    /**
+     * Sets whether datasets are directly loaded or deferred
+     *
+     * @param boolean $enabled
+     */
+    public function setDeferDatasets($defer = true)
+    {
+        $this->deferDatasets = $defer;
+        return $this;
+    }
+
+    /**
+     * Check if the datasets are deffered
+     *
+     * @return boolean
+     */
+    public function areDatasetsDeferred()
+    {
+        return $this->deferDatasets;
     }
 
 
@@ -1110,12 +1137,21 @@ class JavascriptRenderer
 
         if ($renderStackedData && $this->debugBar->hasStackedData()) {
             foreach ($this->debugBar->getStackedData() as $id => $data) {
-                $js .= $this->getAddDatasetCode($id, $data, '(stacked)');
+                if ($this->areDatasetsDeferred()) {
+                    $js .= $this->getLoadDatasetCode($id, '(stacked)');
+                } else {
+                    $js .= $this->getAddDatasetCode($id, $data, '(stacked)');
+
+                }
             }
         }
 
         $suffix = !$initialize ? '(ajax)' : null;
-        $js .= $this->getAddDatasetCode($this->debugBar->getCurrentRequestId(), $this->debugBar->getData(), $suffix);
+        if ($this->areDatasetsDeferred()) {
+            $js .= $this->getLoadDatasetCode($this->debugBar->getCurrentRequestId(), $suffix);
+        } else {
+            $js .= $this->getAddDatasetCode($this->debugBar->getCurrentRequestId(), $this->debugBar->getData(), $suffix);
+        }
 
         $nonce = $this->getNonceAttribute();
 
