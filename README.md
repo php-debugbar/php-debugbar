@@ -7,7 +7,7 @@ No more `var_dump()` in your code!
 
 > **Note: Debug Bar is for development use only. Never install this on websites that are publicly accessible.**
 
-![Screenshot](https://raw.github.com/maximebf/php-debugbar/master/docs/screenshot.png)
+![Screenshot](https://raw.github.com/php-debugbar/php-debugbar/master/docs/screenshot.png)
 
 **Features:**
 
@@ -19,7 +19,7 @@ No more `var_dump()` in your code!
  - The client side bar is 100% coded in javascript
  - Easily create your own collectors and their associated view in the bar
  - Save and re-open previous requests
- - [Very well documented](http://phpdebugbar.com/docs)
+ - [Very well documented](http://php-debugbar.com/docs/)
 
 Includes collectors for:
 
@@ -33,8 +33,8 @@ Includes collectors for:
   - [Swift Mailer](http://swiftmailer.org/)
   - [Twig](http://twig.symfony.com/)
 
-Checkout the [demo](https://github.com/maximebf/php-debugbar/tree/master/demo) for
-examples and [phpdebugbar.com](http://phpdebugbar.com) for a live example.
+Checkout the [demo](https://github.com/php-debugbar/php-debugbar/tree/master/demo) for
+examples and [phpdebugbar.com](http://php-debugbar.com) for a live example.
 
 Integrations with other frameworks:
 
@@ -109,7 +109,7 @@ $debugbar["messages"]->addMessage("hello world!");
  - `TimeDataCollector` (*time*)
  - `ExceptionsCollector` (*exceptions*)
 
-Learn more about DebugBar in the [docs](http://phpdebugbar.com/docs).
+Learn more about DebugBar in the [docs](http://php-debugbar.com/docs/).
 
 
 ## Demo
