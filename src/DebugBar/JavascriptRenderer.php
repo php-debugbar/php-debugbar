@@ -101,15 +101,19 @@ class JavascriptRenderer
     {
         $this->debugBar = $debugBar;
 
-        if ($baseUrl === null) {
-            $baseUrl = '/vendor/php-debugbar/php-debugbar/src/DebugBar/Resources';
-        }
-        $this->baseUrl = $baseUrl;
-
         if ($basePath === null) {
             $basePath = __DIR__ . DIRECTORY_SEPARATOR . 'Resources';
         }
         $this->basePath = $basePath;
+
+        if ($baseUrl === null) {
+            if ($basePath && str_contains($basePath, '/vendor/')) {
+                $baseUrl = strstr($basePath, '/vendor/');
+            } else {
+                $baseUrl = '/vendor/php-debugbar/php-debugbar/src/DebugBar/Resources';
+            }
+        }
+        $this->baseUrl = $baseUrl;
 
         // bitwise operations cannot be done in class definition :(
         $this->initialization = self::INITIALIZE_CONSTRUCTOR | self::INITIALIZE_CONTROLS;
