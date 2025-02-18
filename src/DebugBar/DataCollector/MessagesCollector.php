@@ -67,6 +67,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
      *
      * @param mixed $message
      * @param string $label
+     * @param bool|string $isString
      */
     public function addMessage($message, $label = 'info', $isString = true)
     {
