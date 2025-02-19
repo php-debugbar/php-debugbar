@@ -116,10 +116,6 @@
                         }
                     }
                 }
-                if (typeof(stmt.is_success) != 'undefined' && !stmt.is_success) {
-                    li.addClass(csscls('error'));
-                    li.append($('<span />').addClass(csscls('error')).text("[" + stmt.error_code + "] " + stmt.error_message));
-                }
                 if ((!stmt.type || stmt.type === 'query')) {
                     $('<span title="Copy to clipboard" />')
                         .addClass(csscls('copy-clipboard'))
@@ -141,6 +137,10 @@
                         }
                     }).addClass(csscls('editor-link')).appendTo(header);
                     header.appendTo(li);
+                }
+                if (typeof(stmt.is_success) != 'undefined' && !stmt.is_success) {
+                    li.addClass(csscls('error'));
+                    li.append($('<span />').addClass(csscls('error')).text("[" + stmt.error_code + "] " + stmt.error_message));
                 }
                 var table = $('<table></table>').addClass(csscls('params'));
                 if (stmt.params && !$.isEmptyObject(stmt.params)) {
