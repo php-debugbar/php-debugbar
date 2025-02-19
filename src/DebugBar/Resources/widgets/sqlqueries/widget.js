@@ -57,7 +57,7 @@
                         .concat(value.namespace ? [value.namespace + '::'] : [])
                         .concat([value.name || value.file])
                         .concat(value.line ? [$span.clone().text(':' + value.line)] : [])
-                    : [$span.clone().text(key + ':'), '&nbsp;', value]
+                    : [$span.clone().text(key + ':'), '&nbsp;', $span.clone().text(value).html()]
                 ).appendTo($ul);
             }
             caption += icon ? ' <i class="phpdebugbar-fa phpdebugbar-fa-' + icon + ' phpdebugbar-text-muted"></i>' : '';
