@@ -648,6 +648,8 @@ if (typeof(PhpDebugBar) == 'undefined') {
          * Resizes the debugbar to fit the current browser window
          */
         resize: function() {
+            if (this.isIframe) return;
+
             var contentSize = this.respCSSSize;
             if (this.respCSSSize == 0) {
                 this.$header.find("> *:visible").each(function () {
