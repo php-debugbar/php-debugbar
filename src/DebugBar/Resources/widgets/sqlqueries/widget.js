@@ -74,11 +74,6 @@
             var filters = [], self = this;
 
             this.$list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, stmt) {
-                if (stmt.type === 'transaction') {
-                    $('<strong />').addClass(csscls('sql')).addClass(csscls('name')).text(stmt.sql).appendTo(li);
-                } else {
-                    $('<code />').addClass(csscls('sql')).html(PhpDebugBar.Widgets.highlight(stmt.sql, 'sql')).appendTo(li);
-                }
                 if (stmt.width_percent) {
                     $('<div />').addClass(csscls('bg-measure')).append(
                         $('<div />').addClass(csscls('value')).css({
@@ -137,6 +132,11 @@
                         }
                     }).addClass(csscls('editor-link')).appendTo(header);
                     header.appendTo(li);
+                }
+                if (stmt.type === 'transaction') {
+                    $('<strong />').addClass(csscls('sql')).addClass(csscls('name')).text(stmt.sql).appendTo(li);
+                } else {
+                    $('<code />').addClass(csscls('sql')).html(PhpDebugBar.Widgets.highlight(stmt.sql, 'sql')).appendTo(li);
                 }
                 if (typeof(stmt.is_success) != 'undefined' && !stmt.is_success) {
                     li.addClass(csscls('error'));
