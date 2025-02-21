@@ -282,7 +282,7 @@ a.phpdebugbar-tab.phpdebugbar-active {
   color: var(--debugbar-active-text);
 }
   a.phpdebugbar-tab .phpdebugbar-text {
-    font-size: 14px;
+    font-size: 15px;
   }
   a.phpdebugbar-tab span.phpdebugbar-badge {
     display: none;
