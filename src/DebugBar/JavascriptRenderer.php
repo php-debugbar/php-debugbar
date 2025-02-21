@@ -1256,6 +1256,11 @@ class JavascriptRenderer
         }
         $controls = array_merge($widgets, $this->controls);
 
+        // Sort based on the order is specified
+        uasort($controls, function( $control){
+            return $control['order'] ?? 0;
+        });
+
         foreach (array_filter($controls) as $name => $options) {
             $opts = array_diff_key($options, array_flip($excludedOptions));
 
