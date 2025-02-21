@@ -10,6 +10,8 @@
 
 namespace DebugBar;
 
+use Symfony\Component\Uid\Ulid;
+
 /**
  * Basic request ID generator
  */
@@ -20,6 +22,6 @@ class RequestIdGenerator implements RequestIdGeneratorInterface
      */
     public function generate()
     {
-        return 'X'.bin2hex(random_bytes(16));
+        return (new Ulid())->toString();
     }
 }
