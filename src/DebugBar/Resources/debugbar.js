@@ -284,7 +284,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.bindAttr('data', function(data) {
                 if (this.has('widget')) {
                     this.get('widget').set('data', data);
-                    this.$tab.attr('data-empty', $.isEmptyObject(data));
+                    this.$tab.attr('data-empty', $.isEmptyObject(data) || data.count === 0);
                 }
             })
         }
