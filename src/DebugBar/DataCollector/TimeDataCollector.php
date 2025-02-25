@@ -238,6 +238,7 @@ class TimeDataCollector extends DataCollector implements Renderable
         });
 
         return array(
+            'count' => count($this->measures),
             'start' => $this->requestStartTime,
             'end' => $this->requestEndTime,
             'duration' => $this->getRequestDuration(),
