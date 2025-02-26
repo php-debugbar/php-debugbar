@@ -76,11 +76,35 @@ class TracedStatement
     public function checkParameters(array $params) : array
     {
         foreach ($params as &$param) {
+            if (is_resource($param)) {
+                $param = $this->getResourceContents($param);
+            }
             if (!mb_check_encoding($param ?? '', 'UTF-8')) {
                 $param = '[BINARY DATA]';
             }
         }
         return $params;
+    }
+
+    /**
+     * @param resource $stream
+     */
+    private function getResourceContents($stream, int $length = -1) : string
+    {
+        $meta = stream_get_meta_data($stream);
+        $isSeekable = (bool) $meta['seekable'];
+        if (! $isSeekable) {
+            return sprintf('[resource id #%d]', get_resource_id($stream));
+        }
+
+        fseek($stream, 0);
+        $contents = stream_get_contents($stream, $length);
+        if (-1 !== $length && ! feof($stream)) {
+            $contents .= '…';
+        }
+        fseek($stream, 0, SEEK_END);
+
+        return $contents;
     }
 
     /**

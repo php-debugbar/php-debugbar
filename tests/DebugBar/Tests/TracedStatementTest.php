@@ -120,6 +120,42 @@ class TracedStatementTest extends DebugBarTestCase
     }
 
     /**
+     * Check if stream resource query parameters are replaced without triggering a type error since PHP 8.0.0.
+     * This can happen when e.g. binding `PDO::PARAM_LOB` to your prepared statement.
+     *
+     * @link https://www.php.net/manual/en/pdo.lobs.php
+     */
+    public function testReplacementParamsContainingLargeObjectResourceGeneratesCorrectString()
+    {
+        $sql = 'UPDATE user SET signature = :signature WHERE id = :id';
+
+        $seekableResource = fopen('php://memory', 'r+');
+        fputs($seekableResource, 'Signature from rewindable LOB stream resource.');
+
+        $params = [
+            'id' => 1234,
+            'signature' => $seekableResource,
+        ];
+
+        $traced = new TracedStatement($sql, $params);
+        $expected = 'UPDATE user SET signature = "Signature from rewindable LOB stream resource." WHERE id = "1234"';
+        $result = $traced->getSqlWithParams('"');
+        $this->assertEquals($expected, $result);
+
+        $unseekableResource = fopen('php://stdout', 'r');
+
+        $params = [
+            'id' => 1234,
+            'signature' => $unseekableResource,
+        ];
+
+        $traced = new TracedStatement($sql, $params);
+        $expected = sprintf('UPDATE user SET signature = "[resource id #%d]" WHERE id = "1234"', (int) $unseekableResource);
+        $result = $traced->getSqlWithParams('"');
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Check if literal `NULL` query parameters are replaced without triggering a deprecation warning since PHP 8.0.0.
      * This can happen when e.g. binding `PDO::PARAM_NULL` to your prepared statement.
      *
