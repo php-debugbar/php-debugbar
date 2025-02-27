@@ -10,6 +10,7 @@ pre.phpdebugbar-widgets-code-block {
   }
   pre.phpdebugbar-widgets-code-block code.phpdebugbar-widgets-numbered-code {
     padding: 5px;
+    line-height: normal;
   }
   pre.phpdebugbar-widgets-code-block ul li.phpdebugbar-widgets-highlighted-line {
     font-weight: bolder;
