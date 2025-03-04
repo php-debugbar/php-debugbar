@@ -22,17 +22,6 @@ class ExceptionsCollector extends DataCollector implements Renderable
     protected $chainExceptions = false;
 
     /**
-     * Adds an exception to be profiled in the debug bar
-     *
-     * @param Exception $e
-     * @deprecated in favor on addThrowable
-     */
-    public function addException(Exception $e)
-    {
-        $this->addThrowable($e);
-    }
-
-    /**
      * Adds a Throwable to be profiled in the debug bar
      *
      * @param \Throwable $e
@@ -71,18 +60,6 @@ class ExceptionsCollector extends DataCollector implements Renderable
             'count' => count($this->exceptions),
             'exceptions' => array_map(array($this, 'formatThrowableData'), $this->exceptions)
         );
-    }
-
-    /**
-     * Returns exception data as an array
-     *
-     * @param Exception $e
-     * @return array
-     * @deprecated in favor on formatThrowableData
-     */
-    public function formatExceptionData(Exception $e)
-    {
-        return $this->formatThrowableData($e);
     }
 
     /**
