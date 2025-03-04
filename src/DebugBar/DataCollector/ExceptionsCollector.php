@@ -22,6 +22,44 @@ class ExceptionsCollector extends DataCollector implements Renderable
     protected $chainExceptions = false;
 
     /**
+     * Start collecting warnings, notices and deprecations
+     */
+    public function collectWarnings() {
+        $self = $this;
+        $errorTypes = array(
+            1    => 'E_ERROR',
+            2    => 'E_WARNING',
+            4    => 'E_PARSE',
+            8    => 'E_NOTICE',
+            16   => 'E_CORE_ERROR',
+            32   => 'E_CORE_WARNING',
+            64   => 'E_COMPILE_ERROR',
+            128  => 'E_COMPILE_WARNING',
+            256  => 'E_USER_ERROR',
+            512  => 'E_USER_WARNING',
+            1024 => 'E_USER_NOTICE',
+            2048 => 'E_STRICT',
+            4096 => 'E_RECOVERABLE_ERROR',
+            8192 => 'E_DEPRECATED',
+            16384 => 'E_USER_DEPRECATED'
+        );
+
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($self, $errorTypes) {
+            $self->exceptions[] = array(
+                'type' => $errorTypes[$errno] ?? 'UNKNOWN',
+                'message' => $errstr,
+                'code' => $errno,
+                'file' => $self->normalizeFilePath($errfile),
+                'line' => $errline,
+                'stack_trace' => null,
+                'stack_trace_html' => null,
+                'surrounding_lines' => null,
+                'xdebug_link' => $self->getXdebugLink($errfile, $errline)
+            );
+        });
+    }
+
+    /**
      * Adds an exception to be profiled in the debug bar
      *
      * @param Exception $e
@@ -141,11 +179,15 @@ class ExceptionsCollector extends DataCollector implements Renderable
     /**
      * Returns Throwable data as an array
      *
-     * @param \Throwable $e
+     * @param \Throwable|array $e
      * @return array
      */
     public function formatThrowableData($e)
     {
+        if (is_array($e)) {
+            return $e;
+        }
+
         $filePath = $e->getFile();
         if ($filePath && file_exists($filePath)) {
             $lines = file($filePath);
