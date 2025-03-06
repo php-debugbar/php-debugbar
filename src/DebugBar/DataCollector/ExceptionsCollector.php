@@ -22,44 +22,6 @@ class ExceptionsCollector extends DataCollector implements Renderable
     protected $chainExceptions = false;
 
     /**
-     * Start collecting warnings, notices and deprecations
-     */
-    public function collectWarnings() {
-        $self = $this;
-        $errorTypes = array(
-            1    => 'E_ERROR',
-            2    => 'E_WARNING',
-            4    => 'E_PARSE',
-            8    => 'E_NOTICE',
-            16   => 'E_CORE_ERROR',
-            32   => 'E_CORE_WARNING',
-            64   => 'E_COMPILE_ERROR',
-            128  => 'E_COMPILE_WARNING',
-            256  => 'E_USER_ERROR',
-            512  => 'E_USER_WARNING',
-            1024 => 'E_USER_NOTICE',
-            2048 => 'E_STRICT',
-            4096 => 'E_RECOVERABLE_ERROR',
-            8192 => 'E_DEPRECATED',
-            16384 => 'E_USER_DEPRECATED'
-        );
-
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($self, $errorTypes) {
-            $self->exceptions[] = array(
-                'type' => $errorTypes[$errno] ?? 'UNKNOWN',
-                'message' => $errstr,
-                'code' => $errno,
-                'file' => $self->normalizeFilePath($errfile),
-                'line' => $errline,
-                'stack_trace' => null,
-                'stack_trace_html' => null,
-                'surrounding_lines' => null,
-                'xdebug_link' => $self->getXdebugLink($errfile, $errline)
-            );
-        });
-    }
-
-    /**
      * Adds an exception to be profiled in the debug bar
      *
      * @param Exception $e
@@ -92,11 +54,70 @@ class ExceptionsCollector extends DataCollector implements Renderable
     {
         $this->chainExceptions = $chainExceptions;
     }
+    /**
+     * Start collecting warnings, notices and deprecations
+     *
+     * @param bool $preserveOriginalHandler
+     */
+    public function collectWarnings($preserveOriginalHandler = true) {
+        $self = $this;
+        $originalHandler = $preserveOriginalHandler ? set_error_handler(null) : null;
+
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($self, $originalHandler) {
+            $self->addWarning($errno, $errstr, $errfile, $errline);
+
+            if ($originalHandler) {
+                return call_user_func($originalHandler, $errno, $errstr, $errfile, $errline);
+            }
+
+            return false;
+        });
+    }
+
+    /**
+     * Adds an warning to be profiled in the debug bar
+     *
+     * @param int $errno
+     * @param string $errstr
+     * @param string $errfile
+     * @param int $errline
+     * @return void
+     */
+    public function addWarning($errno, $errstr, $errfile = '', $errline = 0)
+    {
+        $errorTypes = array(
+            1    => 'E_ERROR',
+            2    => 'E_WARNING',
+            4    => 'E_PARSE',
+            8    => 'E_NOTICE',
+            16   => 'E_CORE_ERROR',
+            32   => 'E_CORE_WARNING',
+            64   => 'E_COMPILE_ERROR',
+            128  => 'E_COMPILE_WARNING',
+            256  => 'E_USER_ERROR',
+            512  => 'E_USER_WARNING',
+            1024 => 'E_USER_NOTICE',
+            2048 => 'E_STRICT',
+            4096 => 'E_RECOVERABLE_ERROR',
+            8192 => 'E_DEPRECATED',
+            16384 => 'E_USER_DEPRECATED'
+        );
+
+        $this->exceptions[] = array(
+            'type' => $errorTypes[$errno] ?? 'UNKNOWN',
+            'message' => $errstr,
+            'code' => $errno,
+            'file' => $this->normalizeFilePath($errfile),
+            'line' => $errline,
+            'xdebug_link' => $this->getXdebugLink($errfile, $errline)
+        );
+    }
+
 
     /**
      * Returns the list of exceptions being profiled
      *
-     * @return array[\Throwable]
+     * @return array<Throwable|array>
      */
     public function getExceptions()
     {
