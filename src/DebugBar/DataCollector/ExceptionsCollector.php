@@ -10,7 +10,7 @@
 
 namespace DebugBar\DataCollector;
 
-use Exception;
+use Throwable;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 /**
@@ -24,10 +24,10 @@ class ExceptionsCollector extends DataCollector implements Renderable
     /**
      * Adds an exception to be profiled in the debug bar
      *
-     * @param Exception $e
+     * @param \Exception $e
      * @deprecated in favor on addThrowable
      */
-    public function addException(Exception $e)
+    public function addException(\Exception $e)
     {
         $this->addThrowable($e);
     }
@@ -35,7 +35,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
     /**
      * Adds a Throwable to be profiled in the debug bar
      *
-     * @param \Throwable $e
+     * @param Throwable $e
      */
     public function addThrowable($e)
     {
@@ -135,11 +135,11 @@ class ExceptionsCollector extends DataCollector implements Renderable
     /**
      * Returns exception data as an array
      *
-     * @param Exception $e
+     * @param \Exception $e
      * @return array
      * @deprecated in favor on formatThrowableData
      */
-    public function formatExceptionData(Exception $e)
+    public function formatExceptionData(\Exception $e)
     {
         return $this->formatThrowableData($e);
     }
@@ -178,7 +178,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
     /**
      * Returns Throwable data as an string
      *
-     * @param \Throwable $e
+     * @param Throwable $e
      * @return string
      */
     public function formatTraceAsString($e)
@@ -200,7 +200,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
     /**
      * Returns Throwable data as an array
      *
-     * @param \Throwable|array $e
+     * @param Throwable|array $e
      * @return array
      */
     public function formatThrowableData($e)
