@@ -54,6 +54,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
     {
         $this->chainExceptions = $chainExceptions;
     }
+
     /**
      * Start collecting warnings, notices and deprecations
      *
