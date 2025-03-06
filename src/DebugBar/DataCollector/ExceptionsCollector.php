@@ -19,9 +19,9 @@ use Symfony\Component\Debug\Exception\FatalThrowableError;
 class ExceptionsCollector extends DataCollector implements Renderable
 {
     /** @var string */
-    private $name;
+    private $name = 'exceptions';
     /** @var string */
-    private $icon;
+    private $icon = 'bug';
     /** @var array */
     protected $exceptions = array();
     /** @var bool */
