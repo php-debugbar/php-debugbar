@@ -193,6 +193,7 @@ div.phpdebugbar code, div.phpdebugbar pre {
 }
 
 div.phpdebugbar pre.sf-dump {
+  display: block !important;
   color: #a0a000;
   outline: 0;
 }
