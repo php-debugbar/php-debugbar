@@ -5,10 +5,6 @@
   }
 }
 
-div.phpdebugbar, div.phpdebugbar *, div.phpdebugbar :after, div.phpdebugbar :before {
-  position: static;
-}
-
 div.phpdebugbar,
 div.phpdebugbar-openhandler {
   --debugbar-background: #fff;
