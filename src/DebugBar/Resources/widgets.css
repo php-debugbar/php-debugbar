@@ -276,6 +276,7 @@ ul.phpdebugbar-widgets-timeline {
       ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params .phpdebugbar-widgets-name {
         width: 20%;
         font-weight: bold;
+        vertical-align: top;
       }
 
 /* -------------------------------------- */
