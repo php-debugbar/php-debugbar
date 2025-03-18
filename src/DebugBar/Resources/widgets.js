@@ -635,6 +635,8 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 }
                 if (e.stack_trace_html) {
                     var $trace = $('<span />').addClass(csscls('filename')).html(e.stack_trace_html);
+                    $trace.find('samp[data-depth="1"]').removeClass('sf-dump-expanded').addClass('sf-dump-compact').parent()
+                        .find('>.sf-dump-note').html((_, t) => t.replace(/^array:/, '<span class="sf-dump-key">Stack Trace:</span> ') + ' files');
                     $trace.appendTo(li);
                 } else if (e.stack_trace) {
                     e.stack_trace.split("\n").forEach(function (trace) {
