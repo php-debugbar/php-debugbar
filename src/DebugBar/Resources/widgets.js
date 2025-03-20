@@ -366,7 +366,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                             $('<a href="' + value.xdebug_link.url + '"></a>').addClass(csscls('editor-link')).appendTo(header);
                         }
                     }
-                    header.appendTo(li);
+                    header.prependTo(li);
                 }
                 if (value.collector) {
                     $('<span />').addClass(csscls('collector')).text(value.collector).prependTo(li);
