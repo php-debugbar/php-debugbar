@@ -545,7 +545,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                             }
                             li.css('cursor', 'pointer').click(function() {
                                 if (window.getSelection().type == "Range") {
-                                    return''
+                                    return '';
                                 }
                                 var table = $(this).find('table');
                                 if (table.is(':visible')) {
@@ -553,6 +553,8 @@ if (typeof(PhpDebugBar) == 'undefined') {
                                 } else {
                                     table.show();
                                 }
+                            }).on('click', '.sf-dump', function(event) {
+                                event.stopPropagation();
                             });
                         }
                     }
