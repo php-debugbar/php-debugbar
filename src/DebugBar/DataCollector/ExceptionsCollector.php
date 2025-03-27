@@ -110,6 +110,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
             'code' => $errno,
             'file' => $this->normalizeFilePath($errfile),
             'line' => $errline,
+            'surrounding_lines' => $this->getFileLines($errfile, $errline),
             'xdebug_link' => $this->getXdebugLink($errfile, $errline)
         );
     }
@@ -198,6 +199,17 @@ class ExceptionsCollector extends DataCollector implements Renderable
         return $e->getTraceAsString();
     }
 
+    protected function getFileLines(string $filePath, int $line = 0): array
+    {
+        if ($filePath && file_exists($filePath)) {
+            $lines = file($filePath);
+            $start = $line - 4;
+            return array_slice($lines, $start < 0 ? 0 : $start, 7);
+        } else {
+            return ['Cannot open the file ('.$this->normalizeFilePath($filePath).') in which the exception occurred'];
+        }
+    }
+
     /**
      * Returns Throwable data as an array
      *
@@ -210,15 +222,6 @@ class ExceptionsCollector extends DataCollector implements Renderable
             return $e;
         }
 
-        $filePath = $e->getFile();
-        if ($filePath && file_exists($filePath)) {
-            $lines = file($filePath);
-            $start = $e->getLine() - 4;
-            $lines = array_slice($lines, $start < 0 ? 0 : $start, 7);
-        } else {
-            $lines = array('Cannot open the file ('.$this->normalizeFilePath($filePath).') in which the exception occurred');
-        }
-
         $traceHtml = null;
         if ($this->isHtmlVarDumperUsed()) {
             $traceHtml = $this->getVarDumper()->renderVar($this->formatTrace($e->getTrace()));
@@ -228,12 +231,12 @@ class ExceptionsCollector extends DataCollector implements Renderable
             'type' => get_class($e),
             'message' => $e->getMessage(),
             'code' => $e->getCode(),
-            'file' => $this->normalizeFilePath($filePath),
+            'file' => $this->normalizeFilePath($e->getFile()),
             'line' => $e->getLine(),
             'stack_trace' => $traceHtml ? null : $this->formatTraceAsString($e),
             'stack_trace_html' => $traceHtml,
-            'surrounding_lines' => $lines,
-            'xdebug_link' => $this->getXdebugLink($filePath, $e->getLine())
+            'surrounding_lines' => $this->getFileLines($e->getFile(), $e->getLine()),
+            'xdebug_link' => $this->getXdebugLink($e->getFile(), $e->getLine())
         );
     }
 
