@@ -194,6 +194,10 @@ div.phpdebugbar pre.sf-dump {
   outline: 0;
 }
 
+div.phpdebugbar pre.sf-dump .sf-dump-private {
+  color: grey;
+}
+
 div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-public {
   color: #ffcc00;
 }
