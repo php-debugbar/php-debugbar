@@ -194,6 +194,18 @@ div.phpdebugbar pre.sf-dump {
   outline: 0;
 }
 
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-public {
+  color: #ffcc00;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-protected {
+  color: #a0a000;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-private {
+  color: #9d9266;
+}
+
 a.phpdebugbar-restore-btn {
   float: left;
   padding: 5px 8px;
