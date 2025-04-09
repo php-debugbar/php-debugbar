@@ -112,6 +112,24 @@
                     }
                 }
                 if ((!stmt.type || stmt.type === 'query')) {
+                    if (window.sqlFormatter) {
+                        $('<span title="Format Query" />').on('click', function () {
+                            event.stopPropagation();
+                            let popup = window.open('about:blank', 'SQL Pretty-Print', 'width=650,height=440,scrollbars=yes'),
+                                documentToWriteTo = popup.document,
+                                cssLink = document.querySelector('link[href*="highlightjs/styles/github.css"]')
+                                body = $('<div class="phpdebugbar" />').append(
+                                    $('<pre style="padding:5px;" />').append(
+                                        $('<code class="phpdebugbar-widgets-sql" />')
+                                            .html(PhpDebugBar.Widgets.highlight(sqlFormatter.format(stmt.sql), 'sql'))
+                                    ));
+
+                            let css = '<style>body{margin:0;padding:0;}div.phpdebugbar{position:relative;height:calc(100% - 20px);width:auto;}</style>';
+                            documentToWriteTo.open();
+                            documentToWriteTo.write((cssLink ? $(cssLink).prop('outerHTML') : '') + css + body.prop('outerHTML'));
+                            documentToWriteTo.close();
+                        }).addClass(csscls('code-format')).appendTo(li);
+                    }
                     $('<span title="Copy to clipboard" />')
                         .addClass(csscls('copy-clipboard'))
                         .css('cursor', 'pointer')
