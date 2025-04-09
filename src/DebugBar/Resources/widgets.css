@@ -32,7 +32,8 @@ pre.phpdebugbar-widgets-code-block {
   }
 
   .phpdebugbar-widgets-kvlist span.phpdebugbar-widgets-filename,
-  li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-filename {
+  li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-filename,
+  table.phpdebugbar-widgets-tablevar span.phpdebugbar-widgets-filename {
     display: block;
     font-style: italic;
     float: right;
