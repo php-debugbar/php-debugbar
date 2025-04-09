@@ -315,3 +315,32 @@ ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params {
     width: 99%;
 }
 
+table.phpdebugbar-widgets-tablevar {
+  width: 100%;
+  table-layout: auto;
+}
+
+table.phpdebugbar-widgets-tablevar td:first-child {
+  width: 150px;
+  white-space: nowrap;
+  font-family: var(--debugbar-font-mono);
+}
+
+table.phpdebugbar-widgets-tablevar td.phpdebugbar-widgets-editor {
+  width: 5%;
+  white-space: nowrap;
+  text-align: right;
+}
+
+table.phpdebugbar-widgets-tablevar tr:first-child td{
+  font-weight: bold;
+}
+
+table.phpdebugbar-widgets-tablevar td {
+  padding: 2px 4px;
+  border-bottom: 1px solid var(--debugbar-border);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: normal;
+}

@@ -284,6 +284,75 @@ if (typeof(PhpDebugBar) == 'undefined') {
     // ------------------------------------------------------------------
 
     /**
+     * Displays array element in a <table> list, columns keys map
+     * useful for showing a multiple values table
+     *
+     * Options:
+     *  - data
+     *  - key_map: list of keys to be displayed with an optional label
+     *             example: {key1: label1, key2: label2} or [key1, key2]
+     */
+    var TableVariableListWidget = PhpDebugBar.Widgets.TableVariableListWidget =  PhpDebugBar.Widget.extend({
+
+        tagName: 'div',
+
+        className: csscls('tablevarlist'),
+
+        render: function() {
+            this.bindAttr('data', function(data) {
+                this.$el.empty();
+
+                if (!this.has('data')) {
+                    return;
+                }
+
+                this.$table = $('<table />').addClass(csscls('tablevar')).appendTo(this.$el);
+                var $header = $('<tr />').append('<td />').appendTo(this.$table);
+                var key_map = data.key_map || {value: 'Value'};
+
+                $.each(key_map, function(key, label) {
+                    $header.append($('<td />').text(label || key))
+                });
+
+                var self = this;
+                $.each(data.data, function(key, values) {
+                    var $tr = $('<tr />').addClass(csscls('item')).appendTo(self.$table);
+                    $('<td />').addClass(csscls('key')).text(key).appendTo($tr);
+
+                    if (typeof values !== 'object' || values === null) {
+                        $('<td />').addClass(csscls('value')).text(values ?? '').appendTo($tr);
+                        return;
+                    }
+
+                    $.each(Array.isArray(key_map) ? key_map : Object.keys(key_map), function(i, key) {
+                        $('<td />').addClass(csscls('value')).text(values[key] ?? '').appendTo($tr);
+                    });
+
+                    if (values.xdebug_link) {
+                        var filename = $('<span />').addClass(csscls('filename'))
+                            .text(values.xdebug_link.filename + ( values.xdebug_link.line ? "#" + values.xdebug_link.line : ''))
+                            .appendTo($('<td />').addClass(csscls('editor')).appendTo($tr));
+                        if (values.xdebug_link.ajax) {
+                            $('<a title="' + values.xdebug_link.url + '"></a>').on('click', function () {
+                                $.ajax(values.xdebug_link.url);
+                            }).addClass(csscls('editor-link')).appendTo(filename);
+                        } else {
+                            $('<a href="' + values.xdebug_link.url + '"></a>').addClass(csscls('editor-link')).appendTo(filename);
+                        }
+
+                        if (!data.xdebug_link) {
+                            data.xdebug_link = true;
+                            $header.append($('<td />'));
+                        }
+                    }
+                });
+            });
+        }
+    });
+
+    // ------------------------------------------------------------------
+
+    /**
      * Iframe widget
      *
      * Options:
