@@ -63,7 +63,7 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
      */
     public function collect()
     {
-        arsort($this->classList, SORT_NUMERIC);
+        uasort($this->classList, fn($a, $b) => array_sum($b) <=> array_sum($a));
 
         $collect = [
             'data' => $this->classList,
