@@ -261,7 +261,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
         className: csscls('kvlist htmlvarlist'),
 
         itemRenderer: function(dt, dd, key, value) {
-            $('<span />').attr('title', $('<i />').html(key || '').text()).html(key || '').appendTo(dt);
+            $('<span />').attr('title', $('<i />').html(key ?? '').text()).html(key ?? '').appendTo(dt);
             dd.html(value && value.value || value);
 
             if (value && value.xdebug_link) {
