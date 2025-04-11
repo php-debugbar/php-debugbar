@@ -333,7 +333,8 @@ table.phpdebugbar-widgets-tablevar td.phpdebugbar-widgets-editor {
   text-align: right;
 }
 
-table.phpdebugbar-widgets-tablevar tr:first-child td{
+table.phpdebugbar-widgets-tablevar tr.phpdebugbar-widgets-header td,
+table.phpdebugbar-widgets-tablevar tr.phpdebugbar-widgets-summary td {
   font-weight: bold;
 }
 
@@ -344,4 +345,17 @@ table.phpdebugbar-widgets-tablevar td {
   text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: normal;
+}
+
+table.phpdebugbar-widgets-tablevar .phpdebugbar-widgets-header span.phpdebugbar-widgets-badge {
+  margin: 0 5px 0 8px;
+  font-size: 11px;
+  line-height: 14px;
+  padding: 0 6px;
+  background: var(--debugbar-badge-active);
+  border-radius: 4px;
+  color: var(--debugbar-badge-active-text);
+  font-weight: normal;
+  text-shadow: none;
+  vertical-align: middle;
 }
