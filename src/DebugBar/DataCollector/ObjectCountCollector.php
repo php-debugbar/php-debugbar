@@ -20,6 +20,10 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
     /** @var array */
     protected $classList = [];
     /** @var array */
+    protected $classSummary = [];
+    /** @var bool */
+    protected $collectSummary = false;
+    /** @var array */
     protected $keyMap = ['value' => 'Count'];
 
     /**
@@ -41,6 +45,14 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
     }
 
     /**
+     * Allows to add a summary row
+     */
+    public function collectCountSummary(bool $enable = true)
+    {
+        $this->collectSummary = $enable;
+    }
+
+    /**
      * @param string|mixed $class
      * @param int $count
      * @param string $key
@@ -52,6 +64,10 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
 
         if (!isset($this->classList[$class])) {
             $this->classList[$class] = [];
+        }
+
+        if ($this->collectSummary) {
+            $this->classSummary[$key] = ($this->classSummary[$key] ?? 0) + $count;
         }
 
         $this->classList[$class][$key] = ($this->classList[$class][$key] ?? 0) + $count;
@@ -71,6 +87,10 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
             'key_map' => $this->keyMap,
             'is_counter' => true
         ];
+
+        if ($this->collectSummary) {
+            $collect['badges'] = $this->classSummary;
+        }
 
         if (! $this->getXdebugLinkTemplate()) {
             return $collect;

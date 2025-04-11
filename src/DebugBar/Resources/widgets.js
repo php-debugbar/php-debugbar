@@ -307,11 +307,19 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 }
 
                 this.$table = $('<table />').addClass(csscls('tablevar')).appendTo(this.$el);
-                var $header = $('<tr />').append('<td />').appendTo(this.$table);
+                var $header = $('<tr />').addClass(csscls('header')).append('<td />').appendTo(this.$table);
                 var key_map = data.key_map || {value: 'Value'};
 
+                if (Array.isArray(key_map)) {
+                    key_map = Object.fromEntries(key_map.map(k => [k, null]));
+                }
+
                 $.each(key_map, function(key, label) {
-                    $header.append($('<td />').text(label || key))
+                    var colTitle = $('<td />').text(label ?? key).appendTo($header);
+
+                    if (data.badges && data.badges[key]) {
+                        $('<span />').text(data.badges[key]).addClass(csscls('badge')).appendTo(colTitle);
+                    }
                 });
 
                 var self = this;
@@ -324,7 +332,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                         return;
                     }
 
-                    $.each(Array.isArray(key_map) ? key_map : Object.keys(key_map), function(i, key) {
+                    $.each(key_map, function(key) {
                         $('<td />').addClass(csscls('value')).text(values[key] ?? '').appendTo($tr);
                     });
 
@@ -346,6 +354,23 @@ if (typeof(PhpDebugBar) == 'undefined') {
                         }
                     }
                 });
+
+                if (!data.summary) return;
+
+                var $tr = $('<tr />').addClass(csscls('summary')).appendTo(self.$table);
+                $('<td />').addClass(csscls('key')).appendTo($tr);
+
+                if (typeof data.summary !== 'object' || data.summary === null) {
+                    $('<td />').addClass(csscls('value')).text(data.summary ?? '').appendTo($tr);
+                } else {
+                    $.each(key_map, function(key) {
+                        $('<td />').addClass(csscls('value')).text(data.summary[key] ?? '').appendTo($tr);
+                    });
+                }
+
+                if (data.xdebug_link) {
+                    $('<td />').appendTo($tr);
+                }
             });
         }
     });
