@@ -56,8 +56,11 @@ class RedisStorage implements StorageInterface
     public function find(array $filters = [], $max = 20, $offset = 0)
     {
         $results = [];
-        $cursor = "0";
         $isPhpRedis = get_class($this->redis) === 'Redis' || get_class($this->redis) === 'RedisCluster';
+        $cursor = match (true) {
+            $isPhpRedis && version_compare(phpversion('redis'), '6.1.0', '>=') => null,
+            default => '0',
+        };
 
         do {
             if ($isPhpRedis) {
