@@ -30,6 +30,8 @@ class DebugBar implements ArrayAccess
 {
     public static $useOpenHandlerWhenSendingDataHeaders = false;
 
+    public static DataHasher|null $dataHasher;
+
     protected $collectors = array();
 
     protected $data;
@@ -47,6 +49,8 @@ class DebugBar implements ArrayAccess
     protected $stackSessionNamespace = 'PHPDEBUGBAR_STACK_DATA';
 
     protected $stackAlwaysUseSessionStorage = false;
+
+    protected $hashKey;
 
     /**
      * Adds a data collector
@@ -466,6 +470,40 @@ class DebugBar implements ArrayAccess
             $this->jsRenderer = new JavascriptRenderer($this, $baseUrl, $basePath);
         }
         return $this->jsRenderer;
+    }
+
+
+    /**
+     * Returns the default data formater
+     *
+     * @return DataHasher
+     */
+    public static function setDataHasher(DataHasher $dataHasher)
+    {
+        static::$dataHasher = $dataHasher;
+    }
+
+    /**
+     * Check if the data hasher is set
+     *
+     * @return bool
+     */
+    public static function hasDataHasher() : bool
+    {
+        return isset(static::$dataHasher);
+    }
+
+    /**
+     * Returns the data hasher
+     *
+     * @return DataHasher
+     */
+    public static function getDataHasher() : DataHasher
+    {
+        if (!isset(static::$dataHasher)) {
+            throw new DebugBarException('DataHasher is not set');
+        }
+        return static::$dataHasher;
     }
 
     // --------------------------------------------
