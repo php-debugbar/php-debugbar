@@ -234,8 +234,23 @@ class DebugBar implements ArrayAccess
             )
         );
 
+        // The RequestDataCollector stores a copy of the session data and the
+        // session stores the collected data when it gets stacked. This leads
+        // to exponential memory usage growth if multiple requests have
+        // their data stacked before the stacked data is rendered. We can avoid
+        // that by temporarily removing the stacked data from the session.
+        $http = $this->getHttpDriver();
+        if ($http->isSessionStarted()) {
+            $stack = $http->getSessionValue($this->stackSessionNamespace);
+            $http->deleteSessionValue($this->stackSessionNamespace);
+        }
+
         foreach ($this->collectors as $name => $collector) {
             $this->data[$name] = $collector->collect();
+        }
+
+        if ($http->isSessionStarted()) {
+            $http->setSessionValue($this->stackSessionNamespace, $stack);
         }
 
         // Remove all invalid (non UTF-8) characters
