@@ -5,9 +5,11 @@ include __DIR__ . '/../../bootstrap.php';
 
 $debugbarRenderer->setBaseUrl('../../../src/DebugBar/Resources');
 
-$debugStack = new Doctrine\DBAL\Logging\DebugStack();
-$entityManager->getConnection()->getConfiguration()->setSQLLogger($debugStack);
-$debugbar->addCollector(new DebugBar\Bridge\DoctrineCollector($debugStack));
+$debugBarSQLMiddleware = new DebugBar\Bridge\Doctrine\DebugBarSQLMiddleware();
+$debugbar->addCollector(new DebugBar\Bridge\Doctrine\DoctrineCollector($debugBarSQLMiddleware));
+
+$config->setMiddlewares([$debugBarSQLMiddleware]);
+$entityManager = createEntityManager($config);
 
 $product = new Demo\Product();
 $product->setName("foobar");
