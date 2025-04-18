@@ -18,8 +18,19 @@ class DebugBarHtmlDumper extends HtmlDumper
         $this->dumpHeader = null;
     }
 
-    public function getDumpHeaderByDebugBar() {
-        // getDumpHeader is protected:
-        return str_replace('pre.sf-dump', '.phpdebugbar pre.sf-dump', $this->getDumpHeader());
+    public function getDumpHeaderByDebugBar() 
+    {
+        $header = str_replace('pre.sf-dump', '.phpdebugbar pre.sf-dump', $this->getDumpHeader());
+
+        if (isset(self::$themes['dark'])) {
+            $line = '';
+            foreach (self::$themes['dark'] as $class => $style) {
+                $line .= ".phpdebugbar[data-theme='dark'] pre.sf-dump".('default' === $class ? ', pre.sf-dump' : '').' .sf-dump-'.$class.'{'.$style.'}';
+            }
+            $line .= ".phpdebugbar[data-theme='dark'] " . 'pre.sf-dump .sf-dump-ellipsis-note{'.self::$themes['dark']['note'].'}';
+            $header = str_replace('</style>', $line . '</style>', $header);
+        }
+
+        return $header;
     }
 }
