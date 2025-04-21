@@ -780,7 +780,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
          */
         setHeight: function(height) {
             var min_h = 40;
-            var max_h = $(window).innerHeight() - this.$header.height() - 10;
+            var max_h = window.innerHeight - this.$header.height() - 10;
             height = Math.min(height, max_h);
             height = Math.max(height, min_h);
             this.$body.css('height', height);
