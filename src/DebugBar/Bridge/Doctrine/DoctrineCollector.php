@@ -24,7 +24,8 @@ use DebugBar\DebugBarException;
  *
  * <code>
  * $config->setMiddlewares([$debugBarSQLMiddleware]);
- * $entityManager = new EntityManager($conn, $config);
+ * $conn = Doctrine\DBAL\DriverManager::getConnection($dbParameters, $config);
+ * $entityManager = new Doctrine\DBAL\EntityManager($conn, $config);
  * $debugbar->addCollector(new DoctrineCollector($debugBarSQLMiddleware));
  * </code>
  */
@@ -34,10 +35,15 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
 
     /**
      * DoctrineCollector constructor.
-     * @param DebugBarSQLMiddleware $debugStack
+     * @param DebugBarSQLMiddleware|null $debugStack
      * @throws DebugBarException
      */
-    public function __construct(DebugBarSQLMiddleware $debugStack)
+    public function __construct(?DebugBarSQLMiddleware $debugStack = null)
+    {
+        $this->debugStack = $debugStack;
+    }
+
+    public function setDebugStack(DebugBarSQLMiddleware $debugStack): void
     {
         $this->debugStack = $debugStack;
     }
@@ -49,7 +55,7 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
     {
         $queries = array();
         $totalExecTime = 0;
-        foreach ($this->debugStack->queries as $q) {
+        foreach ($this->debugStack?->queries ?? [] as $q) {
             $queries[] = array(
                 'sql' => $q['sql'],
                 'params' => (object) $this->getParameters($q['params'] ?? []),
@@ -60,6 +66,7 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
         }
 
         return array(
+            'count' => count($queries),
             'nb_statements' => count($queries),
             'accumulated_duration' => $totalExecTime,
             'accumulated_duration_str' => $this->formatDuration($totalExecTime),
