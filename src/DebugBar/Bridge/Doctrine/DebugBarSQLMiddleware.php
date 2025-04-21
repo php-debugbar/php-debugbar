@@ -112,22 +112,22 @@ class DebugBarSQLMiddleware implements Middleware
 
                         $this->middleware->addQuery('"ROLLBACK"');
                     }
-                    
+
                     public function quote(string $value): string
                     {
                         return $this->conn->quote($value);
                     }
-                    
+
                     public function lastInsertId(): int|string
                     {
                         return $this->conn->lastInsertId();
                     }
-                    
+
                     public function getServerVersion(): string
                     {
                         return $this->conn->getServerVersion();
                     }
-                    
+
                     public function getNativeConnection()
                     {
                         return $this->conn->getNativeConnection();
@@ -141,17 +141,10 @@ class DebugBarSQLMiddleware implements Middleware
                 return $this->wrapped->getDatabasePlatform($versionProvider);
             }
 
-            public function getSchemaManager(DriverConnection $conn): AbstractSchemaManager
-            {
-                return $this->wrapped->getSchemaManager($conn);
-            }
-
             public function getExceptionConverter(): ExceptionConverter
             {
                 return $this->wrapped->getExceptionConverter();
             }
-
-            public function getName() { return $this->wrapped->getName(); }
         };
     }
 

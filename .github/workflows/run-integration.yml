@@ -37,7 +37,14 @@ jobs:
       - name: Install dependencies
         run: |
           composer update --prefer-dist --no-progress
+
+      - name: Install monolog bridge
+        run: |
           composer update --prefer-dist --no-progress --working-dir=demo/bridge/monolog
+
+      - name: Install doctrine bridge
+        if: matrix.php != '8.0'
+        run: |
           composer update --prefer-dist --no-progress --working-dir=demo/bridge/doctrine
           composer run --working-dir=demo/bridge/doctrine install-schema
 

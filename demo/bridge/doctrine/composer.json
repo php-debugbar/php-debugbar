@@ -2,7 +2,7 @@
     "require": {
         "doctrine/orm": "3.*",
         "symfony/yaml": "2.*",
-        "symfony/cache": "7.*"
+        "symfony/cache": "6.*|7.*"
     },
     "autoload": {
         "psr-0": {"": "src/"}
