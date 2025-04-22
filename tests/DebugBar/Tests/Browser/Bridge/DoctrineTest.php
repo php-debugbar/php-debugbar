@@ -32,8 +32,7 @@ class DoctrineTest extends AbstractBrowserTest
                 return $node->getText();
             });
 
-        $this->assertEquals('INSERT INTO products (name, updated) VALUES (?, ?)', $statements[1]);
-        $this->assertCount(5, $statements);
+        $this->assertEquals('INSERT INTO products (name, updated) VALUES (?, ?)', $statements[2]);
+        $this->assertCount(6, $statements);
     }
-
 }

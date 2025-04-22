@@ -19,6 +19,11 @@ class Driver extends AbstractDriverMiddleware
      */
     public function connect(array $params): Connection
     {
-        return new Connection(parent::connect($params), $this->debugStack);
+        return $this->debugStack->addQuery(
+            fn () => new Connection(parent::connect($params), $this->debugStack),
+            'Connection Established',
+            null,
+            'transaction'
+        );
     }
 }

@@ -34,5 +34,4 @@ class MonologTest extends AbstractBrowserTest
 
         $this->assertStringContainsString('demo.INFO: hello world [] []', $messages[0]);
     }
-
 }
