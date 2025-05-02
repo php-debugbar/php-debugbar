@@ -164,12 +164,13 @@ class TimeDataCollector extends DataCollector implements Renderable
      * @param string $label
      * @param \Closure $closure
      * @param string|null $collector
+     * @param string|null $group
      * @return mixed
      */
-    public function measure($label, \Closure $closure, $collector = null)
+    public function measure($label, \Closure $closure, $collector = null, $group = null)
     {
         $name = spl_object_hash($closure);
-        $this->startMeasure($name, $label, $collector);
+        $this->startMeasure($name, $label, $collector, $group);
         $result = $closure();
         $params = is_array($result) ? $result : array();
         $this->stopMeasure($name, $params);
