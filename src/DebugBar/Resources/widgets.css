@@ -112,6 +112,7 @@ div.phpdebugbar-widgets-messages {
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-critical:before {
     content: "\f057";
   }
+  .phpdebugbar-widgets-params .phpdebugbar-widgets-value pre.sf-dump,
   dl.phpdebugbar-widgets-kvlist dd.phpdebugbar-widgets-value pre.sf-dump,
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item pre.sf-dump {
     display: inline-block !important;
