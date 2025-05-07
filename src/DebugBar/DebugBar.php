@@ -386,7 +386,7 @@ class DebugBar implements ArrayAccess
             $datasets = $stackedData;
         }
 
-        return $datasets;
+        return array_filter($datasets);
     }
 
     /**
