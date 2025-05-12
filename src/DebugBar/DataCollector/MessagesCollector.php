@@ -130,6 +130,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
      *
      * @param mixed $message
      * @param string $label
+     * @param bool|string $isString
      */
     public function addMessage($message, $label = 'info', $isString = true)
     {
@@ -142,6 +143,8 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
                 $messageHtml = $this->getVarDumper()->renderVar($message);
             }
             $isString = false;
+        } elseif (! $isString) {
+            $messageHtml = $this->cleanHtml($message);
         }
 
         $stackItem = [];
@@ -247,6 +250,14 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
 
         // interpolate replacement values into the message and return
         return strtr($message, $replace);
+    }
+
+    private function cleanHtml($html) {
+        $cleanHtml = strip_tags($html, '<b><i><p><a><ul><ol><li><strong><em><span><div>');
+        $cleanHtml = preg_replace('/\s*on\w+\s*=\s*"[^"]*"|\s*on\w+\s*=\s*\'[^\']*\'/i', '', $cleanHtml);
+        $cleanHtml = preg_replace('/href\s*=\s*["\']?\s*javascript:[^"\']*/i', 'href="#"', $cleanHtml);
+
+        return $cleanHtml;
     }
 
     /**
