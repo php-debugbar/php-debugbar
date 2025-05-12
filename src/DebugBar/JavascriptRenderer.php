@@ -1257,8 +1257,8 @@ class JavascriptRenderer
         $controls = array_merge($widgets, $this->controls);
 
         // Allow widgets to be sorted by order if specified
-        uasort($controls, function(array $control){
-            return $control['order'] ?? 0;
+        uasort($controls, function(array $controlA, array $controlB){
+            return ($controlA['order'] ?? 0) <=> ($controlB['order'] ?? 0);
         });
 
         foreach (array_filter($controls) as $name => $options) {
