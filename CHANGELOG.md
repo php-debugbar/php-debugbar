@@ -1,4 +1,8 @@
 # Changelog
+2025-06-26
+
+ - Add Windsurf editor link template
+
 2023-09-08
 
  - Add SymfonyMailCollector (#554)
@@ -15,40 +19,40 @@
 
  - Use Symfony VarDumper instead of kintLite as DataFormatter (#179)
  - Better resize handling (#185)
- 
+
 2014-11 (1.10.1):
 
  - Add disableVendor() option to JavascriptRenderer to remove a specific vendor (#182)
  - Fix macros in Twig Collector (#167, #177)
- - Update Font Awesome to 4.2.0 
+ - Update Font Awesome to 4.2.0
 
 2014-10 (1.10.0):
 
  - Add bindToXHR() as alternative to jQuery ajax handling.
  - Extend TemplateWidget to show more information + parameters
  - Extend TimeDataCollector to show parameters + collector source
- 
+
 2014-08:
 
  - Replace image files with inline data in css
  - Tweak OpenHandler display
-  
+
 2014-06-10:
 
  - Add LocalizationCollector
-  
+
 2014-03-29:
 
  - Add hasMeasure() method to TimeDataCollector
- 
+
 2014-03-25:
 
  - Duplicate SQL detection
- 
+
 2014-03-23:
 
  - Add syntax highlighting
- 
+
 2014-03-22:
 
  - added AssetProvider interface
