@@ -2,17 +2,29 @@
 
 namespace Demo;
 
-/**
- * @Entity @Table(name="products")
- **/
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\Table;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\GeneratedValue;
+
+/** @Entity @Table(name="products") */
+#[Entity]
+#[Table(name: "products")]
 class Product
 {
     /** @Id @Column(type="integer") @GeneratedValue **/
-    protected $id;
+    #[Id, Column(type: "integer"), GeneratedValue]
+    private int $id;
+
     /** @Column(type="string") **/
-    protected $name;
+    #[Column(type: "string")]
+    private string $name;
+
     /** @Column(type="datetime", nullable=true) **/
-    protected $updated;
+    #[Column(type: "datetime", nullable: true)]
+    private ?\DateTime $updated = null;
 
     public function getId()
     {
