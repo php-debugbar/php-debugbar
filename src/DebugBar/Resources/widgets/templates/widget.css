@@ -71,3 +71,6 @@ div.phpdebugbar-widgets-templates table.phpdebugbar-widgets-params .phpdebugbar-
   width: 20%;
   font-weight: bold;
 }
+div.phpdebugbar[data-theme='dark'] div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-callgraph > pre * {
+  background-color: inherit !important;
+}
