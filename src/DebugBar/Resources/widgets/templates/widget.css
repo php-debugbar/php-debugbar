@@ -70,4 +70,5 @@ div.phpdebugbar-widgets-templates table.phpdebugbar-widgets-params td {
 div.phpdebugbar-widgets-templates table.phpdebugbar-widgets-params .phpdebugbar-widgets-name {
   width: 20%;
   font-weight: bold;
+  vertical-align: top;
 }
