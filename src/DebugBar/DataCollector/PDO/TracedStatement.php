@@ -9,6 +9,8 @@ class TracedStatement
 {
     protected $sql;
 
+    protected $type;
+
     protected $rowCount;
 
     protected $parameters;
@@ -39,6 +41,14 @@ class TracedStatement
         $this->sql = $sql;
         $this->parameters = $this->checkParameters($params);
         $this->preparedId = $preparedId;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setQueryType(string $type) : void
+    {
+        $this->type = $type;
     }
 
     /**
@@ -276,5 +286,15 @@ class TracedStatement
     public function getErrorMessage() : string
     {
         return $this->exception !== null ? $this->exception->getMessage() : '';
+    }
+
+    /**
+     * Returns the query type
+     *
+     * @return string
+     */
+    public function getQueryType() : string
+    {
+        return $this->type !== null ? $this->type : '';
     }
 }

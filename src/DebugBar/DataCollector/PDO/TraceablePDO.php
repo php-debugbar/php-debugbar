@@ -31,6 +31,8 @@ class TraceablePDO extends PDO
     */
     public function beginTransaction() : bool
     {
+        $this->addPdoEvent('Begin Transaction');
+
         return $this->pdo->beginTransaction();
     }
 
@@ -42,6 +44,8 @@ class TraceablePDO extends PDO
      */
     public function commit() : bool
     {
+        $this->addPdoEvent('Commit Transaction');
+
         return $this->pdo->commit();
     }
 
@@ -180,6 +184,8 @@ class TraceablePDO extends PDO
      */
     public function rollBack() : bool
     {
+        $this->addPdoEvent('Rollback Transaction');
+
         return $this->pdo->rollBack();
     }
 
@@ -238,6 +244,21 @@ class TraceablePDO extends PDO
      */
     public function addExecutedStatement(TracedStatement $stmt) : void
     {
+        $this->executedStatements[] = $stmt;
+    }
+
+    /**
+     * Adds a PDO event
+     *
+     * @param string $event
+     */
+    public function addPdoEvent(string $event) : void
+    {
+        $stmt = new TracedStatement($event);
+        $stmt->setQueryType('transaction');
+        $stmt->start();
+        $stmt->end();
+
         $this->executedStatements[] = $stmt;
     }
 

@@ -149,6 +149,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         foreach ($pdo->getExecutedStatements() as $stmt) {
             $stmts[] = array(
                 'sql' => $this->renderSqlWithParams ? $stmt->getSqlWithParams($this->sqlQuotationChar) : $stmt->getSql(),
+                'type' => $stmt->getQueryType(),
                 'row_count' => $stmt->getRowCount(),
                 'stmt_id' => $stmt->getPreparedId(),
                 'prepared_stmt' => $stmt->getSql(),
