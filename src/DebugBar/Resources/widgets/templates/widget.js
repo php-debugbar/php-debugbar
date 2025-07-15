@@ -16,7 +16,12 @@
             this.$status = $('<div />').addClass(csscls('status')).appendTo(this.$el);
 
             this.$list = new  PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, tpl) {
-                $('<span />').addClass(csscls('name')).text(tpl.name).appendTo(li);
+                var name = $('<span />').addClass(csscls('name')).appendTo(li);
+                if (tpl.html) {
+                    name.html(tpl.html);
+                } else {
+                    name.text(tpl.name);
+                }
 
                 if (typeof tpl.xdebug_link !== 'undefined' && tpl.xdebug_link !== null) {
                     var header = $('<span />').addClass(csscls('filename')).text(tpl.xdebug_link.filename + ( tpl.xdebug_link.line ? "#" + tpl.xdebug_link.line : ''));
