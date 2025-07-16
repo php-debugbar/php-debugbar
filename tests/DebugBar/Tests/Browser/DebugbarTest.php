@@ -109,6 +109,8 @@ class DebugbarTest extends AbstractBrowserTest
 
         $crawler->selectLink('load ajax content with exception')->click();
 
+        $client->waitForVisibility('.phpdebugbar-tab[data-collector="exceptions"]');
+
         $client->click($this->getTabLink($crawler, 'exceptions'));
 
         $client->waitForElementToContain('.phpdebugbar-datasets-switcher', 'ajax_exception.php');
