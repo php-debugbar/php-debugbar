@@ -14,6 +14,7 @@
   </extensions>
   <php>
     <server name="PANTHER_WEB_SERVER_DIR" value="./"/>
+    <server name="PANTHER_DEVTOOLS" value="0"/>
   </php>
   <source>
     <include>
