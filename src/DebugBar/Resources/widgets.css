@@ -317,6 +317,13 @@ ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params {
     width: 99%;
 }
 
+div.phpdebugbar[data-theme='dark'] code.phpdebugbar-widgets-sql,
+div.phpdebugbar[data-theme='dark'] .phpdebugbar-widgets-name,
+div.phpdebugbar[data-theme='dark'] .phpdebugbar-widgets-key,
+div.phpdebugbar[data-theme='dark'] .phpdebugbar-widgets-success > pre.sf-dump > .sf-dump-note {
+    color: #fdfd96;
+}
+
 table.phpdebugbar-widgets-tablevar {
   width: 100%;
   table-layout: auto;
