@@ -74,6 +74,9 @@
             var filters = [], self = this;
 
             this.$list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, stmt) {
+                if (stmt.slow) {
+                    li.addClass(csscls('sql-slow'))
+                }
                 if (stmt.width_percent) {
                     $('<div />').addClass(csscls('bg-measure')).append(
                         $('<div />').addClass(csscls('value')).css({
