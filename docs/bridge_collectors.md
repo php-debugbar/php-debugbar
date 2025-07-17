@@ -22,15 +22,32 @@ thus it is required to collect data.
 
 http://doctrine-project.org
 
+**With doctrine/dbal:4.x**
+
+Displays sql queries into an SQL queries view using `DebugBar\Bridge\Doctrine\DoctrineCollector`.
+You will need to set `DebugBar\Bridge\Doctrine\DebugBarSQLMiddleware` middleware on your connection
+and your `EntityManager`.
+```php
+$debugBarSQLMiddleware = new DebugBar\Bridge\Doctrine\DebugBarSQLMiddleware();
+$debugbar->addCollector(new DebugBar\Bridge\Doctrine\DoctrineCollector($debugBarSQLMiddleware));
+
+/** @var Doctrine\ORM\Configuration $config */
+$config->setMiddlewares([$debugBarSQLMiddleware]);
+$conn = Doctrine\DBAL\DriverManager::getConnection($dbParameters, $config);
+$entityManager = new Doctrine\ORM\EntityManager($conn, $config);
+```
+
+**With doctrine/dbal:3.x**
+
 Displays sql queries into an SQL queries view using `DebugBar\Bridge\DoctrineCollector`.
 You will need to set a `Doctrine\DBAL\Logging\DebugStack` logger on your connection.
-
-    $debugStack = new Doctrine\DBAL\Logging\DebugStack();
-    $entityManager->getConnection()->getConfiguration()->setSQLLogger($debugStack);
-    $debugbar->addCollector(new DebugBar\Bridge\DoctrineCollector($debugStack));
-
+```php
+$debugStack = new Doctrine\DBAL\Logging\DebugStack();
+$entityManager->getConnection()->getConfiguration()->setSQLLogger($debugStack);
+$debugbar->addCollector(new DebugBar\Bridge\DoctrineCollector($debugStack));
+```
 `DoctrineCollector` also accepts an `Doctrine\ORM\EntityManager` as argument
-provided the `SQLLogger` is a ̀DebugStack`.
+provided the `SQLLogger` is a `DebugStack`.
 
 ## Monolog
 
