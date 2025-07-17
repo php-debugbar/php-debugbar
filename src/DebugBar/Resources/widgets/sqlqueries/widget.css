@@ -98,12 +98,20 @@ code.phpdebugbar-widgets-sql {
   word-wrap: break-word;
 }
 
+div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item.phpdebugbar-widgets-sql-slow {
+  background-color: #ffe4e4;
+}
+
 div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item.phpdebugbar-widgets-sql-duplicate {
-  background-color: #F7EDED;
+  background-color: #fdfdcd;
+}
+
+div.phpdebugbar[data-theme='dark'] div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item.phpdebugbar-widgets-sql-slow {
+  background-color: #623100;
 }
 
 div.phpdebugbar[data-theme='dark'] div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item.phpdebugbar-widgets-sql-duplicate {
-    background-color: #473e00;
+    background-color: #565602;
 }
 
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-toolbar {
