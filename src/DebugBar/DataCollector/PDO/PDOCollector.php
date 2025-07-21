@@ -64,7 +64,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
      */
     public function setSlowThreshold($threshold)
     {
-        $this->slowThreshold = $threshold;
+        $this->slowThreshold = $threshold / 1000;
     }
 
     /**
