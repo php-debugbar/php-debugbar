@@ -29,6 +29,8 @@ use Doctrine\ORM\EntityManager;
  * $entityManager->getConnection()->getConfiguration()->setSQLLogger($debugStack);
  * $debugbar->addCollector(new DoctrineCollector($debugStack));
  * </code>
+ *
+ * @deprecated use https://github.com/php-debugbar/doctrine-bridge instead
  */
 class DoctrineCollector extends DataCollector implements Renderable, AssetProvider
 {
