@@ -235,6 +235,9 @@ if (typeof(PhpDebugBar) == 'undefined') {
             }
             var prettyVal = null;
             dd.text(v).click(function() {
+                if (window.getSelection().type == "Range") {
+                    return '';
+                }
                 if (dd.hasClass(csscls('pretty'))) {
                     dd.text(v).removeClass(csscls('pretty'));
                 } else {
