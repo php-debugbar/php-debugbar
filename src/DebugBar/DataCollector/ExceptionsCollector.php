@@ -19,6 +19,7 @@ use Symfony\Component\Debug\Exception\FatalThrowableError;
 class ExceptionsCollector extends DataCollector implements Renderable
 {
     protected $exceptions = array();
+    protected $existingWarnings = array();
     protected $chainExceptions = false;
 
     /**
@@ -86,6 +87,11 @@ class ExceptionsCollector extends DataCollector implements Renderable
      */
     public function addWarning($errno, $errstr, $errfile = '', $errline = 0)
     {
+        $hash = md5("{$errno}-{$errstr}-{$errfile}-{$errline}");
+        if (isset($this->existingWarnings[$hash])) {
+            return;
+        }
+
         $errorTypes = array(
             1    => 'E_ERROR',
             2    => 'E_WARNING',
@@ -104,6 +110,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
             16384 => 'E_USER_DEPRECATED'
         );
 
+        $this->existingWarnings[$hash] = true;
         $this->exceptions[] = array(
             'type' => $errorTypes[$errno] ?? 'UNKNOWN',
             'message' => $errstr,
