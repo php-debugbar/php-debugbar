@@ -1,3 +1,31 @@
+# VSCode WSL Remote Xdebug Link Support
+
+This package now supports generating Xdebug file links for VS Code running in WSL (Windows Subsystem for Linux) via the `vscode-wsl` editor type.
+
+## Usage
+
+Set the editor link template to `vscode-wsl`:
+
+```php
+$debugbar->setEditorLinkTemplate('vscode-wsl');
+```
+
+You can configure the WSL distribution name (e.g., `Ubuntu`) using:
+
+- The `DEBUGBAR_WSL_NAME` environment variable
+- The `setWslName()` method
+
+If not set, it defaults to `Ubuntu`.
+
+## Example Link
+
+The generated link will look like:
+
+```
+vscode://vscode-remote/wsl+Ubuntu/path/to/file.php:1
+```
+
+Clicking this link in your browser on Windows will open the file in VS Code inside your WSL environment.
 # PHP Debug Bar
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/php-debugbar/php-debugbar?label=Stable)](https://packagist.org/packages/php-debugbar/php-debugbar) [![Total Downloads](https://img.shields.io/packagist/dt/maximebf/debugbar?label=Downloads)](https://packagist.org/packages/php-debugbar/php-debugbar) [![License](https://img.shields.io/badge/Licence-MIT-4d9283)](https://packagist.org/packages/php-debugbar/php-debugbar) [![Tests](https://github.com/maximebf/php-debugbar/actions/workflows/run-tests.yml/badge.svg)](https://github.com/php-debugbar/php-debugbar/actions/workflows/run-tests.yml)
