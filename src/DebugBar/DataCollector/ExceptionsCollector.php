@@ -18,8 +18,24 @@ use Symfony\Component\Debug\Exception\FatalThrowableError;
  */
 class ExceptionsCollector extends DataCollector implements Renderable
 {
+    /** @var string */
+    private $name = 'exceptions';
+    /** @var string */
+    private $icon = 'bug';
+    /** @var array */
     protected $exceptions = array();
+    /** @var bool */
     protected $chainExceptions = false;
+
+    /**
+     * @param string $name
+     * @param string $icon
+     */
+    public function __construct($name = 'exceptions', $icon = 'bug')
+    {
+        $this->name = $name;
+        $this->icon = $icon;
+    }
 
     /**
      * Adds an exception to be profiled in the debug bar
@@ -242,7 +258,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
      */
     public function getName()
     {
-        return 'exceptions';
+        return $this->name;
     }
 
     /**
@@ -250,15 +266,17 @@ class ExceptionsCollector extends DataCollector implements Renderable
      */
     public function getWidgets()
     {
+        $name = $this->getName();
+
         return array(
-            'exceptions' => array(
-                'icon' => 'bug',
+            "$name" => array(
+                'icon' => $this->icon,
                 'widget' => 'PhpDebugBar.Widgets.ExceptionsWidget',
-                'map' => 'exceptions.exceptions',
+                'map' => "$name.exceptions",
                 'default' => '[]'
             ),
-            'exceptions:badge' => array(
-                'map' => 'exceptions.count',
+            "$name:badge" => array(
+                'map' => "$name.count",
                 'default' => 'null'
             )
         );
