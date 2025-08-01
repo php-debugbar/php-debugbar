@@ -89,6 +89,8 @@ class ExceptionsCollector extends DataCollector implements Renderable
     {
         $hash = md5("{$errno}-{$errstr}-{$errfile}-{$errline}");
         if (isset($this->existingWarnings[$hash])) {
+            $this->existingWarnings[$hash]['count']++;
+
             return;
         }
 
@@ -110,8 +112,8 @@ class ExceptionsCollector extends DataCollector implements Renderable
             16384 => 'E_USER_DEPRECATED'
         );
 
-        $this->existingWarnings[$hash] = true;
-        $this->exceptions[] = array(
+        $warning = array(
+            'count' => 1,
             'type' => $errorTypes[$errno] ?? 'UNKNOWN',
             'message' => $errstr,
             'code' => $errno,
@@ -119,6 +121,8 @@ class ExceptionsCollector extends DataCollector implements Renderable
             'line' => $errline,
             'xdebug_link' => $this->getXdebugLink($errfile, $errline)
         );
+        $this->exceptions[] = &$warning;
+        $this->existingWarnings[$hash] = &$warning;
     }
 
 
