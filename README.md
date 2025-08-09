@@ -7,7 +7,15 @@ This package now supports generating Xdebug file links for VS Code running in WS
 Set the editor link template to `vscode-wsl`:
 
 ```php
-$debugbar->setEditorLinkTemplate('vscode-wsl');
+$wslName = getenv('DEBUGBAR_WSL_NAME') ?: 'Ubuntu';
+$collector->setXdebugLinkTemplate("vscode://vscode-remote/wsl+{$wslName}/%f:%l");
+```
+
+Or, if your collector supports a more generic editor link template method:
+
+```php
+// usage: $collector->setEditorLinkTemplate('vscode-remote', 'wsl+Ubuntu');
+$collector->setEditorLinkTemplate('vscode-remote', 'wsl+Ubuntu');
 ```
 
 You can configure the WSL distribution name (e.g., `Ubuntu`) using:
