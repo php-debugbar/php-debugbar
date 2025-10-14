@@ -127,6 +127,7 @@ trait HasXdebugLinks
             'netbeans' => 'netbeans://open/?f=%f:%l',
             'cursor' => 'cursor://file/%f:%l',
             'windsurf' => 'windsurf://file/%f:%l',
+            'zed' => 'zed://file/%f:%l',
         );
 
         if (is_string($editor) && isset($editorLinkTemplates[$editor])) {
