@@ -127,6 +127,7 @@ trait HasXdebugLinks
             'netbeans' => 'netbeans://open/?f=%f:%l',
             'cursor' => 'cursor://file/%f:%l',
             'windsurf' => 'windsurf://file/%f:%l',
+            'zed' => 'zed://file/%f:%l',
             'antigravity' => 'antigravity://file/%f:%l',
         );
 
