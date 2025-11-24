@@ -1,4 +1,8 @@
 # Changelog
+2025-11-25
+
+ - Add Antigravity editor link template
+
 2025-06-26
 
  - Add Windsurf editor link template
