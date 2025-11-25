@@ -17,6 +17,34 @@ trait HasXdebugLinks
     protected $xdebugLinkTemplate = '';
     protected $xdebugShouldUseAjax = false;
     protected $xdebugReplacements = array();
+    protected $wslName = null;
+    /**
+     * Set the WSL distribution name for vscode-wsl links.
+     *
+     * @param string|null $wslName
+     */
+    public function setWslName($wslName)
+    {
+        $this->wslName = $wslName;
+    }
+
+    /**
+     * Get the WSL distribution name, from property, env, or default.
+     *
+     * @return string
+     */
+    public function getWslName()
+    {
+        if ($this->wslName) {
+            return $this->wslName;
+        }
+        $env = getenv('DEBUGBAR_WSL_NAME');
+        if ($env) {
+            return $env;
+        }
+        // Optionally, set a default here, e.g. 'Ubuntu'
+        return 'Ubuntu';
+    }
 
     /**
      * Shorten the file path by removing the xdebug path replacements
@@ -72,10 +100,16 @@ trait HasXdebugLinks
             }
         }
 
-        $url = strtr($this->getXdebugLinkTemplate(), [
+        $template = $this->getXdebugLinkTemplate();
+        $replacements = [
             '%f' => rawurlencode(str_replace('\\', '/', $file)),
             '%l' => rawurlencode((string) $line ?: 1),
-        ]);
+        ];
+        // Add %w for WSL name if needed
+        if (strpos($template, '%w') !== false) {
+            $replacements['%w'] = rawurlencode($this->getWslName());
+        }
+        $url = strtr($template, $replacements);
         if ($url) {
             return [
                 'url' => $url,
@@ -119,6 +153,7 @@ trait HasXdebugLinks
             'vscode-insiders' => 'vscode-insiders://file/%f:%l',
             'vscode-remote' => 'vscode://vscode-remote/%f:%l',
             'vscode-insiders-remote' => 'vscode-insiders://vscode-remote/%f:%l',
+            'vscode-wsl' => 'vscode://vscode-remote/wsl+%w/%f:%l',
             'vscodium' => 'vscodium://file/%f:%l',
             'nova' => 'nova://open?path=%f&line=%l',
             'xdebug' => 'xdebug://%f@%l',
