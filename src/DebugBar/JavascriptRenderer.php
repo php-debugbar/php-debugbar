@@ -1162,6 +1162,7 @@ class JavascriptRenderer
 
         if ($nonce != '') {
             $js = preg_replace("/<script>/", "<script nonce='{$this->cspNonce}'>", $js);
+            $js = str_replace('\\u003Cscript\\u003E', '\\u003Cscript nonce=\\u0022'.$this->cspNonce.'\\u0022\\u003E', $js);
         }
 
         if ($this->useRequireJs){
