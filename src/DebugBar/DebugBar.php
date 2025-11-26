@@ -48,6 +48,12 @@ class DebugBar implements ArrayAccess
 
     protected $stackAlwaysUseSessionStorage = false;
 
+    protected $editorTemplate = null;
+
+    protected $editorLinkTemplate = null;
+
+    protected $remotePathReplacements = null;
+
     /**
      * Adds a data collector
      *
@@ -63,6 +69,15 @@ class DebugBar implements ArrayAccess
         }
         if (isset($this->collectors[$collector->getName()])) {
             throw new DebugBarException("'{$collector->getName()}' is already a registered collector");
+        }
+        if ($this->editorTemplate && method_exists($collector, 'setEditorLinkTemplate')) {
+            $collector->setEditorLinkTemplate($this->editorTemplate);
+        }
+        if ($this->editorLinkTemplate && method_exists($collector, 'setXdebugLinkTemplate')) {
+            $collector->setXdebugLinkTemplate($this->editorLinkTemplate);
+        }
+        if ($this->remotePathReplacements && method_exists($collector, 'setXdebugReplacements')) {
+            $collector->setXdebugReplacements($this->remotePathReplacements);
         }
         $this->collectors[$collector->getName()] = $collector;
         return $this;
@@ -466,6 +481,62 @@ class DebugBar implements ArrayAccess
             $this->jsRenderer = new JavascriptRenderer($this, $baseUrl, $basePath);
         }
         return $this->jsRenderer;
+    }
+
+    /**
+     * Set the editor globally, e.g., `vscode`
+     *
+     * @param string $editor
+     */
+    public function setEditor($editor)
+    {
+        $this->editorTemplate = $editor;
+        $this->editorLinkTemplate = null;
+
+        foreach ($this->collectors as $collector) {
+            if (method_exists($collector, 'setEditorLinkTemplate')) {
+                $collector->setEditorLinkTemplate($this->editorTemplate);
+            }
+        }
+    }
+
+    /**
+     * Set the editor link template globally,
+     * `%f` = file, `%l` = line, e.g., `vscode://file/%f:%l`
+     *
+     * @param string $editorLinkTemplate
+     * @param bool $shouldUseAjax
+     */
+    public function setEditorTemplate($editorLinkTemplate, $shouldUseAjax = false)
+    {
+        $this->editorTemplate = null;
+        $this->editorLinkTemplate = !$shouldUseAjax ? $editorLinkTemplate
+            : "javascript:(()=>{let r=new XMLHttpRequest;r.open('get','{$editorLinkTemplate}');r.send();})()";
+
+        foreach ($this->collectors as $collector) {
+            if (method_exists($collector, 'setXdebugLinkTemplate')) {
+                $collector->setXdebugLinkTemplate($this->editorLinkTemplate);
+            }
+        }
+    }
+
+    /**
+     * Set server path replacements, server paths will be mapped to local paths
+     * e.g., `['/var/www/remote/' => '/home/local/']`,
+     * '/var/www/remote/app/path' will become to '/home/local/app/path'
+     *
+     * @param array $remotePathReplacements
+     * @param bool $shouldUseAjax
+     */
+    public function setRemoteReplacements($remotePathReplacements)
+    {
+        $this->remotePathReplacements = $remotePathReplacements;
+
+        foreach ($this->collectors as $collector) {
+            if (method_exists($collector, 'setXdebugReplacements')) {
+                $collector->setXdebugReplacements($this->remotePathReplacements);
+            }
+        }
     }
 
     // --------------------------------------------
