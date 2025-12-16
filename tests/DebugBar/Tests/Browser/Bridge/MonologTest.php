@@ -3,9 +3,9 @@
 namespace DebugBar\Tests\Browser\Bridge;
 
 use DebugBar\Browser\Bridge\WebDriverElement;
-use DebugBar\Tests\Browser\AbstractBrowserTest;
+use DebugBar\Tests\Browser\AbstractBrowserTestCase;
 
-class MonologTest extends AbstractBrowserTest
+class MonologTest extends AbstractBrowserTestCase
 {
     public function testMonologCollector(): void
     {

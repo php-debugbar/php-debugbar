@@ -127,6 +127,8 @@ trait HasXdebugLinks
             'netbeans' => 'netbeans://open/?f=%f:%l',
             'cursor' => 'cursor://file/%f:%l',
             'windsurf' => 'windsurf://file/%f:%l',
+            'zed' => 'zed://file/%f:%l',
+            'antigravity' => 'antigravity://file/%f:%l',
         );
 
         if (is_string($editor) && isset($editorLinkTemplates[$editor])) {
@@ -141,10 +143,10 @@ trait HasXdebugLinks
     public function setXdebugLinkTemplate($xdebugLinkTemplate, $shouldUseAjax = false)
     {
         if ($xdebugLinkTemplate === 'idea') {
-            $this->xdebugLinkTemplate  = 'http://localhost:63342/api/file/?file=%f&line=%l';
+            $this->xdebugLinkTemplate = 'http://localhost:63342/api/file/?file=%f&line=%l';
             $this->xdebugShouldUseAjax = true;
         } else {
-            $this->xdebugLinkTemplate  = $xdebugLinkTemplate;
+            $this->xdebugLinkTemplate = $xdebugLinkTemplate;
             $this->xdebugShouldUseAjax = $shouldUseAjax;
         }
     }
