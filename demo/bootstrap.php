@@ -23,6 +23,8 @@ $debugbarRenderer = $debugbar->getJavascriptRenderer()
 // $debugbarRenderer->setOpenHandlerUrl('open.php');
 
 // configs
+// $debugbar->useHtmlVarDumper();
+// $debugbar->setEditor('vscode');
 // $debugbar->setEditor('vscode');
 // $debugbar->setRemoteReplacements(['/remote/demo/' => '/home/demo/']);
 // $debugbar['messages']->collectFileTrace();

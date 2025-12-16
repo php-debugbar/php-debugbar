@@ -46,6 +46,8 @@ class DebugBar implements ArrayAccess
 
     protected $stackSessionNamespace = 'PHPDEBUGBAR_STACK_DATA';
 
+    protected $useHtmlVarDumper = false;
+
     protected $stackAlwaysUseSessionStorage = false;
 
     protected $editorTemplate = null;
@@ -69,6 +71,9 @@ class DebugBar implements ArrayAccess
         }
         if (isset($this->collectors[$collector->getName()])) {
             throw new DebugBarException("'{$collector->getName()}' is already a registered collector");
+        }
+        if ($this->useHtmlVarDumper && method_exists($collector, 'useHtmlVarDumper')) {
+            $collector->useHtmlVarDumper($this->useHtmlVarDumper);
         }
         if ($this->editorTemplate && method_exists($collector, 'setEditorLinkTemplate')) {
             $collector->setEditorLinkTemplate($this->editorTemplate);
@@ -210,6 +215,22 @@ class DebugBar implements ArrayAccess
             $this->httpDriver = new PhpHttpDriver();
         }
         return $this->httpDriver;
+    }
+
+    /**
+     * Set the sinfony html avr dumper globally
+     *
+     * @param bool $value
+     */
+    public function useHtmlVarDumper($value = true)
+    {
+        $this->useHtmlVarDumper = $value;
+
+        foreach ($this->collectors as $collector) {
+            if (method_exists($collector, 'useHtmlVarDumper')) {
+                $collector->useHtmlVarDumper($this->useHtmlVarDumper);
+            }
+        }
     }
 
     /**
