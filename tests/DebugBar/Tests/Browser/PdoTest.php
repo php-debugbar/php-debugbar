@@ -5,7 +5,7 @@ namespace DebugBar\Tests\Browser;
 use DebugBar\Browser\Bridge\WebDriverElement;
 use Facebook\WebDriver\WebDriverDimension;
 
-class PdoTest extends AbstractBrowserTest
+class PdoTest extends AbstractBrowserTestCase
 {
     public function testMonologCollector(): void
     {
