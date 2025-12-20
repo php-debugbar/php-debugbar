@@ -6,75 +6,63 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
 (function($) {
 
-    if (typeof(localStorage) == 'undefined') {
-        // provide mock localStorage object for dumb browsers
-        localStorage = {
-            setItem: function(key, value) {},
-            getItem: function(key) { return null; }
-        };
-    }
-
     if (typeof(PhpDebugBar.utils) == 'undefined') {
         PhpDebugBar.utils = {};
     }
 
     /**
      * Returns the value from an object property.
-     * Using dots in the key, it is possible to retrieve nested property values
+     * Using dots in the key, it is possible to retrieve nested property values.
      *
-     * @param {Object} dict
-     * @param {String} key
-     * @param {Object} default_value
-     * @return {Object}
+     * Note: This returns `defaultValue` only when the path is missing (null/undefined),
+     * not when the value is falsy (0/false/"").
+     *
+     * @param {Record<string, any>} dict
+     * @param {string} key
+     * @param {any} [defaultValue]
+     * @returns {any}
      */
-    var getDictValue = PhpDebugBar.utils.getDictValue = function(dict, key, default_value) {
-        var d = dict, parts = key.split('.');
-        for (var i = 0; i < parts.length; i++) {
-            if (!d[parts[i]]) {
-                return default_value;
-            }
-            d = d[parts[i]];
+    var getDictValue = PhpDebugBar.utils.getDictValue = function(dict, key, defaultValue) {
+        if (dict == null) return defaultValue;
+
+        const parts = String(key).split(".");
+        let d = dict;
+
+        for (const part of parts) {
+            if (d == null) return defaultValue;
+            d = d[part];
+            if (d === undefined) return defaultValue;
         }
+
         return d;
     }
 
     /**
-     * Counts the number of properties in an object
+     * Returns a prefixed CSS class name (or selector).
      *
-     * @param {Object} obj
-     * @return {Integer}
+     * If `cls` contains spaces, each class is prefixed.
+     * If `cls` starts with ".", the dot is preserved (selector form).
+     *
+     * @param {string} cls
+     * @param {string} prefix
+     * @returns {string}
      */
-    var getObjectSize = PhpDebugBar.utils.getObjectSize = function(obj) {
-        if (Object.keys) {
-            return Object.keys(obj).length;
-        }
-        var count = 0;
-        for (var k in obj) {
-            if (obj.hasOwnProperty(k)) {
-                count++;
-            }
-        }
-        return count;
-    }
+    PhpDebugBar.utils.csscls = function (cls, prefix) {
+        const s = String(cls).trim();
 
-    /**
-     * Returns a prefixed css class name
-     *
-     * @param {String} cls
-     * @return {String}
-     */
-    PhpDebugBar.utils.csscls = function(cls, prefix) {
-        if (cls.indexOf(' ') > -1) {
-            var clss = cls.split(' '), out = [];
-            for (var i = 0, c = clss.length; i < c; i++) {
-                out.push(PhpDebugBar.utils.csscls(clss[i], prefix));
-            }
-            return out.join(' ');
+        if (s.includes(" ")) {
+            return s
+                .split(/\s+/)
+                .filter(Boolean)
+                .map(c => PhpDebugBar.utils.csscls(c, prefix))
+                .join(" ");
         }
-        if (cls.indexOf('.') === 0) {
-            return '.' + prefix + cls.substr(1);
+
+        if (s.startsWith(".")) {
+            return "." + prefix + s.slice(1);
         }
-        return prefix + cls;
+
+        return prefix + s;
     };
 
     /**
@@ -518,7 +506,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 suffix = '';
             }
 
-            var nb = nb || getObjectSize(this.debugbar.datasets) ;
+            var nb = nb || Object.keys(this.debugbar.datasets).length ;
 
             if (typeof(data['__meta']) === 'undefined') {
                 return "#" + nb + suffix;
@@ -1151,7 +1139,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 return;
             }
 
-            var nb = getObjectSize(this.datasets) + 1;
+            var nb = Object.keys(this.datasets).length + 1;
             id = id || nb;
             data.__meta['nb'] = nb;
             data.__meta['suffix'] = suffix;
@@ -1161,7 +1149,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
             if (this.datasetTab) {
                 this.datasetTab.set('data', this.datasets);
-                var datasetSize = getObjectSize(this.datasets);
+                var datasetSize = Object.keys(this.datasets).length;
                 this.datasetTab.set('badge', datasetSize > 1 ? datasetSize : null);
                 this.datasetTab.$tab.show();
             }

@@ -105,16 +105,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
         return pre;
     };
 
-    var getDictValue = PhpDebugBar.utils.getDictValue = function(dict, key, default_value) {
-        var d = dict, parts = key.split('.');
-        for (var i = 0; i < parts.length; i++) {
-            if (!d[parts[i]]) {
-                return default_value;
-            }
-            d = d[parts[i]];
-        }
-        return d;
-    }
+    var getDictValue = PhpDebugBar.utils.getDictValue;
 
     // ------------------------------------------------------------------
     // Generic widgets
