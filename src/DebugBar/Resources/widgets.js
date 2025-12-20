@@ -1,6 +1,6 @@
-if (typeof(PhpDebugBar) == 'undefined') {
+if (typeof PhpDebugBar === 'undefined') {
     // namespace
-    var PhpDebugBar = {};
+    window.PhpDebugBar = {};
     PhpDebugBar.$ = jQuery;
 }
 
@@ -11,7 +11,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
      */
     PhpDebugBar.Widgets = {};
 
-    var csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
+    const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
 
     /**
      * Replaces spaces with &nbsp; and line breaks with <br>
@@ -19,7 +19,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
      * @param {String} text
      * @return {String}
      */
-    var htmlize = PhpDebugBar.Widgets.htmlize = function(text) {
+    const htmlize = PhpDebugBar.Widgets.htmlize = function(text) {
         return text.replace(/\n/g, '<br>').replace(/\s/g, "&nbsp;")
     };
 
@@ -31,8 +31,8 @@ if (typeof(PhpDebugBar) == 'undefined') {
      * @param {Boolean} prettify Uses htmlize() if true
      * @return {String}
      */
-    var renderValue = PhpDebugBar.Widgets.renderValue = function(value, prettify) {
-        if (typeof(value) !== 'string') {
+    const renderValue = PhpDebugBar.Widgets.renderValue = function(value, prettify) {
+        if (typeof value !== 'string') {
             if (prettify) {
                 return htmlize(JSON.stringify(value, undefined, 2));
             }
@@ -48,9 +48,9 @@ if (typeof(PhpDebugBar) == 'undefined') {
      * @param  {String} lang
      * @return {String}
      */
-    var highlight = PhpDebugBar.Widgets.highlight = function(code, lang) {
-        if (typeof(code) === 'string') {
-            if (typeof(hljs) === 'undefined') {
+    const highlight = PhpDebugBar.Widgets.highlight = function(code, lang) {
+        if (typeof code === 'string') {
+            if (typeof hljs === 'undefined') {
                 return htmlize(code);
             }
             if (lang && hljs.getLanguage(lang)) {
@@ -59,7 +59,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             return hljs.highlightAuto(code).value;
         }
 
-        if (typeof(hljs) === 'object') {
+        if (typeof hljs === 'object') {
             code.each(function(i, e) { hljs.highlightElement(e); });
         }
         return code;
@@ -74,12 +74,12 @@ if (typeof(PhpDebugBar) == 'undefined') {
      * @param  {Number} [highlightedLine] If provided, the given line number will be highlighted.
      * @return {String}
      */
-    var createCodeBlock = PhpDebugBar.Widgets.createCodeBlock = function(code, lang, firstLineNumber, highlightedLine) {
-        var pre = $('<pre />').addClass(csscls('code-block'));
+    const createCodeBlock = PhpDebugBar.Widgets.createCodeBlock = function(code, lang, firstLineNumber, highlightedLine) {
+        const pre = $('<pre />').addClass(csscls('code-block'));
         // Add a newline to prevent <code> element from vertically collapsing too far if the last
         // code line was empty: that creates problems with the horizontal scrollbar being
         // incorrectly positioned - most noticeable when line numbers are shown.
-        var codeElement = $('<code />').text(code + '\n').appendTo(pre);
+        const codeElement = $('<code />').text(code + '\n').appendTo(pre);
 
         // Format the code
         if (lang) {
@@ -89,11 +89,11 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
         // Show line numbers in a list
         if (!isNaN(parseFloat(firstLineNumber))) {
-            var lineCount = code.split('\n').length;
-            var $lineNumbers = $('<ul />').prependTo(pre);
+            const lineCount = code.split('\n').length;
+            const $lineNumbers = $('<ul />').prependTo(pre);
             pre.children().addClass(csscls('numbered-code'));
-            for (var i = firstLineNumber; i < firstLineNumber + lineCount; i++) {
-                var li = $('<li />').text(i).appendTo($lineNumbers);
+            for (let i = firstLineNumber; i < firstLineNumber + lineCount; i++) {
+                const li = $('<li />').text(i).appendTo($lineNumbers);
 
                 // Add a span with a special class if we are supposed to highlight a line.
                 if (highlightedLine === i) {
@@ -105,7 +105,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
         return pre;
     };
 
-    var getDictValue = PhpDebugBar.utils.getDictValue;
+    const getDictValue = PhpDebugBar.utils.getDictValue;
 
     // ------------------------------------------------------------------
     // Generic widgets
@@ -118,7 +118,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
      *  - data
      *  - itemRenderer: a function used to render list items (optional)
      */
-    var ListWidget = PhpDebugBar.Widgets.ListWidget = PhpDebugBar.Widget.extend({
+    const ListWidget = PhpDebugBar.Widgets.ListWidget = PhpDebugBar.Widget.extend({
 
         tagName: 'ul',
 
@@ -138,9 +138,9 @@ if (typeof(PhpDebugBar) == 'undefined') {
                     return;
                 }
 
-                var data = this.get('data');
-                for (var i = 0; i < data.length; i++) {
-                    var li = $('<li />').addClass(csscls('list-item')).appendTo(this.$el);
+                const data = this.get('data');
+                for (let i = 0; i < data.length; i++) {
+                    const li = $('<li />').addClass(csscls('list-item')).appendTo(this.$el);
                     this.get('itemRenderer')(li, data[i]);
                 }
             });
@@ -167,7 +167,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
      *  - data
      *  - itemRenderer: a function used to render list items (optional)
      */
-    var KVListWidget = PhpDebugBar.Widgets.KVListWidget = ListWidget.extend({
+    const KVListWidget = PhpDebugBar.Widgets.KVListWidget = ListWidget.extend({
 
         tagName: 'dl',
 
@@ -180,12 +180,11 @@ if (typeof(PhpDebugBar) == 'undefined') {
                     return;
                 }
 
-                var self = this;
-                $.each(this.get('data'), function(key, value) {
-                    var dt = $('<dt />').addClass(csscls('key')).appendTo(self.$el);
-                    var dd = $('<dd />').addClass(csscls('value')).appendTo(self.$el);
-                    self.get('itemRenderer')(dt, dd, key, value);
-                });
+                for (const [key, value] of Object.entries(this.get('data'))) {
+                    const dt = $('<dt />').addClass(csscls('key')).appendTo(this.$el);
+                    const dd = $('<dd />').addClass(csscls('value')).appendTo(this.$el);
+                    this.get('itemRenderer')(dt, dd, key, value);
+                }
             });
         },
 
@@ -213,20 +212,20 @@ if (typeof(PhpDebugBar) == 'undefined') {
      * Options:
      *  - data
      */
-    var VariableListWidget = PhpDebugBar.Widgets.VariableListWidget = KVListWidget.extend({
+    const VariableListWidget = PhpDebugBar.Widgets.VariableListWidget = KVListWidget.extend({
 
         className: csscls('kvlist varlist'),
 
         itemRenderer: function(dt, dd, key, value) {
             $('<span />').attr('title', key).text(key).appendTo(dt);
 
-            var v = value && value.value || value;
+            let v = value && value.value || value;
             if (v && v.length > 100) {
                 v = v.substr(0, 100) + "...";
             }
-            var prettyVal = null;
+            let prettyVal = null;
             dd.text(v).click(function() {
-                if (window.getSelection().type == "Range") {
+                if (window.getSelection().type === "Range") {
                     return '';
                 }
                 if (dd.hasClass(csscls('pretty'))) {
@@ -250,7 +249,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
      * Options:
      *  - data
      */
-    var HtmlVariableListWidget = PhpDebugBar.Widgets.HtmlVariableListWidget = KVListWidget.extend({
+    const HtmlVariableListWidget = PhpDebugBar.Widgets.HtmlVariableListWidget = KVListWidget.extend({
 
         className: csscls('kvlist htmlvarlist'),
 
@@ -259,7 +258,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             dd.html(value && value.value || value);
 
             if (value && value.xdebug_link) {
-                var header = $('<span />').addClass(csscls('filename')).text(value.xdebug_link.filename + ( value.xdebug_link.line ? "#" + value.xdebug_link.line : ''));
+                const header = $('<span />').addClass(csscls('filename')).text(value.xdebug_link.filename + ( value.xdebug_link.line ? "#" + value.xdebug_link.line : ''));
                 if (value.xdebug_link) {
                     if (value.xdebug_link.ajax) {
                         $('<a title="' + value.xdebug_link.url + '"></a>').on('click', function () {
@@ -286,7 +285,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
      *  - key_map: list of keys to be displayed with an optional label
      *             example: {key1: label1, key2: label2} or [key1, key2]
      */
-    var TableVariableListWidget = PhpDebugBar.Widgets.TableVariableListWidget =  PhpDebugBar.Widget.extend({
+    const TableVariableListWidget = PhpDebugBar.Widgets.TableVariableListWidget =  PhpDebugBar.Widget.extend({
 
         tagName: 'div',
 
@@ -377,7 +376,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
      * Options:
      *  - data
      */
-    var IFrameWidget = PhpDebugBar.Widgets.IFrameWidget = PhpDebugBar.Widget.extend({
+    const IFrameWidget = PhpDebugBar.Widgets.IFrameWidget = PhpDebugBar.Widget.extend({
 
         tagName: 'iframe',
 
@@ -408,7 +407,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
      * Options:
      *  - data
      */
-    var MessagesWidget = PhpDebugBar.Widgets.MessagesWidget = PhpDebugBar.Widget.extend({
+    const MessagesWidget = PhpDebugBar.Widgets.MessagesWidget = PhpDebugBar.Widget.extend({
 
         className: csscls('messages'),
 
@@ -537,7 +536,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
         onFilterClick: function(el, type) {
             $(el).toggleClass(csscls('excluded'));
 
-            var excluded = [];
+            const excluded = [];
             this.$toolbar.find(csscls('.filter') + csscls('.excluded') + csscls('.' + type)).each(function() {
                 excluded.push(this.rel === 'none' || !this.rel ? undefined : this.rel);
             });
@@ -555,7 +554,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
      * Options:
      *  - data
      */
-    var TimelineWidget = PhpDebugBar.Widgets.TimelineWidget = PhpDebugBar.Widget.extend({
+    const TimelineWidget = PhpDebugBar.Widgets.TimelineWidget = PhpDebugBar.Widget.extend({
 
         tagName: 'ul',
 
@@ -592,7 +591,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 if (data.measures) {
                     var aggregate = {};
 
-                    for (var i = 0; i < data.measures.length; i++) {
+                    for (let i = 0; i < data.measures.length; i++) {
                         var measure = data.measures[i];
                         var group = measure.group || measure.label;
 
@@ -625,7 +624,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
                         if (measure.params && !$.isEmptyObject(measure.params)) {
                             var table = $('<table><tr><th colspan="2">Params</th></tr></table>').hide().addClass(csscls('params')).appendTo(li);
-                            for (var key in measure.params) {
+                            for (let key in measure.params) {
                                 if (typeof measure.params[key] !== 'function') {
                                     table.append('<tr><td class="' + csscls('name') + '">' + key + '</td><td class="' + csscls('value') +
                                     '"><pre><code>' + measure.params[key] + '</code></pre></td></tr>');
@@ -686,7 +685,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
      * Options:
      *  - data
      */
-    var ExceptionsWidget = PhpDebugBar.Widgets.ExceptionsWidget = PhpDebugBar.Widget.extend({
+    const ExceptionsWidget = PhpDebugBar.Widgets.ExceptionsWidget = PhpDebugBar.Widget.extend({
 
         className: csscls('exceptions'),
 
@@ -753,7 +752,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
      * Displays datasets in a table
      *
      */
-    var DatasetWidget = PhpDebugBar.Widgets.DatasetWidget = PhpDebugBar.Widget.extend({
+    const DatasetWidget = PhpDebugBar.Widgets.DatasetWidget = PhpDebugBar.Widget.extend({
 
         initialize: function(options) {
             if (!options['itemRenderer']) {

@@ -1,12 +1,12 @@
-if (typeof(PhpDebugBar) == 'undefined') {
+if (typeof PhpDebugBar === 'undefined') {
     // namespace
-    var PhpDebugBar = {};
+    window.PhpDebugBar = {};
     PhpDebugBar.$ = jQuery;
 }
 
 (function($) {
 
-    var csscls = function(cls) {
+    const csscls = function(cls) {
         return PhpDebugBar.utils.csscls(cls, 'phpdebugbar-openhandler-');
     };
 
@@ -19,7 +19,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
         },
 
         render: function() {
-            var self = this;
+            const self = this;
 
             this.$el.appendTo('body').hide();
             this.$closebtn = $('<a><i class="phpdebugbar-fa phpdebugbar-fa-times"></i></a>');
@@ -74,14 +74,14 @@ if (typeof(PhpDebugBar) == 'undefined') {
         },
 
         addSearch: function(){
-            var self = this;
-            var searchBtn = $('<button />')
+            const self = this;
+            const searchBtn = $('<button />')
                 .text('Search')
                 .attr('type', 'submit')
                 .on('click', function(e) {
                     self.$table.empty();
-                    var search = {};
-                    var a = $(this).parent().serializeArray();
+                    const search = {};
+                    const a = $(this).parent().serializeArray();
                     $.each(a, function() {
                         if(this.value){
                             search[this.name] = this.value;
@@ -102,9 +102,9 @@ if (typeof(PhpDebugBar) == 'undefined') {
         },
 
         handleFind: function(data) {
-            var self = this;
+            const self = this;
             $.each(data, function(i, meta) {
-               var a = $('<a />')
+               const a = $('<a />')
                     .text('Load dataset')
                     .on('click', function(e) {
                        self.hide();
@@ -114,7 +114,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                        e.preventDefault();
                     });
 
-                var method = $('<a />')
+                const method = $('<a />')
                     .text(meta['method'])
                     .on('click', function(e) {
                         self.$table.empty();
@@ -122,7 +122,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                         e.preventDefault();
                     });
 
-                var uri = $('<a />')
+                const uri = $('<a />')
                     .text(meta['uri'])
                     .on('click', function(e) {
                         self.hide();
@@ -132,7 +132,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                         e.preventDefault();
                     });
 
-                var ip = $('<a />')
+                const ip = $('<a />')
                     .text(meta['ip'])
                     .on('click', function(e) {
                         self.$table.empty();
@@ -140,7 +140,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                         e.preventDefault();
                     });
 
-                var search = $('<a />')
+                const search = $('<a />')
                     .text('Show URL')
                     .on('click', function(e) {
                         self.$table.empty();
@@ -174,7 +174,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
         },
 
         find: function(filters, offset, callback) {
-            var data = $.extend({}, filters, {max: this.get('items_per_page'), offset: offset || 0});
+            const data = Object.assign({}, filters, {max: this.get('items_per_page'), offset: offset || 0});
             this.last_find_request = data;
             this.ajax(data, callback);
         },
@@ -188,7 +188,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
         },
 
         ajax: function(data, callback) {
-            var url = this.get('url');
+            let url = this.get('url');
             if (data) {
                 url = url + ( url.includes('?') ? '&' : '?' ) + new URLSearchParams(data);
             }
