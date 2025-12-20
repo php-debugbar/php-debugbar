@@ -263,7 +263,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                 if (value.xdebug_link) {
                     if (value.xdebug_link.ajax) {
                         $('<a title="' + value.xdebug_link.url + '"></a>').on('click', function () {
-                            $.ajax(value.xdebug_link.url);
+                            fetch(value.xdebug_link.url);
                         }).addClass(csscls('editor-link')).appendTo(header);
                     } else {
                         $('<a href="' + value.xdebug_link.url + '"></a>').addClass(csscls('editor-link')).appendTo(header);
@@ -336,7 +336,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                             .appendTo($('<td />').addClass(csscls('editor')).appendTo($tr));
                         if (values.xdebug_link.ajax) {
                             $('<a title="' + values.xdebug_link.url + '"></a>').on('click', function () {
-                                $.ajax(values.xdebug_link.url);
+                                fetch(values.xdebug_link.url);
                             }).addClass(csscls('editor-link')).appendTo(filename);
                         } else {
                             $('<a href="' + values.xdebug_link.url + '"></a>').addClass(csscls('editor-link')).appendTo(filename);
@@ -448,7 +448,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                     if (value.xdebug_link) {
                         if (value.xdebug_link.ajax) {
                             $('<a title="' + value.xdebug_link.url + '"></a>').on('click', function () {
-                                $.ajax(value.xdebug_link.url);
+                                fetch(value.xdebug_link.url);
                             }).addClass(csscls('editor-link')).appendTo(header);
                         } else {
                             $('<a href="' + value.xdebug_link.url + '"></a>').addClass(csscls('editor-link')).appendTo(header);
