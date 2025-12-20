@@ -98,140 +98,130 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
     /**
      * Base class for all elements with a visual component
-     *
-     * @param {Object} options
-     * @constructor
      */
-    var Widget = PhpDebugBar.Widget = function(options) {
-        this._attributes = $.extend({}, this.defaults);
-        this._boundAttributes = {};
-        this.$el = $('<' + this.tagName + ' />');
-        if (this.className) {
-            this.$el.addClass(this.className);
+    class Widget {
+        constructor(options = {}) {
+            this._attributes = { ...this.defaults };
+            this._boundAttributes = {};
+            this.$el = $(`<${this.tagName} />`);
+            if (this.className) {
+                this.$el.addClass(this.className);
+            }
+            this.initialize(options);
+            this.render();
         }
-        this.initialize.apply(this, [options || {}]);
-        this.render.apply(this);
-    };
-
-    $.extend(Widget.prototype, {
-
-        tagName: 'div',
-
-        className: null,
-
-        defaults: {},
 
         /**
          * Called after the constructor
          *
          * @param {Object} options
          */
-        initialize: function(options) {
+        initialize(options) {
             this.set(options);
-        },
+        }
 
         /**
          * Called after the constructor to render the element
          */
-        render: function() {},
+        render() {}
 
         /**
          * Sets the value of an attribute
          *
-         * @param {String} attr Can also be an object to set multiple attributes at once
-         * @param {Object} value
+         * @param {String|Object} attr Attribute name or object with multiple attributes
+         * @param {*} [value] Attribute value (optional if attr is an object)
          */
-        set: function(attr, value) {
-            if (typeof(attr) != 'string') {
-                for (var k in attr) {
+        set(attr, value) {
+            if (typeof attr !== 'string') {
+                for (const k in attr) {
                     this.set(k, attr[k]);
                 }
                 return;
             }
 
             this._attributes[attr] = value;
-            if (typeof(this._boundAttributes[attr]) !== 'undefined') {
-                for (var i = 0, c = this._boundAttributes[attr].length; i < c; i++) {
-                    this._boundAttributes[attr][i].apply(this, [value]);
+            if (this._boundAttributes[attr]) {
+                for (const callback of this._boundAttributes[attr]) {
+                    callback.call(this, value);
                 }
             }
-        },
+        }
 
         /**
          * Checks if an attribute exists and is not null
          *
          * @param {String} attr
-         * @return {[type]} [description]
+         * @return {Boolean}
          */
-        has: function(attr) {
-            return typeof(this._attributes[attr]) !== 'undefined' && this._attributes[attr] !== null;
-        },
+        has(attr) {
+            return this._attributes[attr] !== undefined && this._attributes[attr] !== null;
+        }
 
         /**
          * Returns the value of an attribute
          *
          * @param {String} attr
-         * @return {Object}
+         * @return {*}
          */
-        get: function(attr) {
+        get(attr) {
             return this._attributes[attr];
-        },
+        }
 
         /**
          * Registers a callback function that will be called whenever the value of the attribute changes
          *
          * If cb is a jQuery element, text() will be used to fill the element
          *
-         * @param {String} attr
+         * @param {String|Array} attr
          * @param {Function} cb
          */
-        bindAttr: function(attr, cb) {
+        bindAttr(attr, cb) {
             if (Array.isArray(attr)) {
-                for (var i = 0, c = attr.length; i < c; i++) {
-                    this.bindAttr(attr[i], cb);
+                for (const a of attr) {
+                    this.bindAttr(a, cb);
                 }
                 return;
             }
 
-            if (typeof(this._boundAttributes[attr]) == 'undefined') {
+            if (!this._boundAttributes[attr]) {
                 this._boundAttributes[attr] = [];
             }
-            if (typeof(cb) == 'object') {
-                var el = cb;
-                cb = function(value) { el.text(value || ''); };
+            if (typeof cb === 'object') {
+                const el = cb;
+                cb = value => el.text(value || '');
             }
             this._boundAttributes[attr].push(cb);
             if (this.has(attr)) {
-                cb.apply(this, [this._attributes[attr]]);
+                cb.call(this, this._attributes[attr]);
             }
         }
 
-    });
+        /**
+         * Creates a subclass
+         *
+         * Code from Backbone.js
+         *
+         * @param {Object} props Prototype properties
+         * @return {Function}
+         */
+        static extend(props) {
+            const Parent = this;
+            class Child extends Parent {}
 
+            Object.assign(Child.prototype, props);
+            Object.assign(Child, Parent);
+            Child.__super__ = Parent.prototype;
 
-    /**
-     * Creates a subclass
-     *
-     * Code from Backbone.js
-     *
-     * @param {Array} props Prototype properties
-     * @return {Function}
-     */
-    Widget.extend = function(props) {
-        var parent = this;
+            return Child;
+        }
+    }
 
-        var child = function() { return parent.apply(this, arguments); };
-        $.extend(child, parent);
+    // Set default prototype properties
+    Widget.prototype.tagName = 'div';
+    Widget.prototype.className = null;
+    Widget.prototype.defaults = {};
 
-        var Surrogate = function() { this.constructor = child; };
-        Surrogate.prototype = parent.prototype;
-        child.prototype = new Surrogate;
-        $.extend(child.prototype, props);
-
-        child.__super__ = parent.prototype;
-
-        return child;
-    };
+    PhpDebugBar.Widget = Widget;
 
     // ------------------------------------------------------------------
 
