@@ -7,6 +7,7 @@ const __dirname = path.dirname(__filename);
 
 // Icon mappings (our icon name -> Tabler icon name)
 const iconMappings = {
+    // Data collector icons
     'times': 'x',
     'clock-o': 'clock',
     'list-alt': 'list',
@@ -28,6 +29,13 @@ const iconMappings = {
     'search': 'search',
     'history': 'history',
     'sliders': 'adjustments-horizontal',
+
+    // UI control icons
+    'minimize': 'chevron-down',
+    'maximize': 'chevron-up',
+    'close': 'x',
+    'open': 'folder-open',
+    'restore': 'brand-php',
 };
 
 const svgDir = path.join(__dirname, '../node_modules/@tabler/icons/icons/outline');

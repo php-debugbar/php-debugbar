@@ -23,6 +23,11 @@
   --phpdebugbar-icon-search: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M10%2010m-7%200a7%207%200%201%200%2014%200a7%207%200%201%200%20-14%200%22%20%2F%3E%20%3Cpath%20d%3D%22M21%2021l-6%20-6%22%20%2F%3E%20%3C%2Fsvg%3E');
   --phpdebugbar-icon-history: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M12%208l0%204l2%202%22%20%2F%3E%20%3Cpath%20d%3D%22M3.05%2011a9%209%200%201%201%20.5%204m-.5%205v-5h5%22%20%2F%3E%20%3C%2Fsvg%3E');
   --phpdebugbar-icon-sliders: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M14%206m-2%200a2%202%200%201%200%204%200a2%202%200%201%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M4%206l8%200%22%20%2F%3E%20%3Cpath%20d%3D%22M16%206l4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M8%2012m-2%200a2%202%200%201%200%204%200a2%202%200%201%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2012l2%200%22%20%2F%3E%20%3Cpath%20d%3D%22M10%2012l10%200%22%20%2F%3E%20%3Cpath%20d%3D%22M17%2018m-2%200a2%202%200%201%200%204%200a2%202%200%201%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2018l11%200%22%20%2F%3E%20%3Cpath%20d%3D%22M19%2018l1%200%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --phpdebugbar-icon-minimize: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M6%209l6%206l6%20-6%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --phpdebugbar-icon-maximize: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M6%2015l6%20-6l6%206%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --phpdebugbar-icon-close: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M18%206l-12%2012%22%20%2F%3E%20%3Cpath%20d%3D%22M6%206l12%2012%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --phpdebugbar-icon-open: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M5%2019l2.757%20-7.351a1%201%200%200%201%20.936%20-.649h12.307a1%201%200%200%201%20.986%201.164l-.996%205.211a2%202%200%200%201%20-1.964%201.625h-14.026a2%202%200%200%201%20-2%20-2v-11a2%202%200%200%201%202%20-2h4l3%203h7a2%202%200%200%201%202%202v2%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --phpdebugbar-icon-restore: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M12%2012m-10%200a10%209%200%201%200%2020%200a10%209%200%201%200%20-20%200%22%20%2F%3E%20%3Cpath%20d%3D%22M5.5%2015l.395%20-1.974l.605%20-3.026h1.32a1%201%200%200%201%20.986%201.164l-.167%201a1%201%200%200%201%20-.986%20.836h-1.653%22%20%2F%3E%20%3Cpath%20d%3D%22M15.5%2015l.395%20-1.974l.605%20-3.026h1.32a1%201%200%200%201%20.986%201.164l-.167%201a1%201%200%200%201%20-.986%20.836h-1.653%22%20%2F%3E%20%3Cpath%20d%3D%22M12%207.5l-1%205.5%22%20%2F%3E%20%3Cpath%20d%3D%22M11.6%2010h2.4l-.5%203%22%20%2F%3E%20%3C%2Fsvg%3E');
 }
 
 .phpdebugbar-icon-times::before {
@@ -128,5 +133,30 @@
 .phpdebugbar-icon-sliders::before {
   -webkit-mask-image: var(--phpdebugbar-icon-sliders);
   mask-image: var(--phpdebugbar-icon-sliders);
+}
+
+.phpdebugbar-icon-minimize::before {
+  -webkit-mask-image: var(--phpdebugbar-icon-minimize);
+  mask-image: var(--phpdebugbar-icon-minimize);
+}
+
+.phpdebugbar-icon-maximize::before {
+  -webkit-mask-image: var(--phpdebugbar-icon-maximize);
+  mask-image: var(--phpdebugbar-icon-maximize);
+}
+
+.phpdebugbar-icon-close::before {
+  -webkit-mask-image: var(--phpdebugbar-icon-close);
+  mask-image: var(--phpdebugbar-icon-close);
+}
+
+.phpdebugbar-icon-open::before {
+  -webkit-mask-image: var(--phpdebugbar-icon-open);
+  mask-image: var(--phpdebugbar-icon-open);
+}
+
+.phpdebugbar-icon-restore::before {
+  -webkit-mask-image: var(--phpdebugbar-icon-restore);
+  mask-image: var(--phpdebugbar-icon-restore);
 }
 
