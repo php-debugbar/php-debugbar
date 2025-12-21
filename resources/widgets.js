@@ -468,7 +468,7 @@ if (typeof PhpDebugBar === 'undefined') {
             } });
 
             this.$list.$el.appendTo(this.$el);
-            this.$toolbar = $('<div><i class="phpdebugbar-fa phpdebugbar-fa-search"></i></div>').addClass(csscls('toolbar')).appendTo(this.$el);
+            this.$toolbar = $('<div><i class="phpdebugbar-icon phpdebugbar-icon-search"></i></div>').addClass(csscls('toolbar')).appendTo(this.$el);
 
             $('<input type="text" name="search" aria-label="Search" placeholder="Search" />')
                 .on('change', function () {

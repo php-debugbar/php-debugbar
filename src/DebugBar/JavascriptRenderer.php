@@ -37,7 +37,6 @@ class JavascriptRenderer
     protected $basePath;
 
     protected $cssVendors = array(
-        'fontawesome' => 'vendor/font-awesome/css/font-awesome.min.css',
         'highlightjs' => 'vendor/highlightjs/styles/github.css'
     );
 
@@ -48,7 +47,7 @@ class JavascriptRenderer
 
     protected $includeVendors = true;
 
-    protected $cssFiles = array('debugbar.css', 'widgets.css', 'openhandler.css');
+    protected $cssFiles = array('debugbar.css', 'icons.css', 'widgets.css', 'openhandler.css');
 
     protected $jsFiles = array('debugbar.js', 'widgets.js', 'openhandler.js');
 

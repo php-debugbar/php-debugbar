@@ -324,6 +324,27 @@ a.phpdebugbar-tab.phpdebugbar-active {
     display: none;
     vertical-align: middle;
   }
+
+/* Icon base styles */
+.phpdebugbar-icon::before,
+i.phpdebugbar-icon::before {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
+  /* Use mask to allow currentColor to work */
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: currentColor;
+}
   a.phpdebugbar-tab span.phpdebugbar-badge.phpdebugbar-visible {
     display: inline;
   }

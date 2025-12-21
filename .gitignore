@@ -11,3 +11,4 @@ composer.lock
 /tests/screenshots
 /node_modules
 /package-lock.json
+.DS_Store
