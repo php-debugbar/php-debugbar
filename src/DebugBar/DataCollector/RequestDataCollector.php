@@ -125,7 +125,7 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
             : "PhpDebugBar.Widgets.VariableListWidget";
         return array(
             "request" => array(
-                "icon" => "tags",
+                "icon" => "arrows-left-right",
                 "widget" => $widget,
                 "map" => "request",
                 "default" => "{}"
