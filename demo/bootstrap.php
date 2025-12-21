@@ -12,7 +12,6 @@ $debugbarRenderer = $debugbar->getJavascriptRenderer()
                              ->setBaseUrl('../resources')
                              ->setAjaxHandlerEnableTab(true)
                              ->setHideEmptyTabs(true)
-                             ->setEnableJqueryNoConflict(false)
                              ->setTheme($_GET['theme'] ?? 'auto');
 
 //
@@ -30,12 +29,16 @@ function render_demo_page(?Closure $callback = null)
     <head>
         <?php echo $debugbarRenderer->renderHead() ?>
         <script type="text/javascript">
-            $(function() {
-                $('.ajax').click(function() {
-                    $.get(this.href, function(data) {
-                        $('#ajax-result').html(data);
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.ajax').forEach(function(el) {
+                    el.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        fetch(this.href)
+                            .then(response => response.text())
+                            .then(data => {
+                                document.getElementById('ajax-result').innerHTML = data;
+                            });
                     });
-                    return false;
                 });
             });
         </script>
