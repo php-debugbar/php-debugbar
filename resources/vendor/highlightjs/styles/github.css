@@ -1,9 +1,9 @@
-div.phpdebugbar pre code.hljs {
+pre code.phpdebugbar-hljs {
   display: block;
   overflow-x: auto;
   padding: 1em;
 }
-div.phpdebugbar code.hljs {
+code.phpdebugbar-hljs {
   padding: 3px 5px;
 }
 /*!
@@ -16,102 +16,102 @@ div.phpdebugbar code.hljs {
   Outdated base version: https://github.com/primer/github-syntax-light
   Current colors taken from GitHub's CSS
 */
-div.phpdebugbar .hljs {
+.phpdebugbar-hljs {
   color: var(--debugbar-text);
 }
-div.phpdebugbar .hljs-doctag,
-div.phpdebugbar .hljs-keyword,
-div.phpdebugbar .hljs-meta div.phpdebugbar .hljs-keyword,
-div.phpdebugbar .hljs-template-tag,
-div.phpdebugbar .hljs-template-variable,
-div.phpdebugbar .hljs-type,
-div.phpdebugbar .hljs-variable.language_ {
+.phpdebugbar-hljs-doctag,
+.phpdebugbar-hljs-keyword,
+.phpdebugbar-hljs-meta .phpdebugbar-hljs-keyword,
+.phpdebugbar-hljs-template-tag,
+.phpdebugbar-hljs-template-variable,
+.phpdebugbar-hljs-type,
+.phpdebugbar-hljs-variable.language_ {
   /* prettylights-syntax-keyword */
   color: #d73a49
 }
-div.phpdebugbar .hljs-title,
-div.phpdebugbar .hljs-title.class_,
-div.phpdebugbar .hljs-title.class_.inherited__,
-div.phpdebugbar .hljs-title.function_ {
+.phpdebugbar-hljs-title,
+.phpdebugbar-hljs-title.class_,
+.phpdebugbar-hljs-title.class_.inherited__,
+.phpdebugbar-hljs-title.function_ {
   /* prettylights-syntax-entity */
   color: #6f42c1
 }
-div.phpdebugbar .hljs-attr,
-div.phpdebugbar .hljs-attribute,
-div.phpdebugbar .hljs-literal,
-div.phpdebugbar .hljs-meta,
-div.phpdebugbar .hljs-number,
-div.phpdebugbar .hljs-operator,
-div.phpdebugbar .hljs-variable,
-div.phpdebugbar .hljs-selector-attr,
-div.phpdebugbar .hljs-selector-class,
-div.phpdebugbar .hljs-selector-id {
+.phpdebugbar-hljs-attr,
+.phpdebugbar-hljs-attribute,
+.phpdebugbar-hljs-literal,
+.phpdebugbar-hljs-meta,
+.phpdebugbar-hljs-number,
+.phpdebugbar-hljs-operator,
+.phpdebugbar-hljs-variable,
+.phpdebugbar-hljs-selector-attr,
+.phpdebugbar-hljs-selector-class,
+.phpdebugbar-hljs-selector-id {
   /* prettylights-syntax-constant */
   color: #005cc5
 }
-div.phpdebugbar .hljs-regexp,
-div.phpdebugbar .hljs-string,
-div.phpdebugbar .hljs-meta div.phpdebugbar .hljs-string {
+.phpdebugbar-hljs-regexp,
+.phpdebugbar-hljs-string,
+.phpdebugbar-hljs-meta .phpdebugbar-hljs-string {
   /* prettylights-syntax-string */
   color: #032f62
 }
-div.phpdebugbar .hljs-built_in,
-div.phpdebugbar .hljs-symbol {
+.phpdebugbar-hljs-built_in,
+.phpdebugbar-hljs-symbol {
   /* prettylights-syntax-variable */
   color: #e36209
 }
-div.phpdebugbar .hljs-comment,
-div.phpdebugbar .hljs-code,
-div.phpdebugbar .hljs-formula {
+.phpdebugbar-hljs-comment,
+.phpdebugbar-hljs-code,
+.phpdebugbar-hljs-formula {
   /* prettylights-syntax-comment */
   color: #6a737d
 }
-div.phpdebugbar .hljs-name,
-div.phpdebugbar .hljs-quote,
-div.phpdebugbar .hljs-selector-tag,
-div.phpdebugbar .hljs-selector-pseudo {
+.phpdebugbar-hljs-name,
+.phpdebugbar-hljs-quote,
+.phpdebugbar-hljs-selector-tag,
+.phpdebugbar-hljs-selector-pseudo {
   /* prettylights-syntax-entity-tag */
   color: #22863a
 }
-div.phpdebugbar .hljs-subst {
+.phpdebugbar-hljs-subst {
   /* prettylights-syntax-storage-modifier-import */
   color: #24292e
 }
-div.phpdebugbar .hljs-section {
+.phpdebugbar-hljs-section {
   /* prettylights-syntax-markup-heading */
   color: #005cc5;
   font-weight: bold
 }
-div.phpdebugbar .hljs-bullet {
+.phpdebugbar-hljs-bullet {
   /* prettylights-syntax-markup-list */
   color: #735c0f
 }
-div.phpdebugbar .hljs-emphasis {
+.phpdebugbar-hljs-emphasis {
   /* prettylights-syntax-markup-italic */
   color: #24292e;
   font-style: italic
 }
-div.phpdebugbar .hljs-strong {
+.phpdebugbar-hljs-strong {
   /* prettylights-syntax-markup-bold */
   color: #24292e;
   font-weight: bold
 }
-div.phpdebugbar .hljs-addition {
+.phpdebugbar-hljs-addition {
   /* prettylights-syntax-markup-inserted */
   color: #22863a;
   background-color: #f0fff4
 }
-div.phpdebugbar .hljs-deletion {
+.phpdebugbar-hljs-deletion {
   /* prettylights-syntax-markup-deleted */
   color: #b31d28;
   background-color: #ffeef0
 }
-div.phpdebugbar .hljs-char.escape_,
-div.phpdebugbar .hljs-link,
-div.phpdebugbar .hljs-params,
-div.phpdebugbar .hljs-property,
-div.phpdebugbar .hljs-punctuation,
-div.phpdebugbar .hljs-tag {
+.phpdebugbar-hljs-char.escape_,
+.phpdebugbar-hljs-link,
+.phpdebugbar-hljs-params,
+.phpdebugbar-hljs-property,
+.phpdebugbar-hljs-punctuation,
+.phpdebugbar-hljs-tag {
   /* purposely ignored */
 
 }
@@ -126,99 +126,99 @@ div.phpdebugbar .hljs-tag {
   Outdated base version: https://github.com/primer/github-syntax-dark
   Current colors taken from GitHub's CSS
 */
-div.phpdebugbar[data-theme='dark'] .hljs-doctag,
-div.phpdebugbar[data-theme='dark'] .hljs-keyword,
-div.phpdebugbar[data-theme='dark'] .hljs-meta div.phpdebugbar[data-theme='dark'] .hljs-keyword,
-div.phpdebugbar[data-theme='dark'] .hljs-template-tag,
-div.phpdebugbar[data-theme='dark'] .hljs-template-variable,
-div.phpdebugbar[data-theme='dark'] .hljs-type,
-div.phpdebugbar[data-theme='dark'] .hljs-variable.language_ {
+[data-theme='dark'] .phpdebugbar-hljs-doctag,
+[data-theme='dark'] .phpdebugbar-hljs-keyword,
+[data-theme='dark'] .phpdebugbar-hljs-meta [data-theme='dark'] .phpdebugbar-hljs-keyword,
+[data-theme='dark'] .phpdebugbar-hljs-template-tag,
+[data-theme='dark'] .phpdebugbar-hljs-template-variable,
+[data-theme='dark'] .phpdebugbar-hljs-type,
+[data-theme='dark'] .phpdebugbar-hljs-variable.language_ {
   /* prettylights-syntax-keyword */
   color: #ff7b72
 }
-div.phpdebugbar[data-theme='dark'] .hljs-title,
-div.phpdebugbar[data-theme='dark'] .hljs-title.class_,
-div.phpdebugbar[data-theme='dark'] .hljs-title.class_.inherited__,
-div.phpdebugbar[data-theme='dark'] .hljs-title.function_ {
+[data-theme='dark'] .phpdebugbar-hljs-title,
+[data-theme='dark'] .phpdebugbar-hljs-title.class_,
+[data-theme='dark'] .phpdebugbar-hljs-title.class_.inherited__,
+[data-theme='dark'] .phpdebugbar-hljs-title.function_ {
   /* prettylights-syntax-entity */
   color: #d2a8ff
 }
-div.phpdebugbar[data-theme='dark'] .hljs-attr,
-div.phpdebugbar[data-theme='dark'] .hljs-attribute,
-div.phpdebugbar[data-theme='dark'] .hljs-literal,
-div.phpdebugbar[data-theme='dark'] .hljs-meta,
-div.phpdebugbar[data-theme='dark'] .hljs-number,
-div.phpdebugbar[data-theme='dark'] .hljs-operator,
-div.phpdebugbar[data-theme='dark'] .hljs-variable,
-div.phpdebugbar[data-theme='dark'] .hljs-selector-attr,
-div.phpdebugbar[data-theme='dark'] .hljs-selector-class,
-div.phpdebugbar[data-theme='dark'] .hljs-selector-id {
+[data-theme='dark'] .phpdebugbar-hljs-attr,
+[data-theme='dark'] .phpdebugbar-hljs-attribute,
+[data-theme='dark'] .phpdebugbar-hljs-literal,
+[data-theme='dark'] .phpdebugbar-hljs-meta,
+[data-theme='dark'] .phpdebugbar-hljs-number,
+[data-theme='dark'] .phpdebugbar-hljs-operator,
+[data-theme='dark'] .phpdebugbar-hljs-variable,
+[data-theme='dark'] .phpdebugbar-hljs-selector-attr,
+[data-theme='dark'] .phpdebugbar-hljs-selector-class,
+[data-theme='dark'] .phpdebugbar-hljs-selector-id {
   /* prettylights-syntax-constant */
   color: #79c0ff
 }
-div.phpdebugbar[data-theme='dark'] .hljs-regexp,
-div.phpdebugbar[data-theme='dark'] .hljs-string,
-div.phpdebugbar[data-theme='dark'] .hljs-meta div.phpdebugbar[data-theme='dark'] .hljs-string {
+[data-theme='dark'] .phpdebugbar-hljs-regexp,
+[data-theme='dark'] .phpdebugbar-hljs-string,
+[data-theme='dark'] .phpdebugbar-hljs-meta [data-theme='dark'] .phpdebugbar-hljs-string {
   /* prettylights-syntax-string */
   color: #a5d6ff
 }
-div.phpdebugbar[data-theme='dark'] .hljs-built_in,
-div.phpdebugbar[data-theme='dark'] .hljs-symbol {
+[data-theme='dark'] .phpdebugbar-hljs-built_in,
+[data-theme='dark'] .phpdebugbar-hljs-symbol {
   /* prettylights-syntax-variable */
   color: #ffa657
 }
-div.phpdebugbar[data-theme='dark'] .hljs-comment,
-div.phpdebugbar[data-theme='dark'] .hljs-code,
-div.phpdebugbar[data-theme='dark'] .hljs-formula {
+[data-theme='dark'] .phpdebugbar-hljs-comment,
+[data-theme='dark'] .phpdebugbar-hljs-code,
+[data-theme='dark'] .phpdebugbar-hljs-formula {
   /* prettylights-syntax-comment */
   color: #8b949e
 }
-div.phpdebugbar[data-theme='dark'] .hljs-name,
-div.phpdebugbar[data-theme='dark'] .hljs-quote,
-div.phpdebugbar[data-theme='dark'] .hljs-selector-tag,
-div.phpdebugbar[data-theme='dark'] .hljs-selector-pseudo {
+[data-theme='dark'] .phpdebugbar-hljs-name,
+[data-theme='dark'] .phpdebugbar-hljs-quote,
+[data-theme='dark'] .phpdebugbar-hljs-selector-tag,
+[data-theme='dark'] .phpdebugbar-hljs-selector-pseudo {
   /* prettylights-syntax-entity-tag */
   color: #7ee787
 }
-div.phpdebugbar[data-theme='dark'] .hljs-subst {
+[data-theme='dark'] .phpdebugbar-hljs-subst {
   /* prettylights-syntax-storage-modifier-import */
   color: #c9d1d9
 }
-div.phpdebugbar[data-theme='dark'] .hljs-section {
+[data-theme='dark'] .phpdebugbar-hljs-section {
   /* prettylights-syntax-markup-heading */
   color: #1f6feb;
   font-weight: bold
 }
-div.phpdebugbar[data-theme='dark'] .hljs-bullet {
+[data-theme='dark'] .phpdebugbar-hljs-bullet {
   /* prettylights-syntax-markup-list */
   color: #f2cc60
 }
-div.phpdebugbar[data-theme='dark'] .hljs-emphasis {
+[data-theme='dark'] .phpdebugbar-hljs-emphasis {
   /* prettylights-syntax-markup-italic */
   color: #c9d1d9;
   font-style: italic
 }
-div.phpdebugbar[data-theme='dark'] .hljs-strong {
+[data-theme='dark'] .phpdebugbar-hljs-strong {
   /* prettylights-syntax-markup-bold */
   color: #c9d1d9;
   font-weight: bold
 }
-div.phpdebugbar[data-theme='dark'] .hljs-addition {
+[data-theme='dark'] .phpdebugbar-hljs-addition {
   /* prettylights-syntax-markup-inserted */
   color: #aff5b4;
   background-color: #033a16
 }
-div.phpdebugbar[data-theme='dark'] .hljs-deletion {
+[data-theme='dark'] .phpdebugbar-hljs-deletion {
   /* prettylights-syntax-markup-deleted */
   color: #ffdcd7;
   background-color: #67060c
 }
-div.phpdebugbar[data-theme='dark'] .hljs-char.escape_,
-div.phpdebugbar[data-theme='dark'] .hljs-link,
-div.phpdebugbar[data-theme='dark'] .hljs-params,
-div.phpdebugbar[data-theme='dark'] .hljs-property,
-div.phpdebugbar[data-theme='dark'] .hljs-punctuation,
-div.phpdebugbar[data-theme='dark'] .hljs-tag {
+[data-theme='dark'] .phpdebugbar-hljs-char.escape_,
+[data-theme='dark'] .phpdebugbar-hljs-link,
+[data-theme='dark'] .phpdebugbar-hljs-params,
+[data-theme='dark'] .phpdebugbar-hljs-property,
+[data-theme='dark'] .phpdebugbar-hljs-punctuation,
+[data-theme='dark'] .phpdebugbar-hljs-tag {
   /* purposely ignored */
 
 }

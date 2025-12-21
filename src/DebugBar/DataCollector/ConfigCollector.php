@@ -82,7 +82,7 @@ class ConfigCollector extends DataCollector implements Renderable, AssetProvider
             : "PhpDebugBar.Widgets.VariableListWidget";
         return array(
             "$name" => array(
-                "icon" => "gear",
+                "icon" => "adjustments",
                 "widget" => $widget,
                 "map" => "$name",
                 "default" => "{}"

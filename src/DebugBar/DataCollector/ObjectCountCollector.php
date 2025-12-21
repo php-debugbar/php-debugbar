@@ -30,7 +30,7 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
      * @param string $name
      * @param string $icon
      */
-    public function __construct($name = 'counter', $icon = 'cubes')
+    public function __construct($name = 'counter', $icon = 'box')
     {
         $this->name = $name;
         $this->icon = $icon;

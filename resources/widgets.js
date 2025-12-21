@@ -49,16 +49,18 @@ if (typeof PhpDebugBar === 'undefined') {
      */
     const highlight = PhpDebugBar.Widgets.highlight = function (code, lang) {
         if (typeof code === 'string') {
-            if (typeof hljs === 'undefined') {
+            if (typeof phpdebugbar_hljs === 'undefined') {
                 return htmlize(code);
             }
+            const hljs = phpdebugbar_hljs.default || phpdebugbar_hljs;
             if (lang && hljs.getLanguage(lang)) {
                 return hljs.highlight(code, { language: lang }).value;
             }
             return hljs.highlightAuto(code).value;
         }
 
-        if (typeof hljs === 'object') {
+        if (typeof phpdebugbar_hljs === 'object') {
+            const hljs = phpdebugbar_hljs.default || phpdebugbar_hljs;
             code.each((i, e) => {
                 hljs.highlightElement(e);
             });
@@ -468,7 +470,7 @@ if (typeof PhpDebugBar === 'undefined') {
             } });
 
             this.$list.$el.appendTo(this.$el);
-            this.$toolbar = $('<div><i class="phpdebugbar-fa phpdebugbar-fa-search"></i></div>').addClass(csscls('toolbar')).appendTo(this.$el);
+            this.$toolbar = $('<div><i class="phpdebugbar-icon phpdebugbar-icon-search"></i></div>').addClass(csscls('toolbar')).appendTo(this.$el);
 
             $('<input type="text" name="search" aria-label="Search" placeholder="Search" />')
                 .on('change', function () {

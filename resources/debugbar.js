@@ -238,7 +238,7 @@ if (typeof PhpDebugBar === 'undefined') {
             this.$icon = $('<i />').appendTo(this.$tab);
             this.bindAttr('icon', function (icon) {
                 if (icon) {
-                    this.$icon.attr('class', `phpdebugbar-fa phpdebugbar-fa-${icon}`);
+                    this.$icon.attr('class', `phpdebugbar-icon phpdebugbar-icon-${icon}`);
                 } else {
                     this.$icon.attr('class', '');
                 }
@@ -294,7 +294,7 @@ if (typeof PhpDebugBar === 'undefined') {
             this.$icon = $('<i />').appendTo(this.$el);
             this.bindAttr('icon', function (icon) {
                 if (icon) {
-                    this.$icon.attr('class', `phpdebugbar-fa phpdebugbar-fa-${icon}`);
+                    this.$icon.attr('class', `phpdebugbar-icon phpdebugbar-icon-${icon}`);
                 } else {
                     this.$icon.attr('class', '');
                 }
@@ -574,7 +574,7 @@ if (typeof PhpDebugBar === 'undefined') {
             this.registerMediaListener();
 
             // Attach settings
-            this.settings = new PhpDebugBar.DebugBar.Tab({ icon: 'sliders', title: 'Settings', widget: new Settings({
+            this.settings = new PhpDebugBar.DebugBar.Tab({ icon: 'adjustments-horizontal', title: 'Settings', widget: new Settings({
                 debugbar: this
             }) });
         },

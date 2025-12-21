@@ -9,6 +9,10 @@
   },
   "type": "module",
   "scripts": {
+    "build": "npm run build:jquery && npm run build:hljs && npm run build:icons",
+    "build:jquery": "cp node_modules/jquery/dist/jquery.min.js resources/vendor/jquery/dist/jquery.min.js",
+    "build:hljs": "esbuild build/build-hljs.js --bundle --minify --format=iife --global-name=phpdebugbar_hljs --outfile=resources/vendor/highlightjs/highlight.pack.js",
+    "build:icons": "node build/build-icons.js",
     "lint": "eslint resources/**/*.js",
     "lint:fix": "eslint resources/**/*.js --fix",
     "lint:report": "eslint resources/**/*.js --output-file eslint-report.txt --format unix",
@@ -20,8 +24,14 @@
   "devDependencies": {
     "@antfu/eslint-config": "^6.7.1",
     "@eslint/js": "^9.39.2",
+    "esbuild": "^0.27.2",
     "eslint": "^9.39.2",
     "eslint-plugin-jquery": "^1.5.1",
     "globals": "^16.5.0"
+  },
+  "dependencies": {
+    "@tabler/icons": "^3.36.0",
+    "highlight.js": "^11.11.1",
+    "jquery": "^4.0.0-rc.1"
   }
 }
