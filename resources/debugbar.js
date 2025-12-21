@@ -1448,17 +1448,6 @@ if (typeof PhpDebugBar === 'undefined') {
         }
 
         /**
-         * @deprecated use bindToXHR instead
-         */
-        bindToJquery(jq) {
-            jq(document).ajaxComplete((e, xhr, settings) => {
-                if (!settings.ignoreDebugBarAjaxHandler) {
-                    this.handle(xhr);
-                }
-            });
-        }
-
-        /**
          * Attaches an event listener to XMLHttpRequest
          */
         bindToXHR() {
@@ -1467,10 +1456,7 @@ if (typeof PhpDebugBar === 'undefined') {
             XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {
                 const xhr = this;
                 xhr.addEventListener('readystatechange', () => {
-                    const skipUrl = self.debugbar.openHandler ? self.debugbar.openHandler.get('url') : null;
-                    const href = (typeof url === 'string') ? url : url.href;
-
-                    if (xhr.readyState === 4 && href.indexOf(skipUrl) !== 0) {
+                    if (xhr.readyState === 4) {
                         self.handle(xhr);
                     }
                 }, false);

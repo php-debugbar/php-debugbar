@@ -190,9 +190,6 @@ class JavascriptRenderer
         if (array_key_exists('ajax_handler_classname', $options)) {
             $this->setAjaxHandlerClass($options['ajax_handler_classname']);
         }
-        if (array_key_exists('ajax_handler_bind_to_jquery', $options)) {
-            $this->setBindAjaxHandlerToJquery($options['ajax_handler_bind_to_jquery']);
-        }
         if (array_key_exists('ajax_handler_auto_show', $options)) {
             $this->setAjaxHandlerAutoShow($options['ajax_handler_auto_show']);
         }
@@ -291,7 +288,7 @@ class JavascriptRenderer
     /**
      * Disable a specific vendor's assets.
      *
-     * @param  string $name "jquery", "fontawesome", "highlightjs"
+     * @param  string $name "jquery", "highlightjs"
      *
      * @return void
      */
@@ -560,29 +557,6 @@ class JavascriptRenderer
     public function isAjaxHandlerBoundToFetch()
     {
         return $this->ajaxHandlerBindToFetch;
-    }
-
-    /**
-     * Sets whether to call bindToJquery() on the ajax handler
-     *
-     * @param boolean $bind
-     * @deprecated use setBindAjaxHandlerToXHR
-     */
-    public function setBindAjaxHandlerToJquery($bind = true)
-    {
-        $this->ajaxHandlerBindToJquery = $bind;
-        return $this;
-    }
-
-    /**
-     * Checks whether bindToJquery() will be called on the ajax handler
-     *
-     * @return boolean
-     * @deprecated use isAjaxHandlerBoundToXHR
-     */
-    public function isAjaxHandlerBoundToJquery()
-    {
-        return $this->ajaxHandlerBindToJquery;
     }
 
     /**
@@ -1201,8 +1175,6 @@ class JavascriptRenderer
             }
             if ($this->ajaxHandlerBindToXHR) {
                 $js .= sprintf("%s.ajaxHandler.bindToXHR();\n", $this->variableName);
-            } elseif ($this->ajaxHandlerBindToJquery) {
-                $js .= sprintf("if (jQuery) %s.ajaxHandler.bindToJquery(jQuery);\n", $this->variableName);
             }
         }
 
