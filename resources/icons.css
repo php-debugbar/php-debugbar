@@ -1,174 +1,174 @@
 /* Generated file - do not edit manually */
-/* Generated from Tabler Icons (stroke-width: 2) */
+/* Generated from Tabler Icons */
 
 :root {
-  --phpdebugbar-icon-adjustments: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M4%2010a2%202%200%201%200%204%200a2%202%200%200%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M6%204v4%22%20%2F%3E%20%3Cpath%20d%3D%22M6%2012v8%22%20%2F%3E%20%3Cpath%20d%3D%22M10%2016a2%202%200%201%200%204%200a2%202%200%200%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M12%204v10%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2018v2%22%20%2F%3E%20%3Cpath%20d%3D%22M16%207a2%202%200%201%200%204%200a2%202%200%200%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M18%204v1%22%20%2F%3E%20%3Cpath%20d%3D%22M18%209v11%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-adjustments-horizontal: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M14%206m-2%200a2%202%200%201%200%204%200a2%202%200%201%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M4%206l8%200%22%20%2F%3E%20%3Cpath%20d%3D%22M16%206l4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M8%2012m-2%200a2%202%200%201%200%204%200a2%202%200%201%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2012l2%200%22%20%2F%3E%20%3Cpath%20d%3D%22M10%2012l10%200%22%20%2F%3E%20%3Cpath%20d%3D%22M17%2018m-2%200a2%202%200%201%200%204%200a2%202%200%201%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2018l11%200%22%20%2F%3E%20%3Cpath%20d%3D%22M19%2018l1%200%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-arrow-right: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M5%2012l14%200%22%20%2F%3E%20%3Cpath%20d%3D%22M13%2018l6%20-6%22%20%2F%3E%20%3Cpath%20d%3D%22M13%206l6%206%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-arrows-left-right: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M21%2017l-18%200%22%20%2F%3E%20%3Cpath%20d%3D%22M6%2010l-3%20-3l3%20-3%22%20%2F%3E%20%3Cpath%20d%3D%22M3%207l18%200%22%20%2F%3E%20%3Cpath%20d%3D%22M18%2020l3%20-3l-3%20-3%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-bolt: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M13%203l0%207l6%200l-8%2011l0%20-7l-6%200l8%20-11%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-bookmark: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M18%207v14l-6%20-4l-6%204v-14a4%204%200%200%201%204%20-4h4a4%204%200%200%201%204%204z%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-box: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M12%203l8%204.5l0%209l-8%204.5l-8%20-4.5l0%20-9l8%20-4.5%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2012l8%20-4.5%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2012l0%209%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2012l-8%20-4.5%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-briefcase: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M3%207m0%202a2%202%200%200%201%202%20-2h14a2%202%200%200%201%202%202v9a2%202%200%200%201%20-2%202h-14a2%202%200%200%201%20-2%20-2z%22%20%2F%3E%20%3Cpath%20d%3D%22M8%207v-2a2%202%200%200%201%202%20-2h4a2%202%200%200%201%202%202v2%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2012l0%20.01%22%20%2F%3E%20%3Cpath%20d%3D%22M3%2013a20%2020%200%200%200%2018%200%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-bug: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M9%209v-1a3%203%200%200%201%206%200v1%22%20%2F%3E%20%3Cpath%20d%3D%22M8%209h8a6%206%200%200%201%201%203v3a5%205%200%200%201%20-10%200v-3a6%206%200%200%201%201%20-3%22%20%2F%3E%20%3Cpath%20d%3D%22M3%2013l4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M17%2013l4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2020l0%20-6%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2019l3.35%20-2%22%20%2F%3E%20%3Cpath%20d%3D%22M20%2019l-3.35%20-2%22%20%2F%3E%20%3Cpath%20d%3D%22M4%207l3.75%202.4%22%20%2F%3E%20%3Cpath%20d%3D%22M20%207l-3.75%202.4%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-calendar: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M4%207a2%202%200%200%201%202%20-2h12a2%202%200%200%201%202%202v12a2%202%200%200%201%20-2%202h-12a2%202%200%200%201%20-2%20-2v-12z%22%20%2F%3E%20%3Cpath%20d%3D%22M16%203v4%22%20%2F%3E%20%3Cpath%20d%3D%22M8%203v4%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2011h16%22%20%2F%3E%20%3Cpath%20d%3D%22M11%2015h1%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2015v3%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-chart-infographic: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M7%207m-4%200a4%204%200%201%200%208%200a4%204%200%201%200%20-8%200%22%20%2F%3E%20%3Cpath%20d%3D%22M7%203v4h4%22%20%2F%3E%20%3Cpath%20d%3D%22M9%2017l0%204%22%20%2F%3E%20%3Cpath%20d%3D%22M17%2014l0%207%22%20%2F%3E%20%3Cpath%20d%3D%22M13%2013l0%208%22%20%2F%3E%20%3Cpath%20d%3D%22M21%2012l0%209%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-clock: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M3%2012a9%209%200%201%200%2018%200a9%209%200%200%200%20-18%200%22%20%2F%3E%20%3Cpath%20d%3D%22M12%207v5l3%203%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-code: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M7%208l-4%204l4%204%22%20%2F%3E%20%3Cpath%20d%3D%22M17%208l4%204l-4%204%22%20%2F%3E%20%3Cpath%20d%3D%22M14%204l-4%2016%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-database: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M12%206m-8%200a8%203%200%201%200%2016%200a8%203%200%201%200%20-16%200%22%20%2F%3E%20%3Cpath%20d%3D%22M4%206v6a8%203%200%200%200%2016%200v-6%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2012v6a8%203%200%200%200%2016%200v-6%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-flag: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M5%205a5%205%200%200%201%207%200a5%205%200%200%200%207%200v9a5%205%200%200%201%20-7%200a5%205%200%200%200%20-7%200v-9z%22%20%2F%3E%20%3Cpath%20d%3D%22M5%2021v-7%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-history: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M12%208l0%204l2%202%22%20%2F%3E%20%3Cpath%20d%3D%22M3.05%2011a9%209%200%201%201%20.5%204m-.5%205v-5h5%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-inbox: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M4%204m0%202a2%202%200%200%201%202%20-2h12a2%202%200%200%201%202%202v12a2%202%200%200%201%20-2%202h-12a2%202%200%200%201%20-2%20-2z%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2013h3l3%203h4l3%20-3h3%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-leaf: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M5%2021c.5%20-4.5%202.5%20-8%207%20-10%22%20%2F%3E%20%3Cpath%20d%3D%22M9%2018c6.218%200%2010.5%20-3.288%2011%20-12v-2h-4.014c-9%200%20-11.986%204%20-12%209c0%201%200%203%202%205h3z%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-list: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M9%206l11%200%22%20%2F%3E%20%3Cpath%20d%3D%22M9%2012l11%200%22%20%2F%3E%20%3Cpath%20d%3D%22M9%2018l11%200%22%20%2F%3E%20%3Cpath%20d%3D%22M5%206l0%20.01%22%20%2F%3E%20%3Cpath%20d%3D%22M5%2012l0%20.01%22%20%2F%3E%20%3Cpath%20d%3D%22M5%2018l0%20.01%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-logs: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M4%2012h.01%22%20%2F%3E%20%3Cpath%20d%3D%22M4%206h.01%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2018h.01%22%20%2F%3E%20%3Cpath%20d%3D%22M8%2018h2%22%20%2F%3E%20%3Cpath%20d%3D%22M8%2012h2%22%20%2F%3E%20%3Cpath%20d%3D%22M8%206h2%22%20%2F%3E%20%3Cpath%20d%3D%22M14%206h6%22%20%2F%3E%20%3Cpath%20d%3D%22M14%2012h6%22%20%2F%3E%20%3Cpath%20d%3D%22M14%2018h6%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-search: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M10%2010m-7%200a7%207%200%201%200%2014%200a7%207%200%201%200%20-14%200%22%20%2F%3E%20%3Cpath%20d%3D%22M21%2021l-6%20-6%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-server-cog: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M3%204m0%203a3%203%200%200%201%203%20-3h12a3%203%200%200%201%203%203v2a3%203%200%200%201%20-3%203h-12a3%203%200%200%201%20-3%20-3z%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2020h-6a3%203%200%200%201%20-3%20-3v-2a3%203%200%200%201%203%20-3h10.5%22%20%2F%3E%20%3Cpath%20d%3D%22M18%2018m-2%200a2%202%200%201%200%204%200a2%202%200%201%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M18%2014.5v1.5%22%20%2F%3E%20%3Cpath%20d%3D%22M18%2020v1.5%22%20%2F%3E%20%3Cpath%20d%3D%22M21.032%2016.25l-1.299%20.75%22%20%2F%3E%20%3Cpath%20d%3D%22M16.27%2019l-1.3%20.75%22%20%2F%3E%20%3Cpath%20d%3D%22M14.97%2016.25l1.3%20.75%22%20%2F%3E%20%3Cpath%20d%3D%22M19.733%2019l1.3%20.75%22%20%2F%3E%20%3Cpath%20d%3D%22M7%208v.01%22%20%2F%3E%20%3Cpath%20d%3D%22M7%2016v.01%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-tags: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M3%208v4.172a2%202%200%200%200%20.586%201.414l5.71%205.71a2.41%202.41%200%200%200%203.408%200l3.592%20-3.592a2.41%202.41%200%200%200%200%20-3.408l-5.71%20-5.71a2%202%200%200%200%20-1.414%20-.586h-4.172a2%202%200%200%200%20-2%202z%22%20%2F%3E%20%3Cpath%20d%3D%22M18%2019l1.592%20-1.592a4.82%204.82%200%200%200%200%20-6.816l-4.592%20-4.592%22%20%2F%3E%20%3Cpath%20d%3D%22M7%2010h-.01%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-x: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M18%206l-12%2012%22%20%2F%3E%20%3Cpath%20d%3D%22M6%206l12%2012%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-chevron-down: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M6%209l6%206l6%20-6%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-chevron-up: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M6%2015l6%20-6l6%206%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-folder-open: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M5%2019l2.757%20-7.351a1%201%200%200%201%20.936%20-.649h12.307a1%201%200%200%201%20.986%201.164l-.996%205.211a2%202%200%200%201%20-1.964%201.625h-14.026a2%202%200%200%201%20-2%20-2v-11a2%202%200%200%201%202%20-2h4l3%203h7a2%202%200%200%201%202%202v2%22%20%2F%3E%20%3C%2Fsvg%3E');
-  --phpdebugbar-icon-brand-php: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M12%2012m-10%200a10%209%200%201%200%2020%200a10%209%200%201%200%20-20%200%22%20%2F%3E%20%3Cpath%20d%3D%22M5.5%2015l.395%20-1.974l.605%20-3.026h1.32a1%201%200%200%201%20.986%201.164l-.167%201a1%201%200%200%201%20-.986%20.836h-1.653%22%20%2F%3E%20%3Cpath%20d%3D%22M15.5%2015l.395%20-1.974l.605%20-3.026h1.32a1%201%200%200%201%20.986%201.164l-.167%201a1%201%200%200%201%20-.986%20.836h-1.653%22%20%2F%3E%20%3Cpath%20d%3D%22M12%207.5l-1%205.5%22%20%2F%3E%20%3Cpath%20d%3D%22M11.6%2010h2.4l-.5%203%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-adjustments: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M4%2010a2%202%200%201%200%204%200a2%202%200%200%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M6%204v4%22%20%2F%3E%20%3Cpath%20d%3D%22M6%2012v8%22%20%2F%3E%20%3Cpath%20d%3D%22M10%2016a2%202%200%201%200%204%200a2%202%200%200%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M12%204v10%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2018v2%22%20%2F%3E%20%3Cpath%20d%3D%22M16%207a2%202%200%201%200%204%200a2%202%200%200%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M18%204v1%22%20%2F%3E%20%3Cpath%20d%3D%22M18%209v11%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-adjustments-horizontal: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M14%206m-2%200a2%202%200%201%200%204%200a2%202%200%201%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M4%206l8%200%22%20%2F%3E%20%3Cpath%20d%3D%22M16%206l4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M8%2012m-2%200a2%202%200%201%200%204%200a2%202%200%201%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2012l2%200%22%20%2F%3E%20%3Cpath%20d%3D%22M10%2012l10%200%22%20%2F%3E%20%3Cpath%20d%3D%22M17%2018m-2%200a2%202%200%201%200%204%200a2%202%200%201%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2018l11%200%22%20%2F%3E%20%3Cpath%20d%3D%22M19%2018l1%200%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-arrow-right: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M5%2012l14%200%22%20%2F%3E%20%3Cpath%20d%3D%22M13%2018l6%20-6%22%20%2F%3E%20%3Cpath%20d%3D%22M13%206l6%206%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-arrows-left-right: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M21%2017l-18%200%22%20%2F%3E%20%3Cpath%20d%3D%22M6%2010l-3%20-3l3%20-3%22%20%2F%3E%20%3Cpath%20d%3D%22M3%207l18%200%22%20%2F%3E%20%3Cpath%20d%3D%22M18%2020l3%20-3l-3%20-3%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-bolt: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M13%203l0%207l6%200l-8%2011l0%20-7l-6%200l8%20-11%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-bookmark: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M18%207v14l-6%20-4l-6%204v-14a4%204%200%200%201%204%20-4h4a4%204%200%200%201%204%204z%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-box: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M12%203l8%204.5l0%209l-8%204.5l-8%20-4.5l0%20-9l8%20-4.5%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2012l8%20-4.5%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2012l0%209%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2012l-8%20-4.5%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-briefcase: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M3%207m0%202a2%202%200%200%201%202%20-2h14a2%202%200%200%201%202%202v9a2%202%200%200%201%20-2%202h-14a2%202%200%200%201%20-2%20-2z%22%20%2F%3E%20%3Cpath%20d%3D%22M8%207v-2a2%202%200%200%201%202%20-2h4a2%202%200%200%201%202%202v2%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2012l0%20.01%22%20%2F%3E%20%3Cpath%20d%3D%22M3%2013a20%2020%200%200%200%2018%200%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-bug: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M9%209v-1a3%203%200%200%201%206%200v1%22%20%2F%3E%20%3Cpath%20d%3D%22M8%209h8a6%206%200%200%201%201%203v3a5%205%200%200%201%20-10%200v-3a6%206%200%200%201%201%20-3%22%20%2F%3E%20%3Cpath%20d%3D%22M3%2013l4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M17%2013l4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2020l0%20-6%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2019l3.35%20-2%22%20%2F%3E%20%3Cpath%20d%3D%22M20%2019l-3.35%20-2%22%20%2F%3E%20%3Cpath%20d%3D%22M4%207l3.75%202.4%22%20%2F%3E%20%3Cpath%20d%3D%22M20%207l-3.75%202.4%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-calendar: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M4%207a2%202%200%200%201%202%20-2h12a2%202%200%200%201%202%202v12a2%202%200%200%201%20-2%202h-12a2%202%200%200%201%20-2%20-2v-12z%22%20%2F%3E%20%3Cpath%20d%3D%22M16%203v4%22%20%2F%3E%20%3Cpath%20d%3D%22M8%203v4%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2011h16%22%20%2F%3E%20%3Cpath%20d%3D%22M11%2015h1%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2015v3%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-chart-infographic: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M7%207m-4%200a4%204%200%201%200%208%200a4%204%200%201%200%20-8%200%22%20%2F%3E%20%3Cpath%20d%3D%22M7%203v4h4%22%20%2F%3E%20%3Cpath%20d%3D%22M9%2017l0%204%22%20%2F%3E%20%3Cpath%20d%3D%22M17%2014l0%207%22%20%2F%3E%20%3Cpath%20d%3D%22M13%2013l0%208%22%20%2F%3E%20%3Cpath%20d%3D%22M21%2012l0%209%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-clock: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M3%2012a9%209%200%201%200%2018%200a9%209%200%200%200%20-18%200%22%20%2F%3E%20%3Cpath%20d%3D%22M12%207v5l3%203%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-code: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M7%208l-4%204l4%204%22%20%2F%3E%20%3Cpath%20d%3D%22M17%208l4%204l-4%204%22%20%2F%3E%20%3Cpath%20d%3D%22M14%204l-4%2016%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-database: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M12%206m-8%200a8%203%200%201%200%2016%200a8%203%200%201%200%20-16%200%22%20%2F%3E%20%3Cpath%20d%3D%22M4%206v6a8%203%200%200%200%2016%200v-6%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2012v6a8%203%200%200%200%2016%200v-6%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-flag: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M5%205a5%205%200%200%201%207%200a5%205%200%200%200%207%200v9a5%205%200%200%201%20-7%200a5%205%200%200%200%20-7%200v-9z%22%20%2F%3E%20%3Cpath%20d%3D%22M5%2021v-7%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-history: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M12%208l0%204l2%202%22%20%2F%3E%20%3Cpath%20d%3D%22M3.05%2011a9%209%200%201%201%20.5%204m-.5%205v-5h5%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-inbox: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M4%204m0%202a2%202%200%200%201%202%20-2h12a2%202%200%200%201%202%202v12a2%202%200%200%201%20-2%202h-12a2%202%200%200%201%20-2%20-2z%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2013h3l3%203h4l3%20-3h3%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-leaf: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M5%2021c.5%20-4.5%202.5%20-8%207%20-10%22%20%2F%3E%20%3Cpath%20d%3D%22M9%2018c6.218%200%2010.5%20-3.288%2011%20-12v-2h-4.014c-9%200%20-11.986%204%20-12%209c0%201%200%203%202%205h3z%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-list: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M9%206l11%200%22%20%2F%3E%20%3Cpath%20d%3D%22M9%2012l11%200%22%20%2F%3E%20%3Cpath%20d%3D%22M9%2018l11%200%22%20%2F%3E%20%3Cpath%20d%3D%22M5%206l0%20.01%22%20%2F%3E%20%3Cpath%20d%3D%22M5%2012l0%20.01%22%20%2F%3E%20%3Cpath%20d%3D%22M5%2018l0%20.01%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-logs: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M4%2012h.01%22%20%2F%3E%20%3Cpath%20d%3D%22M4%206h.01%22%20%2F%3E%20%3Cpath%20d%3D%22M4%2018h.01%22%20%2F%3E%20%3Cpath%20d%3D%22M8%2018h2%22%20%2F%3E%20%3Cpath%20d%3D%22M8%2012h2%22%20%2F%3E%20%3Cpath%20d%3D%22M8%206h2%22%20%2F%3E%20%3Cpath%20d%3D%22M14%206h6%22%20%2F%3E%20%3Cpath%20d%3D%22M14%2012h6%22%20%2F%3E%20%3Cpath%20d%3D%22M14%2018h6%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-search: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M10%2010m-7%200a7%207%200%201%200%2014%200a7%207%200%201%200%20-14%200%22%20%2F%3E%20%3Cpath%20d%3D%22M21%2021l-6%20-6%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-server-cog: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M3%204m0%203a3%203%200%200%201%203%20-3h12a3%203%200%200%201%203%203v2a3%203%200%200%201%20-3%203h-12a3%203%200%200%201%20-3%20-3z%22%20%2F%3E%20%3Cpath%20d%3D%22M12%2020h-6a3%203%200%200%201%20-3%20-3v-2a3%203%200%200%201%203%20-3h10.5%22%20%2F%3E%20%3Cpath%20d%3D%22M18%2018m-2%200a2%202%200%201%200%204%200a2%202%200%201%200%20-4%200%22%20%2F%3E%20%3Cpath%20d%3D%22M18%2014.5v1.5%22%20%2F%3E%20%3Cpath%20d%3D%22M18%2020v1.5%22%20%2F%3E%20%3Cpath%20d%3D%22M21.032%2016.25l-1.299%20.75%22%20%2F%3E%20%3Cpath%20d%3D%22M16.27%2019l-1.3%20.75%22%20%2F%3E%20%3Cpath%20d%3D%22M14.97%2016.25l1.3%20.75%22%20%2F%3E%20%3Cpath%20d%3D%22M19.733%2019l1.3%20.75%22%20%2F%3E%20%3Cpath%20d%3D%22M7%208v.01%22%20%2F%3E%20%3Cpath%20d%3D%22M7%2016v.01%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-tags: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M3%208v4.172a2%202%200%200%200%20.586%201.414l5.71%205.71a2.41%202.41%200%200%200%203.408%200l3.592%20-3.592a2.41%202.41%200%200%200%200%20-3.408l-5.71%20-5.71a2%202%200%200%200%20-1.414%20-.586h-4.172a2%202%200%200%200%20-2%202z%22%20%2F%3E%20%3Cpath%20d%3D%22M18%2019l1.592%20-1.592a4.82%204.82%200%200%200%200%20-6.816l-4.592%20-4.592%22%20%2F%3E%20%3Cpath%20d%3D%22M7%2010h-.01%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-x: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M18%206l-12%2012%22%20%2F%3E%20%3Cpath%20d%3D%22M6%206l12%2012%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-chevron-down: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M6%209l6%206l6%20-6%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-chevron-up: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M6%2015l6%20-6l6%206%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-folder-open: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M5%2019l2.757%20-7.351a1%201%200%200%201%20.936%20-.649h12.307a1%201%200%200%201%20.986%201.164l-.996%205.211a2%202%200%200%201%20-1.964%201.625h-14.026a2%202%200%200%201%20-2%20-2v-11a2%202%200%200%201%202%20-2h4l3%203h7a2%202%200%200%201%202%202v2%22%20%2F%3E%20%3C%2Fsvg%3E');
+  --debugbar-icon-brand-php: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%221.25%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M12%2012m-10%200a10%209%200%201%200%2020%200a10%209%200%201%200%20-20%200%22%20%2F%3E%20%3Cpath%20d%3D%22M5.5%2015l.395%20-1.974l.605%20-3.026h1.32a1%201%200%200%201%20.986%201.164l-.167%201a1%201%200%200%201%20-.986%20.836h-1.653%22%20%2F%3E%20%3Cpath%20d%3D%22M15.5%2015l.395%20-1.974l.605%20-3.026h1.32a1%201%200%200%201%20.986%201.164l-.167%201a1%201%200%200%201%20-.986%20.836h-1.653%22%20%2F%3E%20%3Cpath%20d%3D%22M12%207.5l-1%205.5%22%20%2F%3E%20%3Cpath%20d%3D%22M11.6%2010h2.4l-.5%203%22%20%2F%3E%20%3C%2Fsvg%3E');
 }
 
 .phpdebugbar-icon-adjustments::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-adjustments);
-  mask-image: var(--phpdebugbar-icon-adjustments);
+  -webkit-mask-image: var(--debugbar-icon-adjustments);
+  mask-image: var(--debugbar-icon-adjustments);
 }
 
 .phpdebugbar-icon-adjustments-horizontal::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-adjustments-horizontal);
-  mask-image: var(--phpdebugbar-icon-adjustments-horizontal);
+  -webkit-mask-image: var(--debugbar-icon-adjustments-horizontal);
+  mask-image: var(--debugbar-icon-adjustments-horizontal);
 }
 
 .phpdebugbar-icon-arrow-right::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-arrow-right);
-  mask-image: var(--phpdebugbar-icon-arrow-right);
+  -webkit-mask-image: var(--debugbar-icon-arrow-right);
+  mask-image: var(--debugbar-icon-arrow-right);
 }
 
 .phpdebugbar-icon-arrows-left-right::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-arrows-left-right);
-  mask-image: var(--phpdebugbar-icon-arrows-left-right);
+  -webkit-mask-image: var(--debugbar-icon-arrows-left-right);
+  mask-image: var(--debugbar-icon-arrows-left-right);
 }
 
 .phpdebugbar-icon-bolt::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-bolt);
-  mask-image: var(--phpdebugbar-icon-bolt);
+  -webkit-mask-image: var(--debugbar-icon-bolt);
+  mask-image: var(--debugbar-icon-bolt);
 }
 
 .phpdebugbar-icon-bookmark::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-bookmark);
-  mask-image: var(--phpdebugbar-icon-bookmark);
+  -webkit-mask-image: var(--debugbar-icon-bookmark);
+  mask-image: var(--debugbar-icon-bookmark);
 }
 
 .phpdebugbar-icon-box::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-box);
-  mask-image: var(--phpdebugbar-icon-box);
+  -webkit-mask-image: var(--debugbar-icon-box);
+  mask-image: var(--debugbar-icon-box);
 }
 
 .phpdebugbar-icon-briefcase::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-briefcase);
-  mask-image: var(--phpdebugbar-icon-briefcase);
+  -webkit-mask-image: var(--debugbar-icon-briefcase);
+  mask-image: var(--debugbar-icon-briefcase);
 }
 
 .phpdebugbar-icon-bug::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-bug);
-  mask-image: var(--phpdebugbar-icon-bug);
+  -webkit-mask-image: var(--debugbar-icon-bug);
+  mask-image: var(--debugbar-icon-bug);
 }
 
 .phpdebugbar-icon-calendar::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-calendar);
-  mask-image: var(--phpdebugbar-icon-calendar);
+  -webkit-mask-image: var(--debugbar-icon-calendar);
+  mask-image: var(--debugbar-icon-calendar);
 }
 
 .phpdebugbar-icon-chart-infographic::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-chart-infographic);
-  mask-image: var(--phpdebugbar-icon-chart-infographic);
+  -webkit-mask-image: var(--debugbar-icon-chart-infographic);
+  mask-image: var(--debugbar-icon-chart-infographic);
 }
 
 .phpdebugbar-icon-clock::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-clock);
-  mask-image: var(--phpdebugbar-icon-clock);
+  -webkit-mask-image: var(--debugbar-icon-clock);
+  mask-image: var(--debugbar-icon-clock);
 }
 
 .phpdebugbar-icon-code::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-code);
-  mask-image: var(--phpdebugbar-icon-code);
+  -webkit-mask-image: var(--debugbar-icon-code);
+  mask-image: var(--debugbar-icon-code);
 }
 
 .phpdebugbar-icon-database::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-database);
-  mask-image: var(--phpdebugbar-icon-database);
+  -webkit-mask-image: var(--debugbar-icon-database);
+  mask-image: var(--debugbar-icon-database);
 }
 
 .phpdebugbar-icon-flag::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-flag);
-  mask-image: var(--phpdebugbar-icon-flag);
+  -webkit-mask-image: var(--debugbar-icon-flag);
+  mask-image: var(--debugbar-icon-flag);
 }
 
 .phpdebugbar-icon-history::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-history);
-  mask-image: var(--phpdebugbar-icon-history);
+  -webkit-mask-image: var(--debugbar-icon-history);
+  mask-image: var(--debugbar-icon-history);
 }
 
 .phpdebugbar-icon-inbox::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-inbox);
-  mask-image: var(--phpdebugbar-icon-inbox);
+  -webkit-mask-image: var(--debugbar-icon-inbox);
+  mask-image: var(--debugbar-icon-inbox);
 }
 
 .phpdebugbar-icon-leaf::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-leaf);
-  mask-image: var(--phpdebugbar-icon-leaf);
+  -webkit-mask-image: var(--debugbar-icon-leaf);
+  mask-image: var(--debugbar-icon-leaf);
 }
 
 .phpdebugbar-icon-list::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-list);
-  mask-image: var(--phpdebugbar-icon-list);
+  -webkit-mask-image: var(--debugbar-icon-list);
+  mask-image: var(--debugbar-icon-list);
 }
 
 .phpdebugbar-icon-logs::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-logs);
-  mask-image: var(--phpdebugbar-icon-logs);
+  -webkit-mask-image: var(--debugbar-icon-logs);
+  mask-image: var(--debugbar-icon-logs);
 }
 
 .phpdebugbar-icon-search::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-search);
-  mask-image: var(--phpdebugbar-icon-search);
+  -webkit-mask-image: var(--debugbar-icon-search);
+  mask-image: var(--debugbar-icon-search);
 }
 
 .phpdebugbar-icon-server-cog::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-server-cog);
-  mask-image: var(--phpdebugbar-icon-server-cog);
+  -webkit-mask-image: var(--debugbar-icon-server-cog);
+  mask-image: var(--debugbar-icon-server-cog);
 }
 
 .phpdebugbar-icon-tags::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-tags);
-  mask-image: var(--phpdebugbar-icon-tags);
+  -webkit-mask-image: var(--debugbar-icon-tags);
+  mask-image: var(--debugbar-icon-tags);
 }
 
 .phpdebugbar-icon-x::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-x);
-  mask-image: var(--phpdebugbar-icon-x);
+  -webkit-mask-image: var(--debugbar-icon-x);
+  mask-image: var(--debugbar-icon-x);
 }
 
 .phpdebugbar-icon-chevron-down::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-chevron-down);
-  mask-image: var(--phpdebugbar-icon-chevron-down);
+  -webkit-mask-image: var(--debugbar-icon-chevron-down);
+  mask-image: var(--debugbar-icon-chevron-down);
 }
 
 .phpdebugbar-icon-chevron-up::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-chevron-up);
-  mask-image: var(--phpdebugbar-icon-chevron-up);
+  -webkit-mask-image: var(--debugbar-icon-chevron-up);
+  mask-image: var(--debugbar-icon-chevron-up);
 }
 
 .phpdebugbar-icon-folder-open::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-folder-open);
-  mask-image: var(--phpdebugbar-icon-folder-open);
+  -webkit-mask-image: var(--debugbar-icon-folder-open);
+  mask-image: var(--debugbar-icon-folder-open);
 }
 
 .phpdebugbar-icon-brand-php::before {
-  -webkit-mask-image: var(--phpdebugbar-icon-brand-php);
-  mask-image: var(--phpdebugbar-icon-brand-php);
+  -webkit-mask-image: var(--debugbar-icon-brand-php);
+  mask-image: var(--debugbar-icon-brand-php);
 }
 

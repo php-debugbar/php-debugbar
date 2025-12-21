@@ -42,13 +42,14 @@ const icons = [
 
 const svgDir = path.join(__dirname, '../node_modules/@tabler/icons/icons/outline');
 const outputFile = path.join(__dirname, '../resources/icons.css');
-const strokeWidth = 2; // Tabler default stroke width
+const defaultStrokeWidth = 2; // Tabler default stroke width
+const brandStrokeWidth = 1.25; // For brands, use 1
 
-function svgToDataUri(svgContent) {
+function svgToDataUri(svgContent, strokeWidth) {
     // Remove XML comments
     svgContent = svgContent.replace(/<!--[\s\S]*?-->/g, '');
 
-    // Ensure consistent stroke-width (Tabler icons already have stroke-width="2")
+    // Ensure consistent stroke-width
     svgContent = svgContent.replace(/stroke-width="[^"]*"/g, `stroke-width="${strokeWidth}"`);
 
     // Remove unnecessary attributes for mask usage (but not stroke-width!)
@@ -67,7 +68,7 @@ function svgToDataUri(svgContent) {
 }
 
 function generateIconsCSS() {
-    let css = `/* Generated file - do not edit manually */\n/* Generated from Tabler Icons (stroke-width: ${strokeWidth}) */\n\n`;
+    let css = `/* Generated file - do not edit manually */\n/* Generated from Tabler Icons */\n\n`;
 
     // First, define all CSS variables with the SVG data URIs
     css += `:root {\n`;
@@ -80,9 +81,10 @@ function generateIconsCSS() {
         }
 
         const svgContent = fs.readFileSync(svgPath, 'utf8');
-        const dataUri = svgToDataUri(svgContent);
+        let strokeWidth = icon.indexOf('brand-') === 0 ? brandStrokeWidth : defaultStrokeWidth
+        const dataUri = svgToDataUri(svgContent, strokeWidth);
 
-        css += `  --phpdebugbar-icon-${icon}: url('${dataUri}');\n`;
+        css += `  --debugbar-icon-${icon}: url('${dataUri}');\n`;
     }
     css += `}\n\n`;
 
@@ -95,8 +97,8 @@ function generateIconsCSS() {
         }
 
         css += `.phpdebugbar-icon-${icon}::before {\n`;
-        css += `  -webkit-mask-image: var(--phpdebugbar-icon-${icon});\n`;
-        css += `  mask-image: var(--phpdebugbar-icon-${icon});\n`;
+        css += `  -webkit-mask-image: var(--debugbar-icon-${icon});\n`;
+        css += `  mask-image: var(--debugbar-icon-${icon});\n`;
         css += `}\n\n`;
     }
 
