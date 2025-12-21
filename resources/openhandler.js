@@ -4,9 +4,8 @@ if (typeof PhpDebugBar === 'undefined') {
     PhpDebugBar.$ = jQuery;
 }
 
-(function($) {
-
-    const csscls = function(cls) {
+(function ($) {
+    const csscls = function (cls) {
         return PhpDebugBar.utils.csscls(cls, 'phpdebugbar-openhandler-');
     };
 
@@ -42,7 +41,7 @@ if (typeof PhpDebugBar === 'undefined') {
                 .appendTo(this.$actions)
                 .on('click', () => {
                     self.$table.empty();
-                    self.find({uri: window.location.pathname}, 0, self.handleFind.bind(self));
+                    self.find({ uri: window.location.pathname }, 0, self.handleFind.bind(self));
                 });
 
             this.$showallbtn = $('<a>Show all</a>')
@@ -73,17 +72,17 @@ if (typeof PhpDebugBar === 'undefined') {
             this.find({}, 0, this.handleFind.bind(this));
         },
 
-        addSearch(){
+        addSearch() {
             const self = this;
             const searchBtn = $('<button />')
                 .text('Search')
                 .attr('type', 'submit')
-                .on('click', function(e) {
+                .on('click', function (e) {
                     self.$table.empty();
                     const search = {};
                     const a = $(this).parent().serializeArray();
-                    $.each(a, function() {
-                        if(this.value){
+                    $.each(a, function () {
+                        if (this.value) {
                             search[this.name] = this.value;
                         }
                     });
@@ -104,39 +103,39 @@ if (typeof PhpDebugBar === 'undefined') {
         handleFind(data) {
             const self = this;
             $.each(data, (i, meta) => {
-                const a = $('<a />')
+                const _a = $('<a />')
                     .text('Load dataset')
                     .on('click', (e) => {
                         self.hide();
-                        self.load(meta['id'], (data) => {
-                            self.callback(meta['id'], data);
+                        self.load(meta.id, (data) => {
+                            self.callback(meta.id, data);
                         });
                         e.preventDefault();
                     });
 
-                const method = $('<a />')
-                    .text(meta['method'])
+                const _method = $('<a />')
+                    .text(meta.method)
                     .on('click', (e) => {
                         self.$table.empty();
-                        self.find({method: meta['method']}, 0, self.handleFind.bind(self));
+                        self.find({ method: meta.method }, 0, self.handleFind.bind(self));
                         e.preventDefault();
                     });
 
                 const uri = $('<a />')
-                    .text(meta['uri'])
+                    .text(meta.uri)
                     .on('click', (e) => {
                         self.hide();
-                        self.load(meta['id'], (data) => {
-                            self.callback(meta['id'], data);
+                        self.load(meta.id, (data) => {
+                            self.callback(meta.id, data);
                         });
                         e.preventDefault();
                     });
 
                 const ip = $('<a />')
-                    .text(meta['ip'])
+                    .text(meta.ip)
                     .on('click', (e) => {
                         self.$table.empty();
-                        self.find({ip: meta['ip']}, 0, self.handleFind.bind(self));
+                        self.find({ ip: meta.ip }, 0, self.handleFind.bind(self));
                         e.preventDefault();
                     });
 
@@ -144,13 +143,13 @@ if (typeof PhpDebugBar === 'undefined') {
                     .text('Show URL')
                     .on('click', (e) => {
                         self.$table.empty();
-                        self.find({uri: meta['uri']}, 0, self.handleFind.bind(self));
+                        self.find({ uri: meta.uri }, 0, self.handleFind.bind(self));
                         e.preventDefault();
                     });
 
                 $('<tr />')
-                    .append(`<td>${  meta['datetime']  }</td>`)
-                    .append(`<td>${  meta['method']  }</td>`)
+                    .append(`<td>${meta.datetime}</td>`)
+                    .append(`<td>${meta.method}</td>`)
                     .append($('<td />').append(uri))
                     .append($('<td />').append(ip))
                     .append($('<td />').append(search))
@@ -174,35 +173,34 @@ if (typeof PhpDebugBar === 'undefined') {
         },
 
         find(filters, offset, callback) {
-            const data = Object.assign({}, filters, {max: this.get('items_per_page'), offset: offset || 0});
+            const data = Object.assign({}, filters, { max: this.get('items_per_page'), offset: offset || 0 });
             this.last_find_request = data;
             this.ajax(data, callback);
         },
 
         load(id, callback) {
-            this.ajax({op: 'get', id}, callback);
+            this.ajax({ op: 'get', id }, callback);
         },
 
         clear(callback) {
-            this.ajax({op: 'clear'}, callback);
+            this.ajax({ op: 'clear' }, callback);
         },
 
         ajax(data, callback) {
             let url = this.get('url');
             if (data) {
-                url = url + ( url.includes('?') ? '&' : '?' ) + new URLSearchParams(data);
+                url = url + (url.includes('?') ? '&' : '?') + new URLSearchParams(data);
             }
 
             fetch(url, {
                 method: 'GET',
                 headers: {
-                    'Accept': 'application/json'
+                    Accept: 'application/json'
                 }
             })
-                .then((data) => data.json())
+                .then(data => data.json())
                 .then(callback);
         }
 
     });
-
 })(PhpDebugBar.$);

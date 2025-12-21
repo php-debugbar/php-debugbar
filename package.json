@@ -18,6 +18,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@antfu/eslint-config": "^6.7.1",
     "@eslint/js": "^9.39.2",
     "eslint": "^9.39.2",
     "eslint-plugin-jquery": "^1.5.1",

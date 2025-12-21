@@ -4,8 +4,7 @@ if (typeof PhpDebugBar === 'undefined') {
     PhpDebugBar.$ = jQuery;
 }
 
-(function($) {
-
+(function ($) {
     if (typeof PhpDebugBar.utils === 'undefined') {
         PhpDebugBar.utils = {};
     }
@@ -22,8 +21,8 @@ if (typeof PhpDebugBar === 'undefined') {
      * @param {any} [defaultValue]
      * @returns {any}
      */
-    const getDictValue = PhpDebugBar.utils.getDictValue = function(dict, key, defaultValue) {
-        if (dict == null) {
+    const getDictValue = PhpDebugBar.utils.getDictValue = function (dict, key, defaultValue) {
+        if (dict === null || dict === undefined) {
             return defaultValue;
         }
 
@@ -31,7 +30,7 @@ if (typeof PhpDebugBar === 'undefined') {
         let d = dict;
 
         for (const part of parts) {
-            if (d == null) {
+            if (d === null || d === undefined) {
                 return defaultValue;
             }
             d = d[part];
@@ -65,7 +64,7 @@ if (typeof PhpDebugBar === 'undefined') {
         }
 
         if (s.startsWith('.')) {
-            return `.${  prefix  }${s.slice(1)}`;
+            return `.${prefix}${s.slice(1)}`;
         }
 
         return prefix + s;
@@ -78,12 +77,11 @@ if (typeof PhpDebugBar === 'undefined') {
      * @param  {string} prefix
      * @return {Function}
      */
-    PhpDebugBar.utils.makecsscls = function(prefix) {
+    PhpDebugBar.utils.makecsscls = function (prefix) {
         return cls => PhpDebugBar.utils.csscls(cls, prefix);
     };
 
     const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-');
-
 
     // ------------------------------------------------------------------
 
@@ -105,7 +103,7 @@ if (typeof PhpDebugBar === 'undefined') {
         /**
          * Called after the constructor
          *
-         * @param {Object} options
+         * @param {object} options
          */
         initialize(options) {
             this.set(options);
@@ -119,7 +117,7 @@ if (typeof PhpDebugBar === 'undefined') {
         /**
          * Sets the value of an attribute
          *
-         * @param {String|Object} attr Attribute name or object with multiple attributes
+         * @param {string | object} attr Attribute name or object with multiple attributes
          * @param {*} [value] Attribute value (optional if attr is an object)
          */
         set(attr, value) {
@@ -141,8 +139,8 @@ if (typeof PhpDebugBar === 'undefined') {
         /**
          * Checks if an attribute exists and is not null
          *
-         * @param {String} attr
-         * @return {Boolean}
+         * @param {string} attr
+         * @return {boolean}
          */
         has(attr) {
             return this._attributes[attr] !== undefined && this._attributes[attr] !== null;
@@ -151,7 +149,7 @@ if (typeof PhpDebugBar === 'undefined') {
         /**
          * Returns the value of an attribute
          *
-         * @param {String} attr
+         * @param {string} attr
          * @return {*}
          */
         get(attr) {
@@ -163,7 +161,7 @@ if (typeof PhpDebugBar === 'undefined') {
          *
          * If cb is a jQuery element, text() will be used to fill the element
          *
-         * @param {String|Array} attr
+         * @param {string | Array} attr
          * @param {Function} cb
          */
         bindAttr(attr, cb) {
@@ -192,7 +190,7 @@ if (typeof PhpDebugBar === 'undefined') {
          *
          * Code from Backbone.js
          *
-         * @param {Object} props Prototype properties
+         * @param {object} props Prototype properties
          * @return {Function}
          */
         static extend(props) {
@@ -238,9 +236,9 @@ if (typeof PhpDebugBar === 'undefined') {
         render() {
             this.$tab = $('<a />').addClass(csscls('tab'));
             this.$icon = $('<i />').appendTo(this.$tab);
-            this.bindAttr('icon', function(icon) {
+            this.bindAttr('icon', function (icon) {
                 if (icon) {
-                    this.$icon.attr('class', `phpdebugbar-fa phpdebugbar-fa-${  icon}`);
+                    this.$icon.attr('class', `phpdebugbar-fa phpdebugbar-fa-${icon}`);
                 } else {
                     this.$icon.attr('class', '');
                 }
@@ -249,7 +247,7 @@ if (typeof PhpDebugBar === 'undefined') {
             this.bindAttr('title', $('<span />').addClass(csscls('text')).appendTo(this.$tab));
 
             this.$badge = $('<span />').addClass(csscls('badge')).appendTo(this.$tab);
-            this.bindAttr('badge', function(value) {
+            this.bindAttr('badge', function (value) {
                 if (value !== null) {
                     this.$badge.text(value);
                     this.$badge.addClass(csscls('visible'));
@@ -258,11 +256,11 @@ if (typeof PhpDebugBar === 'undefined') {
                 }
             });
 
-            this.bindAttr('widget', function(widget) {
+            this.bindAttr('widget', function (widget) {
                 this.$el.empty().append(widget.$el);
             });
 
-            this.bindAttr('data', function(data) {
+            this.bindAttr('data', function (data) {
                 if (this.has('widget')) {
                     this.get('widget').set('data', data);
                     this.$tab.attr('data-empty', $.isEmptyObject(data) || data.count === 0);
@@ -294,15 +292,15 @@ if (typeof PhpDebugBar === 'undefined') {
 
         render() {
             this.$icon = $('<i />').appendTo(this.$el);
-            this.bindAttr('icon', function(icon) {
+            this.bindAttr('icon', function (icon) {
                 if (icon) {
-                    this.$icon.attr('class', `phpdebugbar-fa phpdebugbar-fa-${  icon}`);
+                    this.$icon.attr('class', `phpdebugbar-fa phpdebugbar-fa-${icon}`);
                 } else {
                     this.$icon.attr('class', '');
                 }
             });
 
-            this.bindAttr('link', function(link) {
+            this.bindAttr('link', function (link) {
                 if (link) {
                     this.$el.on('click', () => {
                         this.get('debugbar').showTab(link);
@@ -315,7 +313,7 @@ if (typeof PhpDebugBar === 'undefined') {
             this.bindAttr(['title', 'data'], $('<span />').addClass(csscls('text')).appendTo(this.$el));
 
             this.$tooltip = $('<span />').addClass(csscls('tooltip disabled')).appendTo(this.$el);
-            this.bindAttr('tooltip', function(tooltip) {
+            this.bindAttr('tooltip', function (tooltip) {
                 if (tooltip) {
                     const dl = $('<dl />');
                     if (Array.isArray(tooltip) || typeof tooltip === 'object') {
@@ -334,7 +332,6 @@ if (typeof PhpDebugBar === 'undefined') {
         }
 
     });
-
 
     /**
      * Displays datasets in a table
@@ -363,7 +360,7 @@ if (typeof PhpDebugBar === 'undefined') {
                 if (key === 'theme') {
                     debugbar.setTheme(debugbar.options[key]);
                 } else {
-                    debugbar.$el.attr(`data-${  key}`, debugbar.options[key]);
+                    debugbar.$el.attr(`data-${key}`, debugbar.options[key]);
                 }
             }
         },
@@ -384,8 +381,8 @@ if (typeof PhpDebugBar === 'undefined') {
                 const autoshow = debugbar.ajaxHandler.defaultAutoShow;
                 debugbar.ajaxHandler.setAutoShow(autoshow);
                 this.set('autoshow', autoshow);
-                if(debugbar.controls['__datasets']) {
-                    debugbar.controls['__datasets'].get('widget').set('autoshow', $(this).is(':checked'));
+                if (debugbar.controls.__datasets) {
+                    debugbar.controls.__datasets.get('widget').set('autoshow', $(this).is(':checked'));
                 }
             }
 
@@ -398,7 +395,7 @@ if (typeof PhpDebugBar === 'undefined') {
             const debugbar = this.get('debugbar');
             debugbar.options[key] = value;
             if (key !== 'theme') {
-                debugbar.$el.attr(`data-${  key}`, value);
+                debugbar.$el.attr(`data-${key}`, value);
             }
 
             localStorage.setItem('phpdebugbar-settings', JSON.stringify(this.settings));
@@ -413,31 +410,31 @@ if (typeof PhpDebugBar === 'undefined') {
             const fields = {};
 
             // Set Theme
-            fields['Theme'] = $('<select>' +
-                '<option value="auto">Auto (System preference)</option>' +
-                '<option value="light">Light</option>' +
-                '<option value="dark">Dark</option>' +
-                '</select>')
+            fields.Theme = $('<select>'
+                + '<option value="auto">Auto (System preference)</option>'
+                + '<option value="light">Light</option>'
+                + '<option value="dark">Dark</option>'
+                + '</select>')
                 .val(debugbar.options.theme)
-                .on('change', function() {
+                .on('change', function () {
                     self.storeSetting('theme', $(this).val());
                     debugbar.setTheme($(this).val());
                 });
 
-            fields['Open Button Position'] = $('<select>' +
-                '<option value="bottomLeft">Bottom Left</option>' +
-                '<option value="bottomRight">Bottom Right</option>' +
-                '<option value="topLeft">Top Left</option>' +
-                '<option value="topRight">Top Right</option>' +
-                '</select>')
+            fields['Open Button Position'] = $('<select>'
+                + '<option value="bottomLeft">Bottom Left</option>'
+                + '<option value="bottomRight">Bottom Right</option>'
+                + '<option value="topLeft">Top Left</option>'
+                + '<option value="topRight">Top Right</option>'
+                + '</select>')
                 .val(debugbar.options.openBtnPosition)
-                .on('change', function() {
+                .on('change', function () {
                     self.storeSetting('openBtnPosition', $(this).val());
                 });
 
             this.$hideEmptyTabs = $('<input type=checkbox>')
                 .prop('checked', debugbar.options.hideEmptyTabs)
-                .on('click', function() {
+                .on('click', function () {
                     self.storeSetting('hideEmptyTabs', $(this).is(':checked'));
                 });
 
@@ -445,19 +442,19 @@ if (typeof PhpDebugBar === 'undefined') {
 
             this.$autoshow = $('<input type=checkbox>')
                 .prop('checked', debugbar.ajaxHandler && debugbar.ajaxHandler.autoShow)
-                .on('click', function() {
+                .on('click', function () {
                     if (debugbar.ajaxHandler) {
                         debugbar.ajaxHandler.setAutoShow($(this).is(':checked'));
                     }
-                    if (debugbar.controls['__datasets']) {
-                        debugbar.controls['__datasets'].get('widget').set('autoshow', $(this).is(':checked'));
+                    if (debugbar.controls.__datasets) {
+                        debugbar.controls.__datasets.get('widget').set('autoshow', $(this).is(':checked'));
                     }
                 });
 
-            this.bindAttr('autoshow', function() {
+            this.bindAttr('autoshow', function () {
                 this.$autoshow.prop('checked', this.get('autoshow')).closest('.form-row').show();
             });
-            fields['Autoshow'] = $('<label/>').append(this.$autoshow, 'Automatically show new incoming Ajax requests');
+            fields.Autoshow = $('<label/>').append(this.$autoshow, 'Automatically show new incoming Ajax requests');
 
             fields['Reset to defaults'] = $('<button>Reset settings</button>').on('click', (e) => {
                 e.preventDefault();
@@ -494,40 +491,40 @@ if (typeof PhpDebugBar === 'undefined') {
         /**
          * Formats the title of a dataset
          *
-         * @param {String} id
-         * @param {Object} data
-         * @param {String} suffix
-         * @param {Number} nb
-         * @return {String}
+         * @param {string} id
+         * @param {object} data
+         * @param {string} suffix
+         * @param {number} nb
+         * @return {string}
          */
         format(id, data, suffix, nb) {
-            suffix = suffix ? ` ${  suffix}` : '';
+            suffix = suffix ? ` ${suffix}` : '';
             nb = nb || Object.keys(this.debugbar.datasets).length;
 
-            if (data['__meta'] === undefined) {
-                return `#${  nb  }${suffix}`;
+            if (data.__meta === undefined) {
+                return `#${nb}${suffix}`;
             }
 
-            const uri = data['__meta']['uri'].split('/');
+            const uri = data.__meta.uri.split('/');
             let filename = uri.pop();
 
             // URI ends in a trailing /, avoid returning an empty string
             if (!filename) {
-                filename = `${uri.pop() || ''  }/`; // add the trailing '/' back
+                filename = `${uri.pop() || ''}/`; // add the trailing '/' back
             }
 
             // filename is a number, path could be like /action/{id}
             if (uri.length && !isNaN(filename)) {
-                filename = `${uri.pop()  }/${  filename}`;
+                filename = `${uri.pop()}/${filename}`;
             }
 
             // truncate the filename in the label, if it's too long
             const maxLength = 150;
             if (filename.length > maxLength) {
-                filename = `${filename.substr(0, maxLength)  }...`;
+                filename = `${filename.substr(0, maxLength)}...`;
             }
 
-            const label = `#${  nb  } ${  filename  }${suffix  } (${  data['__meta']['datetime'].split(' ')[1]  })`;
+            const label = `#${nb} ${filename}${suffix} (${data.__meta.datetime.split(' ')[1]})`;
             return label;
         }
     }
@@ -535,7 +532,6 @@ if (typeof PhpDebugBar === 'undefined') {
     PhpDebugBar.DatasetTitleFormater = DatasetTitleFormater;
 
     // ------------------------------------------------------------------
-
 
     /**
      * DebugBar
@@ -549,7 +545,7 @@ if (typeof PhpDebugBar === 'undefined') {
      */
     const DebugBar = PhpDebugBar.DebugBar = Widget.extend({
 
-        className: `phpdebugbar ${  csscls('minimized')}`,
+        className: `phpdebugbar ${csscls('minimized')}`,
 
         options: {
             bodyMarginBottom: true,
@@ -568,19 +564,19 @@ if (typeof PhpDebugBar === 'undefined') {
             this.activePanelName = null;
             this.activeDatasetId = null;
             this.datesetTitleFormater = new DatasetTitleFormater(this);
-            this.bodyMarginBottomHeight = parseInt($('body').css('margin-bottom'));
+            this.bodyMarginBottomHeight = Number.parseInt($('body').css('margin-bottom'));
             try {
                 this.isIframe = window.self !== window.top && window.top.phpdebugbar;
-            } catch (error) {
+            } catch (_error) {
                 this.isIframe = false;
             }
             this.registerResizeHandler();
             this.registerMediaListener();
 
             // Attach settings
-            this.settings = new PhpDebugBar.DebugBar.Tab({'icon':'sliders', 'title':'Settings', 'widget': new Settings({
-                'debugbar': this
-            })});
+            this.settings = new PhpDebugBar.DebugBar.Tab({ icon: 'sliders', title: 'Settings', widget: new Settings({
+                debugbar: this
+            }) });
         },
 
         /**
@@ -601,7 +597,7 @@ if (typeof PhpDebugBar === 'undefined') {
 
         registerMediaListener() {
             const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)');
-            mediaQueryList.addEventListener('change', event => {
+            mediaQueryList.addEventListener('change', (event) => {
                 if (this.options.theme === 'auto') {
                     this.setTheme('auto');
                 }
@@ -679,13 +675,7 @@ if (typeof PhpDebugBar === 'undefined') {
 
             // dragging of resize handle
             let pos_y, orig_h;
-            this.$resizehdle.on('mousedown', (e) => {
-                orig_h = $body.height(), pos_y = e.pageY;
-                $body.parents().on('mousemove', mousemove).on('mouseup', mouseup);
-                self.$dragCapture.show();
-                e.preventDefault();
-            });
-            const mousemove = e => {
+            const mousemove = (e) => {
                 const h = orig_h + (pos_y - e.pageY);
                 self.setHeight(h);
             };
@@ -693,6 +683,12 @@ if (typeof PhpDebugBar === 'undefined') {
                 $body.parents().off('mousemove', mousemove).off('mouseup', mouseup);
                 self.$dragCapture.hide();
             };
+            this.$resizehdle.on('mousedown', (e) => {
+                orig_h = $body.height(), pos_y = e.pageY;
+                $body.parents().on('mousemove', mousemove).on('mouseup', mouseup);
+                self.$dragCapture.show();
+                e.preventDefault();
+            });
 
             // close button
             this.$closebtn = $('<a />').addClass(csscls('close-btn')).appendTo(this.$headerRight);
@@ -701,13 +697,13 @@ if (typeof PhpDebugBar === 'undefined') {
             });
 
             // minimize button
-            this.$minimizebtn = $('<a />').addClass(csscls('minimize-btn') ).appendTo(this.$headerRight);
+            this.$minimizebtn = $('<a />').addClass(csscls('minimize-btn')).appendTo(this.$headerRight);
             this.$minimizebtn.click(() => {
                 self.minimize();
             });
 
             // maximize button
-            this.$maximizebtn = $('<a />').addClass(csscls('maximize-btn') ).appendTo(this.$headerRight);
+            this.$maximizebtn = $('<a />').addClass(csscls('maximize-btn')).appendTo(this.$headerRight);
             this.$maximizebtn.click(() => {
                 self.restore();
             });
@@ -728,19 +724,18 @@ if (typeof PhpDebugBar === 'undefined') {
             });
 
             // select box for data sets
-            this.$datasets = $('<select />').addClass(csscls('datasets-switcher')).attr('name', 'datasets-switcher')
-                .appendTo(this.$headerRight);
-            this.$datasets.change(function() {
+            this.$datasets = $('<select />').addClass(csscls('datasets-switcher')).attr('name', 'datasets-switcher').appendTo(this.$headerRight);
+            this.$datasets.change(function () {
                 self.showDataSet(this.value);
             });
 
-            this.controls['__settings'] = this.settings;
+            this.controls.__settings = this.settings;
             this.settings.$tab.addClass(csscls('tab-settings'));
             this.settings.$tab.attr('data-collector', '__settings');
             this.settings.$el.attr('data-collector', '__settings');
             this.settings.$tab.insertAfter(this.$minimizebtn).show();
             this.settings.$tab.click(() => {
-                if (!this.isMinimized() && this.activePanelName == '__settings') {
+                if (!this.isMinimized() && this.activePanelName === '__settings') {
                     this.minimize();
                 } else {
                     this.showTab('__settings');
@@ -804,14 +799,14 @@ if (typeof PhpDebugBar === 'undefined') {
          * Creates and adds a new tab
          *
          * @this {DebugBar}
-         * @param {String} name Internal name
-         * @param {Object} widget A widget object with an element property
-         * @param {String} title The text in the tab, if not specified, name will be used
+         * @param {string} name Internal name
+         * @param {object} widget A widget object with an element property
+         * @param {string} title The text in the tab, if not specified, name will be used
          * @return {Tab}
          */
         createTab(name, widget, title) {
             const tab = new Tab({
-                title: title || (name.replace(/[_\-]/g, ' ').charAt(0).toUpperCase() + name.slice(1)),
+                title: title || (name.replace(/[_-]/g, ' ').charAt(0).toUpperCase() + name.slice(1)),
                 widget
             });
             return this.addTab(name, tab);
@@ -821,13 +816,13 @@ if (typeof PhpDebugBar === 'undefined') {
          * Adds a new tab
          *
          * @this {DebugBar}
-         * @param {String} name Internal name
+         * @param {string} name Internal name
          * @param {Tab} tab Tab object
          * @return {Tab}
          */
         addTab(name, tab) {
             if (this.isControl(name)) {
-                throw new Error(`${name  } already exists`);
+                throw new Error(`${name} already exists`);
             }
 
             const self = this;
@@ -854,10 +849,10 @@ if (typeof PhpDebugBar === 'undefined') {
          * Creates and adds an indicator
          *
          * @this {DebugBar}
-         * @param {String} name Internal name
-         * @param {String} icon
-         * @param {String|Object} tooltip
-         * @param {String} position "right" or "left", default is "right"
+         * @param {string} name Internal name
+         * @param {string} icon
+         * @param {string | object} tooltip
+         * @param {string} position "right" or "left", default is "right"
          * @return {Indicator}
          */
         createIndicator(name, icon, tooltip, position) {
@@ -872,13 +867,13 @@ if (typeof PhpDebugBar === 'undefined') {
          * Adds an indicator
          *
          * @this {DebugBar}
-         * @param {String} name Internal name
+         * @param {string} name Internal name
          * @param {Indicator} indicator Indicator object
          * @return {Indicator}
          */
         addIndicator(name, indicator, position) {
             if (this.isControl(name)) {
-                throw new Error(`${name  } already exists`);
+                throw new Error(`${name} already exists`);
             }
 
             indicator.set('debugbar', this);
@@ -896,8 +891,8 @@ if (typeof PhpDebugBar === 'undefined') {
         /**
          * Returns a control
          *
-         * @param {String} name
-         * @return {Object}
+         * @param {string} name
+         * @return {object}
          */
         getControl(name) {
             if (this.isControl(name)) {
@@ -909,8 +904,8 @@ if (typeof PhpDebugBar === 'undefined') {
          * Checks if there's a control under the specified name
          *
          * @this {DebugBar}
-         * @param {String} name
-         * @return {Boolean}
+         * @param {string} name
+         * @return {boolean}
          */
         isControl(name) {
             return this.controls[name] !== undefined;
@@ -920,8 +915,8 @@ if (typeof PhpDebugBar === 'undefined') {
          * Checks if a tab with the specified name exists
          *
          * @this {DebugBar}
-         * @param {String} name
-         * @return {Boolean}
+         * @param {string} name
+         * @return {boolean}
          */
         isTab(name) {
             return this.isControl(name) && this.controls[name] instanceof Tab;
@@ -931,8 +926,8 @@ if (typeof PhpDebugBar === 'undefined') {
          * Checks if an indicator with the specified name exists
          *
          * @this {DebugBar}
-         * @param {String} name
-         * @return {Boolean}
+         * @param {string} name
+         * @return {boolean}
          */
         isIndicator(name) {
             return this.isControl(name) && this.controls[name] instanceof Indicator;
@@ -958,7 +953,7 @@ if (typeof PhpDebugBar === 'undefined') {
          * Open the debug bar and display the specified tab
          *
          * @this {DebugBar}
-         * @param {String} name If not specified, display the first tab
+         * @param {string} name If not specified, display the first tab
          */
         showTab(name) {
             if (!name) {
@@ -970,15 +965,15 @@ if (typeof PhpDebugBar === 'undefined') {
             }
 
             if (!this.isTab(name)) {
-                throw new Error(`Unknown tab '${  name  }'`);
+                throw new Error(`Unknown tab '${name}'`);
             }
 
             this.$resizehdle.show();
             this.$body.show();
             this.recomputeBottomOffset();
 
-            $(this.$header).find(`> div > .${  csscls('active')}`).removeClass(csscls('active'));
-            $(this.$body).find(`> .${  csscls('active')}`).removeClass(csscls('active'));
+            $(this.$header).find(`> div > .${csscls('active')}`).removeClass(csscls('active'));
+            $(this.$body).find(`> .${csscls('active')}`).removeClass(csscls('active'));
 
             this.controls[name].$tab.addClass(csscls('active'));
             this.controls[name].$el.addClass(csscls('active'));
@@ -997,7 +992,7 @@ if (typeof PhpDebugBar === 'undefined') {
          * @this {DebugBar}
          */
         minimize() {
-            this.$header.find(`> div > .${  csscls('active')}`).removeClass(csscls('active'));
+            this.$header.find(`> div > .${csscls('active')}`).removeClass(csscls('active'));
             this.$body.hide();
             this.$resizehdle.hide();
             this.recomputeBottomOffset();
@@ -1009,7 +1004,7 @@ if (typeof PhpDebugBar === 'undefined') {
         /**
          * Checks if the panel is minimized
          *
-         * @return {Boolean}
+         * @return {boolean}
          */
         isMinimized() {
             return this.$el.hasClass(csscls('minimized'));
@@ -1033,7 +1028,7 @@ if (typeof PhpDebugBar === 'undefined') {
         /**
          * Checks if the panel is closed
          *
-         * @return {Boolean}
+         * @return {boolean}
          */
         isClosed() {
             return this.$el.hasClass(csscls('closed'));
@@ -1069,7 +1064,7 @@ if (typeof PhpDebugBar === 'undefined') {
                     return $('body').css('margin-bottom', this.bodyMarginBottomHeight || '');
                 }
 
-                const offset = parseInt(this.$el.height()) + (this.bodyMarginBottomHeight || 0);
+                const offset = Number.parseInt(this.$el.height()) + (this.bodyMarginBottomHeight || 0);
                 $('body').css('margin-bottom', offset);
             }
         },
@@ -1087,7 +1082,7 @@ if (typeof PhpDebugBar === 'undefined') {
          *     {"memory": ["memory.peak_usage_str", "0B"]}
          *
          * @this {DebugBar}
-         * @param {Object} map
+         * @param {object} map
          */
         setDataMap(map) {
             this.dataMap = map;
@@ -1098,7 +1093,7 @@ if (typeof PhpDebugBar === 'undefined') {
          * rather than replacing it
          *
          * @this {DebugBar}
-         * @param {Object} map
+         * @param {object} map
          */
         addDataMap(map) {
             Object.assign(this.dataMap, map);
@@ -1111,8 +1106,8 @@ if (typeof PhpDebugBar === 'undefined') {
          * a dataMap using setDataMap()
          *
          * @this {DebugBar}
-         * @param {Object} data
-         * @return {String} Dataset's id
+         * @param {object} data
+         * @return {string} Dataset's id
          */
         setData(data) {
             this.datasets = {};
@@ -1129,25 +1124,25 @@ if (typeof PhpDebugBar === 'undefined') {
          * a dataMap using setDataMap()
          *
          * @this {DebugBar}
-         * @param {Object} data
-         * @param {String} id The name of this set, optional
-         * @param {String} suffix
+         * @param {object} data
+         * @param {string} id The name of this set, optional
+         * @param {string} suffix
          * @param {Bool} show Whether to show the new dataset, optional (default: true)
-         * @return {String} Dataset's id
+         * @return {string} Dataset's id
          */
         addDataSet(data, id, suffix, show) {
             if (!data || !data.__meta) {
                 return;
             }
             if (this.isIframe) {
-                window.top.phpdebugbar.addDataSet(data, id, `(iframe)${  suffix || ''}`, show);
+                window.top.phpdebugbar.addDataSet(data, id, `(iframe)${suffix || ''}`, show);
                 return;
             }
 
             const nb = Object.keys(this.datasets).length + 1;
             id = id || nb;
-            data.__meta['nb'] = nb;
-            data.__meta['suffix'] = suffix;
+            data.__meta.nb = nb;
+            data.__meta.suffix = suffix;
             this.datasets[id] = data;
 
             const label = this.datesetTitleFormater.format(id, this.datasets[id], suffix, nb);
@@ -1159,7 +1154,7 @@ if (typeof PhpDebugBar === 'undefined') {
                 this.datasetTab.$tab.show();
             }
 
-            this.$datasets.append($(`<option value="${  id  }">${  label  }</option>`));
+            this.$datasets.append($(`<option value="${id}">${label}</option>`));
             if (this.$datasets.children().length > 1) {
                 this.$datasets.show();
             }
@@ -1176,7 +1171,7 @@ if (typeof PhpDebugBar === 'undefined') {
         /**
          * Loads a dataset using the open handler
          *
-         * @param {String} id
+         * @param {string} id
          * @param {Bool} show Whether to show the new dataset, optional (default: true)
          */
         loadDataSet(id, suffix, callback, show) {
@@ -1195,8 +1190,8 @@ if (typeof PhpDebugBar === 'undefined') {
          * Returns the data from a dataset
          *
          * @this {DebugBar}
-         * @param {String} id
-         * @return {Object}
+         * @param {string} id
+         * @return {object}
          */
         getDataSet(id) {
             return this.datasets[id];
@@ -1206,7 +1201,7 @@ if (typeof PhpDebugBar === 'undefined') {
          * Switch the currently displayed dataset
          *
          * @this {DebugBar}
-         * @param {String} id
+         * @param {string} id
          */
         showDataSet(id) {
             this.activeDatasetId = id;
@@ -1225,12 +1220,12 @@ if (typeof PhpDebugBar === 'undefined') {
          * Called when the current dataset is modified.
          *
          * @this {DebugBar}
-         * @param {Object} data
+         * @param {object} data
          */
         dataChangeHandler(data) {
             for (const [key, def] of Object.entries(this.dataMap)) {
                 const d = getDictValue(data, def[0], def[1]);
-                if (key.indexOf(':') !== -1) {
+                if (key.includes(':')) {
                     const parts = key.split(':');
                     this.getControl(parts[0]).set(parts[1], d);
                 } else {
@@ -1267,22 +1262,22 @@ if (typeof PhpDebugBar === 'undefined') {
         },
 
         enableAjaxHandlerTab() {
-            this.datasetTab = new PhpDebugBar.DebugBar.Tab({'icon':'history', 'title':'Request history', 'widget': new PhpDebugBar.Widgets.DatasetWidget({
-                'debugbar': this
-            })});
+            this.datasetTab = new PhpDebugBar.DebugBar.Tab({ icon: 'history', title: 'Request history', widget: new PhpDebugBar.Widgets.DatasetWidget({
+                debugbar: this
+            }) });
             this.datasetTab.$tab.addClass(csscls('tab-history'));
             this.datasetTab.$tab.attr('data-collector', '__datasets');
             this.datasetTab.$el.attr('data-collector', '__datasets');
             this.datasetTab.$tab.insertAfter(this.$openbtn).hide();
             this.datasetTab.$tab.click(() => {
-                if (!this.isMinimized() && this.activePanelName == '__datasets') {
+                if (!this.isMinimized() && this.activePanelName === '__datasets') {
                     this.minimize();
                 } else {
                     this.showTab('__datasets');
                 }
             });
             this.datasetTab.$el.appendTo(this.$body);
-            this.controls['__datasets'] = this.datasetTab;
+            this.controls.__datasets = this.datasetTab;
         }
     });
 
@@ -1307,8 +1302,8 @@ if (typeof PhpDebugBar === 'undefined') {
             if (localStorage.getItem('phpdebugbar-ajaxhandler-autoshow') !== null) {
                 this.autoShow = localStorage.getItem('phpdebugbar-ajaxhandler-autoshow') === '1';
             }
-            if (debugbar.controls['__settings']) {
-                debugbar.controls['__settings'].get('widget').set('autoshow', this.autoShow);
+            if (debugbar.controls.__settings) {
+                debugbar.controls.__settings.get('widget').set('autoshow', this.autoShow);
             }
         }
 
@@ -1320,9 +1315,9 @@ if (typeof PhpDebugBar === 'undefined') {
          */
         handle(response) {
             // Check if the debugbar header is available
-            if (this.isFetch(response) && !response.headers.has(`${this.headerName  }-id`)) {
+            if (this.isFetch(response) && !response.headers.has(`${this.headerName}-id`)) {
                 return true;
-            } else if (this.isXHR(response) && response.getAllResponseHeaders().indexOf(this.headerName) === -1) {
+            } else if (this.isXHR(response) && !response.getAllResponseHeaders().includes(this.headerName)) {
                 return true;
             }
             if (!this.loadFromId(response)) {
@@ -1371,10 +1366,10 @@ if (typeof PhpDebugBar === 'undefined') {
          * Extracts the id from the HEADER-id
          *
          * @param {Response|XMLHttpRequest} response
-         * @return {String}
+         * @return {string}
          */
         extractIdFromHeaders(response) {
-            return this.getHeader(response, `${this.headerName  }-id`);
+            return this.getHeader(response, `${this.headerName}-id`);
         }
 
         /**
@@ -1391,8 +1386,8 @@ if (typeof PhpDebugBar === 'undefined') {
 
             const data = this.parseHeaders(raw);
             if (data.error) {
-                throw new Error(`Error loading debugbar data: ${  data.error}`);
-            } else if(data.data) {
+                throw new Error(`Error loading debugbar data: ${data.error}`);
+            } else if (data.data) {
                 this.debugbar.addDataSet(data.data, data.id, '(ajax)', this.autoShow);
             }
             return true;
@@ -1409,8 +1404,8 @@ if (typeof PhpDebugBar === 'undefined') {
             if (!data) {
                 return;
             }
-            for (let i = 1;; i++) {
-                const header = this.getHeader(response, `${this.headerName  }-${  i}`);
+            for (let i = 1; ; i++) {
+                const header = this.getHeader(response, `${this.headerName}-${i}`);
                 if (!header) {
                     break;
                 }
@@ -1423,7 +1418,7 @@ if (typeof PhpDebugBar === 'undefined') {
          * Parses the string data into an object
          *
          * @param {string} data
-         * @return {Object}
+         * @return {object}
          */
         parseHeaders(data) {
             return JSON.parse(data);
@@ -1440,12 +1435,12 @@ if (typeof PhpDebugBar === 'undefined') {
                 return;
             }
 
-            window.fetch = function(...args) {
+            window.fetch = function (...args) {
                 const promise = proxied.apply(window, args);
 
-                promise.then(response => {
+                promise.then((response) => {
                     self.handle(response);
-                }).catch(reason => {
+                }).catch((reason) => {
                     // Fetch request failed or aborted via AbortController.abort().
                     // Catch is required to not trigger React's error handler.
                 });
@@ -1471,7 +1466,7 @@ if (typeof PhpDebugBar === 'undefined') {
         bindToXHR() {
             const self = this;
             const proxied = XMLHttpRequest.prototype.open;
-            XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {
+            XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {
                 const xhr = this;
                 xhr.addEventListener('readystatechange', () => {
                     const skipUrl = self.debugbar.openHandler ? self.debugbar.openHandler.get('url') : null;
@@ -1487,5 +1482,4 @@ if (typeof PhpDebugBar === 'undefined') {
     }
 
     PhpDebugBar.AjaxHandler = AjaxHandler;
-
 })(PhpDebugBar.$);

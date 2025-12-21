@@ -1,5 +1,4 @@
-(function($) {
-
+(function ($) {
     const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
 
     /**
@@ -13,7 +12,7 @@
         className: csscls('mails'),
 
         render() {
-            this.$list = new  PhpDebugBar.Widgets.ListWidget({ itemRenderer(li, mail) {
+            this.$list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer(li, mail) {
                 $('<span />').addClass(csscls('subject')).text(mail.subject).appendTo(li);
                 $('<span />').addClass(csscls('to')).text(mail.to).appendTo(li);
                 if (mail.body || mail.html) {
@@ -21,8 +20,10 @@
                     $('<a title="Mail Preview">View Mail</a>').on('click', () => {
                         const popup = window.open('about:blank', 'Mail Preview', 'width=650,height=440,scrollbars=yes');
                         const documentToWriteTo = popup.document;
-                        const headers = !mail.headers ? '' : $('<pre style="border: 1px solid #ddd; padding: 5px;" />')
-                            .append($('<code />').text(mail.headers));
+                        const headers = !mail.headers
+                            ? ''
+                            : $('<pre style="border: 1px solid #ddd; padding: 5px;" />')
+                                    .append($('<code />').text(mail.headers));
 
                         let body = $('<pre style="border: 1px solid #ddd; padding: 5px;" />').text(mail.body);
                         let html = null;
@@ -50,14 +51,13 @@
                         }
                     });
                 }
-            }});
+            } });
             this.$list.$el.appendTo(this.$el);
 
-            this.bindAttr('data', function(data) {
+            this.bindAttr('data', function (data) {
                 this.$list.set('data', data);
             });
         }
 
     });
-
 })(PhpDebugBar.$);

@@ -4,8 +4,7 @@ if (typeof PhpDebugBar === 'undefined') {
     PhpDebugBar.$ = jQuery;
 }
 
-(function($) {
-
+(function ($) {
     /**
      * @namespace
      */
@@ -16,10 +15,10 @@ if (typeof PhpDebugBar === 'undefined') {
     /**
      * Replaces spaces with &nbsp; and line breaks with <br>
      *
-     * @param {String} text
-     * @return {String}
+     * @param {string} text
+     * @return {string}
      */
-    const htmlize = PhpDebugBar.Widgets.htmlize = function(text) {
+    const htmlize = PhpDebugBar.Widgets.htmlize = function (text) {
         return text.replace(/\n/g, '<br>').replace(/\s/g, '&nbsp;');
     };
 
@@ -27,11 +26,11 @@ if (typeof PhpDebugBar === 'undefined') {
      * Returns a string representation of value, using JSON.stringify
      * if it's an object.
      *
-     * @param {Object} value
-     * @param {Boolean} prettify Uses htmlize() if true
-     * @return {String}
+     * @param {object} value
+     * @param {boolean} prettify Uses htmlize() if true
+     * @return {string}
      */
-    const renderValue = PhpDebugBar.Widgets.renderValue = function(value, prettify) {
+    const renderValue = PhpDebugBar.Widgets.renderValue = function (value, prettify) {
         if (typeof value !== 'string') {
             if (prettify) {
                 return htmlize(JSON.stringify(value, undefined, 2));
@@ -44,24 +43,24 @@ if (typeof PhpDebugBar === 'undefined') {
     /**
      * Highlights a block of code
      *
-     * @param  {String} code
-     * @param  {String} lang
-     * @return {String}
+     * @param  {string} code
+     * @param  {string} lang
+     * @return {string}
      */
-    const highlight = PhpDebugBar.Widgets.highlight = function(code, lang) {
+    const highlight = PhpDebugBar.Widgets.highlight = function (code, lang) {
         if (typeof code === 'string') {
             if (typeof hljs === 'undefined') {
                 return htmlize(code);
             }
             if (lang && hljs.getLanguage(lang)) {
-                return hljs.highlight(code, {language: lang}).value;
+                return hljs.highlight(code, { language: lang }).value;
             }
             return hljs.highlightAuto(code).value;
         }
 
         if (typeof hljs === 'object') {
             code.each((i, e) => {
-                hljs.highlightElement(e); 
+                hljs.highlightElement(e);
             });
         }
         return code;
@@ -70,27 +69,27 @@ if (typeof PhpDebugBar === 'undefined') {
     /**
      * Creates a <pre> element with a block of code
      *
-     * @param  {String} code
-     * @param  {String} lang
-     * @param  {Number} [firstLineNumber] If provided, shows line numbers beginning with the given value.
-     * @param  {Number} [highlightedLine] If provided, the given line number will be highlighted.
-     * @return {String}
+     * @param  {string} code
+     * @param  {string} lang
+     * @param  {number} [firstLineNumber] If provided, shows line numbers beginning with the given value.
+     * @param  {number} [highlightedLine] If provided, the given line number will be highlighted.
+     * @return {string}
      */
-    const createCodeBlock = PhpDebugBar.Widgets.createCodeBlock = function(code, lang, firstLineNumber, highlightedLine) {
+    const createCodeBlock = PhpDebugBar.Widgets.createCodeBlock = function (code, lang, firstLineNumber, highlightedLine) {
         const pre = $('<pre />').addClass(csscls('code-block'));
         // Add a newline to prevent <code> element from vertically collapsing too far if the last
         // code line was empty: that creates problems with the horizontal scrollbar being
         // incorrectly positioned - most noticeable when line numbers are shown.
-        const codeElement = $('<code />').text(`${code  }\n`).appendTo(pre);
+        const codeElement = $('<code />').text(`${code}\n`).appendTo(pre);
 
         // Format the code
         if (lang) {
-            codeElement.addClass(`language-${  lang}`);
+            codeElement.addClass(`language-${lang}`);
         }
         highlight(codeElement).removeClass('hljs');
 
         // Show line numbers in a list
-        if (!isNaN(parseFloat(firstLineNumber))) {
+        if (!isNaN(Number.parseFloat(firstLineNumber))) {
             const lineCount = code.split('\n').length;
             const $lineNumbers = $('<ul />').prependTo(pre);
             pre.children().addClass(csscls('numbered-code'));
@@ -107,7 +106,7 @@ if (typeof PhpDebugBar === 'undefined') {
         return pre;
     };
 
-    const {getDictValue} = PhpDebugBar.utils;
+    const { getDictValue } = PhpDebugBar.utils;
 
     // ------------------------------------------------------------------
     // Generic widgets
@@ -127,14 +126,14 @@ if (typeof PhpDebugBar === 'undefined') {
         className: csscls('list'),
 
         initialize(options) {
-            if (!options['itemRenderer']) {
-                options['itemRenderer'] = this.itemRenderer;
+            if (!options.itemRenderer) {
+                options.itemRenderer = this.itemRenderer;
             }
             this.set(options);
         },
 
         render() {
-            this.bindAttr(['itemRenderer', 'data'], function() {
+            this.bindAttr(['itemRenderer', 'data'], function () {
                 this.$el.empty();
                 if (!this.has('data')) {
                     return;
@@ -152,7 +151,7 @@ if (typeof PhpDebugBar === 'undefined') {
          * Renders the content of a <li> element
          *
          * @param {jQuery} li The <li> element as a jQuery Object
-         * @param {Object} value An item from the data array
+         * @param {object} value An item from the data array
          */
         itemRenderer(li, value) {
             li.html(renderValue(value));
@@ -176,7 +175,7 @@ if (typeof PhpDebugBar === 'undefined') {
         className: csscls('kvlist'),
 
         render() {
-            this.bindAttr(['itemRenderer', 'data'], function() {
+            this.bindAttr(['itemRenderer', 'data'], function () {
                 this.$el.empty();
                 if (!this.has('data')) {
                     return;
@@ -195,8 +194,8 @@ if (typeof PhpDebugBar === 'undefined') {
          *
          * @param {jQuery} dt The <dt> element as a jQuery Object
          * @param {jQuery} dd The <dd> element as a jQuery Object
-         * @param {String} key Property name
-         * @param {Object} value Property value
+         * @param {string} key Property name
+         * @param {object} value Property value
          */
         itemRenderer(dt, dd, key, value) {
             dt.text(key);
@@ -223,7 +222,7 @@ if (typeof PhpDebugBar === 'undefined') {
 
             let v = value && value.value || value;
             if (v && v.length > 100) {
-                v = `${v.substr(0, 100)  }...`;
+                v = `${v.substr(0, 100)}...`;
             }
             let prettyVal = null;
             dd.text(v).click(() => {
@@ -260,14 +259,14 @@ if (typeof PhpDebugBar === 'undefined') {
             dd.html(value && value.value || value);
 
             if (value && value.xdebug_link) {
-                const header = $('<span />').addClass(csscls('filename')).text(value.xdebug_link.filename + ( value.xdebug_link.line ? `#${  value.xdebug_link.line}` : ''));
+                const header = $('<span />').addClass(csscls('filename')).text(value.xdebug_link.filename + (value.xdebug_link.line ? `#${value.xdebug_link.line}` : ''));
                 if (value.xdebug_link) {
                     if (value.xdebug_link.ajax) {
-                        $(`<a title="${  value.xdebug_link.url  }"></a>`).on('click', () => {
+                        $(`<a title="${value.xdebug_link.url}"></a>`).on('click', () => {
                             fetch(value.xdebug_link.url);
                         }).addClass(csscls('editor-link')).appendTo(header);
                     } else {
-                        $(`<a href="${  value.xdebug_link.url  }"></a>`).addClass(csscls('editor-link')).appendTo(header);
+                        $(`<a href="${value.xdebug_link.url}"></a>`).addClass(csscls('editor-link')).appendTo(header);
                     }
                 }
                 header.appendTo(dd);
@@ -287,14 +286,14 @@ if (typeof PhpDebugBar === 'undefined') {
      *  - key_map: list of keys to be displayed with an optional label
      *             example: {key1: label1, key2: label2} or [key1, key2]
      */
-    const TableVariableListWidget = PhpDebugBar.Widgets.TableVariableListWidget =  PhpDebugBar.Widget.extend({
+    const TableVariableListWidget = PhpDebugBar.Widgets.TableVariableListWidget = PhpDebugBar.Widget.extend({
 
         tagName: 'div',
 
         className: csscls('tablevarlist'),
 
         render() {
-            this.bindAttr('data', function(data) {
+            this.bindAttr('data', function (data) {
                 this.$el.empty();
 
                 if (!this.has('data')) {
@@ -303,7 +302,7 @@ if (typeof PhpDebugBar === 'undefined') {
 
                 this.$table = $('<table />').addClass(csscls('tablevar')).appendTo(this.$el);
                 const $header = $('<tr />').addClass(csscls('header')).append('<td />').appendTo(this.$table);
-                let key_map = data.key_map || {value: 'Value'};
+                let key_map = data.key_map || { value: 'Value' };
 
                 if (Array.isArray(key_map)) {
                     key_map = Object.fromEntries(key_map.map(k => [k, null]));
@@ -332,15 +331,13 @@ if (typeof PhpDebugBar === 'undefined') {
                     });
 
                     if (values.xdebug_link) {
-                        const filename = $('<span />').addClass(csscls('filename'))
-                            .text(values.xdebug_link.filename + ( values.xdebug_link.line ? `#${  values.xdebug_link.line}` : ''))
-                            .appendTo($('<td />').addClass(csscls('editor')).appendTo($tr));
+                        const filename = $('<span />').addClass(csscls('filename')).text(values.xdebug_link.filename + (values.xdebug_link.line ? `#${values.xdebug_link.line}` : '')).appendTo($('<td />').addClass(csscls('editor')).appendTo($tr));
                         if (values.xdebug_link.ajax) {
-                            $(`<a title="${  values.xdebug_link.url  }"></a>`).on('click', () => {
+                            $(`<a title="${values.xdebug_link.url}"></a>`).on('click', () => {
                                 fetch(values.xdebug_link.url);
                             }).addClass(csscls('editor-link')).appendTo(filename);
                         } else {
-                            $(`<a href="${  values.xdebug_link.url  }"></a>`).addClass(csscls('editor-link')).appendTo(filename);
+                            $(`<a href="${values.xdebug_link.url}"></a>`).addClass(csscls('editor-link')).appendTo(filename);
                         }
 
                         if (!data.xdebug_link) {
@@ -393,13 +390,12 @@ if (typeof PhpDebugBar === 'undefined') {
                 width: '100%',
                 height: '100%'
             });
-            this.bindAttr('data', function(url) {
-                this.$el.attr('src', url); 
+            this.bindAttr('data', function (url) {
+                this.$el.attr('src', url);
             });
         }
 
     });
-
 
     // ------------------------------------------------------------------
     // Collector specific widgets
@@ -421,23 +417,24 @@ if (typeof PhpDebugBar === 'undefined') {
             const self = this;
 
             this.$list = new ListWidget({ itemRenderer(li, value) {
+                let val;
                 if (value.message_html) {
-                    var val = $('<span />').addClass(csscls('value')).html(value.message_html).appendTo(li);
+                    val = $('<span />').addClass(csscls('value')).html(value.message_html).appendTo(li);
                 } else {
                     let m = value.message;
                     if (m.length > 100) {
-                        m = `${m.substr(0, 100)  }...`;
+                        m = `${m.substr(0, 100)}...`;
                     }
 
-                    var val = $('<span />').addClass(csscls('value')).text(m).appendTo(li);
+                    val = $('<span />').addClass(csscls('value')).text(m).appendTo(li);
                     if (!value.is_string || value.message.length > 100) {
                         let prettyVal = value.message;
                         if (!value.is_string) {
                             prettyVal = null;
                         }
                         li.css('cursor', 'pointer').click(() => {
-                            if (window.getSelection().type == 'Range') {
-                                return'';
+                            if (window.getSelection().type === 'Range') {
+                                return '';
                             }
                             if (val.hasClass(csscls('pretty'))) {
                                 val.text(m).removeClass(csscls('pretty'));
@@ -449,14 +446,14 @@ if (typeof PhpDebugBar === 'undefined') {
                     }
                 }
                 if (value.xdebug_link) {
-                    const header = $('<span />').addClass(csscls('filename')).text(value.xdebug_link.filename + ( value.xdebug_link.line ? `#${  value.xdebug_link.line}` : ''));
+                    const header = $('<span />').addClass(csscls('filename')).text(value.xdebug_link.filename + (value.xdebug_link.line ? `#${value.xdebug_link.line}` : ''));
                     if (value.xdebug_link) {
                         if (value.xdebug_link.ajax) {
-                            $(`<a title="${  value.xdebug_link.url  }"></a>`).on('click', () => {
+                            $(`<a title="${value.xdebug_link.url}"></a>`).on('click', () => {
                                 fetch(value.xdebug_link.url);
                             }).addClass(csscls('editor-link')).appendTo(header);
                         } else {
-                            $(`<a href="${  value.xdebug_link.url  }"></a>`).addClass(csscls('editor-link')).appendTo(header);
+                            $(`<a href="${value.xdebug_link.url}"></a>`).addClass(csscls('editor-link')).appendTo(header);
                         }
                     }
                     header.prependTo(li);
@@ -468,31 +465,33 @@ if (typeof PhpDebugBar === 'undefined') {
                     val.addClass(csscls(value.label));
                     $('<span />').addClass(csscls('label')).text(value.label).prependTo(li);
                 }
-            }});
+            } });
 
             this.$list.$el.appendTo(this.$el);
             this.$toolbar = $('<div><i class="phpdebugbar-fa phpdebugbar-fa-search"></i></div>').addClass(csscls('toolbar')).appendTo(this.$el);
 
             $('<input type="text" name="search" aria-label="Search" placeholder="Search" />')
-                .on('change', function() {
-                    self.set('search', this.value); 
+                .on('change', function () {
+                    self.set('search', this.value);
                 })
                 .appendTo(this.$toolbar);
 
-            this.bindAttr('data', function(data) {
-                this.set({excludelabel: [], excludecollector: [], search: ''});
+            this.bindAttr('data', function (data) {
+                this.set({ excludelabel: [], excludecollector: [], search: '' });
                 this.$toolbar.find(csscls('.filter')).remove();
 
-                const labels = [], collectors = [], self = this,
-                    createFilterItem = function (type, value) {
-                        $('<a />')
-                            .addClass(csscls('filter')).addClass(csscls(type))
-                            .text(value).attr('rel', value)
-                            .on('click', function() {
-                                self.onFilterClick(this, type); 
-                            })
-                            .appendTo(self.$toolbar);
-                    };
+                const labels = []; const collectors = []; const self = this;
+                const createFilterItem = function (type, value) {
+                    $('<a />')
+                        .addClass(csscls('filter'))
+                        .addClass(csscls(type))
+                        .text(value)
+                        .attr('rel', value)
+                        .on('click', function () {
+                            self.onFilterClick(this, type);
+                        })
+                        .appendTo(self.$toolbar);
+                };
 
                 data.forEach((item) => {
                     if (!labels.includes(item.label || 'none')) {
@@ -516,12 +515,12 @@ if (typeof PhpDebugBar === 'undefined') {
                 collectors.forEach(collector => createFilterItem('collector', collector));
             });
 
-            this.bindAttr(['excludelabel', 'excludecollector', 'search'], function() {
-                let excludelabel = this.get('excludelabel') || [],
-                    excludecollector = this.get('excludecollector') || [],
-                    search = this.get('search'),
-                    caseless = false,
-                    fdata = [];
+            this.bindAttr(['excludelabel', 'excludecollector', 'search'], function () {
+                const excludelabel = this.get('excludelabel') || [];
+                const excludecollector = this.get('excludecollector') || [];
+                const search = this.get('search');
+                let caseless = false;
+                const fdata = [];
 
                 if (search && search === search.toLowerCase()) {
                     caseless = true;
@@ -531,9 +530,9 @@ if (typeof PhpDebugBar === 'undefined') {
                     const message = caseless ? item.message.toLowerCase() : item.message;
 
                     if (
-                        !excludelabel.includes(item.label || undefined) &&
-                        !excludecollector.includes(item.collector || undefined) &&
-                        (!search || message.indexOf(search) > -1)
+                        !excludelabel.includes(item.label || undefined)
+                        && !excludecollector.includes(item.collector || undefined)
+                        && (!search || message.includes(search))
                     ) {
                         fdata.push(item);
                     }
@@ -547,11 +546,11 @@ if (typeof PhpDebugBar === 'undefined') {
             $(el).toggleClass(csscls('excluded'));
 
             const excluded = [];
-            this.$toolbar.find(csscls('.filter') + csscls('.excluded') + csscls(`.${  type}`)).each(function() {
+            this.$toolbar.find(csscls('.filter') + csscls('.excluded') + csscls(`.${type}`)).each(function () {
                 excluded.push(this.rel === 'none' || !this.rel ? undefined : this.rel);
             });
 
-            this.set(`exclude${  type}`, excluded);
+            this.set(`exclude${type}`, excluded);
         }
 
     });
@@ -571,18 +570,17 @@ if (typeof PhpDebugBar === 'undefined') {
         className: csscls('timeline'),
 
         render() {
-            this.bindAttr('data', function(data) {
-
+            this.bindAttr('data', function (data) {
                 // ported from php DataFormatter
-                const formatDuration = function(seconds) {
+                const formatDuration = function (seconds) {
                     if (seconds < 0.001) {
-                        return `${(seconds * 1000000).toFixed()  }μs`;
+                        return `${(seconds * 1000000).toFixed()}μs`;
                     } else if (seconds < 0.1) {
-                        return `${(seconds * 1000).toFixed(2)  }ms`;
+                        return `${(seconds * 1000).toFixed(2)}ms`;
                     } else if (seconds < 1) {
-                        return `${(seconds * 1000).toFixed()  }ms`;
+                        return `${(seconds * 1000).toFixed()}ms`;
                     }
-                    return `${(seconds).toFixed(2)   }s`;
+                    return `${(seconds).toFixed(2)}s`;
                 };
 
                 // ported from php DataFormatter
@@ -591,11 +589,11 @@ if (typeof PhpDebugBar === 'undefined') {
                         return '0B';
                     }
 
-                    var sign = size < 0 ? '-' : '',
-                        size = Math.abs(size),
-                        base = Math.log(size) / Math.log(1024),
-                        suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
-                    return sign + (Math.round(Math.pow(1024, base - Math.floor(base)) * 100) / 100) + suffixes[Math.floor(base)];
+                    const sign = size < 0 ? '-' : '';
+                    const absSize2 = Math.abs(size);
+                    const base = Math.log(absSize2) / Math.log(1024);
+                    const suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
+                    return sign + (Math.round(1024 ** (base - Math.floor(base)) * 100) / 100) + suffixes[Math.floor(base)];
                 };
 
                 this.$el.empty();
@@ -606,25 +604,25 @@ if (typeof PhpDebugBar === 'undefined') {
                         const measure = data.measures[i];
                         const group = measure.group || measure.label;
 
-                        if(!aggregate[group]) {
-                            aggregate[group] = { count: 0, duration: 0, memory : 0 };
+                        if (!aggregate[group]) {
+                            aggregate[group] = { count: 0, duration: 0, memory: 0 };
                         }
 
-                        aggregate[group]['count'] += 1;
-                        aggregate[group]['duration'] += measure.duration;
-                        aggregate[group]['memory'] += (measure.memory || 0);
+                        aggregate[group].count += 1;
+                        aggregate[group].duration += measure.duration;
+                        aggregate[group].memory += (measure.memory || 0);
 
-                        var m = $('<div />').addClass(csscls('measure')),
-                            li = $('<li />'),
-                            left = (measure.relative_start * 100 / data.duration).toFixed(2),
-                            width = Math.min((measure.duration * 100 / data.duration).toFixed(2), 100 - left);
+                        const m = $('<div />').addClass(csscls('measure'));
+                        const li = $('<li />');
+                        const left = (measure.relative_start * 100 / data.duration).toFixed(2);
+                        const width = Math.min((measure.duration * 100 / data.duration).toFixed(2), 100 - left);
 
                         m.append($('<span />').addClass(csscls('value')).css({
-                            left: `${left  }%`,
-                            width: `${width  }%`
+                            left: `${left}%`,
+                            width: `${width}%`
                         }));
                         m.append($('<span />').addClass(csscls('label'))
-                            .text(measure.label.replace(/\s+/g, ' ') + ( measure.duration ? ` (${  measure.duration_str }${measure.memory ? `/${  measure.memory_str}`: ''  })` : '')));
+                            .text(measure.label.replace(/\s+/g, ' ') + (measure.duration ? ` (${measure.duration_str}${measure.memory ? `/${measure.memory_str}` : ''})` : '')));
 
                         if (measure.collector) {
                             $('<span />').addClass(csscls('collector')).text(measure.collector).appendTo(m);
@@ -637,12 +635,12 @@ if (typeof PhpDebugBar === 'undefined') {
                             const table = $('<table><tr><th colspan="2">Params</th></tr></table>').hide().addClass(csscls('params')).appendTo(li);
                             for (const key in measure.params) {
                                 if (typeof measure.params[key] !== 'function') {
-                                    table.append(`<tr><td class="${  csscls('name')  }">${  key  }</td><td class="${  csscls('value') 
-                                    }"><pre><code>${  measure.params[key]  }</code></pre></td></tr>`);
+                                    table.append(`<tr><td class="${csscls('name')}">${key}</td><td class="${csscls('value')
+                                    }"><pre><code>${measure.params[key]}</code></pre></td></tr>`);
                                 }
                             }
-                            li.css('cursor', 'pointer').click(function() {
-                                if (window.getSelection().type == 'Range') {
+                            li.css('cursor', 'pointer').click(function () {
+                                if (window.getSelection().type === 'Range') {
                                     return '';
                                 }
                                 const table = $(this).find('table');
@@ -670,15 +668,15 @@ if (typeof PhpDebugBar === 'undefined') {
                     // build table and add
                     const aggregateTable = $('<table></table>').addClass(csscls('params'));
                     $.each(aggregate, (i, aggregate) => {
-                        width = Math.min((aggregate.data.duration * 100 / data.duration).toFixed(2), 100);
+                        const width = Math.min((aggregate.data.duration * 100 / data.duration).toFixed(2), 100);
 
-                        aggregateTable.append(`<tr><td class="${  csscls('name')  }">${ 
-                            aggregate.data.count  } x ${  $('<i />').text(aggregate.label.replace(/\s+/g, ' ')).html()  } (${  width  }%)</td><td class="${  csscls('value')  }">` +
-                            `<div class="${  csscls('measure') }">` +
-                                `<span class="${  csscls('value')  }"></span>` +
-                                `<span class="${  csscls('label')  }">${  formatDuration(aggregate.data.duration)  }${aggregate.data.memory ? `/${  formatBytes(aggregate.data.memory)}` : ''  }</span>` +
-                            '</div></td></tr>');
-                        aggregateTable.find(`span.${  csscls('value')  }:last`).css({width: `${width  }%` });
+                        aggregateTable.append(`<tr><td class="${csscls('name')}">${
+                            aggregate.data.count} x ${$('<i />').text(aggregate.label.replace(/\s+/g, ' ')).html()} (${width}%)</td><td class="${csscls('value')}">`
+                            + `<div class="${csscls('measure')}">`
+                            + `<span class="${csscls('value')}"></span>`
+                            + `<span class="${csscls('label')}">${formatDuration(aggregate.data.duration)}${aggregate.data.memory ? `/${formatBytes(aggregate.data.memory)}` : ''}</span>`
+                            + '</div></td></tr>');
+                        aggregateTable.find(`span.${csscls('value')}:last`).css({ width: `${width}%` });
                     });
 
                     this.$el.append('<li/>').find('li:last').append(aggregateTable);
@@ -702,17 +700,16 @@ if (typeof PhpDebugBar === 'undefined') {
 
         render() {
             this.$list = new ListWidget({ itemRenderer(li, e) {
-                $('<span />').addClass(csscls('message')).text(e.message)
-                    .prepend(e.count>1 ? $('<span />').addClass(csscls('badge')).text(`${e.count}x`) : '').appendTo(li);
+                $('<span />').addClass(csscls('message')).text(e.message).prepend(e.count > 1 ? $('<span />').addClass(csscls('badge')).text(`${e.count}x`) : '').appendTo(li);
                 if (e.file) {
-                    const header = $('<span />').addClass(csscls('filename')).text(`${e.file  }#${  e.line}`);
+                    const header = $('<span />').addClass(csscls('filename')).text(`${e.file}#${e.line}`);
                     if (e.xdebug_link) {
                         if (e.xdebug_link.ajax) {
-                            $(`<a title="${  e.xdebug_link.url  }"></a>`).on('click', () => {
+                            $(`<a title="${e.xdebug_link.url}"></a>`).on('click', () => {
                                 fetch(e.xdebug_link.url);
                             }).addClass(csscls('editor-link')).appendTo(header);
                         } else {
-                            $(`<a href="${  e.xdebug_link.url  }"></a>`).addClass(csscls('editor-link')).appendTo(header);
+                            $(`<a href="${e.xdebug_link.url}"></a>`).addClass(csscls('editor-link')).appendTo(header);
                         }
                     }
                     header.appendTo(li);
@@ -736,8 +733,7 @@ if (typeof PhpDebugBar === 'undefined') {
                 }
                 if (e.stack_trace_html) {
                     const $trace = $('<span />').addClass(csscls('filename')).html(e.stack_trace_html);
-                    $trace.find('samp[data-depth="1"]').removeClass('sf-dump-expanded').addClass('sf-dump-compact').parent()
-                        .find('>.sf-dump-note').html((_, t) => `${t.replace(/^array:/, '<span class="sf-dump-key">Stack Trace:</span> ')  } files`);
+                    $trace.find('samp[data-depth="1"]').removeClass('sf-dump-expanded').addClass('sf-dump-compact').parent().find('>.sf-dump-note').html((_, t) => `${t.replace(/^array:/, '<span class="sf-dump-key">Stack Trace:</span> ')} files`);
                     $trace.appendTo(li);
                 } else if (e.stack_trace) {
                     e.stack_trace.split('\n').forEach((trace) => {
@@ -746,16 +742,15 @@ if (typeof PhpDebugBar === 'undefined') {
                         $traceLine.appendTo(li);
                     });
                 }
-            }});
+            } });
             this.$list.$el.appendTo(this.$el);
 
-            this.bindAttr('data', function(data) {
+            this.bindAttr('data', function (data) {
                 this.$list.set('data', data);
-                if (data.length == 1) {
+                if (data.length === 1) {
                     this.$list.$el.children().first().find(csscls('.file')).show();
                 }
             });
-
         }
 
     });
@@ -767,8 +762,8 @@ if (typeof PhpDebugBar === 'undefined') {
     const DatasetWidget = PhpDebugBar.Widgets.DatasetWidget = PhpDebugBar.Widget.extend({
 
         initialize(options) {
-            if (!options['itemRenderer']) {
-                options['itemRenderer'] = this.itemRenderer;
+            if (!options.itemRenderer) {
+                options.itemRenderer = this.itemRenderer;
             }
             this.set(options);
             this.set('autoshow', null);
@@ -787,19 +782,18 @@ if (typeof PhpDebugBar === 'undefined') {
             const debugbar = self.get('debugbar');
 
             this.$autoshow = $('<input type=checkbox>')
-                .on('click', function() {
+                .on('click', function () {
                     if (debugbar.ajaxHandler) {
                         debugbar.ajaxHandler.setAutoShow($(this).is(':checked'));
                     }
-                    if (debugbar.controls['__settings']) {
-                        debugbar.controls['__settings'].get('widget').set('autoshow', this.autoShow);
+                    if (debugbar.controls.__settings) {
+                        debugbar.controls.__settings.get('widget').set('autoshow', this.autoShow);
                     }
                 });
 
             $('<label>Autoshow</label>')
                 .append(this.$autoshow)
                 .appendTo(this.$actions);
-
 
             this.$clearbtn = $('<a>Clear</a>')
                 .appendTo(this.$actions)
@@ -817,17 +811,16 @@ if (typeof PhpDebugBar === 'undefined') {
                 });
 
             this.methodInput = $('<select name="method" style="width:100px"><option>(method)</option><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select>')
-                .on('change', function() {
+                .on('change', function () {
                     self.set('method', this.value);
                 })
                 .appendTo(this.$actions);
 
             this.searchInput = $('<input type="text" name="search" aria-label="Search" placeholder="Search" />')
-                .on('input', function() {
-                    self.set('search', this.value); 
+                .on('input', function () {
+                    self.set('search', this.value);
                 })
                 .appendTo(this.$actions);
-
 
             this.$table = $('<tbody />');
 
@@ -845,8 +838,6 @@ if (typeof PhpDebugBar === 'undefined') {
                 )
                 .append(this.$table)
                 .appendTo(this.$el);
-
-
         },
 
         renderDatasets() {
@@ -862,7 +853,7 @@ if (typeof PhpDebugBar === 'undefined') {
         },
 
         render() {
-            this.bindAttr('data', function() {
+            this.bindAttr('data', function () {
                 if (this.get('autoshow') === null && this.get('debugbar').ajaxHandler) {
                     this.set('autoshow', this.get('debugbar').ajaxHandler.autoShow);
                 }
@@ -880,24 +871,24 @@ if (typeof PhpDebugBar === 'undefined') {
 
                 this.get('itemRenderer')(this, data);
             });
-            this.bindAttr(['itemRenderer', 'search', 'method', 'sort'], function() {
+            this.bindAttr(['itemRenderer', 'search', 'method', 'sort'], function () {
                 this.renderDatasets();
             });
-            this.bindAttr('autoshow', function() {
+            this.bindAttr('autoshow', function () {
                 const autoshow = this.get('autoshow');
                 this.$autoshow.prop('checked', autoshow);
             });
-            this.bindAttr('id', function() {
+            this.bindAttr('id', function () {
                 const id = this.get('id');
-                this.$table.find(`.${  csscls('active')}`).removeClass(csscls('active'));
-                this.$table.find(`tr[data-id=${  id}]`).addClass(csscls('active'));
+                this.$table.find(`.${csscls('active')}`).removeClass(csscls('active'));
+                this.$table.find(`tr[data-id=${id}]`).addClass(csscls('active'));
             });
         },
 
         /**
          * Renders the content of a dataset item
          *
-         * @param {Object} value An item from the data array
+         * @param {object} value An item from the data array
          */
         itemRenderer(widget, data) {
             const meta = data.__meta;
@@ -910,10 +901,10 @@ if (typeof PhpDebugBar === 'undefined') {
                 tr.prependTo(widget.$table);
             }
 
-            const clickHandler = function() {
+            const clickHandler = function () {
                 const debugbar = widget.get('debugbar');
                 debugbar.showDataSet(meta.id, debugbar.datesetTitleFormater.format('', data, meta.suffix, meta.nb));
-                widget.$table.find(`.${  csscls('active')}`).removeClass(csscls('active'));
+                widget.$table.find(`.${csscls('active')}`).removeClass(csscls('active'));
                 tr.addClass(csscls('active'));
 
                 if ($(this).data('tab')) {
@@ -921,18 +912,18 @@ if (typeof PhpDebugBar === 'undefined') {
                 }
             };
 
-            tr.attr('data-id', meta['id'])
-                .append($(`<td>#${  meta['nb']  }</td>`).click(clickHandler))
-                .append($(`<td>${  meta['datetime']  }</td>`).click(clickHandler))
-                .append($(`<td>${  meta['method']  }</td>`).click(clickHandler))
-                .append($('<td />').append(meta['uri'] + (meta['suffix'] ? ` ${  meta['suffix']}` : '')).click(clickHandler))
+            tr.attr('data-id', meta.id)
+                .append($(`<td>#${meta.nb}</td>`).click(clickHandler))
+                .append($(`<td>${meta.datetime}</td>`).click(clickHandler))
+                .append($(`<td>${meta.method}</td>`).click(clickHandler))
+                .append($('<td />').append(meta.uri + (meta.suffix ? ` ${meta.suffix}` : '')).click(clickHandler))
                 .css('cursor', 'pointer')
                 .addClass(csscls('table-row'));
 
             const debugbar = widget.get('debugbar');
             $.each(debugbar.dataMap, (key, def) => {
                 const d = getDictValue(data, def[0], def[1]);
-                if (key.indexOf(':') != -1) {
+                if (key.includes(':')) {
                     key = key.split(':');
                     if (key[1] === 'badge' && d > 0) {
                         const control = debugbar.getControl(key[0]);
@@ -951,19 +942,16 @@ if (typeof PhpDebugBar === 'undefined') {
             });
             tr.append($badges);
 
-            if (debugbar.activeDatasetId === meta['id']) {
+            if (debugbar.activeDatasetId === meta.id) {
                 tr.addClass(csscls('active'));
             }
 
             const search = widget.get('search');
             const method = widget.get('method');
-            if ((search && meta['uri'].indexOf(search) == -1) || (method && meta['method'] !== method)) {
+            if ((search && !meta.uri.includes(search)) || (method && meta.method !== method)) {
                 tr.hide();
             }
         }
 
     });
-
-
-
 })(PhpDebugBar.$);

@@ -1,5 +1,4 @@
-(function($) {
-
+(function ($) {
     const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
 
     /**
@@ -14,15 +13,15 @@
 
         onFilterClick(el) {
             $(el).toggleClass(csscls('excluded'));
-            this.$list.$el.find(`li[connection=${  $(el).attr('rel')  }]`).toggle();
+            this.$list.$el.find(`li[connection=${$(el).attr('rel')}]`).toggle();
         },
-        onCopyToClipboard (el) {
+        onCopyToClipboard(el) {
             const code = $(el).parent('li').find('code').get(0);
             const copy = function () {
                 try {
                     if (document.execCommand('copy')) {
                         $(el).addClass(csscls('copy-clipboard-check'));
-                        setTimeout(() =>{
+                        setTimeout(() => {
                             $(el).removeClass(csscls('copy-clipboard-check'));
                         }, 2000);
                     }
@@ -32,11 +31,11 @@
             };
             const select = function (node) {
                 if (document.selection) {
-                    var range = document.body.createTextRange();
+                    const range = document.body.createTextRange();
                     range.moveToElementText(node);
                     range.select();
                 } else if (window.getSelection) {
-                    var range = document.createRange();
+                    const range = document.createRange();
                     range.selectNodeContents(node);
                     window.getSelection().removeAllRanges();
                     window.getSelection().addRange(range);
@@ -46,21 +45,21 @@
             };
             select(code);
         },
-        renderList (caption, icon, data) {
-            let $ul = $('<ul />').addClass(csscls('table-list')), $parts;
+        renderList(caption, icon, data) {
+            const $ul = $('<ul />').addClass(csscls('table-list'));
             const $li = $('<li />').addClass(csscls('table-list-item'));
             const $span = $('<span />').addClass('phpdebugbar-text-muted');
             for (const key in data) {
-                const value = typeof data[key] === 'function' ? `${data[key].name  } {}` : data[key];
+                const value = typeof data[key] === 'function' ? `${data[key].name} {}` : data[key];
                 $li.clone().append(typeof value === 'object' && value !== null
                     ? [$span.clone().text(value.index || key).append('.'), '&nbsp;']
-                        .concat(value.namespace ? [`${value.namespace  }::`] : [])
-                        .concat([value.name || value.file])
-                        .concat(value.line ? [$span.clone().text(`:${  value.line}`)] : [])
-                    : [$span.clone().text(`${key  }:`), '&nbsp;', $span.clone().text(value).html()]
+                            .concat(value.namespace ? [`${value.namespace}::`] : [])
+                            .concat([value.name || value.file])
+                            .concat(value.line ? [$span.clone().text(`:${value.line}`)] : [])
+                    : [$span.clone().text(`${key}:`), '&nbsp;', $span.clone().text(value).html()]
                 ).appendTo($ul);
             }
-            caption += icon ? ` <i class="phpdebugbar-fa phpdebugbar-fa-${  icon  } phpdebugbar-text-muted"></i>` : '';
+            caption += icon ? ` <i class="phpdebugbar-fa phpdebugbar-fa-${icon} phpdebugbar-text-muted"></i>` : '';
             return $('<tr />').append(
                 $('<td />').addClass(csscls('name')).html(caption),
                 $('<td />').addClass(csscls('value')).append($ul)
@@ -71,7 +70,8 @@
 
             this.$toolbar = $('<div />').addClass(csscls('toolbar')).appendTo(this.$el);
 
-            let filters = [], self = this;
+            let filters = [];
+            const self = this;
 
             this.$list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer(li, stmt) {
                 if (stmt.slow) {
@@ -80,8 +80,8 @@
                 if (stmt.width_percent) {
                     $('<div />').addClass(csscls('bg-measure')).append(
                         $('<div />').addClass(csscls('value')).css({
-                            left: `${stmt.start_percent  }%`,
-                            width: `${Math.max(stmt.width_percent, 0.01)  }%`
+                            left: `${stmt.start_percent}%`,
+                            width: `${Math.max(stmt.width_percent, 0.01)}%`
                         })
                     ).appendTo(li);
                 }
@@ -91,28 +91,28 @@
                 if (stmt.memory_str) {
                     $('<span title="Memory usage" />').addClass(csscls('memory')).text(stmt.memory_str).appendTo(li);
                 }
-                if (typeof(stmt.row_count) !== 'undefined') {
+                if (typeof (stmt.row_count) !== 'undefined') {
                     $('<span title="Row count" />').addClass(csscls('row-count')).text(stmt.row_count).appendTo(li);
                 }
-                if (typeof(stmt.stmt_id) !== 'undefined' && stmt.stmt_id) {
+                if (typeof (stmt.stmt_id) !== 'undefined' && stmt.stmt_id) {
                     $('<span title="Prepared statement ID" />').addClass(csscls('stmt-id')).text(stmt.stmt_id).appendTo(li);
                 }
                 if (stmt.connection) {
                     $('<span title="Connection" />').addClass(csscls('database')).text(stmt.connection).appendTo(li);
-                    li.attr('connection',stmt.connection);
-                    if ( $.inArray(stmt.connection, filters) == -1 ) {
+                    li.attr('connection', stmt.connection);
+                    if ($.inArray(stmt.connection, filters) === -1) {
                         filters.push(stmt.connection);
                         $('<a />')
                             .addClass(csscls('filter'))
                             .text(stmt.connection)
                             .attr('rel', stmt.connection)
-                            .on('click', function() {
-                                self.onFilterClick(this); 
+                            .on('click', function () {
+                                self.onFilterClick(this);
                             })
                             .appendTo(self.$toolbar);
-                        if (filters.length>1) {
+                        if (filters.length > 1) {
                             self.$toolbar.show();
-                            self.$list.$el.css('margin-bottom','20px');
+                            self.$list.$el.css('margin-bottom', '20px');
                         }
                     }
                 }
@@ -127,11 +127,11 @@
                         })
                         .appendTo(li);
                 }
-                if (typeof(stmt.xdebug_link) !== 'undefined' && stmt.xdebug_link) {
-                    const header = $('<span title="Filename" />').addClass(csscls('filename')).text(stmt.xdebug_link.filename + ( stmt.xdebug_link.line ? `#${  stmt.xdebug_link.line}` : ''));
-                    $(`<a href="${  stmt.xdebug_link.url  }"></a>`).on('click', () => {
+                if (typeof (stmt.xdebug_link) !== 'undefined' && stmt.xdebug_link) {
+                    const header = $('<span title="Filename" />').addClass(csscls('filename')).text(stmt.xdebug_link.filename + (stmt.xdebug_link.line ? `#${stmt.xdebug_link.line}` : ''));
+                    $(`<a href="${stmt.xdebug_link.url}"></a>`).on('click', () => {
                         event.stopPropagation();
-                        if (stmt.xdebug_link.ajax) {                            
+                        if (stmt.xdebug_link.ajax) {
                             fetch(stmt.xdebug_link.url);
                             event.preventDefault();
                         }
@@ -143,9 +143,9 @@
                 } else {
                     $('<code />').addClass(csscls('sql')).html(PhpDebugBar.Widgets.highlight(stmt.sql, 'sql')).appendTo(li);
                 }
-                if (typeof(stmt.is_success) !== 'undefined' && !stmt.is_success) {
+                if (typeof (stmt.is_success) !== 'undefined' && !stmt.is_success) {
                     li.addClass(csscls('error'));
-                    li.append($('<span />').addClass(csscls('error')).text(`[${  stmt.error_code  }] ${  stmt.error_message}`));
+                    li.append($('<span />').addClass(csscls('error')).text(`[${stmt.error_code}] ${stmt.error_message}`));
                 }
                 const table = $('<table></table>').addClass(csscls('params'));
                 if (stmt.params && !$.isEmptyObject(stmt.params)) {
@@ -163,8 +163,8 @@
                 if (table.find('tr').length) {
                     table.appendTo(li);
                     li.css('cursor', 'pointer').click(() => {
-                        if (window.getSelection().type == 'Range') {
-                            return'';
+                        if (window.getSelection().type === 'Range') {
+                            return '';
                         }
                         if (table.is(':visible')) {
                             table.hide();
@@ -173,10 +173,10 @@
                         }
                     });
                 }
-            }});
+            } });
             this.$list.$el.appendTo(this.$el);
 
-            this.bindAttr('data', function(data) {
+            this.bindAttr('data', function (data) {
                 // the PDO collector maybe is empty
                 if (data.length <= 0 || !data.statements) {
                     return false;
@@ -187,11 +187,13 @@
                 this.$status.empty();
 
                 // Search for duplicate statements.
-                for (var sql = {}, duplicate = 0, i = 0; i < data.statements.length; i++) {
+                const sql = {};
+                let duplicate = 0;
+                for (let i = 0; i < data.statements.length; i++) {
                     if (data.statements[i].type && data.statements[i].type !== 'query') {
                         continue;
                     }
-                    var stmt = data.statements[i].sql;
+                    let stmt = data.statements[i].sql;
                     if (data.statements[i].params && !$.isEmptyObject(data.statements[i].params)) {
                         stmt += JSON.stringify(data.statements[i].params);
                     }
@@ -199,37 +201,36 @@
                         stmt += JSON.stringify(data.statements[i].bindings);
                     }
                     if (data.statements[i].connection) {
-                        stmt += `@${  data.statements[i].connection}`;
+                        stmt += `@${data.statements[i].connection}`;
                     }
                     sql[stmt] = sql[stmt] || { keys: [] };
                     sql[stmt].keys.push(i);
                 }
                 // Add classes to all duplicate SQL statements.
-                for (var stmt in sql) {
+                for (const stmt in sql) {
                     if (sql[stmt].keys.length > 1) {
                         duplicate += sql[stmt].keys.length;
-                        for (var i = 0; i < sql[stmt].keys.length; i++) {
-                            this.$list.$el.find(`.${  csscls('list-item')}`).eq(sql[stmt].keys[i])
-                                .addClass(csscls('sql-duplicate'));
+                        for (let i = 0; i < sql[stmt].keys.length; i++) {
+                            this.$list.$el.find(`.${csscls('list-item')}`).eq(sql[stmt].keys[i]).addClass(csscls('sql-duplicate'));
                         }
                     }
                 }
 
-                const t = $('<span />').text(`${data.nb_statements  } statements were executed`).appendTo(this.$status);
+                const t = $('<span />').text(`${data.nb_statements} statements were executed`).appendTo(this.$status);
                 if (data.nb_failed_statements) {
-                    t.append(`, ${  data.nb_failed_statements  } of which failed`);
+                    t.append(`, ${data.nb_failed_statements} of which failed`);
                 }
                 if (duplicate) {
-                    t.append(`, ${  duplicate  } of which were duplicates`);
-                    t.append(`, ${  data.nb_statements - duplicate  } unique. `);
+                    t.append(`, ${duplicate} of which were duplicates`);
+                    t.append(`, ${data.nb_statements - duplicate} unique. `);
 
                     // add toggler for displaying only duplicated queries
                     const duplicatedText = 'Show only duplicated';
                     $('<a />').addClass(csscls('duplicates')).click(function () {
-                        $(this).toggleClass('shown-duplicated')
-                            .text($(this).hasClass('shown-duplicated') ? 'Show All' : duplicatedText);
-                        $(`.${  self.className  } .${  csscls('list-item')}`)
-                            .not(`.${  csscls('sql-duplicate')}`).toggle();
+                        $(this).toggleClass('shown-duplicated').text($(this).hasClass('shown-duplicated') ? 'Show All' : duplicatedText);
+                        $(`.${self.className} .${csscls('list-item')}`)
+                            .not(`.${csscls('sql-duplicate')}`)
+                            .toggle();
                     }).text(duplicatedText).appendTo(t);
                 }
                 if (data.accumulated_duration_str) {
@@ -242,5 +243,4 @@
         }
 
     });
-
 })(PhpDebugBar.$);
