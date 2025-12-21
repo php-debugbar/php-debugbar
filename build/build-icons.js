@@ -5,38 +5,40 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Icon mappings (our icon name -> Tabler icon name)
-const iconMappings = {
+// Tabler icons to include
+const icons = [
     // Data collector icons
-    'times': 'x',
-    'clock': 'clock',
-    'logs': 'logs',
-    'arrow-right': 'arrow-right',
-    'code': 'code',
-    'leaf': 'leaf',
-    'bug': 'bug',
-    'briefcase': 'briefcase',
-    'chart-infographic': 'chart-infographic',
-    'bolt': 'bolt',
-    'server-cog': 'server-cog',
-    'bookmark': 'bookmark',
-    'flag': 'flag',
-    'inbox': 'inbox',
-    'cubes': 'box',
-    'database': 'database',
-    'arrows-left-right': 'arrows-left-right',
-    'adjustments': 'adjustments',
-    'search': 'search',
-    'history': 'history',
-    'sliders': 'adjustments-horizontal',
+    'adjustments',
+    'adjustments-horizontal',
+    'arrow-right',
+    'arrows-left-right',
+    'bolt',
+    'bookmark',
+    'box',
+    'briefcase',
+    'bug',
+    'calendar',
+    'chart-infographic',
+    'clock',
+    'code',
+    'database',
+    'flag',
+    'history',
+    'inbox',
+    'leaf',
+    'list',
+    'logs',
+    'search',
+    'server-cog',
+    'tags',
+    'x',
 
     // UI control icons
-    'minimize': 'chevron-down',
-    'maximize': 'chevron-up',
-    'close': 'x',
-    'open': 'folder-open',
-    'restore': 'brand-php',
-};
+    'chevron-down',
+    'chevron-up',
+    'folder-open',
+    'brand-php',
+];
 
 const svgDir = path.join(__dirname, '../node_modules/@tabler/icons/icons/outline');
 const outputFile = path.join(__dirname, '../resources/icons.css');
@@ -69,37 +71,37 @@ function generateIconsCSS() {
 
     // First, define all CSS variables with the SVG data URIs
     css += `:root {\n`;
-    for (const [ourIcon, tablerIcon] of Object.entries(iconMappings)) {
-        const svgPath = path.join(svgDir, `${tablerIcon}.svg`);
+    for (const icon of icons) {
+        const svgPath = path.join(svgDir, `${icon}.svg`);
 
         if (!fs.existsSync(svgPath)) {
-            console.warn(`Warning: SVG file not found for icon "${ourIcon}" (Tabler: ${tablerIcon}) at ${svgPath}`);
+            console.warn(`Warning: SVG file not found for icon "${icon}" at ${svgPath}`);
             continue;
         }
 
         const svgContent = fs.readFileSync(svgPath, 'utf8');
         const dataUri = svgToDataUri(svgContent);
 
-        css += `  --phpdebugbar-icon-${ourIcon}: url('${dataUri}');\n`;
+        css += `  --phpdebugbar-icon-${icon}: url('${dataUri}');\n`;
     }
     css += `}\n\n`;
 
     // Then, apply the variables to the icon classes
-    for (const [ourIcon, tablerIcon] of Object.entries(iconMappings)) {
-        const svgPath = path.join(svgDir, `${tablerIcon}.svg`);
+    for (const icon of icons) {
+        const svgPath = path.join(svgDir, `${icon}.svg`);
 
         if (!fs.existsSync(svgPath)) {
             continue;
         }
 
-        css += `.phpdebugbar-icon-${ourIcon}::before {\n`;
-        css += `  -webkit-mask-image: var(--phpdebugbar-icon-${ourIcon});\n`;
-        css += `  mask-image: var(--phpdebugbar-icon-${ourIcon});\n`;
+        css += `.phpdebugbar-icon-${icon}::before {\n`;
+        css += `  -webkit-mask-image: var(--phpdebugbar-icon-${icon});\n`;
+        css += `  mask-image: var(--phpdebugbar-icon-${icon});\n`;
         css += `}\n\n`;
     }
 
     fs.writeFileSync(outputFile, css, 'utf8');
-    console.log(`✓ Generated ${outputFile} with ${Object.keys(iconMappings).length} icons`);
+    console.log(`✓ Generated ${outputFile} with ${icons.length} icons`);
 }
 
 try {

@@ -574,7 +574,7 @@ if (typeof PhpDebugBar === 'undefined') {
             this.registerMediaListener();
 
             // Attach settings
-            this.settings = new PhpDebugBar.DebugBar.Tab({ icon: 'sliders', title: 'Settings', widget: new Settings({
+            this.settings = new PhpDebugBar.DebugBar.Tab({ icon: 'adjustments-horizontal', title: 'Settings', widget: new Settings({
                 debugbar: this
             }) });
         },

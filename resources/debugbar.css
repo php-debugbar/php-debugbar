@@ -237,8 +237,8 @@ div.phpdebugbar-minimized{
 /* -------------------------------------- */
 
 a.phpdebugbar-restore-btn:after {
-    -webkit-mask-image: var(--phpdebugbar-icon-restore);
-    mask-image: var(--phpdebugbar-icon-restore);
+    -webkit-mask-image: var(--phpdebugbar-icon-brand-php);
+    mask-image: var(--phpdebugbar-icon-brand-php);
     -webkit-mask-size: 20px 20px;
     mask-size: 20px 20px;
     background-color: var(--debugbar-icons);
@@ -413,23 +413,23 @@ div.phpdebugbar-minimized a.phpdebugbar-maximize-btn { display: block}
 div.phpdebugbar-minimized a.phpdebugbar-minimize-btn { display: none}
 
 a.phpdebugbar-minimize-btn:after {
-  -webkit-mask-image: var(--phpdebugbar-icon-minimize);
-  mask-image: var(--phpdebugbar-icon-minimize);
+  -webkit-mask-image: var(--phpdebugbar-icon-chevron-down);
+  mask-image: var(--phpdebugbar-icon-chevron-down);
 }
 
 a.phpdebugbar-maximize-btn:after {
-  -webkit-mask-image: var(--phpdebugbar-icon-maximize);
-  mask-image: var(--phpdebugbar-icon-maximize);
+  -webkit-mask-image: var(--phpdebugbar-icon-chevron-up);
+  mask-image: var(--phpdebugbar-icon-chevron-up);
 }
 
 a.phpdebugbar-close-btn:after {
-  -webkit-mask-image: var(--phpdebugbar-icon-close);
-  mask-image: var(--phpdebugbar-icon-close);
+  -webkit-mask-image: var(--phpdebugbar-icon-x);
+  mask-image: var(--phpdebugbar-icon-x);
 }
 
 a.phpdebugbar-open-btn:after {
-  -webkit-mask-image: var(--phpdebugbar-icon-open);
-  mask-image: var(--phpdebugbar-icon-open);
+  -webkit-mask-image: var(--phpdebugbar-icon-folder-open);
+  mask-image: var(--phpdebugbar-icon-folder-open);
 }
 
 .phpdebugbar-indicator {
