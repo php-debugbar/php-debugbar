@@ -59,7 +59,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertNull($controls['messages']);
         $this->assertContains('config', $this->r->getIgnoredCollectors());
         $this->assertEquals('AjaxFoo', $this->r->getAjaxHandlerClass());
-        $this->assertFalse($this->r->isAjaxHandlerBoundToJquery());
+        $this->assertTrue($this->r->isAjaxHandlerBoundToFetch());
         $this->assertFalse($this->r->isAjaxHandlerAutoShow());
         $this->assertEquals('OpenFoo', $this->r->getOpenHandlerClass());
         $this->assertEquals('open.php', $this->r->getOpenHandlerUrl());
