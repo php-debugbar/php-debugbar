@@ -49,16 +49,18 @@ if (typeof PhpDebugBar === 'undefined') {
      */
     const highlight = PhpDebugBar.Widgets.highlight = function (code, lang) {
         if (typeof code === 'string') {
-            if (typeof hljs === 'undefined') {
+            if (typeof phpdebugbar_hljs === 'undefined') {
                 return htmlize(code);
             }
+            const hljs = phpdebugbar_hljs.default || phpdebugbar_hljs;
             if (lang && hljs.getLanguage(lang)) {
                 return hljs.highlight(code, { language: lang }).value;
             }
             return hljs.highlightAuto(code).value;
         }
 
-        if (typeof hljs === 'object') {
+        if (typeof phpdebugbar_hljs === 'object') {
+            const hljs = phpdebugbar_hljs.default || phpdebugbar_hljs;
             code.each((i, e) => {
                 hljs.highlightElement(e);
             });
