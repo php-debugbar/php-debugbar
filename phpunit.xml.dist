@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" bootstrap="tests/bootstrap.php" colors="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+    bootstrap="tests/bootstrap.php"
+    colors="true"
+    cacheDirectory=".phpunit.cache"
+>
   <testsuites>
     <testsuite name="Unit">
       <directory>./tests/DebugBar/Tests</directory>
@@ -9,9 +15,6 @@
       <directory>./tests/DebugBar/Tests/Browser</directory>
     </testsuite>
   </testsuites>
-  <extensions>
-    <extension class="Symfony\Component\Panther\ServerExtension"/>
-  </extensions>
   <php>
     <server name="PANTHER_WEB_SERVER_DIR" value="./"/>
     <server name="PANTHER_DEVTOOLS" value="0"/>
