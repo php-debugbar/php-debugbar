@@ -11,5 +11,5 @@ try {
 ?>
 error from AJAX
 <?php
-    echo $debugbarRenderer->render(false);
+    $debugbar->sendDataInHeaders(true);
 ?>

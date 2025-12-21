@@ -73,7 +73,7 @@ class JavascriptRenderer
 
     protected $ajaxHandlerClass = 'PhpDebugBar.AjaxHandler';
 
-    protected $ajaxHandlerBindToFetch = false;
+    protected $ajaxHandlerBindToFetch = true;
 
     protected $ajaxHandlerBindToJquery = false;
 

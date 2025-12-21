@@ -1314,32 +1314,30 @@ if (typeof PhpDebugBar === 'undefined') {
          * @return {Bool}
          */
         handle(response) {
-            // Check if the debugbar header is available
-            if (this.isFetch(response) && !response.headers.has(`${this.headerName}-id`)) {
-                return true;
-            } else if (this.isXHR(response) && !response.getAllResponseHeaders().includes(this.headerName)) {
+            if (this.loadFromId(response)) {
                 return true;
             }
-            if (!this.loadFromId(response)) {
-                return this.loadFromData(response);
+
+            if (this.loadFromData(response)) {
+                return true;
             }
-            return true;
+
+            return false;
         }
 
+        /**
+         * Retrieves a response header from either a Fetch Response or XMLHttpRequest
+         *
+         * @param {Response|XMLHttpRequest} response - The response object from either fetch() or XHR
+         * @param {string} header - The name of the header to retrieve
+         * @returns {string|null} The header value, or null if not found
+         */
         getHeader(response, header) {
-            if (this.isFetch(response)) {
+            if (response instanceof Response) {
                 return response.headers.get(header);
+            } else if (response instanceof XMLHttpRequest) {
+                return response.getResponseHeader(header);
             }
-
-            return response.getResponseHeader(header);
-        }
-
-        isFetch(response) {
-            return response instanceof Response;
-        }
-
-        isXHR(response) {
-            return response instanceof XMLHttpRequest;
         }
 
         setAutoShow(autoshow) {
