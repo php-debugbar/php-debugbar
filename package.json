@@ -30,7 +30,7 @@
     "globals": "^16.5.0"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^7.1.0",
+    "@tabler/icons": "^3.36.0",
     "highlight.js": "^11.11.1",
     "jquery": "^4.0.0-rc.1"
   }

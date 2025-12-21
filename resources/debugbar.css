@@ -330,8 +330,8 @@ a.phpdebugbar-tab.phpdebugbar-active {
 i.phpdebugbar-icon::before {
   content: "";
   display: inline-block;
-  width: 1em;
-  height: 1em;
+  width: 1.15em;
+  height: 1.15em;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;

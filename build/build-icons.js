@@ -5,39 +5,50 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Icon mappings (FA icon name -> our icon name)
+// Icon mappings (our icon name -> Tabler icon name)
 const iconMappings = {
-    'xmark': 'times',           // FA7 renamed times to xmark
-    'clock': 'clock-o',         // FA7 renamed clock-o to clock
-    'list-alt': 'list-alt',
+    'times': 'x',
+    'clock-o': 'clock',
+    'list-alt': 'list',
     'arrow-right': 'arrow-right',
     'code': 'code',
     'leaf': 'leaf',
     'bug': 'bug',
-    'suitcase': 'suitcase',
+    'suitcase': 'briefcase',
     'bolt': 'bolt',
-    'cogs': 'cogs',
-    'tasks': 'tasks',
+    'cogs': 'server-cog',
+    'tasks': 'calendar',
     'bookmark': 'bookmark',
     'flag': 'flag',
     'inbox': 'inbox',
-    'cubes': 'cubes',
+    'cubes': 'box',
     'database': 'database',
     'tags': 'tags',
-    'gear': 'gear',
-    'magnifying-glass': 'search',  // FA7 renamed search to magnifying-glass
-    'clock-rotate-left': 'history',
-    'sliders': 'sliders',
+    'gear': 'adjustments',
+    'search': 'search',
+    'history': 'history',
+    'sliders': 'adjustments-horizontal',
 };
 
-const svgDir = path.join(__dirname, '../node_modules/@fortawesome/fontawesome-free/svgs/solid');
+const svgDir = path.join(__dirname, '../node_modules/@tabler/icons/icons/outline');
 const outputFile = path.join(__dirname, '../resources/icons.css');
+const strokeWidth = 2; // Tabler default stroke width
 
 function svgToDataUri(svgContent) {
     // Remove XML comments
     svgContent = svgContent.replace(/<!--[\s\S]*?-->/g, '');
+
+    // Ensure consistent stroke-width (Tabler icons already have stroke-width="2")
+    svgContent = svgContent.replace(/stroke-width="[^"]*"/g, `stroke-width="${strokeWidth}"`);
+
+    // Remove unnecessary attributes for mask usage (but not stroke-width!)
+    svgContent = svgContent.replace(/\s+class="[^"]*"/g, '');
+    svgContent = svgContent.replace(/\s+width="[^"]*"/g, '');
+    svgContent = svgContent.replace(/\s+height="[^"]*"/g, '');
+
     // Minify: remove newlines and extra spaces
     svgContent = svgContent.replace(/\s+/g, ' ').trim();
+
     // URL encode for data URI
     const encoded = encodeURIComponent(svgContent)
         .replace(/'/g, '%27')
@@ -46,15 +57,15 @@ function svgToDataUri(svgContent) {
 }
 
 function generateIconsCSS() {
-    let css = `/* Generated file - do not edit manually */\n/* Generated from Font Awesome icons */\n\n`;
+    let css = `/* Generated file - do not edit manually */\n/* Generated from Tabler Icons (stroke-width: ${strokeWidth}) */\n\n`;
 
     // First, define all CSS variables with the SVG data URIs
     css += `:root {\n`;
-    for (const [faIcon, ourIcon] of Object.entries(iconMappings)) {
-        const svgPath = path.join(svgDir, `${faIcon}.svg`);
+    for (const [ourIcon, tablerIcon] of Object.entries(iconMappings)) {
+        const svgPath = path.join(svgDir, `${tablerIcon}.svg`);
 
         if (!fs.existsSync(svgPath)) {
-            console.warn(`Warning: SVG file not found for icon "${faIcon}" at ${svgPath}`);
+            console.warn(`Warning: SVG file not found for icon "${ourIcon}" (Tabler: ${tablerIcon}) at ${svgPath}`);
             continue;
         }
 
@@ -66,8 +77,8 @@ function generateIconsCSS() {
     css += `}\n\n`;
 
     // Then, apply the variables to the icon classes
-    for (const [faIcon, ourIcon] of Object.entries(iconMappings)) {
-        const svgPath = path.join(svgDir, `${faIcon}.svg`);
+    for (const [ourIcon, tablerIcon] of Object.entries(iconMappings)) {
+        const svgPath = path.join(svgDir, `${tablerIcon}.svg`);
 
         if (!fs.existsSync(svgPath)) {
             continue;
