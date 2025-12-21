@@ -3,7 +3,7 @@
 include __DIR__ . '/vendor/autoload.php';
 include __DIR__ . '/../../bootstrap.php';
 
-$debugbarRenderer->setBaseUrl('../../../src/DebugBar/Resources');
+$debugbarRenderer->setBaseUrl('../../../resources');
 
 $app = new \Slim\Slim();
 $app->get('/', function () use ($app) {

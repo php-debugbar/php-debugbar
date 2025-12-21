@@ -3,7 +3,7 @@
 include __DIR__ . '/vendor/autoload.php';
 include __DIR__ . '/../../bootstrap.php';
 
-$debugbarRenderer->setBaseUrl('../../../src/DebugBar/Resources');
+$debugbarRenderer->setBaseUrl('../../../resources');
 
 $loader = new Twig\Loader\FilesystemLoader('.');
 $twig = new Twig\Environment($loader);

@@ -3,7 +3,7 @@
 include __DIR__ . '/bootstrap.php';
 include __DIR__ . '/../../bootstrap.php';
 
-$debugbarRenderer->setBaseUrl('../../../src/DebugBar/Resources');
+$debugbarRenderer->setBaseUrl('../../../resources');
 
 $debugStack = new Doctrine\DBAL\Logging\DebugStack();
 $entityManager->getConnection()->getConfiguration()->setSQLLogger($debugStack);
