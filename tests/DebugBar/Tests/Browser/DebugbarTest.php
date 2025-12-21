@@ -5,7 +5,7 @@ namespace DebugBar\Tests\Browser;
 use Facebook\WebDriver\WebDriverDimension;
 use Facebook\WebDriver\WebDriverElement;
 
-class DebugbarTest extends AbstractBrowserTest
+class DebugbarTest extends AbstractBrowserTestCase
 {
     public function testDebugbarTab(): void
     {

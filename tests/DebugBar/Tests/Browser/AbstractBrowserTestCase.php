@@ -6,7 +6,8 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Panther\DomCrawler\Link;
 use Symfony\Component\Panther\PantherTestCase;
 
-abstract class AbstractBrowserTest extends PantherTestCase
+/** @internal */
+abstract class AbstractBrowserTestCase extends PantherTestCase
 {
     public function isTabActive(Crawler $crawler, $tab)
     {

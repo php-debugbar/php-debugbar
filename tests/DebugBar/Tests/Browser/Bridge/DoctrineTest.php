@@ -3,9 +3,9 @@
 namespace DebugBar\Tests\Browser\Bridge;
 
 use DebugBar\Browser\Bridge\WebDriverElement;
-use DebugBar\Tests\Browser\AbstractBrowserTest;
+use DebugBar\Tests\Browser\AbstractBrowserTestCase;
 
-class DoctrineTest extends AbstractBrowserTest
+class DoctrineTest extends AbstractBrowserTestCase
 {
     public function testMonologCollector(): void
     {
