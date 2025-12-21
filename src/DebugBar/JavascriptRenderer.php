@@ -102,7 +102,7 @@ class JavascriptRenderer
         $this->debugBar = $debugBar;
 
         if ($basePath === null) {
-            $basePath = __DIR__ . DIRECTORY_SEPARATOR . 'Resources';
+            $basePath = __DIR__ . '/../../resources';
         }
         $this->basePath = $basePath;
 
@@ -110,7 +110,7 @@ class JavascriptRenderer
             if ($basePath && str_contains($basePath, '/vendor/')) {
                 $baseUrl = strstr($basePath, '/vendor/');
             } else {
-                $baseUrl = '/vendor/php-debugbar/php-debugbar/src/DebugBar/Resources';
+                $baseUrl = '/vendor/php-debugbar/php-debugbar/resources';
             }
         }
         $this->baseUrl = $baseUrl;

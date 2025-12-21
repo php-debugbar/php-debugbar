@@ -1,6 +1,6 @@
 <?php
 
-$path = __DIR__ . '/../src/DebugBar/Resources/vendor/font-awesome/css/font-awesome.min.css';
+$path = __DIR__ . '/../resources/vendor/font-awesome/css/font-awesome.min.css';
 $contents = file_get_contents($path);
 
 if (strpos($contents, 'PhpDebugbarFontAwesome') !== false ){

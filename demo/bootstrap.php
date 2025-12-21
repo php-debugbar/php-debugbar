@@ -9,7 +9,7 @@ use DebugBar\StandardDebugBar;
 
 $debugbar = new StandardDebugBar();
 $debugbarRenderer = $debugbar->getJavascriptRenderer()
-                             ->setBaseUrl('../src/DebugBar/Resources')
+                             ->setBaseUrl('../resources')
                              ->setAjaxHandlerEnableTab(true)
                              ->setHideEmptyTabs(true)
                              ->setEnableJqueryNoConflict(false)
