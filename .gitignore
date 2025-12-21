@@ -9,3 +9,5 @@ composer.lock
 /chromedriver
 .phpunit.cache/
 /tests/screenshots
+/node_modules
+/package-lock.json

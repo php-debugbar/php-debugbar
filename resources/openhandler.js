@@ -18,7 +18,7 @@ if (typeof PhpDebugBar === 'undefined') {
             items_per_page: 20
         },
 
-        render: function() {
+        render() {
             const self = this;
 
             this.$el.appendTo('body').hide();
@@ -28,33 +28,33 @@ if (typeof PhpDebugBar === 'undefined') {
             $('<table><thead><tr><th width="155">Date</th><th width="75">Method</th><th>URL</th><th width="125">IP</th><th width="100">Filter data</th></tr></thead></table>').append(this.$table).appendTo(this.$el);
             this.$actions = $('<div />').addClass(csscls('actions')).appendTo(this.$el);
 
-            this.$closebtn.on('click', function() {
+            this.$closebtn.on('click', () => {
                 self.hide();
             });
 
             this.$loadmorebtn = $('<a>Load more</a>')
                 .appendTo(this.$actions)
-                .on('click', function() {
+                .on('click', () => {
                     self.find(self.last_find_request, self.last_find_request.offset + self.get('items_per_page'), self.handleFind.bind(self));
                 });
 
             this.$showonlycurrentbtn = $('<a>Show only current URL</a>')
                 .appendTo(this.$actions)
-                .on('click', function() {
+                .on('click', () => {
                     self.$table.empty();
                     self.find({uri: window.location.pathname}, 0, self.handleFind.bind(self));
                 });
 
             this.$showallbtn = $('<a>Show all</a>')
                 .appendTo(this.$actions)
-                .on('click', function() {
+                .on('click', () => {
                     self.refresh();
                 });
 
             this.$clearbtn = $('<a>Delete all</a>')
                 .appendTo(this.$actions)
-                .on('click', function() {
-                    self.clear(function() {
+                .on('click', () => {
+                    self.clear(() => {
                         self.hide();
                     });
                 });
@@ -62,18 +62,18 @@ if (typeof PhpDebugBar === 'undefined') {
             this.addSearch();
 
             this.$overlay = $('<div />').addClass(csscls('overlay')).hide().appendTo('body');
-            this.$overlay.on('click', function() {
+            this.$overlay.on('click', () => {
                 self.hide();
             });
         },
 
-        refresh: function() {
+        refresh() {
             this.$table.empty();
             this.$loadmorebtn.show();
             this.find({}, 0, this.handleFind.bind(this));
         },
 
-        addSearch: function(){
+        addSearch(){
             const self = this;
             const searchBtn = $('<button />')
                 .text('Search')
@@ -101,22 +101,22 @@ if (typeof PhpDebugBar === 'undefined') {
                 .appendTo(this.$actions);
         },
 
-        handleFind: function(data) {
+        handleFind(data) {
             const self = this;
-            $.each(data, function(i, meta) {
-               const a = $('<a />')
+            $.each(data, (i, meta) => {
+                const a = $('<a />')
                     .text('Load dataset')
-                    .on('click', function(e) {
-                       self.hide();
-                       self.load(meta['id'], function(data) {
-                           self.callback(meta['id'], data);
-                       });
-                       e.preventDefault();
+                    .on('click', (e) => {
+                        self.hide();
+                        self.load(meta['id'], (data) => {
+                            self.callback(meta['id'], data);
+                        });
+                        e.preventDefault();
                     });
 
                 const method = $('<a />')
                     .text(meta['method'])
-                    .on('click', function(e) {
+                    .on('click', (e) => {
                         self.$table.empty();
                         self.find({method: meta['method']}, 0, self.handleFind.bind(self));
                         e.preventDefault();
@@ -124,9 +124,9 @@ if (typeof PhpDebugBar === 'undefined') {
 
                 const uri = $('<a />')
                     .text(meta['uri'])
-                    .on('click', function(e) {
+                    .on('click', (e) => {
                         self.hide();
-                        self.load(meta['id'], function(data) {
+                        self.load(meta['id'], (data) => {
                             self.callback(meta['id'], data);
                         });
                         e.preventDefault();
@@ -134,7 +134,7 @@ if (typeof PhpDebugBar === 'undefined') {
 
                 const ip = $('<a />')
                     .text(meta['ip'])
-                    .on('click', function(e) {
+                    .on('click', (e) => {
                         self.$table.empty();
                         self.find({ip: meta['ip']}, 0, self.handleFind.bind(self));
                         e.preventDefault();
@@ -142,15 +142,15 @@ if (typeof PhpDebugBar === 'undefined') {
 
                 const search = $('<a />')
                     .text('Show URL')
-                    .on('click', function(e) {
+                    .on('click', (e) => {
                         self.$table.empty();
                         self.find({uri: meta['uri']}, 0, self.handleFind.bind(self));
                         e.preventDefault();
                     });
 
                 $('<tr />')
-                    .append('<td>' + meta['datetime'] + '</td>')
-                    .append('<td>' + meta['method'] + '</td>')
+                    .append(`<td>${  meta['datetime']  }</td>`)
+                    .append(`<td>${  meta['method']  }</td>`)
                     .append($('<td />').append(uri))
                     .append($('<td />').append(ip))
                     .append($('<td />').append(search))
@@ -161,43 +161,43 @@ if (typeof PhpDebugBar === 'undefined') {
             }
         },
 
-        show: function(callback) {
+        show(callback) {
             this.callback = callback;
             this.$el.show();
             this.$overlay.show();
             this.refresh();
         },
 
-        hide: function() {
+        hide() {
             this.$el.hide();
             this.$overlay.hide();
         },
 
-        find: function(filters, offset, callback) {
+        find(filters, offset, callback) {
             const data = Object.assign({}, filters, {max: this.get('items_per_page'), offset: offset || 0});
             this.last_find_request = data;
             this.ajax(data, callback);
         },
 
-        load: function(id, callback) {
-            this.ajax({op: "get", id: id}, callback);
+        load(id, callback) {
+            this.ajax({op: 'get', id}, callback);
         },
 
-        clear: function(callback) {
-            this.ajax({op: "clear"}, callback);
+        clear(callback) {
+            this.ajax({op: 'clear'}, callback);
         },
 
-        ajax: function(data, callback) {
+        ajax(data, callback) {
             let url = this.get('url');
             if (data) {
                 url = url + ( url.includes('?') ? '&' : '?' ) + new URLSearchParams(data);
             }
 
             fetch(url, {
-                method: "GET",
+                method: 'GET',
                 headers: {
-                    "Accept": "application/json",
-                },
+                    'Accept': 'application/json'
+                }
             })
                 .then((data) => data.json())
                 .then(callback);

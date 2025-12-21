@@ -1,6 +1,6 @@
 (function($) {
 
-    var csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
+    const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
 
     /**
      * Widget for the displaying templates data
@@ -8,15 +8,15 @@
      * Options:
      *  - data
      */
-    var TemplatesWidget = PhpDebugBar.Widgets.TemplatesWidget = PhpDebugBar.Widget.extend({
+    const TemplatesWidget = PhpDebugBar.Widgets.TemplatesWidget = PhpDebugBar.Widget.extend({
 
         className: csscls('templates'),
 
-        render: function() {
+        render() {
             this.$status = $('<div />').addClass(csscls('status')).appendTo(this.$el);
 
-            this.$list = new  PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, tpl) {
-                var name = $('<span />').addClass(csscls('name')).appendTo(li);
+            this.$list = new  PhpDebugBar.Widgets.ListWidget({ itemRenderer(li, tpl) {
+                const name = $('<span />').addClass(csscls('name')).appendTo(li);
                 if (tpl.html) {
                     name.html(tpl.html);
                 } else {
@@ -24,9 +24,9 @@
                 }
 
                 if (typeof tpl.xdebug_link !== 'undefined' && tpl.xdebug_link !== null) {
-                    var header = $('<span />').addClass(csscls('filename')).text(tpl.xdebug_link.filename + ( tpl.xdebug_link.line ? "#" + tpl.xdebug_link.line : ''));
+                    const header = $('<span />').addClass(csscls('filename')).text(tpl.xdebug_link.filename + ( tpl.xdebug_link.line ? `#${  tpl.xdebug_link.line}` : ''));
                     if (tpl.xdebug_link) {
-                        $('<a href="' + tpl.xdebug_link.url + '"></a>').on('click', function () {
+                        $(`<a href="${  tpl.xdebug_link.url  }"></a>`).on('click', () => {
                             event.stopPropagation();
                             if (tpl.xdebug_link.ajax) {
                                 fetch(tpl.xdebug_link.url);
@@ -43,28 +43,28 @@
                 if (tpl.memory_str) {
                     $('<span title="Memory usage" />').addClass(csscls('memory')).text(tpl.memory_str).appendTo(li);
                 }
-                if (typeof(tpl.param_count) != 'undefined') {
+                if (typeof(tpl.param_count) !== 'undefined') {
                     $('<span title="Parameter count" />').addClass(csscls('param-count')).text(tpl.param_count).appendTo(li);
                 }
-                if (typeof(tpl.type) != 'undefined' && tpl.type) {
+                if (typeof(tpl.type) !== 'undefined' && tpl.type) {
                     $('<span title="Type" />').addClass(csscls('type')).text(tpl.type).appendTo(li);
                 }
-                if (typeof(tpl.editorLink) != 'undefined' && tpl.editorLink) {
-                    $('<a href="'+ tpl.editorLink +'" />').on('click', function (event) {
+                if (typeof(tpl.editorLink) !== 'undefined' && tpl.editorLink) {
+                    $(`<a href="${ tpl.editorLink }" />`).on('click', (event) => {
                         event.stopPropagation();
                     }).addClass(csscls('editor-link')).text('file').appendTo(li);
                 }
                 if (tpl.params && !$.isEmptyObject(tpl.params)) {
-                    var table = $('<table><tr><th colspan="2">Params</th></tr></table>').addClass(csscls('params')).appendTo(li);
-                    for (var key in tpl.params) {
+                    const table = $('<table><tr><th colspan="2">Params</th></tr></table>').addClass(csscls('params')).appendTo(li);
+                    for (const key in tpl.params) {
                         if (typeof tpl.params[key] !== 'function') {
-                            table.append('<tr><td class="' + csscls('name') + '">' + key + '</td><td class="' + csscls('value') +
-                            '"><pre><code>' + tpl.params[key] + '</code></pre></td></tr>');
+                            table.append(`<tr><td class="${  csscls('name')  }">${  key  }</td><td class="${  csscls('value') 
+                            }"><pre><code>${  tpl.params[key]  }</code></pre></td></tr>`);
                         }
                     }
-                    li.css('cursor', 'pointer').click(function() {
-                        if (window.getSelection().type == "Range") {
-                            return''
+                    li.css('cursor', 'pointer').click(() => {
+                        if (window.getSelection().type == 'Range') {
+                            return'';
                         }
                         if (table.is(':visible')) {
                             table.hide();
@@ -82,8 +82,8 @@
                 this.$status.empty();
                 this.$callgraph.empty();
 
-                var sentence = data.sentence || "templates were rendered";
-                $('<span />').text(data.nb_templates + " " + sentence).appendTo(this.$status);
+                const sentence = data.sentence || 'templates were rendered';
+                $('<span />').text(`${data.nb_templates  } ${  sentence}`).appendTo(this.$status);
 
                 if (data.accumulated_render_time_str) {
                     this.$status.append($('<span title="Accumulated render time" />').addClass(csscls('render-time')).text(data.accumulated_render_time_str));
@@ -92,10 +92,10 @@
                     this.$status.append($('<span title="Memory usage" />').addClass(csscls('memory')).text(data.memory_usage_str));
                 }
                 if (data.nb_blocks > 0) {
-                    $('<div />').text(data.nb_blocks + " blocks were rendered").appendTo(this.$status);
+                    $('<div />').text(`${data.nb_blocks  } blocks were rendered`).appendTo(this.$status);
                 }
                 if (data.nb_macros > 0) {
-                    $('<div />').text(data.nb_macros + " macros were rendered").appendTo(this.$status);
+                    $('<div />').text(`${data.nb_macros  } macros were rendered`).appendTo(this.$status);
                 }
                 if (typeof data.callgraph !== 'undefined') {
                     this.$callgraph.html(data.callgraph);
