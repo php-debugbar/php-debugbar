@@ -144,24 +144,20 @@ You can optionally use `DebugBar\Bridge\Twig\TimeableTwigExtensionProfiler` in p
 `Twig\Profiler\Profile` so render operation can be measured.
 
 ```php
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
-use Twig\Profiler\Profile;
+use Twig\Environment;use Twig\Loader\FilesystemLoader;use Twig\Profiler\Profile;
 
 $loader = new FilesystemLoader('.');
 $env = new Environment($loader);
 $profile = new Profile();
 
-$env->addExtension(new DebugBar\Bridge\Twig\TimeableTwigExtensionProfiler($profile, $debugbar['time']));
+$env->addExtension(new demo\TimeableTwigExtensionProfiler($profile, $debugbar['time']));
 $debugbar->addCollector(new DebugBar\Bridge\TwigProfileCollector($profile));
 ```
 
 Other optional extensions add functions and tags for debugbar integration into templates.
 
 ```php
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
-use Twig\Profiler\Profile;
+use Twig\Environment;use Twig\Loader\FilesystemLoader;use Twig\Profiler\Profile;
 
 $loader = new FilesystemLoader('.');
 $env = new Environment($loader);
@@ -169,17 +165,17 @@ $profile = new Profile();
 
 // enable {% measure 'foo' %} {% endmeasure %} tags for time measure on templates
 // this extension adds timeline items to TimeDataCollector
-$twig->addExtension(new DebugBar\Bridge\Twig\MeasureTwigExtension($debugbar['time']));
+$twig->addExtension(new demo\MeasureTwigExtension($debugbar['time']));
 
 $twig->enableDebug(); // if Twig\Environment debug is disabled, dump/debug are ignored
 
 // enable {{ dump('foo') }} function on templates
 // this extension allows dumping data using debugbar DataFormatter
-$twig->addExtension(new DebugBar\Bridge\Twig\DumpTwigExtension());
+$twig->addExtension(new demo\DumpTwigExtension());
 
 // enable {{ debug('foo') }} function on templates
 // this extension allows debugging in MessageCollector
-$twig->addExtension(new DebugBar\Bridge\Twig\DebugTwigExtension($debugbar['messages']));
+$twig->addExtension(new demo\DebugTwigExtension($debugbar['messages']));
 
 $debugbar->addCollector(new DebugBar\Bridge\TwigProfileCollector($profile));
 ```

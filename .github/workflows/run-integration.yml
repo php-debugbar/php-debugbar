@@ -38,8 +38,6 @@ jobs:
         run: |
           composer update --prefer-dist --no-progress
           composer update --prefer-dist --no-progress --working-dir=demo/bridge/monolog
-          composer update --prefer-dist --no-progress --working-dir=demo/bridge/doctrine
-          composer run --working-dir=demo/bridge/doctrine install-schema
 
       - name: Execute Unit Tests
         run: vendor/bin/phpunit --testsuite=Browser

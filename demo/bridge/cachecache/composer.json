@@ -1,6 +1,0 @@
-{
-    "require": {
-        "maximebf/cachecache": "*",
-        "monolog/monolog": "*"
-    }
-}
