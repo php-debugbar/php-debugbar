@@ -758,7 +758,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.settings.$tab.addClass(csscls('tab-settings'));
             this.settings.$tab.attr('data-collector', '__settings');
             this.settings.$el.attr('data-collector', '__settings');
-            this.settings.$tab.insertAfter(this.$minimizebtn).show();
+            this.settings.$tab.insertAfter(this.$maximizebtn).show();
             this.settings.$tab.click(() => {
                 if (!this.isMinimized() && this.activePanelName == '__settings') {
                     this.minimize();
