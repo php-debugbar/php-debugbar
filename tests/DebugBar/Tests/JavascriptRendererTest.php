@@ -17,6 +17,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->r = new JavascriptRenderer($this->debugbar);
         $this->r->setBasePath('/bpath');
         $this->r->setBaseUrl('/burl');
+        $this->r->setUseDistFiles(false);
     }
 
     public function testOptions()
@@ -95,11 +96,23 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertContains('/bpath/debugbar.css', $css);
         $this->assertContains('/bpath/widgets.js', $js);
         $this->assertContains('/bpath/vendor/jquery/dist/jquery.min.js', $js);
+    }
 
+    public function testGetAssetsExludeVendors()
+    {
         $this->r->setIncludeVendors(false);
         $js = $this->r->getAssets('js');
         $this->assertContains('/bpath/debugbar.js', $js);
         $this->assertNotContains('/bpath/vendor/jquery/dist/jquery.min.js', $js);
+    }
+
+    public function testGetDistAssets()
+    {
+        $this->r->setUseDistFiles(true);
+        list($css, $js) = $this->r->getAssets();
+        $this->assertContains('/bpath/dist/debugbar.min.css', $css);
+        $this->assertNotContains('/bpath/widgets.js', $js);
+        $this->assertContains('/bpath/vendor/jquery/dist/jquery.min.js', $js);
     }
 
     public function testRenderHead()
