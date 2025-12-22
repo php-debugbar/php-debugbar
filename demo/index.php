@@ -53,6 +53,13 @@ $foo = $stmt->fetch();
 
 $pdo->exec('delete from users');
 
+$templateCollector = new \DebugBar\DataCollector\TemplateCollector();
+$debugbar->addCollector($templateCollector);
+
+$templateCollector->addTemplate('index.php', ['foo' => 'bar'], 'php', __FILE__);
+$templateCollector->addTemplate('index.php', ['foo' => 'quz'], 'php', __FILE__);
+
+
 $debugbar['time']->startMeasure('render');
 
 render_demo_page(function() {
