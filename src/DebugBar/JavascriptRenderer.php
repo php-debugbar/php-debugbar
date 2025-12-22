@@ -37,7 +37,7 @@ class JavascriptRenderer
     protected $basePath;
 
     protected $cssVendors = array(
-        'highlightjs' => 'vendor/highlightjs/styles/github.css'
+
     );
 
     protected $jsVendors = array(
@@ -47,7 +47,7 @@ class JavascriptRenderer
 
     protected $includeVendors = true;
 
-    protected $cssFiles = array('debugbar.css', 'icons.css', 'widgets.css', 'openhandler.css');
+    protected $cssFiles = array('debugbar.css', 'icons.css', 'widgets.css', 'openhandler.css', 'highlight.css');
 
     protected $jsFiles = array('debugbar.js', 'widgets.js', 'openhandler.js');
 

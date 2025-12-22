@@ -25,6 +25,7 @@ const cssFiles = [
     'icons.css',
     'widgets.css',
     'openhandler.css',
+    'highlight.css',
     'widgets/sqlqueries/widget.css',
     'widgets/templates/widget.css',
     'widgets/mails/widget.css'
