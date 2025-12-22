@@ -137,28 +137,4 @@ trait HasDataFormatter
         }
         return $this->varDumper;
     }
-
-    /**
-     * @deprecated
-     */
-    public function formatVar($var)
-    {
-        return $this->getDataFormatter()->formatVar($var);
-    }
-
-    /**
-     * @deprecated
-     */
-    public function formatDuration($seconds)
-    {
-        return $this->getDataFormatter()->formatDuration($seconds);
-    }
-
-    /**
-     * @deprecated
-     */
-    public function formatBytes($size, $precision = 2)
-    {
-        return $this->getDataFormatter()->formatBytes($size, $precision);
-    }
 }

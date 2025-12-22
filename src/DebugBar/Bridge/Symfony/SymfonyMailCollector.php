@@ -29,14 +29,6 @@ class SymfonyMailCollector extends DataCollector implements Renderable, AssetPro
         $this->messages[] = $message->getOriginalMessage();
     }
 
-    /**
-     * @deprecated use showMessageBody()
-     */
-    public function showMessageDetail()
-    {
-        $this->showMessageBody(true);
-    }
-
     public function showMessageBody($show = true)
     {
         $this->showBody = $show;
