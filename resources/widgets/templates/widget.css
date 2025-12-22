@@ -31,28 +31,43 @@ div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before,
 div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before,
 div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 {
-  font-family: PhpDebugbarFontAwesome;
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
   margin-right: 4px;
-  font-size: 12px;
+  vertical-align: middle;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: currentColor;
 }
 div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:hover
 {
     color: var(--debugbar-hover);
 }
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time:before {
-  content: "\f017";
+  -webkit-mask-image: var(--debugbar-icon-clock);
+  mask-image: var(--debugbar-icon-clock);
 }
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory:before {
-  content: "\f085";
+  -webkit-mask-image: var(--debugbar-icon-cpu);
+  mask-image: var(--debugbar-icon-cpu);
 }
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before {
-  content: "\f0ce";
+  -webkit-mask-image: var(--debugbar-icon-table);
+  mask-image: var(--debugbar-icon-table);
 }
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before {
-  content: "\f121";
+  -webkit-mask-image: var(--debugbar-icon-code);
+  mask-image: var(--debugbar-icon-code);
 }
 div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before {
-  content: "\f08e";
+  -webkit-mask-image: var(--debugbar-icon-external-link);
+  mask-image: var(--debugbar-icon-external-link);
   margin-left: 4px;
 }
 div.phpdebugbar-widgets-templates table.phpdebugbar-widgets-params {

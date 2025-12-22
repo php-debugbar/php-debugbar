@@ -34,35 +34,54 @@ div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory:before,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-row-count:before,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard-check:before,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id:before,
 div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link:before {
-  font-family: PhpDebugbarFontAwesome;
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
   margin-right: 4px;
-  font-size: 12px;
+  vertical-align: middle;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: currentColor;
 }
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before {
-  content: "\f1c0";
+  -webkit-mask-image: var(--debugbar-icon-database);
+  mask-image: var(--debugbar-icon-database);
 }
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before {
-  content: "\f017";
+  -webkit-mask-image: var(--debugbar-icon-clock);
+  mask-image: var(--debugbar-icon-clock);
 }
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory:before {
-  content: "\f085";
+  -webkit-mask-image: var(--debugbar-icon-cpu);
+  mask-image: var(--debugbar-icon-cpu);
 }
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-row-count:before {
-  content: "\f0ce";
+  -webkit-mask-image: var(--debugbar-icon-table);
+  mask-image: var(--debugbar-icon-table);
 }
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id:before {
-  content: "\f08d";
+  -webkit-mask-image: var(--debugbar-icon-link);
+  mask-image: var(--debugbar-icon-link);
 }
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:before {
-  content: "\f0c5";
+  -webkit-mask-image: var(--debugbar-icon-copy);
+  mask-image: var(--debugbar-icon-copy);
 }
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard-check:before {
-  content: "\f46c";
+  -webkit-mask-image: var(--debugbar-icon-circle-check);
+  mask-image: var(--debugbar-icon-circle-check);
 }
 div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link:before {
-  content: "\f08e";
+  -webkit-mask-image: var(--debugbar-icon-external-link);
+  mask-image: var(--debugbar-icon-external-link);
 }
 div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link {
   color: var(--debugbar-link);
