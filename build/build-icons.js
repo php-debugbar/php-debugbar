@@ -22,6 +22,7 @@ const icons = [
     'clock',
     'code',
     'database',
+    'file-code',
     'flag',
     'history',
     'inbox',

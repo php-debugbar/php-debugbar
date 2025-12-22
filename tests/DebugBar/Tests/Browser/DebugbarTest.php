@@ -31,7 +31,7 @@ class DebugbarTest extends AbstractBrowserTestCase
             });
 
         $this->assertEquals('hello', $messages[0]);
-        $this->assertCount(4, $messages);
+        $this->assertCount(6, $messages);
 
         // Close it again
         $client->click($this->getTabLink($crawler, 'messages'));
