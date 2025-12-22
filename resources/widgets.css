@@ -50,15 +50,21 @@ pre.phpdebugbar-widgets-code-block {
   }
 
   a.phpdebugbar-widgets-editor-link:before {
-    font-family: PhpDebugbarFontAwesome;
-    margin-right: 4px;
-    font-size: 12px;
-    font-style: normal;
-  }
-
-  a.phpdebugbar-widgets-editor-link:before {
-    content: "\f08e";
+    content: "";
+    display: inline-block;
+    width: 1em;
+    height: 1em;
     margin-left: 4px;
+    vertical-align: middle;
+    -webkit-mask-image: var(--debugbar-icon-external-link);
+    mask-image: var(--debugbar-icon-external-link);
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    background-color: currentColor;
   }
 
 /* -------------------------------------- */
@@ -86,22 +92,21 @@ div.phpdebugbar-widgets-messages {
     padding-bottom: 45px;
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value:before {
-    font-family: PhpDebugbarFontAwesome;
     margin-right: 8px;
     font-size: 11px;
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-alert:before {
-    content: "\f0f3";
+    content: "ℹ";
     color: #cbcf38;
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-debug:before {
-    content: "\f188";
+    content: "🐛";
     color: #78d79a;
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-warning:before,
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-emergency:before,
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-notice:before {
-    content: "\f071";
+    content: "⚠";
     color: #ecb03d;
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-error,
@@ -110,7 +115,7 @@ div.phpdebugbar-widgets-messages {
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-error:before,
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-critical:before {
-    content: "\f057";
+    content: "✖";
   }
   .phpdebugbar-widgets-params .phpdebugbar-widgets-value pre.sf-dump,
   dl.phpdebugbar-widgets-kvlist dd.phpdebugbar-widgets-value pre.sf-dump,
@@ -153,10 +158,21 @@ div.phpdebugbar-widgets-messages {
     border-bottom: 1px dotted var(--debugbar-border);
   }
   div.phpdebugbar-widgets-messages li .phpdebugbar-widgets-label-called-from:before {
-    content: "\f08d";
-    font-family: PhpDebugbarFontAwesome;
+    content: "";
+    display: inline-block;
+    width: 1em;
+    height: 1em;
     margin-right: 4px;
-    font-size: 12px;
+    vertical-align: middle;
+    -webkit-mask-image: var(--debugbar-icon-link);
+    mask-image: var(--debugbar-icon-link);
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    background-color: currentColor;
   }
     div.phpdebugbar-widgets-messages div.phpdebugbar-widgets-toolbar input {
       border: 0;
