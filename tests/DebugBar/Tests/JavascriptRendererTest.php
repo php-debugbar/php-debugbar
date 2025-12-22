@@ -75,16 +75,16 @@ class JavascriptRendererTest extends DebugBarTestCase
         }
 
         // Make sure all the right assets are returned by getAssets
-        list($css, $js, $inline_css, $inline_js, $inline_head) = $this->r->getAssets();
-        $this->assertContains('/bar/foo.css', $css);
-        $this->assertContains('/bar/foo.js', $js);
-        $this->assertEquals(array('Css' => 'CssTest'), $inline_css);
-        $this->assertEquals(array('Js' => 'JsTest'), $inline_js);
-        $this->assertEquals(array('Head' => 'HeaderTest'), $inline_head);
+        $assets = $this->r->getAssets();
+        $this->assertContains('/bar/foo.css', $assets['css']);
+        $this->assertContains('/bar/foo.js', $assets['js']);
+        $this->assertEquals(array('Css' => 'CssTest'), $assets['inline_css']);
+        $this->assertEquals(array('Js' => 'JsTest'), $assets['inline_js']);
+        $this->assertEquals(array('Head' => 'HeaderTest'), $assets['inline_head']);
 
         // Make sure asset files are deduplicated
-        $this->assertCount(count(array_unique($css)), $css);
-        $this->assertCount(count(array_unique($js)), $js);
+        $this->assertCount(count(array_unique($assets['css'])), $assets['css']);
+        $this->assertCount(count(array_unique($assets['js'])), $assets['js']);
 
         $html = $this->r->renderHead();
         $this->assertStringContainsString('<script type="text/javascript" src="/foobar/foo.js"></script>', $html);
@@ -92,10 +92,10 @@ class JavascriptRendererTest extends DebugBarTestCase
 
     public function testGetAssets()
     {
-        list($css, $js) = $this->r->getAssets();
-        $this->assertContains('/bpath/debugbar.css', $css);
-        $this->assertContains('/bpath/widgets.js', $js);
-        $this->assertContains('/bpath/vendor/jquery/dist/jquery.min.js', $js);
+        $assets = $this->r->getAssets();
+        $this->assertContains('/bpath/debugbar.css', $assets['css']);
+        $this->assertContains('/bpath/widgets.js', $assets['js']);
+        $this->assertContains('/bpath/vendor/jquery/dist/jquery.min.js', $assets['js']);
     }
 
     public function testGetAssetsExludeVendors()
@@ -109,10 +109,10 @@ class JavascriptRendererTest extends DebugBarTestCase
     public function testGetDistAssets()
     {
         $this->r->setUseDistFiles(true);
-        list($css, $js) = $this->r->getAssets();
-        $this->assertContains('/bpath/dist/debugbar.min.css', $css);
-        $this->assertNotContains('/bpath/widgets.js', $js);
-        $this->assertContains('/bpath/vendor/jquery/dist/jquery.min.js', $js);
+        $assets = $this->r->getAssets();
+        $this->assertContains('/bpath/dist/debugbar.min.css', $assets['css']);
+        $this->assertNotContains('/bpath/widgets.js', $assets['js']);
+        $this->assertContains('/bpath/vendor/jquery/dist/jquery.min.js', $assets['js']);
     }
 
     public function testRenderHead()

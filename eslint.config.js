@@ -37,12 +37,12 @@ export default antfu(
             // Allow unused vars with _ prefix or Widget suffix
             'unused-imports/no-unused-vars': ['error', {
                 args: 'none',
-                varsIgnorePattern: '^_|Widget$',
+                varsIgnorePattern: '^(_|.*Widget)$',
                 caughtErrors: 'none'
             }],
             'no-unused-vars': ['error', {
                 args: 'none',
-                varsIgnorePattern: '^_|Widget$',
+                varsIgnorePattern: '^(_|.*Widget)$',
                 caughtErrors: 'none'
             }],
 

@@ -77,8 +77,6 @@ class JavascriptRenderer
 
     protected $enableJqueryNoConflict = true;
 
-    protected $useRequireJs = false;
-
     protected $theme = null;
 
     protected $hideEmptyTabs = null;
@@ -146,7 +144,6 @@ class JavascriptRenderer
      *  - initialization
      *  - enable_jquery_noconflict
      *  - use_dist_files
-     *  - use_requirejs
      *  - controls
      *  - disable_controls
      *  - ignore_collectors
@@ -182,9 +179,6 @@ class JavascriptRenderer
         }
         if (array_key_exists('use_dist_files', $options)) {
             $this->setUseDistFiles($options['use_dist_files']);
-        }
-        if (array_key_exists('use_requirejs', $options)) {
-            $this->setUseRequireJs($options['use_requirejs']);
         }
         if (array_key_exists('theme', $options)) {
             $this->setTheme($options['theme']);
@@ -429,28 +423,6 @@ class JavascriptRenderer
     public function isJqueryNoConflictEnabled()
     {
         return $this->enableJqueryNoConflict;
-    }
-
-    /**
-     * Sets whether to use RequireJS or not
-     *
-     * @param boolean $enabled
-     * @return $this
-     */
-    public function setUseRequireJs($enabled = true)
-    {
-        $this->useRequireJs = $enabled;
-        return $this;
-    }
-
-    /**
-     * Checks if RequireJS is used
-     *
-     * @return boolean
-     */
-    public function isRequireJsUsed()
-    {
-        return $this->useRequireJs;
     }
 
     /**
@@ -801,11 +773,11 @@ class JavascriptRenderer
     /**
      * Returns the list of asset files
      *
-     * @param string $type 'css', 'js', 'inline_css', 'inline_js', 'inline_head', or null for all
-     * @param string $relativeTo The type of path to which filenames must be relative (path, url or null)
+     * @param string|null $type 'css', 'js', 'inline_css', 'inline_js', 'inline_head', or null for all
+     * @param string|null $relativeTo The type of path to which filenames must be relative (path, url or null)
      * @return array
      */
-    public function getAssets($type = null, $relativeTo = self::RELATIVE_PATH)
+    public function getAssets(?string $type = null, ?string $relativeTo = self::RELATIVE_PATH): array
     {
         if ($this->useDistFiles) {
             $cssFiles = $this->distCssFiles;
@@ -870,7 +842,15 @@ class JavascriptRenderer
         $cssFiles = array_unique($cssFiles);
         $jsFiles = array_unique($jsFiles);
 
-        return $this->filterAssetArray(array($cssFiles, $jsFiles, $inlineCss, $inlineJs, $inlineHead), $type ?? '');
+        $files = [
+            'css' => $cssFiles,
+            'js' => $jsFiles,
+            'inline_css' => $inlineCss,
+            'inline_js' => $inlineJs,
+            'inline_head' => $inlineHead
+        ];
+
+        return $type ? $files[$type] : $files;
     }
 
     /**
@@ -922,69 +902,6 @@ class JavascriptRenderer
     }
 
     /**
-     * Filters a tuple of (css, js, inline_css, inline_js, inline_head) assets according to $type
-     *
-     * @param array $array
-     * @param string $type 'css', 'js', 'inline_css', 'inline_js', 'inline_head', or null for all
-     * @return array
-     */
-    protected function filterAssetArray($array, $type = '')
-    {
-        $types = array('css', 'js', 'inline_css', 'inline_js', 'inline_head');
-        $typeIndex = array_search(strtolower($type ?? ''), $types);
-        return $typeIndex !== false ? $array[$typeIndex] : $array;
-    }
-
-    /**
-     * Returns an array where all items are Assetic AssetCollection:
-     *  - The first one contains the CSS files
-     *  - The second one contains the JS files
-     *  - The third one contains arbitrary inline HTML (typically composed of <script>/<style>
-     *    elements); it must be embedded within the <head> element
-     *
-     * @param string $type Optionally return only 'css', 'js', or 'inline_head' collection
-     * @return array|\Assetic\Asset\AssetCollection
-     */
-    public function getAsseticCollection($type = null)
-    {
-        $types = array('css', 'js', 'inline_head');
-        $typeIndex = array_search(strtolower($type), $types);
-
-        list($cssFiles, $jsFiles, $inlineCss, $inlineJs, $inlineHead) = $this->getAssets();
-        $collections = array(
-            $this->createAsseticCollection($cssFiles, $inlineCss),
-            $this->createAsseticCollection($jsFiles, $inlineJs),
-            $this->createAsseticCollection(null, $inlineHead)
-        );
-        return $typeIndex !== false ? $collections[$typeIndex] : $collections;
-    }
-
-    /**
-     * Create an Assetic AssetCollection with the given content.
-     * Filenames will be converted to absolute path using
-     * the base path.
-     *
-     * @param array|null $files Array of asset filenames.
-     * @param array|null $content Array of inline asset content.
-     * @return \Assetic\Asset\AssetCollection
-     */
-    protected function createAsseticCollection($files = null, $content = null)
-    {
-        $assets = array();
-        if ($files) {
-            foreach ($files as $file) {
-                $assets[] = new \Assetic\Asset\FileAsset($file);
-            }
-        }
-        if ($content) {
-            foreach ($content as $item) {
-                $assets[] = new \Assetic\Asset\StringAsset($item);
-            }
-        }
-        return new \Assetic\Asset\AssetCollection($assets);
-    }
-
-    /**
      * Write all CSS assets to standard output or in a file
      *
      * @param string $targetFilename
@@ -1001,7 +918,7 @@ class JavascriptRenderer
      */
     public function dumpJsAssets($targetFilename = null)
     {
-        $this->dumpAssets($this->getAssets('js'), $this->getAssets('inline_js'), $targetFilename, $this->useRequireJs);
+        $this->dumpAssets($this->getAssets('js'), $this->getAssets('inline_js'), $targetFilename);
     }
 
     /**
@@ -1021,9 +938,8 @@ class JavascriptRenderer
      * @param array|null $files Filenames containing assets
      * @param array|null $content Inline content to dump
      * @param string $targetFilename
-     * @param bool $useRequireJs
      */
-    protected function dumpAssets($files = null, $content = null, $targetFilename = null, $useRequireJs = false)
+    protected function dumpAssets($files = null, $content = null, $targetFilename = null)
     {
         $dumpedContent = '';
         if ($files) {
@@ -1036,9 +952,7 @@ class JavascriptRenderer
                 $dumpedContent .= $item . "\n";
             }
         }
-        if ($useRequireJs) {
-            $dumpedContent = "define('debugbar', ['jquery'], function($){\r\n" . $dumpedContent . "\r\n return PhpDebugBar; \r\n});";
-        }
+
         if ($targetFilename !== null) {
             file_put_contents($targetFilename, $dumpedContent);
         } else {
@@ -1055,7 +969,14 @@ class JavascriptRenderer
      */
     public function renderHead()
     {
-        list($cssFiles, $jsFiles, $inlineCss, $inlineJs, $inlineHead) = $this->getAssets(null, self::RELATIVE_URL);
+        [
+            'css' => $cssFiles,
+            'js' => $jsFiles,
+            'inline_css' => $inlineCss,
+            'inline_js' => $inlineJs,
+            'inline_head' => $inlineHead
+        ] = $this->getAssets(null, self::RELATIVE_URL);
+
         $html = '';
 
         $nonce = $this->getNonceAttribute();
@@ -1080,7 +1001,7 @@ class JavascriptRenderer
             $html .= $content . "\n";
         }
 
-        if ($this->enableJqueryNoConflict && !$this->useRequireJs) {
+        if ($this->enableJqueryNoConflict) {
             $html .= '<script type="text/javascript"' . $nonce . '>jQuery.noConflict(true);</script>' . "\n";
         }
 
@@ -1184,12 +1105,7 @@ class JavascriptRenderer
             $js = preg_replace("/<script>/", "<script nonce='{$this->cspNonce}'>", $js);
         }
 
-        if ($this->useRequireJs){
-            return "<script type=\"text/javascript\"{$nonce}>\nrequire(['debugbar'], function(PhpDebugBar){ $js });\n</script>\n";
-        } else {
-            return "<script type=\"text/javascript\"{$nonce}>\n$js\n</script>\n";
-        }
-
+        return "<script type=\"text/javascript\"{$nonce}>\n$js\n</script>\n";
     }
 
     /**
