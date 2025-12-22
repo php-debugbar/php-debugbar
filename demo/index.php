@@ -1,5 +1,9 @@
 <?php
 
+use DebugBar\DataCollector\PDO\TraceablePDO;
+use DebugBar\DataCollector\PDO\PDOCollector;
+
+
 include 'bootstrap.php';
 
 $debugbar['messages']->addMessage('hello');
@@ -24,6 +28,27 @@ $debugbar['counter']->setKeyMap($classEvent);
 for ($i = 0; $i <=20; $i++) {
     $debugbar['counter']->countClass($classDemo[rand(0, 2)], 1, $classEvent[rand(0, 2)]);
 }
+
+// PDO
+$pdo = new TraceablePDO(new PDO('sqlite::memory:'));
+$debugbar->addCollector(new PDOCollector($pdo));
+$debugbar['pdo']->setDurationBackground(true);
+
+$pdo->exec('create table users (name varchar)');
+$stmt = $pdo->prepare('insert into users (name) values (?)');
+$stmt->execute(array('foo'));
+$stmt->execute(array('bar'));
+
+$users = $pdo->query('select * from users')->fetchAll();
+$stmt = $pdo->prepare('select * from users where name=?');
+$stmt->execute(array('foo'));
+$foo = $stmt->fetch();
+
+$stmt = $pdo->prepare('select * from users where name=?');
+$stmt->execute(array('<script>alert();</script>'));
+$foo = $stmt->fetch();
+
+$pdo->exec('delete from users');
 
 $debugbar['time']->startMeasure('render');
 
@@ -50,14 +75,8 @@ render_demo_page(function() {
 <h2>Bridges</h2>
 <p>(you need to install needed dependencies first, run <code>composer.phar install</code> in each demo folders)</p>
 <ul>
-    <li><a href="bridge/cachecache">CacheCache</a></li>
-    <li><a href="bridge/doctrine">Doctrine</a></li>
     <li><a href="bridge/monolog">Monolog</a></li>
-    <li><a href="bridge/propel">Propel</a></li>
-    <li><a href="bridge/slim">Slim</a></li>
-    <li><a href="bridge/swiftmailer">Swift mailer</a></li>
     <li><a href="bridge/symfonymailer">Symfony mailer</a></li>
-    <li><a href="bridge/twig">Twig</a></li>
 </ul>
 <?php
 });
