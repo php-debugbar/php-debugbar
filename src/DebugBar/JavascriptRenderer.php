@@ -51,6 +51,24 @@ class JavascriptRenderer
 
     protected $jsFiles = array('debugbar.js', 'widgets.js', 'openhandler.js');
 
+    protected $useDistFiles = true;
+
+    protected $distCssFiles = array('dist/debugbar.min.css');
+
+    protected $distJsFiles = array('dist/debugbar.min.js');
+
+    /*
+     * These files are included in the dist files. When using source, they are added by collectors if needed.
+     */
+    protected $distWidgetAssets = [
+        'widgets/mails/widget.css',
+        'widgets/mails/widget.js',
+        'widgets/sqlqueries/widget.css',
+        'widgets/sqlqueries/widget.js',
+        'widgets/templates/widget.css',
+        'widgets/templates/widget.js',
+    ];
+
     protected $additionalAssets = array();
 
     protected $javascriptClass = 'PhpDebugBar.DebugBar';
@@ -74,8 +92,6 @@ class JavascriptRenderer
     protected $ajaxHandlerClass = 'PhpDebugBar.AjaxHandler';
 
     protected $ajaxHandlerBindToFetch = true;
-
-    protected $ajaxHandlerBindToJquery = false;
 
     protected $ajaxHandlerBindToXHR = true;
 
@@ -129,11 +145,12 @@ class JavascriptRenderer
      *  - variable_name
      *  - initialization
      *  - enable_jquery_noconflict
+     *  - use_dist_files
+     *  - use_requirejs
      *  - controls
      *  - disable_controls
      *  - ignore_collectors
      *  - ajax_handler_classname
-     *  - ajax_handler_bind_to_jquery
      *  - ajax_handler_auto_show
      *  - open_handler_classname
      *  - open_handler_url
@@ -162,6 +179,9 @@ class JavascriptRenderer
         }
         if (array_key_exists('enable_jquery_noconflict', $options)) {
             $this->setEnableJqueryNoConflict($options['enable_jquery_noconflict']);
+        }
+        if (array_key_exists('use_dist_files', $options)) {
+            $this->setUseDistFiles($options['use_dist_files']);
         }
         if (array_key_exists('use_requirejs', $options)) {
             $this->setUseRequireJs($options['use_requirejs']);
@@ -258,7 +278,7 @@ class JavascriptRenderer
      * You can only include js or css vendors using
      * setIncludeVendors('css') or setIncludeVendors('js')
      *
-     * @param boolean $enabled
+     * @param boolean|string|array $enabled
      */
     public function setIncludeVendors($enabled = true)
     {
@@ -300,6 +320,27 @@ class JavascriptRenderer
         if (array_key_exists($name, $this->jsVendors)) {
             unset($this->jsVendors[$name]);
         }
+    }
+
+    /**
+     * Enables or disables using dist files instead of source files
+     *
+     * @param bool $useDistFiles
+     */
+    public function setUseDistFiles($useDistFiles = true)
+    {
+        $this->useDistFiles = $useDistFiles;
+        return $this;
+    }
+
+    /**
+     * Returns the usage of dist files.
+     *
+     * @return bool
+     */
+    public function getUseDistFiles()
+    {
+        return $this->useDistFiles;
     }
 
     /**
@@ -766,8 +807,14 @@ class JavascriptRenderer
      */
     public function getAssets($type = null, $relativeTo = self::RELATIVE_PATH)
     {
-        $cssFiles = $this->cssFiles;
-        $jsFiles = $this->jsFiles;
+        if ($this->useDistFiles) {
+            $cssFiles = $this->distCssFiles;
+            $jsFiles = $this->distJsFiles;
+        } else {
+            $cssFiles = $this->cssFiles;
+            $jsFiles = $this->jsFiles;
+        }
+
         $inlineCss = array();
         $inlineJs = array();
         $inlineHead = array();
@@ -801,10 +848,10 @@ class JavascriptRenderer
             $root = $this->getRelativeRoot($relativeTo,
                 $this->makeUriRelativeTo($basePath, $this->basePath),
                 $this->makeUriRelativeTo($baseUrl, $this->baseUrl));
-            if (isset($assets['css'])) {
+            if (isset($assets['css']) && !($this->useDistFiles && $basePath === '' && in_array($assets['css'], $this->distWidgetAssets))) {
                 $cssFiles = array_merge($cssFiles, $this->makeUriRelativeTo((array) $assets['css'], $root));
             }
-            if (isset($assets['js'])) {
+            if (isset($assets['js']) && !($this->useDistFiles && $basePath === '' && in_array($assets['js'], $this->distWidgetAssets))) {
                 $jsFiles = array_merge($jsFiles, $this->makeUriRelativeTo((array) $assets['js'], $root));
             }
 
