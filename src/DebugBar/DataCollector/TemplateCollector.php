@@ -38,15 +38,16 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
 
     public function getWidgets()
     {
+        $name = $this->getName();
         return [
-            'views' => [
+            $name => [
                 'icon' => 'file-code',
                 'widget' => 'PhpDebugBar.Widgets.TemplatesWidget',
-                'map' => 'templates',
+                'map' => $name,
                 'default' => '[]'
             ],
-            'views:badge' => [
-                'map' => 'templates.nb_templates',
+            "$name:badge"=> [
+                'map' => $name . '.nb_templates',
                 'default' => 0
             ]
         ];
