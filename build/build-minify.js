@@ -13,6 +13,7 @@ const outputDir = resourcesDir + '/dist';
 // Files to concatenate and minify (order matters!)
 const jsFiles = [
     'debugbar.js',
+    'icons.js',
     'widgets.js',
     'openhandler.js',
     'widgets/sqlqueries/widget.js',
@@ -22,7 +23,6 @@ const jsFiles = [
 
 const cssFiles = [
     'debugbar.css',
-    'icons.css',
     'widgets.css',
     'openhandler.css',
     'highlight.css',

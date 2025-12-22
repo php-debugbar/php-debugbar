@@ -330,24 +330,16 @@ a.phpdebugbar-tab.phpdebugbar-active {
   }
 
 /* Icon base styles */
-.phpdebugbar-icon::before,
-i.phpdebugbar-icon::before {
-  content: "";
-  display: inline-block;
+svg.phpdebugbar-icon {
   width: 1.3em;
   height: 1.3em;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  display: inline-block;
   vertical-align: middle;
-  /* Use mask to allow currentColor to work */
-  -webkit-mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-size: contain;
-  mask-repeat: no-repeat;
-  mask-position: center;
-  background-color: currentColor;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
   a.phpdebugbar-tab span.phpdebugbar-badge.phpdebugbar-visible {
     display: inline;
@@ -378,59 +370,13 @@ a.phpdebugbar-maximize-btn {
     position: relative;
 }
 
-a.phpdebugbar-close-btn:after,
-a.phpdebugbar-open-btn:after,
-a.phpdebugbar-restore-btn:after,
-a.phpdebugbar-minimize-btn:after,
-a.phpdebugbar-maximize-btn:after {
-    content: " ";
-    display: block;
-    left: 0;
-    position: absolute;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--debugbar-icons);
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: 18px 18px;
-    mask-size: 18px 18px;
-}
-
-a.phpdebugbar-restore-btn:after {
-  -webkit-mask-size: 20px 20px;
-  mask-size: 20px 20px;
-}
-
 a.phpdebugbar-maximize-btn { display: none}
 
-a.phpdebugbar-minimize-btn { display: block}
+a.phpdebugbar-minimize-btn { display: flex}
 
-div.phpdebugbar-minimized a.phpdebugbar-maximize-btn { display: block}
+div.phpdebugbar-minimized a.phpdebugbar-maximize-btn { display: flex}
 
 div.phpdebugbar-minimized a.phpdebugbar-minimize-btn { display: none}
-
-a.phpdebugbar-minimize-btn:after {
-  -webkit-mask-image: var(--debugbar-icon-chevron-down);
-  mask-image: var(--debugbar-icon-chevron-down);
-}
-
-a.phpdebugbar-maximize-btn:after {
-  -webkit-mask-image: var(--debugbar-icon-chevron-up);
-  mask-image: var(--debugbar-icon-chevron-up);
-}
-
-a.phpdebugbar-close-btn:after {
-  -webkit-mask-image: var(--debugbar-icon-x);
-  mask-image: var(--debugbar-icon-x);
-}
-
-a.phpdebugbar-open-btn:after {
-  -webkit-mask-image: var(--debugbar-icon-folder-open);
-  mask-image: var(--debugbar-icon-folder-open);
-}
 
 .phpdebugbar-indicator {
   position: relative;

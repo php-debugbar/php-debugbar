@@ -1,5 +1,6 @@
 (function ($) {
     const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
+    const createIcon = PhpDebugBar.utils.createIcon;
 
     /**
      * Widget for the displaying sql queries
@@ -20,9 +21,9 @@
             const copy = function () {
                 try {
                     if (document.execCommand('copy')) {
-                        $(el).addClass(csscls('copy-clipboard-check'));
+                        $(el).empty().append(createIcon('circle-check'));
                         setTimeout(() => {
-                            $(el).removeClass(csscls('copy-clipboard-check'));
+                            $(el).empty().append(createIcon('copy'));
                         }, 2000);
                     }
                 } catch (err) {
@@ -86,19 +87,19 @@
                     ).appendTo(li);
                 }
                 if (stmt.duration_str) {
-                    $('<span title="Duration" />').addClass(csscls('duration')).text(stmt.duration_str).appendTo(li);
+                    $('<span title="Duration" />').append(createIcon('clock')).addClass(csscls('duration')).append(stmt.duration_str).appendTo(li);
                 }
                 if (stmt.memory_str) {
-                    $('<span title="Memory usage" />').addClass(csscls('memory')).text(stmt.memory_str).appendTo(li);
+                    $('<span title="Memory usage" />').append(createIcon('cpu')).addClass(csscls('memory')).append(stmt.memory_str).appendTo(li);
                 }
                 if (typeof (stmt.row_count) !== 'undefined') {
-                    $('<span title="Row count" />').addClass(csscls('row-count')).text(stmt.row_count).appendTo(li);
+                    $('<span title="Row count" />').append(createIcon('table')).append(stmt.row_count).appendTo(li);
                 }
                 if (typeof (stmt.stmt_id) !== 'undefined' && stmt.stmt_id) {
-                    $('<span title="Prepared statement ID" />').addClass(csscls('stmt-id')).text(stmt.stmt_id).appendTo(li);
+                    $('<span title="Prepared statement ID" />').append(createIcon('link')).addClass(csscls('stmt-id')).append(stmt.stmt_id).appendTo(li);
                 }
                 if (stmt.connection) {
-                    $('<span title="Connection" />').addClass(csscls('database')).text(stmt.connection).appendTo(li);
+                    $('<span title="Connection" />').append(createIcon('database')).append(stmt.connection).appendTo(li);
                     li.attr('connection', stmt.connection);
                     if ($.inArray(stmt.connection, filters) === -1) {
                         filters.push(stmt.connection);
@@ -119,8 +120,8 @@
                 if ((!stmt.type || stmt.type === 'query')) {
                     $('<span title="Copy to clipboard" />')
                         .addClass(csscls('copy-clipboard'))
+                        .append(createIcon('copy'))
                         .css('cursor', 'pointer')
-                        .html('&#8203;')
                         .on('click', function (event) {
                             self.onCopyToClipboard(this);
                             event.stopPropagation();

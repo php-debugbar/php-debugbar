@@ -59,5 +59,7 @@ render_demo_page(function() {
     <li><a href="bridge/symfonymailer">Symfony mailer</a></li>
     <li><a href="bridge/twig">Twig</a></li>
 </ul>
+
+    <svg class="phpdebugbar-icon"><use href="#debugbar-icon-server-cog"></use></svg>
 <?php
 });

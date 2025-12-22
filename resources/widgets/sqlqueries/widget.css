@@ -29,60 +29,7 @@ div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugb
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-stmt-id {
   color: var(--debugbar-text);
 }
-div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before,
-div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before,
-div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory:before,
-div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-row-count:before,
-div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:before,
-div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard-check:before,
-div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id:before,
-div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link:before {
-  content: "";
-  display: inline-block;
-  width: 1em;
-  height: 1em;
-  margin-right: 4px;
-  vertical-align: middle;
-  -webkit-mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-size: contain;
-  mask-repeat: no-repeat;
-  mask-position: center;
-  background-color: currentColor;
-}
-div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-database:before {
-  -webkit-mask-image: var(--debugbar-icon-database);
-  mask-image: var(--debugbar-icon-database);
-}
-div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration:before {
-  -webkit-mask-image: var(--debugbar-icon-clock);
-  mask-image: var(--debugbar-icon-clock);
-}
-div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory:before {
-  -webkit-mask-image: var(--debugbar-icon-cpu);
-  mask-image: var(--debugbar-icon-cpu);
-}
-div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-row-count:before {
-  -webkit-mask-image: var(--debugbar-icon-table);
-  mask-image: var(--debugbar-icon-table);
-}
-div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id:before {
-  -webkit-mask-image: var(--debugbar-icon-link);
-  mask-image: var(--debugbar-icon-link);
-}
-div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:before {
-  -webkit-mask-image: var(--debugbar-icon-copy);
-  mask-image: var(--debugbar-icon-copy);
-}
-div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard-check:before {
-  -webkit-mask-image: var(--debugbar-icon-circle-check);
-  mask-image: var(--debugbar-icon-circle-check);
-}
-div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link:before {
-  -webkit-mask-image: var(--debugbar-icon-external-link);
-  mask-image: var(--debugbar-icon-external-link);
-}
+
 div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link {
   color: var(--debugbar-link);
 }

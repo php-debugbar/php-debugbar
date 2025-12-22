@@ -47,9 +47,9 @@ class JavascriptRenderer
 
     protected $includeVendors = true;
 
-    protected $cssFiles = array('debugbar.css', 'icons.css', 'widgets.css', 'openhandler.css', 'highlight.css');
+    protected $cssFiles = array('debugbar.css', 'widgets.css', 'openhandler.css', 'highlight.css');
 
-    protected $jsFiles = array('debugbar.js', 'widgets.js', 'openhandler.js');
+    protected $jsFiles = array('debugbar.js', 'icons.js', 'widgets.js', 'openhandler.js');
 
     protected $useDistFiles = true;
 
@@ -67,6 +67,7 @@ class JavascriptRenderer
         'widgets/sqlqueries/widget.js',
         'widgets/templates/widget.css',
         'widgets/templates/widget.js',
+        'icons.js',
     ];
 
     protected $additionalAssets = array();
