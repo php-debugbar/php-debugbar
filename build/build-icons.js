@@ -38,6 +38,14 @@ const icons = [
     'chevron-up',
     'folder-open',
     'brand-php',
+
+    // Widget-specific icons
+    'cpu',           // memory/performance
+    'table',         // row count
+    'link',          // statement ID
+    'copy',          // copy to clipboard
+    'circle-check',  // copy success confirmation
+    'external-link', // editor link
 ];
 
 const svgDir = path.join(__dirname, '../node_modules/@tabler/icons/icons/outline');
