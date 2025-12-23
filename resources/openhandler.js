@@ -20,156 +20,206 @@ if (typeof PhpDebugBar === 'undefined') {
         render() {
             const self = this;
 
-            this.$el.appendTo('body').hide();
-            this.$closebtn = $('<a><i class="phpdebugbar-icon phpdebugbar-icon-x"></i></a>');
-            this.$table = $('<tbody />');
-            $('<div>PHP DebugBar | Open</div>').addClass(csscls('header')).append(this.$closebtn).appendTo(this.$el);
-            $('<table><thead><tr><th width="155">Date</th><th width="75">Method</th><th>URL</th><th width="125">IP</th><th width="100">Filter data</th></tr></thead></table>').append(this.$table).appendTo(this.$el);
-            this.$actions = $('<div />').addClass(csscls('actions')).appendTo(this.$el);
+            document.body.append(this.el);
+            this.el.style.display = 'none';
 
-            this.$closebtn.on('click', () => {
+            this.closebtn = document.createElement('a');
+            this.closebtn.innerHTML = '<i class="phpdebugbar-icon phpdebugbar-icon-x"></i>';
+
+            this.table = document.createElement('tbody');
+
+            const header = document.createElement('div');
+            header.classList.add(csscls('header'));
+            header.textContent = 'PHP DebugBar | Open';
+            header.append(this.closebtn);
+            this.el.append(header);
+
+            const tableWrapper = document.createElement('table');
+            tableWrapper.innerHTML = '<thead><tr><th width="155">Date</th><th width="75">Method</th><th>URL</th><th width="125">IP</th><th width="100">Filter data</th></tr></thead>';
+            tableWrapper.append(this.table);
+            this.el.append(tableWrapper);
+
+            this.actions = document.createElement('div');
+            this.actions.classList.add(csscls('actions'));
+            this.el.append(this.actions);
+
+            this.closebtn.addEventListener('click', () => {
                 self.hide();
             });
 
-            this.$loadmorebtn = $('<a>Load more</a>')
-                .appendTo(this.$actions)
-                .on('click', () => {
-                    self.find(self.last_find_request, self.last_find_request.offset + self.get('items_per_page'), self.handleFind.bind(self));
-                });
+            this.loadmorebtn = document.createElement('a');
+            this.loadmorebtn.textContent = 'Load more';
+            this.actions.append(this.loadmorebtn);
+            this.loadmorebtn.addEventListener('click', () => {
+                self.find(self.last_find_request, self.last_find_request.offset + self.get('items_per_page'), self.handleFind.bind(self));
+            });
 
-            this.$showonlycurrentbtn = $('<a>Show only current URL</a>')
-                .appendTo(this.$actions)
-                .on('click', () => {
-                    self.$table.empty();
-                    self.find({ uri: window.location.pathname }, 0, self.handleFind.bind(self));
-                });
+            this.showonlycurrentbtn = document.createElement('a');
+            this.showonlycurrentbtn.textContent = 'Show only current URL';
+            this.actions.append(this.showonlycurrentbtn);
+            this.showonlycurrentbtn.addEventListener('click', () => {
+                self.table.innerHTML = '';
+                self.find({ uri: window.location.pathname }, 0, self.handleFind.bind(self));
+            });
 
-            this.$showallbtn = $('<a>Show all</a>')
-                .appendTo(this.$actions)
-                .on('click', () => {
-                    self.refresh();
-                });
+            this.showallbtn = document.createElement('a');
+            this.showallbtn.textContent = 'Show all';
+            this.actions.append(this.showallbtn);
+            this.showallbtn.addEventListener('click', () => {
+                self.refresh();
+            });
 
-            this.$clearbtn = $('<a>Delete all</a>')
-                .appendTo(this.$actions)
-                .on('click', () => {
-                    self.clear(() => {
-                        self.hide();
-                    });
+            this.clearbtn = document.createElement('a');
+            this.clearbtn.textContent = 'Delete all';
+            this.actions.append(this.clearbtn);
+            this.clearbtn.addEventListener('click', () => {
+                self.clear(() => {
+                    self.hide();
                 });
+            });
 
             this.addSearch();
 
-            this.$overlay = $('<div />').addClass(csscls('overlay')).hide().appendTo('body');
-            this.$overlay.on('click', () => {
+            this.overlay = document.createElement('div');
+            this.overlay.classList.add(csscls('overlay'));
+            this.overlay.style.display = 'none';
+            document.body.append(this.overlay);
+            this.overlay.addEventListener('click', () => {
                 self.hide();
             });
         },
 
         refresh() {
-            this.$table.empty();
-            this.$loadmorebtn.show();
+            this.table.innerHTML = '';
+            this.loadmorebtn.style.display = '';
             this.find({}, 0, this.handleFind.bind(this));
         },
 
         addSearch() {
             const self = this;
-            const searchBtn = $('<button />')
-                .text('Search')
-                .attr('type', 'submit')
-                .on('click', function (e) {
-                    self.$table.empty();
-                    const search = {};
-                    const a = $(this).parent().serializeArray();
-                    $.each(a, function () {
-                        if (this.value) {
-                            search[this.name] = this.value;
-                        }
-                    });
 
-                    self.find(search, 0, self.handleFind.bind(self));
-                    e.preventDefault();
-                });
+            const searchBtn = document.createElement('button');
+            searchBtn.textContent = 'Search';
+            searchBtn.type = 'submit';
+            searchBtn.addEventListener('click', function (e) {
+                self.table.innerHTML = '';
+                const search = {};
+                const formData = new FormData(this.parentElement);
+                for (const [name, value] of formData.entries()) {
+                    if (value) {
+                        search[name] = value;
+                    }
+                }
 
-            $('<form />')
-                .append('<br/><b>Filter results</b><br/>')
-                .append('<select name="method"><option selected>(Method)</option><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select>')
-                .append('<input type="text" name="uri" placeholder="URI">')
-                .append('<input type="text" name="ip" placeholder="IP">')
-                .append(searchBtn)
-                .appendTo(this.$actions);
+                self.find(search, 0, self.handleFind.bind(self));
+                e.preventDefault();
+            });
+
+            const form = document.createElement('form');
+            form.innerHTML = '<br/><b>Filter results</b><br/>'
+                + '<select name="method"><option selected>(Method)</option><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select>';
+
+            const uriInput = document.createElement('input');
+            uriInput.type = 'text';
+            uriInput.name = 'uri';
+            uriInput.placeholder = 'URI';
+            form.append(uriInput);
+
+            const ipInput = document.createElement('input');
+            ipInput.type = 'text';
+            ipInput.name = 'ip';
+            ipInput.placeholder = 'IP';
+            form.append(ipInput);
+
+            form.append(searchBtn);
+            this.actions.append(form);
         },
 
         handleFind(data) {
             const self = this;
-            $.each(data, (i, meta) => {
-                const _a = $('<a />')
-                    .text('Load dataset')
-                    .on('click', (e) => {
-                        self.hide();
-                        self.load(meta.id, (data) => {
-                            self.callback(meta.id, data);
-                        });
-                        e.preventDefault();
+            for (const meta of data) {
+                const loadLink = document.createElement('a');
+                loadLink.textContent = 'Load dataset';
+                loadLink.addEventListener('click', (e) => {
+                    self.hide();
+                    self.load(meta.id, (data) => {
+                        self.callback(meta.id, data);
                     });
+                    e.preventDefault();
+                });
 
-                const _method = $('<a />')
-                    .text(meta.method)
-                    .on('click', (e) => {
-                        self.$table.empty();
-                        self.find({ method: meta.method }, 0, self.handleFind.bind(self));
-                        e.preventDefault();
+                const methodLink = document.createElement('a');
+                methodLink.textContent = meta.method;
+                methodLink.addEventListener('click', (e) => {
+                    self.table.innerHTML = '';
+                    self.find({ method: meta.method }, 0, self.handleFind.bind(self));
+                    e.preventDefault();
+                });
+
+                const uriLink = document.createElement('a');
+                uriLink.textContent = meta.uri;
+                uriLink.addEventListener('click', (e) => {
+                    self.hide();
+                    self.load(meta.id, (data) => {
+                        self.callback(meta.id, data);
                     });
+                    e.preventDefault();
+                });
 
-                const uri = $('<a />')
-                    .text(meta.uri)
-                    .on('click', (e) => {
-                        self.hide();
-                        self.load(meta.id, (data) => {
-                            self.callback(meta.id, data);
-                        });
-                        e.preventDefault();
-                    });
+                const ipLink = document.createElement('a');
+                ipLink.textContent = meta.ip;
+                ipLink.addEventListener('click', (e) => {
+                    self.table.innerHTML = '';
+                    self.find({ ip: meta.ip }, 0, self.handleFind.bind(self));
+                    e.preventDefault();
+                });
 
-                const ip = $('<a />')
-                    .text(meta.ip)
-                    .on('click', (e) => {
-                        self.$table.empty();
-                        self.find({ ip: meta.ip }, 0, self.handleFind.bind(self));
-                        e.preventDefault();
-                    });
+                const searchLink = document.createElement('a');
+                searchLink.textContent = 'Show URL';
+                searchLink.addEventListener('click', (e) => {
+                    self.table.innerHTML = '';
+                    self.find({ uri: meta.uri }, 0, self.handleFind.bind(self));
+                    e.preventDefault();
+                });
 
-                const search = $('<a />')
-                    .text('Show URL')
-                    .on('click', (e) => {
-                        self.$table.empty();
-                        self.find({ uri: meta.uri }, 0, self.handleFind.bind(self));
-                        e.preventDefault();
-                    });
+                const tr = document.createElement('tr');
+                const datetimeTd = document.createElement('td');
+                datetimeTd.textContent = meta.datetime;
+                tr.append(datetimeTd);
 
-                $('<tr />')
-                    .append(`<td>${meta.datetime}</td>`)
-                    .append(`<td>${meta.method}</td>`)
-                    .append($('<td />').append(uri))
-                    .append($('<td />').append(ip))
-                    .append($('<td />').append(search))
-                    .appendTo(self.$table);
-            });
+                const methodTd = document.createElement('td');
+                methodTd.textContent = meta.method;
+                tr.append(methodTd);
+
+                const uriTd = document.createElement('td');
+                uriTd.append(uriLink);
+                tr.append(uriTd);
+
+                const ipTd = document.createElement('td');
+                ipTd.append(ipLink);
+                tr.append(ipTd);
+
+                const searchTd = document.createElement('td');
+                searchTd.append(searchLink);
+                tr.append(searchTd);
+
+                self.table.append(tr);
+            }
             if (data.length < this.get('items_per_page')) {
-                this.$loadmorebtn.hide();
+                this.loadmorebtn.style.display = 'none';
             }
         },
 
         show(callback) {
             this.callback = callback;
-            this.$el.show();
-            this.$overlay.show();
+            this.el.style.display = 'block';
+            this.overlay.style.display = 'block';
             this.refresh();
         },
 
         hide() {
-            this.$el.hide();
-            this.$overlay.hide();
+            this.el.style.display = 'none';
+            this.overlay.style.display = 'none';
         },
 
         find(filters, offset, callback) {

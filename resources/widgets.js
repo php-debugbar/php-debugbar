@@ -78,29 +78,43 @@ if (typeof PhpDebugBar === 'undefined') {
      * @return {string}
      */
     const createCodeBlock = PhpDebugBar.Widgets.createCodeBlock = function (code, lang, firstLineNumber, highlightedLine) {
-        const pre = $('<pre />').addClass(csscls('code-block'));
+        const pre = document.createElement('pre');
+        pre.classList.add(csscls('code-block'));
+
         // Add a newline to prevent <code> element from vertically collapsing too far if the last
         // code line was empty: that creates problems with the horizontal scrollbar being
         // incorrectly positioned - most noticeable when line numbers are shown.
-        const codeElement = $('<code />').text(`${code}\n`).appendTo(pre);
+        const codeElement = document.createElement('code');
+        codeElement.textContent = `${code}\n`;
+        pre.append(codeElement);
 
         // Format the code
         if (lang) {
-            codeElement.addClass(`language-${lang}`);
+            codeElement.classList.add(`language-${lang}`);
         }
-        highlight(codeElement).removeClass('hljs');
+        highlight(codeElement);
+        codeElement.classList.remove('hljs');
 
         // Show line numbers in a list
         if (!isNaN(Number.parseFloat(firstLineNumber))) {
             const lineCount = code.split('\n').length;
-            const $lineNumbers = $('<ul />').prependTo(pre);
-            pre.children().addClass(csscls('numbered-code'));
+            const lineNumbers = document.createElement('ul');
+            pre.prepend(lineNumbers);
+            const children = Array.from(pre.children);
+            for (const child of children) {
+                child.classList.add(csscls('numbered-code'));
+            }
             for (let i = firstLineNumber; i < firstLineNumber + lineCount; i++) {
-                const li = $('<li />').text(i).appendTo($lineNumbers);
+                const li = document.createElement('li');
+                li.textContent = i;
+                lineNumbers.append(li);
 
                 // Add a span with a special class if we are supposed to highlight a line.
                 if (highlightedLine === i) {
-                    li.addClass(csscls('highlighted-line')).append('<span>&nbsp;</span>');
+                    li.classList.add(csscls('highlighted-line'));
+                    const span = document.createElement('span');
+                    span.innerHTML = '&nbsp;';
+                    li.append(span);
                 }
             }
         }
@@ -136,14 +150,16 @@ if (typeof PhpDebugBar === 'undefined') {
 
         render() {
             this.bindAttr(['itemRenderer', 'data'], function () {
-                this.$el.empty();
+                this.el.innerHTML = '';
                 if (!this.has('data')) {
                     return;
                 }
 
                 const data = this.get('data');
                 for (let i = 0; i < data.length; i++) {
-                    const li = $('<li />').addClass(csscls('list-item')).appendTo(this.$el);
+                    const li = document.createElement('li');
+                    li.classList.add(csscls('list-item'));
+                    this.el.append(li);
                     this.get('itemRenderer')(li, data[i]);
                 }
             });
@@ -152,11 +168,11 @@ if (typeof PhpDebugBar === 'undefined') {
         /**
          * Renders the content of a <li> element
          *
-         * @param {jQuery} li The <li> element as a jQuery Object
+         * @param {HTMLElement} li The <li> element
          * @param {object} value An item from the data array
          */
         itemRenderer(li, value) {
-            li.html(renderValue(value));
+            li.innerHTML = renderValue(value);
         }
 
     });
@@ -178,14 +194,20 @@ if (typeof PhpDebugBar === 'undefined') {
 
         render() {
             this.bindAttr(['itemRenderer', 'data'], function () {
-                this.$el.empty();
+                this.el.innerHTML = '';
                 if (!this.has('data')) {
                     return;
                 }
 
                 for (const [key, value] of Object.entries(this.get('data'))) {
-                    const dt = $('<dt />').addClass(csscls('key')).appendTo(this.$el);
-                    const dd = $('<dd />').addClass(csscls('value')).appendTo(this.$el);
+                    const dt = document.createElement('dt');
+                    dt.classList.add(csscls('key'));
+                    this.el.append(dt);
+
+                    const dd = document.createElement('dd');
+                    dd.classList.add(csscls('value'));
+                    this.el.append(dd);
+
                     this.get('itemRenderer')(dt, dd, key, value);
                 }
             });
@@ -194,14 +216,14 @@ if (typeof PhpDebugBar === 'undefined') {
         /**
          * Renders the content of the <dt> and <dd> elements
          *
-         * @param {jQuery} dt The <dt> element as a jQuery Object
-         * @param {jQuery} dd The <dd> element as a jQuery Object
+         * @param {HTMLElement} dt The <dt> element
+         * @param {HTMLElement} dd The <dd> element
          * @param {string} key Property name
          * @param {object} value Property value
          */
         itemRenderer(dt, dd, key, value) {
-            dt.text(key);
-            dd.html(htmlize(value));
+            dt.textContent = key;
+            dd.innerHTML = htmlize(value);
         }
 
     });
@@ -220,22 +242,29 @@ if (typeof PhpDebugBar === 'undefined') {
         className: csscls('kvlist varlist'),
 
         itemRenderer(dt, dd, key, value) {
-            $('<span />').attr('title', key).text(key).appendTo(dt);
+            const span = document.createElement('span');
+            span.setAttribute('title', key);
+            span.textContent = key;
+            dt.append(span);
 
             let v = value && value.value || value;
             if (v && v.length > 100) {
                 v = `${v.substr(0, 100)}...`;
             }
             let prettyVal = null;
-            dd.text(v).click(() => {
+            dd.textContent = v;
+            dd.addEventListener('click', () => {
                 if (window.getSelection().type === 'Range') {
                     return '';
                 }
-                if (dd.hasClass(csscls('pretty'))) {
-                    dd.text(v).removeClass(csscls('pretty'));
+                if (dd.classList.contains(csscls('pretty'))) {
+                    dd.textContent = v;
+                    dd.classList.remove(csscls('pretty'));
                 } else {
                     prettyVal = prettyVal || createCodeBlock(value);
-                    dd.addClass(csscls('pretty')).empty().append(prettyVal);
+                    dd.classList.add(csscls('pretty'));
+                    dd.innerHTML = '';
+                    dd.append(prettyVal);
                 }
             });
         }
@@ -257,21 +286,35 @@ if (typeof PhpDebugBar === 'undefined') {
         className: csscls('kvlist htmlvarlist'),
 
         itemRenderer(dt, dd, key, value) {
-            $('<span />').attr('title', $('<i />').html(key ?? '').text()).html(key ?? '').appendTo(dt);
-            dd.html(value && value.value || value);
+            const tempElement = document.createElement('i');
+            tempElement.innerHTML = key ?? '';
+            const span = document.createElement('span');
+            span.setAttribute('title', tempElement.textContent);
+            span.innerHTML = key ?? '';
+            dt.append(span);
+
+            dd.innerHTML = value && value.value || value;
 
             if (value && value.xdebug_link) {
-                const header = $('<span />').addClass(csscls('filename')).text(value.xdebug_link.filename + (value.xdebug_link.line ? `#${value.xdebug_link.line}` : ''));
+                const header = document.createElement('span');
+                header.classList.add(csscls('filename'));
+                header.textContent = value.xdebug_link.filename + (value.xdebug_link.line ? `#${value.xdebug_link.line}` : '');
+
                 if (value.xdebug_link) {
+                    const link = document.createElement('a');
+                    link.classList.add(csscls('editor-link'));
+
                     if (value.xdebug_link.ajax) {
-                        $(`<a title="${value.xdebug_link.url}"></a>`).on('click', () => {
+                        link.setAttribute('title', value.xdebug_link.url);
+                        link.addEventListener('click', () => {
                             fetch(value.xdebug_link.url);
-                        }).addClass(csscls('editor-link')).appendTo(header);
+                        });
                     } else {
-                        $(`<a href="${value.xdebug_link.url}"></a>`).addClass(csscls('editor-link')).appendTo(header);
+                        link.setAttribute('href', value.xdebug_link.url);
                     }
+                    header.append(link);
                 }
-                header.appendTo(dd);
+                dd.append(header);
             }
         }
 
@@ -296,76 +339,127 @@ if (typeof PhpDebugBar === 'undefined') {
 
         render() {
             this.bindAttr('data', function (data) {
-                this.$el.empty();
+                this.el.innerHTML = '';
 
                 if (!this.has('data')) {
                     return;
                 }
 
-                this.$table = $('<table />').addClass(csscls('tablevar')).appendTo(this.$el);
-                const $header = $('<tr />').addClass(csscls('header')).append('<td />').appendTo(this.$table);
+                this.table = document.createElement('table');
+                this.table.classList.add(csscls('tablevar'));
+                this.el.append(this.table);
+
+                const header = document.createElement('tr');
+                header.classList.add(csscls('header'));
+                const headerFirstCell = document.createElement('td');
+                header.append(headerFirstCell);
+                this.table.append(header);
+
                 let key_map = data.key_map || { value: 'Value' };
 
                 if (Array.isArray(key_map)) {
                     key_map = Object.fromEntries(key_map.map(k => [k, null]));
                 }
 
-                $.each(key_map, (key, label) => {
-                    const colTitle = $('<td />').text(label ?? key).appendTo($header);
+                for (const [key, label] of Object.entries(key_map)) {
+                    const colTitle = document.createElement('td');
+                    colTitle.textContent = label ?? key;
+                    header.append(colTitle);
 
                     if (data.badges && data.badges[key]) {
-                        $('<span />').text(data.badges[key]).addClass(csscls('badge')).appendTo(colTitle);
+                        const badge = document.createElement('span');
+                        badge.textContent = data.badges[key];
+                        badge.classList.add(csscls('badge'));
+                        colTitle.append(badge);
                     }
-                });
+                }
 
                 const self = this;
-                $.each(data.data, (key, values) => {
-                    const $tr = $('<tr />').addClass(csscls('item')).appendTo(self.$table);
-                    $('<td />').addClass(csscls('key')).text(key).appendTo($tr);
+                if (!data.data) {
+                    return;
+                }
+                for (const [key, values] of Object.entries(data.data)) {
+                    const tr = document.createElement('tr');
+                    tr.classList.add(csscls('item'));
+                    self.table.append(tr);
+
+                    const keyCell = document.createElement('td');
+                    keyCell.classList.add(csscls('key'));
+                    keyCell.textContent = key;
+                    tr.append(keyCell);
 
                     if (typeof values !== 'object' || values === null) {
-                        $('<td />').addClass(csscls('value')).text(values ?? '').appendTo($tr);
-                        return;
+                        const valueCell = document.createElement('td');
+                        valueCell.classList.add(csscls('value'));
+                        valueCell.textContent = values ?? '';
+                        tr.append(valueCell);
+                        continue;
                     }
 
-                    $.each(key_map, (key) => {
-                        $('<td />').addClass(csscls('value')).text(values[key] ?? '').appendTo($tr);
-                    });
+                    for (const key of Object.keys(key_map)) {
+                        const valueCell = document.createElement('td');
+                        valueCell.classList.add(csscls('value'));
+                        valueCell.textContent = values[key] ?? '';
+                        tr.append(valueCell);
+                    }
 
                     if (values.xdebug_link) {
-                        const filename = $('<span />').addClass(csscls('filename')).text(values.xdebug_link.filename + (values.xdebug_link.line ? `#${values.xdebug_link.line}` : '')).appendTo($('<td />').addClass(csscls('editor')).appendTo($tr));
+                        const editorCell = document.createElement('td');
+                        editorCell.classList.add(csscls('editor'));
+                        tr.append(editorCell);
+
+                        const filename = document.createElement('span');
+                        filename.classList.add(csscls('filename'));
+                        filename.textContent = values.xdebug_link.filename + (values.xdebug_link.line ? `#${values.xdebug_link.line}` : '');
+                        editorCell.append(filename);
+
+                        const link = document.createElement('a');
+                        link.classList.add(csscls('editor-link'));
                         if (values.xdebug_link.ajax) {
-                            $(`<a title="${values.xdebug_link.url}"></a>`).on('click', () => {
+                            link.setAttribute('title', values.xdebug_link.url);
+                            link.addEventListener('click', () => {
                                 fetch(values.xdebug_link.url);
-                            }).addClass(csscls('editor-link')).appendTo(filename);
+                            });
                         } else {
-                            $(`<a href="${values.xdebug_link.url}"></a>`).addClass(csscls('editor-link')).appendTo(filename);
+                            link.setAttribute('href', values.xdebug_link.url);
                         }
+                        filename.append(link);
 
                         if (!data.xdebug_link) {
                             data.xdebug_link = true;
-                            $header.append($('<td />'));
+                            header.append(document.createElement('td'));
                         }
                     }
-                });
+                }
 
                 if (!data.summary) {
                     return;
                 }
 
-                const $tr = $('<tr />').addClass(csscls('summary')).appendTo(self.$table);
-                $('<td />').addClass(csscls('key')).appendTo($tr);
+                const summaryTr = document.createElement('tr');
+                summaryTr.classList.add(csscls('summary'));
+                self.table.append(summaryTr);
+
+                const summaryKeyCell = document.createElement('td');
+                summaryKeyCell.classList.add(csscls('key'));
+                summaryTr.append(summaryKeyCell);
 
                 if (typeof data.summary !== 'object' || data.summary === null) {
-                    $('<td />').addClass(csscls('value')).text(data.summary ?? '').appendTo($tr);
+                    const summaryValueCell = document.createElement('td');
+                    summaryValueCell.classList.add(csscls('value'));
+                    summaryValueCell.textContent = data.summary ?? '';
+                    summaryTr.append(summaryValueCell);
                 } else {
-                    $.each(key_map, (key) => {
-                        $('<td />').addClass(csscls('value')).text(data.summary[key] ?? '').appendTo($tr);
-                    });
+                    for (const key of Object.keys(key_map)) {
+                        const summaryValueCell = document.createElement('td');
+                        summaryValueCell.classList.add(csscls('value'));
+                        summaryValueCell.textContent = data.summary[key] ?? '';
+                        summaryTr.append(summaryValueCell);
+                    }
                 }
 
                 if (data.xdebug_link) {
-                    $('<td />').appendTo($tr);
+                    summaryTr.append(document.createElement('td'));
                 }
             });
         }
@@ -386,14 +480,13 @@ if (typeof PhpDebugBar === 'undefined') {
         className: csscls('iframe'),
 
         render() {
-            this.$el.attr({
-                seamless: 'seamless',
-                border: '0',
-                width: '100%',
-                height: '100%'
-            });
+            this.el.setAttribute('seamless', 'seamless');
+            this.el.setAttribute('border', '0');
+            this.el.setAttribute('width', '100%');
+            this.el.setAttribute('height', '100%');
+
             this.bindAttr('data', function (url) {
-                this.$el.attr('src', url);
+                this.el.setAttribute('src', url);
             });
         }
 
@@ -418,81 +511,118 @@ if (typeof PhpDebugBar === 'undefined') {
         render() {
             const self = this;
 
-            this.$list = new ListWidget({ itemRenderer(li, value) {
+            this.list = new ListWidget({ itemRenderer(li, value) {
                 let val;
                 if (value.message_html) {
-                    val = $('<span />').addClass(csscls('value')).html(value.message_html).appendTo(li);
+                    val = document.createElement('span');
+                    val.classList.add(csscls('value'));
+                    val.innerHTML = value.message_html;
+                    li.append(val);
                 } else {
                     let m = value.message;
                     if (m.length > 100) {
                         m = `${m.substr(0, 100)}...`;
                     }
 
-                    val = $('<span />').addClass(csscls('value')).text(m).appendTo(li);
+                    val = document.createElement('span');
+                    val.classList.add(csscls('value'));
+                    val.textContent = m;
+                    li.append(val);
+
                     if (!value.is_string || value.message.length > 100) {
                         let prettyVal = value.message;
                         if (!value.is_string) {
                             prettyVal = null;
                         }
-                        li.css('cursor', 'pointer').click(() => {
+                        li.style.cursor = 'pointer';
+                        li.addEventListener('click', () => {
                             if (window.getSelection().type === 'Range') {
                                 return '';
                             }
-                            if (val.hasClass(csscls('pretty'))) {
-                                val.text(m).removeClass(csscls('pretty'));
+                            if (val.classList.contains(csscls('pretty'))) {
+                                val.textContent = m;
+                                val.classList.remove(csscls('pretty'));
                             } else {
                                 prettyVal = prettyVal || createCodeBlock(value.message, 'php');
-                                val.addClass(csscls('pretty')).empty().append(prettyVal);
+                                val.classList.add(csscls('pretty'));
+                                val.innerHTML = '';
+                                val.append(prettyVal);
                             }
                         });
                     }
                 }
                 if (value.xdebug_link) {
-                    const header = $('<span />').addClass(csscls('filename')).text(value.xdebug_link.filename + (value.xdebug_link.line ? `#${value.xdebug_link.line}` : ''));
+                    const header = document.createElement('span');
+                    header.classList.add(csscls('filename'));
+                    header.textContent = value.xdebug_link.filename + (value.xdebug_link.line ? `#${value.xdebug_link.line}` : '');
+
                     if (value.xdebug_link) {
+                        const link = document.createElement('a');
+                        link.classList.add(csscls('editor-link'));
+
                         if (value.xdebug_link.ajax) {
-                            $(`<a title="${value.xdebug_link.url}"></a>`).on('click', () => {
+                            link.setAttribute('title', value.xdebug_link.url);
+                            link.addEventListener('click', () => {
                                 fetch(value.xdebug_link.url);
-                            }).addClass(csscls('editor-link')).appendTo(header);
+                            });
                         } else {
-                            $(`<a href="${value.xdebug_link.url}"></a>`).addClass(csscls('editor-link')).appendTo(header);
+                            link.setAttribute('href', value.xdebug_link.url);
                         }
+                        header.append(link);
                     }
-                    header.prependTo(li);
+                    li.prepend(header);
                 }
                 if (value.collector) {
-                    $('<span />').addClass(csscls('collector')).text(value.collector).prependTo(li);
+                    const collector = document.createElement('span');
+                    collector.classList.add(csscls('collector'));
+                    collector.textContent = value.collector;
+                    li.prepend(collector);
                 }
                 if (value.label) {
-                    val.addClass(csscls(value.label));
-                    $('<span />').addClass(csscls('label')).text(value.label).prependTo(li);
+                    val.classList.add(csscls(value.label));
+                    const label = document.createElement('span');
+                    label.classList.add(csscls('label'));
+                    label.textContent = value.label;
+                    li.prepend(label);
                 }
             } });
 
-            this.$list.$el.appendTo(this.$el);
-            this.$toolbar = $('<div><i class="phpdebugbar-icon phpdebugbar-icon-search"></i></div>').addClass(csscls('toolbar')).appendTo(this.$el);
+            this.el.append(this.list.el);
 
-            $('<input type="text" name="search" aria-label="Search" placeholder="Search" />')
-                .on('change', function () {
-                    self.set('search', this.value);
-                })
-                .appendTo(this.$toolbar);
+            this.toolbar = document.createElement('div');
+            this.toolbar.classList.add(csscls('toolbar'));
+            this.toolbar.innerHTML = '<i class="phpdebugbar-icon phpdebugbar-icon-search"></i>';
+            this.el.append(this.toolbar);
+
+            const searchInput = document.createElement('input');
+            searchInput.type = 'text';
+            searchInput.name = 'search';
+            searchInput.setAttribute('aria-label', 'Search');
+            searchInput.placeholder = 'Search';
+            searchInput.addEventListener('change', function () {
+                self.set('search', this.value);
+            });
+            this.toolbar.append(searchInput);
 
             this.bindAttr('data', function (data) {
                 this.set({ excludelabel: [], excludecollector: [], search: '' });
-                this.$toolbar.find(csscls('.filter')).remove();
+
+                const filters = this.toolbar.querySelectorAll(`.${csscls('filter')}`);
+                for (const filter of filters) {
+                    filter.remove();
+                }
 
                 const labels = []; const collectors = []; const self = this;
                 const createFilterItem = function (type, value) {
-                    $('<a />')
-                        .addClass(csscls('filter'))
-                        .addClass(csscls(type))
-                        .text(value)
-                        .attr('rel', value)
-                        .on('click', function () {
-                            self.onFilterClick(this, type);
-                        })
-                        .appendTo(self.$toolbar);
+                    const link = document.createElement('a');
+                    link.classList.add(csscls('filter'));
+                    link.classList.add(csscls(type));
+                    link.textContent = value;
+                    link.setAttribute('rel', value);
+                    link.addEventListener('click', function () {
+                        self.onFilterClick(this, type);
+                    });
+                    self.toolbar.append(link);
                 };
 
                 data.forEach((item) => {
@@ -513,7 +643,10 @@ if (typeof PhpDebugBar === 'undefined') {
                     return;
                 }
 
-                $('<a />').addClass(csscls('filter')).css('visibility', 'hidden').appendTo(self.$toolbar);
+                const spacer = document.createElement('a');
+                spacer.classList.add(csscls('filter'));
+                spacer.style.visibility = 'hidden';
+                self.toolbar.append(spacer);
                 collectors.forEach(collector => createFilterItem('collector', collector));
             });
 
@@ -540,17 +673,19 @@ if (typeof PhpDebugBar === 'undefined') {
                     }
                 });
 
-                this.$list.set('data', fdata);
+                this.list.set('data', fdata);
             });
         },
 
         onFilterClick(el, type) {
-            $(el).toggleClass(csscls('excluded'));
+            el.classList.toggle(csscls('excluded'));
 
             const excluded = [];
-            this.$toolbar.find(csscls('.filter') + csscls('.excluded') + csscls(`.${type}`)).each(function () {
-                excluded.push(this.rel === 'none' || !this.rel ? undefined : this.rel);
-            });
+            const selector = `.${csscls('filter')}.${csscls('excluded')}.${csscls(type)}`;
+            const excludedFilters = this.toolbar.querySelectorAll(selector);
+            for (const filter of excludedFilters) {
+                excluded.push(filter.rel === 'none' || !filter.rel ? undefined : filter.rel);
+            }
 
             this.set(`exclude${type}`, excluded);
         }
@@ -598,7 +733,7 @@ if (typeof PhpDebugBar === 'undefined') {
                     return sign + (Math.round(1024 ** (base - Math.floor(base)) * 100) / 100) + suffixes[Math.floor(base)];
                 };
 
-                this.$el.empty();
+                this.el.innerHTML = '';
                 if (data.measures) {
                     let aggregate = {};
 
@@ -614,74 +749,105 @@ if (typeof PhpDebugBar === 'undefined') {
                         aggregate[group].duration += measure.duration;
                         aggregate[group].memory += (measure.memory || 0);
 
-                        const m = $('<div />').addClass(csscls('measure'));
-                        const li = $('<li />');
+                        const m = document.createElement('div');
+                        m.classList.add(csscls('measure'));
+
+                        const li = document.createElement('li');
                         const left = (measure.relative_start * 100 / data.duration).toFixed(2);
                         const width = Math.min((measure.duration * 100 / data.duration).toFixed(2), 100 - left);
 
-                        m.append($('<span />').addClass(csscls('value')).css({
-                            left: `${left}%`,
-                            width: `${width}%`
-                        }));
-                        m.append($('<span />').addClass(csscls('label'))
-                            .text(measure.label.replace(/\s+/g, ' ') + (measure.duration ? ` (${measure.duration_str}${measure.memory ? `/${measure.memory_str}` : ''})` : '')));
+                        const valueSpan = document.createElement('span');
+                        valueSpan.classList.add(csscls('value'));
+                        valueSpan.style.left = `${left}%`;
+                        valueSpan.style.width = `${width}%`;
+                        m.append(valueSpan);
+
+                        const labelSpan = document.createElement('span');
+                        labelSpan.classList.add(csscls('label'));
+                        labelSpan.textContent = measure.label.replace(/\s+/g, ' ') + (measure.duration ? ` (${measure.duration_str}${measure.memory ? `/${measure.memory_str}` : ''})` : '');
+                        m.append(labelSpan);
 
                         if (measure.collector) {
-                            $('<span />').addClass(csscls('collector')).text(measure.collector).appendTo(m);
+                            const collectorSpan = document.createElement('span');
+                            collectorSpan.classList.add(csscls('collector'));
+                            collectorSpan.textContent = measure.collector;
+                            m.append(collectorSpan);
                         }
 
-                        m.appendTo(li);
-                        this.$el.append(li);
+                        li.append(m);
+                        this.el.append(li);
 
-                        if (measure.params && !$.isEmptyObject(measure.params)) {
-                            const table = $('<table><tr><th colspan="2">Params</th></tr></table>').hide().addClass(csscls('params')).appendTo(li);
+                        if (measure.params && Object.keys(measure.params).length > 0) {
+                            const table = document.createElement('table');
+                            table.classList.add(csscls('params'));
+                            table.style.display = 'none';
+                            table.innerHTML = '<tr><th colspan="2">Params</th></tr>';
+
                             for (const key in measure.params) {
                                 if (typeof measure.params[key] !== 'function') {
-                                    table.append(`<tr><td class="${csscls('name')}">${key}</td><td class="${csscls('value')
-                                    }"><pre><code>${measure.params[key]}</code></pre></td></tr>`);
+                                    const tr = document.createElement('tr');
+                                    tr.innerHTML = `<td class="${csscls('name')}">${key}</td><td class="${csscls('value')}"><pre><code>${measure.params[key]}</code></pre></td>`;
+                                    table.append(tr);
                                 }
                             }
-                            li.css('cursor', 'pointer').click(function () {
+                            li.append(table);
+
+                            li.style.cursor = 'pointer';
+                            li.addEventListener('click', function () {
                                 if (window.getSelection().type === 'Range') {
                                     return '';
                                 }
-                                const table = $(this).find('table');
-                                if (table.is(':visible')) {
-                                    table.hide();
+                                const table = this.querySelector('table');
+                                if (table.style.display !== 'none') {
+                                    table.style.display = 'none';
                                 } else {
-                                    table.show();
+                                    table.style.display = '';
                                 }
-                            }).on('click', '.sf-dump', (event) => {
-                                event.stopPropagation();
+                            });
+
+                            li.addEventListener('click', (event) => {
+                                if (event.target.closest('.sf-dump')) {
+                                    event.stopPropagation();
+                                }
                             });
                         }
                     }
 
                     // convert to array and sort by duration
-                    aggregate = $.map(aggregate, (data, label) => {
-                        return {
-                            label,
-                            data
-                        };
-                    }).sort((a, b) => {
+                    aggregate = Object.entries(aggregate).map(([label, data]) => ({
+                        label,
+                        data
+                    })).sort((a, b) => {
                         return b.data.duration - a.data.duration;
                     });
 
                     // build table and add
-                    const aggregateTable = $('<table></table>').addClass(csscls('params'));
-                    $.each(aggregate, (i, aggregate) => {
-                        const width = Math.min((aggregate.data.duration * 100 / data.duration).toFixed(2), 100);
+                    const aggregateTable = document.createElement('table');
+                    aggregateTable.classList.add(csscls('params'));
 
-                        aggregateTable.append(`<tr><td class="${csscls('name')}">${
-                            aggregate.data.count} x ${$('<i />').text(aggregate.label.replace(/\s+/g, ' ')).html()} (${width}%)</td><td class="${csscls('value')}">`
+                    for (const agg of aggregate) {
+                        const width = Math.min((agg.data.duration * 100 / data.duration).toFixed(2), 100);
+
+                        const tempElement = document.createElement('i');
+                        tempElement.textContent = agg.label.replace(/\s+/g, ' ');
+                        const escapedLabel = tempElement.innerHTML;
+
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td class="${csscls('name')}">${
+                            agg.data.count} x ${escapedLabel} (${width}%)</td><td class="${csscls('value')}">`
                             + `<div class="${csscls('measure')}">`
                             + `<span class="${csscls('value')}"></span>`
-                            + `<span class="${csscls('label')}">${formatDuration(aggregate.data.duration)}${aggregate.data.memory ? `/${formatBytes(aggregate.data.memory)}` : ''}</span>`
-                            + '</div></td></tr>');
-                        aggregateTable.find(`span.${csscls('value')}:last`).css({ width: `${width}%` });
-                    });
+                            + `<span class="${csscls('label')}">${formatDuration(agg.data.duration)}${agg.data.memory ? `/${formatBytes(agg.data.memory)}` : ''}</span>`
+                            + '</div></td>';
+                        aggregateTable.append(tr);
 
-                    this.$el.append('<li/>').find('li:last').append(aggregateTable);
+                        const lastValueSpan = tr.querySelector(`span.${csscls('value')}`);
+                        lastValueSpan.style.width = `${width}%`;
+                    }
+
+                    const lastLi = document.createElement('li');
+                    lastLi.append(aggregateTable);
+                    this.el.append(lastLi);
                 }
             });
         }
@@ -701,56 +867,105 @@ if (typeof PhpDebugBar === 'undefined') {
         className: csscls('exceptions'),
 
         render() {
-            this.$list = new ListWidget({ itemRenderer(li, e) {
-                $('<span />').addClass(csscls('message')).text(e.message).prepend(e.count > 1 ? $('<span />').addClass(csscls('badge')).text(`${e.count}x`) : '').appendTo(li);
+            this.list = new ListWidget({ itemRenderer(li, e) {
+                const messageSpan = document.createElement('span');
+                messageSpan.classList.add(csscls('message'));
+                messageSpan.textContent = e.message;
+
+                if (e.count > 1) {
+                    const badge = document.createElement('span');
+                    badge.classList.add(csscls('badge'));
+                    badge.textContent = `${e.count}x`;
+                    messageSpan.prepend(badge);
+                }
+                li.append(messageSpan);
+
                 if (e.file) {
-                    const header = $('<span />').addClass(csscls('filename')).text(`${e.file}#${e.line}`);
+                    const header = document.createElement('span');
+                    header.classList.add(csscls('filename'));
+                    header.textContent = `${e.file}#${e.line}`;
+
                     if (e.xdebug_link) {
+                        const link = document.createElement('a');
+                        link.classList.add(csscls('editor-link'));
+
                         if (e.xdebug_link.ajax) {
-                            $(`<a title="${e.xdebug_link.url}"></a>`).on('click', () => {
+                            link.setAttribute('title', e.xdebug_link.url);
+                            link.addEventListener('click', () => {
                                 fetch(e.xdebug_link.url);
-                            }).addClass(csscls('editor-link')).appendTo(header);
+                            });
                         } else {
-                            $(`<a href="${e.xdebug_link.url}"></a>`).addClass(csscls('editor-link')).appendTo(header);
+                            link.setAttribute('href', e.xdebug_link.url);
                         }
+                        header.append(link);
                     }
-                    header.appendTo(li);
+                    li.append(header);
                 }
+
                 if (e.type) {
-                    $('<span />').addClass(csscls('type')).text(e.type).appendTo(li);
+                    const typeSpan = document.createElement('span');
+                    typeSpan.classList.add(csscls('type'));
+                    typeSpan.textContent = e.type;
+                    li.append(typeSpan);
                 }
+
                 if (e.surrounding_lines) {
                     const startLine = (e.line - 3) <= 0 ? 1 : e.line - 3;
-                    const pre = createCodeBlock(e.surrounding_lines.join(''), 'php', startLine, e.line).addClass(csscls('file')).appendTo(li);
+                    const pre = createCodeBlock(e.surrounding_lines.join(''), 'php', startLine, e.line);
+                    pre.classList.add(csscls('file'));
+                    li.append(pre);
+
                     if (!e.stack_trace_html) {
                         // This click event makes the var-dumper hard to use.
-                        li.click(() => {
-                            if (pre.is(':visible')) {
-                                pre.hide();
+                        li.addEventListener('click', () => {
+                            if (pre.style.display !== 'none') {
+                                pre.style.display = 'none';
                             } else {
-                                pre.show();
+                                pre.style.display = '';
                             }
                         });
                     }
                 }
+
                 if (e.stack_trace_html) {
-                    const $trace = $('<span />').addClass(csscls('filename')).html(e.stack_trace_html);
-                    $trace.find('samp[data-depth="1"]').removeClass('sf-dump-expanded').addClass('sf-dump-compact').parent().find('>.sf-dump-note').html((_, t) => `${t.replace(/^array:/, '<span class="sf-dump-key">Stack Trace:</span> ')} files`);
-                    $trace.appendTo(li);
+                    const trace = document.createElement('span');
+                    trace.classList.add(csscls('filename'));
+                    trace.innerHTML = e.stack_trace_html;
+
+                    const samps = trace.querySelectorAll('samp[data-depth="1"]');
+                    for (const samp of samps) {
+                        samp.classList.remove('sf-dump-expanded');
+                        samp.classList.add('sf-dump-compact');
+
+                        const note = samp.parentElement.querySelector('>.sf-dump-note');
+                        if (note) {
+                            note.innerHTML = note.innerHTML.replace(/^array:/, '<span class="sf-dump-key">Stack Trace:</span> ') + ' files';
+                        }
+                    }
+                    li.append(trace);
                 } else if (e.stack_trace) {
                     e.stack_trace.split('\n').forEach((trace) => {
-                        const $traceLine = $('<div />');
-                        $('<span />').addClass(csscls('filename')).text(trace).appendTo($traceLine);
-                        $traceLine.appendTo(li);
+                        const traceLine = document.createElement('div');
+                        const filename = document.createElement('span');
+                        filename.classList.add(csscls('filename'));
+                        filename.textContent = trace;
+                        traceLine.append(filename);
+                        li.append(traceLine);
                     });
                 }
             } });
-            this.$list.$el.appendTo(this.$el);
+            this.el.append(this.list.el);
 
             this.bindAttr('data', function (data) {
-                this.$list.set('data', data);
+                this.list.set('data', data);
                 if (data.length === 1) {
-                    this.$list.$el.children().first().find(csscls('.file')).show();
+                    const firstChild = this.list.el.children[0];
+                    if (firstChild) {
+                        const file = firstChild.querySelector(`.${csscls('file')}`);
+                        if (file) {
+                            file.style.display = '';
+                        }
+                    }
                 }
             });
         }
@@ -771,87 +986,126 @@ if (typeof PhpDebugBar === 'undefined') {
             this.set('autoshow', null);
             this.set('id', null);
             this.set('sort', localStorage.getItem('debugbar-history-sort') || 'asc');
-            this.$el.addClass(csscls('dataset-history'));
+            this.el.classList.add(csscls('dataset-history'));
 
             this.renderHead();
         },
 
         renderHead() {
-            this.$el.empty();
-            this.$actions = $('<div />').addClass(csscls('dataset-actions')).appendTo(this.$el);
+            this.el.innerHTML = '';
+
+            this.actions = document.createElement('div');
+            this.actions.classList.add(csscls('dataset-actions'));
+            this.el.append(this.actions);
 
             const self = this;
             const debugbar = self.get('debugbar');
 
-            this.$autoshow = $('<input type=checkbox>')
-                .on('click', function () {
-                    if (debugbar.ajaxHandler) {
-                        debugbar.ajaxHandler.setAutoShow($(this).is(':checked'));
-                    }
-                    if (debugbar.controls.__settings) {
-                        debugbar.controls.__settings.get('widget').set('autoshow', this.autoShow);
-                    }
-                });
+            this.autoshow = document.createElement('input');
+            this.autoshow.type = 'checkbox';
+            this.autoshow.addEventListener('click', function () {
+                if (debugbar.ajaxHandler) {
+                    debugbar.ajaxHandler.setAutoShow(this.checked);
+                }
+                if (debugbar.controls.__settings) {
+                    debugbar.controls.__settings.get('widget').set('autoshow', this.autoShow);
+                }
+            });
 
-            $('<label>Autoshow</label>')
-                .append(this.$autoshow)
-                .appendTo(this.$actions);
+            const autoshowLabel = document.createElement('label');
+            autoshowLabel.textContent = 'Autoshow';
+            autoshowLabel.append(this.autoshow);
+            this.actions.append(autoshowLabel);
 
-            this.$clearbtn = $('<a>Clear</a>')
-                .appendTo(this.$actions)
-                .on('click', () => {
-                    self.$table.empty();
-                });
+            this.clearbtn = document.createElement('a');
+            this.clearbtn.textContent = 'Clear';
+            this.actions.append(this.clearbtn);
+            this.clearbtn.addEventListener('click', () => {
+                self.table.innerHTML = '';
+            });
 
-            this.$showBtn = $('<a>Show all</a>')
-                .appendTo(this.$actions)
-                .on('click', () => {
-                    self.searchInput.val(null);
-                    self.methodInput.val(null);
-                    self.set('search', null);
-                    self.set('method', null);
-                });
+            this.showBtn = document.createElement('a');
+            this.showBtn.textContent = 'Show all';
+            this.actions.append(this.showBtn);
+            this.showBtn.addEventListener('click', () => {
+                self.searchInput.value = null;
+                self.methodInput.value = null;
+                self.set('search', null);
+                self.set('method', null);
+            });
 
-            this.methodInput = $('<select name="method" style="width:100px"><option>(method)</option><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select>')
-                .on('change', function () {
-                    self.set('method', this.value);
-                })
-                .appendTo(this.$actions);
+            this.methodInput = document.createElement('select');
+            this.methodInput.name = 'method';
+            this.methodInput.style.width = '100px';
+            this.methodInput.innerHTML = '<option>(method)</option><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option>';
+            this.methodInput.addEventListener('change', function () {
+                self.set('method', this.value);
+            });
+            this.actions.append(this.methodInput);
 
-            this.searchInput = $('<input type="text" name="search" aria-label="Search" placeholder="Search" />')
-                .on('input', function () {
-                    self.set('search', this.value);
-                })
-                .appendTo(this.$actions);
+            this.searchInput = document.createElement('input');
+            this.searchInput.type = 'text';
+            this.searchInput.name = 'search';
+            this.searchInput.setAttribute('aria-label', 'Search');
+            this.searchInput.placeholder = 'Search';
+            this.searchInput.addEventListener('input', function () {
+                self.set('search', this.value);
+            });
+            this.actions.append(this.searchInput);
 
-            this.$table = $('<tbody />');
+            this.table = document.createElement('tbody');
 
-            $('<table/>')
-                .append($('<thead/>')
-                    .append($('<tr/>')
-                        .append($('<th></th>').css('width', '30px'))
-                        .append($('<th>Date ↕</th>').css('width', '175px').click(() => {
-                            self.set('sort', self.get('sort') === 'asc' ? 'desc' : 'asc');
-                            localStorage.setItem('debugbar-history-sort', self.get('sort'));
-                        }))
-                        .append($('<th>Method</th>').css('width', '80px'))
-                        .append($('<th>URL</th>'))
-                        .append($('<th width="40%">Data</th>')))
-                )
-                .append(this.$table)
-                .appendTo(this.$el);
+            const tableWrapper = document.createElement('table');
+            const thead = document.createElement('thead');
+            const theadTr = document.createElement('tr');
+
+            const th1 = document.createElement('th');
+            th1.style.width = '30px';
+            theadTr.append(th1);
+
+            const th2 = document.createElement('th');
+            th2.textContent = 'Date ↕';
+            th2.style.width = '175px';
+            th2.addEventListener('click', () => {
+                self.set('sort', self.get('sort') === 'asc' ? 'desc' : 'asc');
+                localStorage.setItem('debugbar-history-sort', self.get('sort'));
+            });
+            theadTr.append(th2);
+
+            const th3 = document.createElement('th');
+            th3.textContent = 'Method';
+            th3.style.width = '80px';
+            theadTr.append(th3);
+
+            const th4 = document.createElement('th');
+            th4.textContent = 'URL';
+            theadTr.append(th4);
+
+            const th5 = document.createElement('th');
+            th5.setAttribute('width', '40%');
+            th5.textContent = 'Data';
+            theadTr.append(th5);
+
+            thead.append(theadTr);
+            tableWrapper.append(thead);
+            tableWrapper.append(this.table);
+            this.el.append(tableWrapper);
         },
 
         renderDatasets() {
-            this.$table.empty();
+            this.table.innerHTML = '';
             const self = this;
-            $.each(this.get('data'), (key, data) => {
+            const datasets = this.get('data');
+            if (!datasets) {
+                return;
+            }
+            for (const [key, data] of Object.entries(datasets)) {
                 if (!data.__meta) {
-                    return;
+                    continue;
                 }
 
                 self.get('itemRenderer')(self, data);
-            });
+            }
         },
 
         render() {
@@ -878,12 +1132,19 @@ if (typeof PhpDebugBar === 'undefined') {
             });
             this.bindAttr('autoshow', function () {
                 const autoshow = this.get('autoshow');
-                this.$autoshow.prop('checked', autoshow);
+                this.autoshow.checked = autoshow;
             });
             this.bindAttr('id', function () {
                 const id = this.get('id');
-                this.$table.find(`.${csscls('active')}`).removeClass(csscls('active'));
-                this.$table.find(`tr[data-id=${id}]`).addClass(csscls('active'));
+                const activeClass = csscls('active');
+                const actives = this.table.querySelectorAll(`.${activeClass}`);
+                for (const active of actives) {
+                    active.classList.remove(activeClass);
+                }
+                const targetRow = this.table.querySelector(`tr[data-id="${id}"]`);
+                if (targetRow) {
+                    targetRow.classList.add(activeClass);
+                }
             });
         },
 
@@ -895,63 +1156,96 @@ if (typeof PhpDebugBar === 'undefined') {
         itemRenderer(widget, data) {
             const meta = data.__meta;
 
-            const $badges = $('<td />');
-            const tr = $('<tr />');
+            const badgesTd = document.createElement('td');
+            const tr = document.createElement('tr');
+
             if (widget.get('sort') === 'asc') {
-                tr.appendTo(widget.$table);
+                widget.table.append(tr);
             } else {
-                tr.prependTo(widget.$table);
+                widget.table.prepend(tr);
             }
 
             const clickHandler = function () {
                 const debugbar = widget.get('debugbar');
                 debugbar.showDataSet(meta.id, debugbar.datesetTitleFormater.format('', data, meta.suffix, meta.nb));
-                widget.$table.find(`.${csscls('active')}`).removeClass(csscls('active'));
-                tr.addClass(csscls('active'));
 
-                if ($(this).data('tab')) {
-                    debugbar.showTab($(this).data('tab'));
+                const activeClass = csscls('active');
+                const actives = widget.table.querySelectorAll(`.${activeClass}`);
+                for (const active of actives) {
+                    active.classList.remove(activeClass);
+                }
+                tr.classList.add(activeClass);
+
+                const tab = this.dataset.tab;
+                if (tab) {
+                    debugbar.showTab(tab);
                 }
             };
 
-            tr.attr('data-id', meta.id)
-                .append($(`<td>#${meta.nb}</td>`).click(clickHandler))
-                .append($(`<td>${meta.datetime}</td>`).click(clickHandler))
-                .append($(`<td>${meta.method}</td>`).click(clickHandler))
-                .append($('<td />').append(meta.uri + (meta.suffix ? ` ${meta.suffix}` : '')).click(clickHandler))
-                .css('cursor', 'pointer')
-                .addClass(csscls('table-row'));
+            tr.setAttribute('data-id', meta.id);
+            tr.style.cursor = 'pointer';
+            tr.classList.add(csscls('table-row'));
+
+            const nbTd = document.createElement('td');
+            nbTd.textContent = `#${meta.nb}`;
+            nbTd.addEventListener('click', clickHandler);
+            tr.append(nbTd);
+
+            const datetimeTd = document.createElement('td');
+            datetimeTd.textContent = meta.datetime;
+            datetimeTd.addEventListener('click', clickHandler);
+            tr.append(datetimeTd);
+
+            const methodTd = document.createElement('td');
+            methodTd.textContent = meta.method;
+            methodTd.addEventListener('click', clickHandler);
+            tr.append(methodTd);
+
+            const uriTd = document.createElement('td');
+            uriTd.textContent = meta.uri + (meta.suffix ? ` ${meta.suffix}` : '');
+            uriTd.addEventListener('click', clickHandler);
+            tr.append(uriTd);
 
             const debugbar = widget.get('debugbar');
-            $.each(debugbar.dataMap, (key, def) => {
+            for (let [key, def] of Object.entries(debugbar.dataMap)) {
                 const d = getDictValue(data, def[0], def[1]);
                 if (key.includes(':')) {
-                    key = key.split(':');
-                    if (key[1] === 'badge' && d > 0) {
-                        const control = debugbar.getControl(key[0]);
-                        const $a = $('<a>').attr('title', control.get('title')).data('tab', key[0]);
-                        if (control.$icon) {
-                            $a.append(debugbar.getControl(key[0]).$icon.clone());
+                    const parts = key.split(':');
+                    key = parts[0];
+                    const subkey = parts[1];
+
+                    if (subkey === 'badge' && d > 0) {
+                        const control = debugbar.getControl(key);
+                        const link = document.createElement('a');
+                        link.setAttribute('title', control.get('title'));
+                        link.dataset.tab = key;
+
+                        if (control.icon) {
+                            link.append(control.icon.cloneNode(true));
                         }
-                        if (control.$badge) {
-                            $a.append(debugbar.getControl(key[0]).$badge.clone().css('display', 'inline-block').text(d));
+                        if (control.badge) {
+                            const badgeClone = control.badge.cloneNode(true);
+                            badgeClone.style.display = 'inline-block';
+                            badgeClone.textContent = d;
+                            link.append(badgeClone);
                         }
-                        $a.appendTo($badges).click(clickHandler);
-                    } else if (key[1] === 'tooltip') {
-                        debugbar.getControl(key[0]).set('tooltip', d);
+                        badgesTd.append(link);
+                        link.addEventListener('click', clickHandler);
+                    } else if (subkey === 'tooltip') {
+                        debugbar.getControl(key).set('tooltip', d);
                     }
                 }
-            });
-            tr.append($badges);
+            }
+            tr.append(badgesTd);
 
             if (debugbar.activeDatasetId === meta.id) {
-                tr.addClass(csscls('active'));
+                tr.classList.add(csscls('active'));
             }
 
             const search = widget.get('search');
             const method = widget.get('method');
             if ((search && !meta.uri.includes(search)) || (method && meta.method !== method)) {
-                tr.hide();
+                tr.style.display = 'none';
             }
         }
 
