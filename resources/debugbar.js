@@ -702,7 +702,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             }
 
             // Reset height to ensure bar is still visible
-            const currentHeight = this.body.offsetHeight || parseInt(this.body.style.height) || parseInt(localStorage.getItem('phpdebugbar-height')) || 300;
+            const currentHeight = this.body.clientHeight || parseInt(localStorage.getItem('phpdebugbar-height'), 10) || 300;
             this.setHeight(currentHeight);
         },
 
