@@ -60,9 +60,13 @@ if (typeof PhpDebugBar === 'undefined') {
 
         if (typeof phpdebugbar_hljs === 'object') {
             const hljs = phpdebugbar_hljs.default || phpdebugbar_hljs;
-            code.each((i, e) => {
-                hljs.highlightElement(e);
-            });
+            if (code.nodeType === Node.ELEMENT_NODE) {
+                hljs.highlightElement(code);
+            } else if (code.length) {
+                for (const element of code) {
+                    hljs.highlightElement(element);
+                }
+            }
         }
         return code;
     };
