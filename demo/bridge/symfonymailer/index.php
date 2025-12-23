@@ -8,7 +8,6 @@ use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport\AbstractTransport;
 use Symfony\Component\Mime\Email;
 
-include __DIR__ . '/vendor/autoload.php';
 include __DIR__ . '/../../bootstrap.php';
 
 $debugbarRenderer->setBaseUrl('../../../resources');
