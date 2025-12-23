@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -39,5 +40,5 @@ interface AssetProvider
      *
      * @return array
      */
-    function getAssets();
+    public function getAssets();
 }

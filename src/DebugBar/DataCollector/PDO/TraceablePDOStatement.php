@@ -62,7 +62,7 @@ class TraceablePDOStatement extends PDOStatement
      * @param  mixed $driver_options [optional]
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null) : bool
+    public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null): bool
     {
         $this->boundParameters[$parameter] = $variable;
         $args = array_merge([$parameter, &$variable], array_slice(func_get_args(), 2));
@@ -81,7 +81,7 @@ class TraceablePDOStatement extends PDOStatement
      * constants.
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function bindValue($parameter, $value, $data_type = PDO::PARAM_STR) : bool
+    public function bindValue($parameter, $value, $data_type = PDO::PARAM_STR): bool
     {
         $this->boundParameters[$parameter] = $value;
         return parent::bindValue(...func_get_args());
@@ -97,7 +97,7 @@ class TraceablePDOStatement extends PDOStatement
      * @throws PDOException
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function execute($input_parameters = null) : bool
+    public function execute($input_parameters = null): bool
     {
         $preparedId = spl_object_hash($this);
         $boundParameters = $this->boundParameters;

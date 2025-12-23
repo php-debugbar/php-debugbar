@@ -8,7 +8,7 @@ class MockStorage implements StorageInterface
 {
     public $data;
 
-    public function __construct(array $data = array())
+    public function __construct(array $data = [])
     {
         $this->data = $data;
     }
@@ -23,13 +23,13 @@ class MockStorage implements StorageInterface
         return $this->data[$id];
     }
 
-    public function find(array $filters = array(), $max = 20, $offset = 0)
+    public function find(array $filters = [], $max = 20, $offset = 0)
     {
         return array_slice($this->data, $offset, $max);
     }
 
     public function clear()
     {
-        $this->data = array();
+        $this->data = [];
     }
 }

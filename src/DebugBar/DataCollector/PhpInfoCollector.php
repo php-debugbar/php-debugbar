@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -28,10 +29,10 @@ class PhpInfoCollector extends DataCollector implements Renderable
      */
     public function collect()
     {
-        return array(
+        return [
             'version' => implode('.', [PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION]),
-            'interface' => PHP_SAPI
-        );
+            'interface' => PHP_SAPI,
+        ];
     }
 
     /**
@@ -39,13 +40,13 @@ class PhpInfoCollector extends DataCollector implements Renderable
      */
     public function getWidgets()
     {
-        return array(
-            "php_version" => array(
+        return [
+            "php_version" => [
                 "icon" => "code",
                 "tooltip" => "PHP Version",
                 "map" => "php.version",
-                "default" => ""
-            ),
-        );
+                "default" => "",
+            ],
+        ];
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -29,7 +30,7 @@ class MonologCollector extends AbstractProcessingHandler implements DataCollecto
 {
     protected $name;
 
-    protected $records = array();
+    protected $records = [];
 
     /**
      * @param Logger $logger
@@ -61,12 +62,12 @@ class MonologCollector extends AbstractProcessingHandler implements DataCollecto
      */
     protected function write($record): void
     {
-        $this->records[] = array(
+        $this->records[] = [
             'message' => $record['formatted'],
             'is_string' => true,
             'label' => strtolower($record['level_name']),
-            'time' => $record['datetime']->format('U')
-        );
+            'time' => $record['datetime']->format('U'),
+        ];
     }
 
     /**
@@ -82,10 +83,10 @@ class MonologCollector extends AbstractProcessingHandler implements DataCollecto
      */
     public function collect()
     {
-        return array(
+        return [
             'count' => count($this->records),
-            'records' => $this->records
-        );
+            'records' => $this->records,
+        ];
     }
 
     /**
@@ -102,17 +103,17 @@ class MonologCollector extends AbstractProcessingHandler implements DataCollecto
     public function getWidgets()
     {
         $name = $this->getName();
-        return array(
-            $name => array(
+        return [
+            $name => [
                 "icon" => "briefcase",
                 "widget" => "PhpDebugBar.Widgets.MessagesWidget",
                 "map" => "$name.records",
-                "default" => "[]"
-            ),
-            "$name:badge" => array(
+                "default" => "[]",
+            ],
+            "$name:badge" => [
                 "map" => "$name.count",
-                "default" => "null"
-            )
-        );
+                "default" => "null",
+            ],
+        ];
     }
 }

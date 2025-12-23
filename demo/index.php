@@ -3,7 +3,6 @@
 use DebugBar\DataCollector\PDO\TraceablePDO;
 use DebugBar\DataCollector\PDO\PDOCollector;
 
-
 include 'bootstrap.php';
 
 $debugbar['messages']->addMessage('hello');
@@ -17,18 +16,18 @@ usleep(200);
 $debugbar['time']->stopMeasure('op2');
 
 $debugbar['messages']->addMessage('world', 'warning');
-$debugbar['messages']->addMessage(array('toto' => array('titi', 'tata')));
+$debugbar['messages']->addMessage(['toto' => ['titi', 'tata']]);
 $debugbar['messages']->addMessage('oups', 'error');
 $debugbar['messages']->addMessage('welcome!', 'success');
 $debugbar['messages']->addMessage('panic!', 'critical');
 
 
-$classDemo = array('FirstClass', 'SecondClass', 'ThirdClass');
-$classEvent = array('Retrieved', 'Saved', 'Deleted');
+$classDemo = ['FirstClass', 'SecondClass', 'ThirdClass'];
+$classEvent = ['Retrieved', 'Saved', 'Deleted'];
 $debugbar->addCollector(new \DebugBar\DataCollector\ObjectCountCollector());
 $debugbar['counter']->collectCountSummary(true);
 $debugbar['counter']->setKeyMap($classEvent);
-for ($i = 0; $i <=20; $i++) {
+for ($i = 0; $i <= 20; $i++) {
     $debugbar['counter']->countClass($classDemo[rand(0, 2)], 1, $classEvent[rand(0, 2)]);
 }
 
@@ -39,16 +38,16 @@ $debugbar['pdo']->setDurationBackground(true);
 
 $pdo->exec('create table users (name varchar)');
 $stmt = $pdo->prepare('insert into users (name) values (?)');
-$stmt->execute(array('foo'));
-$stmt->execute(array('bar'));
+$stmt->execute(['foo']);
+$stmt->execute(['bar']);
 
 $users = $pdo->query('select * from users')->fetchAll();
 $stmt = $pdo->prepare('select * from users where name=?');
-$stmt->execute(array('foo'));
+$stmt->execute(['foo']);
 $foo = $stmt->fetch();
 
 $stmt = $pdo->prepare('select * from users where name=?');
-$stmt->execute(array('<script>alert();</script>'));
+$stmt->execute(['<script>alert();</script>']);
 $foo = $stmt->fetch();
 
 $pdo->exec('delete from users');
@@ -62,8 +61,8 @@ $templateCollector->addTemplate('index.php', ['foo' => 'quz'], 'php', __FILE__);
 
 $debugbar['time']->startMeasure('render');
 
-render_demo_page(function() {
-?>
+render_demo_page(function () {
+    ?>
 <h2>AJAX</h2>
 <ul>
     <li><a href="ajax.php" class="ajax">load ajax content</a></li>

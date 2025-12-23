@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -46,8 +47,10 @@ class RedisStorage implements StorageInterface
      */
     public function get($id)
     {
-        return array_merge(unserialize($this->redis->hGet("$this->hash:data", $id)) ?: [],
-            array('__meta' => unserialize($this->redis->hGet("$this->hash:meta", $id))));
+        return array_merge(
+            unserialize($this->redis->hGet("$this->hash:data", $id)) ?: [],
+            ['__meta' => unserialize($this->redis->hGet("$this->hash:meta", $id))],
+        );
     }
 
     /**
@@ -76,7 +79,7 @@ class RedisStorage implements StorageInterface
                     }
                 }
             }
-        } while($cursor);
+        } while ($cursor);
 
         usort($results, static function ($a, $b) {
             return $b['utime'] <=> $a['utime'];

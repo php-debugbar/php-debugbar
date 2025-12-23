@@ -15,11 +15,11 @@ class FileStorageTest extends DebugBarTestCase
     {
         $this->dirname = tempnam(sys_get_temp_dir(), 'debugbar');
         if (file_exists($this->dirname)) {
-          unlink($this->dirname);
+            unlink($this->dirname);
         }
-        mkdir($this->dirname, 0777);
+        mkdir($this->dirname, 0o777);
         $this->s = new FileStorage($this->dirname);
-        $this->data = array('__meta' => array('id' => 'foo'));
+        $this->data = ['__meta' => ['id' => 'foo']];
         $this->s->save('bar', $this->data);
     }
 
@@ -27,13 +27,13 @@ class FileStorageTest extends DebugBarTestCase
     {
         $files = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($this->dirname, \RecursiveDirectoryIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::CHILD_FIRST
+            \RecursiveIteratorIterator::CHILD_FIRST,
         );
 
         foreach ($files as $fileinfo) {
             $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
             $todo($fileinfo->getRealPath());
-		}
+        }
 
         rmdir($this->dirname);
     }

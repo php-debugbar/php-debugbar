@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -92,10 +93,10 @@ class MemoryCollector extends DataCollector implements Renderable
     public function collect()
     {
         $this->updatePeakUsage();
-        return array(
+        return [
             'peak_usage' => $this->getPeakUsage(),
-            'peak_usage_str' => $this->getDataFormatter()->formatBytes($this->getPeakUsage(), $this->precision)
-        );
+            'peak_usage_str' => $this->getDataFormatter()->formatBytes($this->getPeakUsage(), $this->precision),
+        ];
     }
 
     /**
@@ -111,13 +112,13 @@ class MemoryCollector extends DataCollector implements Renderable
      */
     public function getWidgets()
     {
-        return array(
-            "memory" => array(
+        return [
+            "memory" => [
                 "icon" => "server-cog",
                 "tooltip" => "Memory Usage",
                 "map" => "memory.peak_usage_str",
-                "default" => "'0B'"
-            )
-        );
+                "default" => "'0B'",
+            ],
+        ];
     }
 }

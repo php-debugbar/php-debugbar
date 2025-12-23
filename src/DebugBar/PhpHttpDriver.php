@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -18,7 +19,7 @@ class PhpHttpDriver implements HttpDriverInterface
     /**
      * @param array $headers
      */
-    function setHeaders(array $headers)
+    public function setHeaders(array $headers)
     {
         foreach ($headers as $name => $value) {
             header("$name: $value");
@@ -28,7 +29,7 @@ class PhpHttpDriver implements HttpDriverInterface
     /**
      * @return bool
      */
-    function isSessionStarted()
+    public function isSessionStarted()
     {
         return isset($_SESSION);
     }
@@ -37,7 +38,7 @@ class PhpHttpDriver implements HttpDriverInterface
      * @param string $name
      * @param string $value
      */
-    function setSessionValue($name, $value)
+    public function setSessionValue($name, $value)
     {
         $_SESSION[$name] = $value;
     }
@@ -46,7 +47,7 @@ class PhpHttpDriver implements HttpDriverInterface
      * @param string $name
      * @return bool
      */
-    function hasSessionValue($name)
+    public function hasSessionValue($name)
     {
         return array_key_exists($name, $_SESSION);
     }
@@ -55,7 +56,7 @@ class PhpHttpDriver implements HttpDriverInterface
      * @param string $name
      * @return mixed
      */
-    function getSessionValue($name)
+    public function getSessionValue($name)
     {
         return $_SESSION[$name];
     }
@@ -63,7 +64,7 @@ class PhpHttpDriver implements HttpDriverInterface
     /**
      * @param string $name
      */
-    function deleteSessionValue($name)
+    public function deleteSessionValue($name)
     {
         unset($_SESSION[$name]);
     }

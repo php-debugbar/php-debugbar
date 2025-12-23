@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -21,19 +22,19 @@ class PdoStorage implements StorageInterface
 
     protected $tableName;
 
-    protected $sqlQueries = array(
+    protected $sqlQueries = [
         'save' => "INSERT INTO %tablename% (id, data, meta_utime, meta_datetime, meta_uri, meta_ip, meta_method) VALUES (?, ?, ?, ?, ?, ?, ?)",
         'get' => "SELECT data FROM %tablename% WHERE id = ?",
         'find' => "SELECT data FROM %tablename% %where% ORDER BY meta_datetime DESC LIMIT %limit% OFFSET %offset%",
-        'clear' => "DELETE FROM %tablename%"
-    );
+        'clear' => "DELETE FROM %tablename%",
+    ];
 
     /**
      * @param \PDO $pdo The PDO instance
      * @param string $tableName
      * @param array $sqlQueries
      */
-    public function __construct(PDO $pdo, $tableName = 'phpdebugbar', array $sqlQueries = array())
+    public function __construct(PDO $pdo, $tableName = 'phpdebugbar', array $sqlQueries = [])
     {
         $this->pdo = $pdo;
         $this->tableName = $tableName;
@@ -58,7 +59,7 @@ class PdoStorage implements StorageInterface
         $sql = $this->getSqlQuery('save');
         $stmt = $this->pdo->prepare($sql);
         $meta = $data['__meta'];
-        $stmt->execute(array($id, serialize($data), $meta['utime'], $meta['datetime'], $meta['uri'], $meta['ip'], $meta['method']));
+        $stmt->execute([$id, serialize($data), $meta['utime'], $meta['datetime'], $meta['uri'], $meta['ip'], $meta['method']]);
     }
 
     /**
@@ -68,7 +69,7 @@ class PdoStorage implements StorageInterface
     {
         $sql = $this->getSqlQuery('get');
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(array($id));
+        $stmt->execute([$id]);
         if (($data = $stmt->fetchColumn(0)) !== false) {
             return unserialize($data);
         }
@@ -78,10 +79,10 @@ class PdoStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function find(array $filters = array(), $max = 20, $offset = 0)
+    public function find(array $filters = [], $max = 20, $offset = 0)
     {
-        $where = array();
-        $params = array();
+        $where = [];
+        $params = [];
         foreach ($filters as $key => $value) {
             $where[] = "meta_$key = ?";
             $params[] = $value;
@@ -92,16 +93,16 @@ class PdoStorage implements StorageInterface
             $where = '';
         }
 
-        $sql = $this->getSqlQuery('find', array(
+        $sql = $this->getSqlQuery('find', [
             'where' => $where,
             'offset' => $offset,
-            'limit' => $max
-        ));
+            'limit' => $max,
+        ]);
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
 
-        $results = array();
+        $results = [];
         foreach ($stmt->fetchAll() as $row) {
             $data = unserialize($row['data']);
             $results[] = $data['__meta'];
@@ -125,10 +126,10 @@ class PdoStorage implements StorageInterface
      * @param  array  $vars
      * @return string
      */
-    protected function getSqlQuery($name, array $vars = array())
+    protected function getSqlQuery($name, array $vars = [])
     {
         $sql = $this->sqlQueries[$name];
-        $vars = array_merge(array('tablename' => $this->tableName), $vars);
+        $vars = array_merge(['tablename' => $this->tableName], $vars);
         foreach ($vars as $k => $v) {
             $sql = str_replace("%$k%", $v, $sql);
         }

@@ -6,8 +6,8 @@ $debugbarRenderer->setBaseUrl('../../resources');
 
 $debugbar['messages']->addMessage('I\'m a Deeper Hidden Iframe');
 
-render_demo_page(function() {
-?>
+render_demo_page(function () {
+    ?>
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
         fetch('../ajax.php')

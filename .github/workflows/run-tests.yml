@@ -42,3 +42,6 @@ jobs:
 
     - name: Analyse with PHPStan
       run: composer analyse
+
+    - name: Analyse Code Style
+      run: composer check-style

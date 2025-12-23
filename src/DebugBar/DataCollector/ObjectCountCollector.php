@@ -57,7 +57,8 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
      * @param int $count
      * @param string $key
      */
-    public function countClass($class, $count = 1, $key = 'value') {
+    public function countClass($class, $count = 1, $key = 'value')
+    {
         if (! is_string($class)) {
             $class = get_class($class);
         }
@@ -85,7 +86,7 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
             'data' => $this->classList,
             'count' => $this->classCount,
             'key_map' => $this->keyMap,
-            'is_counter' => true
+            'is_counter' => true,
         ];
 
         if ($this->collectSummary) {
@@ -127,12 +128,12 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
                 'icon' => $this->icon,
                 'widget' => 'PhpDebugBar.Widgets.TableVariableListWidget',
                 'map' => "$name",
-                'default' => '{}'
+                'default' => '{}',
             ],
             "$name:badge" => [
                 'map' => "$name.count",
-                'default' => 0
-            ]
+                'default' => 0,
+            ],
         ];
     }
 }

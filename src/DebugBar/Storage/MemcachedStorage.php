@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -47,7 +48,7 @@ class MemcachedStorage implements StorageInterface
         $this->memcached->set($key, $data, $this->expiration);
         if (!$this->memcached->append($this->keyNamespace, "|$key")) {
             $this->memcached->set($this->keyNamespace, $key, $this->expiration);
-        } else if ($this->expiration) {
+        } elseif ($this->expiration) {
             // append doesn't support updating expiration, so do it here:
             $this->memcached->touch($this->keyNamespace, $this->expiration);
         }
@@ -64,13 +65,13 @@ class MemcachedStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function find(array $filters = array(), $max = 20, $offset = 0)
+    public function find(array $filters = [], $max = 20, $offset = 0)
     {
         if (!($keys = $this->memcached->get($this->keyNamespace))) {
-            return array();
+            return [];
         }
 
-        $results = array();
+        $results = [];
         $keys = array_reverse(explode('|', $keys)); // Reverse so newest comes first
         $keyPosition = 0; // Index in $keys to try to get next items from
         $remainingItems = $max + $offset; // Try to obtain this many remaining items
@@ -101,7 +102,7 @@ class MemcachedStorage implements StorageInterface
 
     /**
      * Filter the metadata for matches.
-     * 
+     *
      * @param  array $meta
      * @param  array $filters
      * @return bool
@@ -130,7 +131,7 @@ class MemcachedStorage implements StorageInterface
 
     /**
      * @param  string $id
-     * @return string 
+     * @return string
      */
     protected function createKey($id)
     {

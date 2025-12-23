@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -18,7 +19,8 @@ use DebugBar\DataFormatter\HasXdebugLinks;
  */
 abstract class DataCollector implements DataCollectorInterface
 {
-    use HasDataFormatter, HasXdebugLinks;
+    use HasDataFormatter;
+    use HasXdebugLinks;
 
     public static $defaultDataFormatter;
     public static $defaultVarDumper;

@@ -22,27 +22,27 @@ class JavascriptRendererTest extends DebugBarTestCase
 
     public function testOptions()
     {
-        $this->r->setOptions(array(
+        $this->r->setOptions([
             'base_path' => '/foo',
             'base_url' => '/foo',
             'include_vendors' => false,
             'javascript_class' => 'Foobar',
             'variable_name' => 'foovar',
             'initialization' => JavascriptRenderer::INITIALIZE_CONTROLS,
-            'controls' => array(
-                'memory' => array(
+            'controls' => [
+                'memory' => [
                     "icon" => "cogs",
                     "map" => "memory.peak_usage_str",
-                    "default" => "'0B'"
-                )
-            ),
-            'disable_controls' => array('messages'),
+                    "default" => "'0B'",
+                ],
+            ],
+            'disable_controls' => ['messages'],
             'ignore_collectors' => 'config',
             'ajax_handler_classname' => 'AjaxFoo',
             'ajax_handler_auto_show' => false,
             'open_handler_classname' => 'OpenFoo',
-            'open_handler_url' => 'open.php'
-        ));
+            'open_handler_url' => 'open.php',
+        ]);
 
         $this->assertEquals('/foo', $this->r->getBasePath());
         $this->assertEquals('/foo', $this->r->getBaseUrl());
@@ -68,16 +68,16 @@ class JavascriptRendererTest extends DebugBarTestCase
         // Use a loop to test deduplication of assets
         for ($i = 0; $i < 2; ++$i) {
             $this->r->addAssets('foo.css', 'foo.js', '/bar', '/foobar');
-            $this->r->addInlineAssets(array('Css' => 'CssTest'), array('Js' => 'JsTest'), array('Head' => 'HeaderTest'));
+            $this->r->addInlineAssets(['Css' => 'CssTest'], ['Js' => 'JsTest'], ['Head' => 'HeaderTest']);
         }
 
         // Make sure all the right assets are returned by getAssets
         $assets = $this->r->getAssets();
         $this->assertContains('/bar/foo.css', $assets['css']);
         $this->assertContains('/bar/foo.js', $assets['js']);
-        $this->assertEquals(array('Css' => 'CssTest'), $assets['inline_css']);
-        $this->assertEquals(array('Js' => 'JsTest'), $assets['inline_js']);
-        $this->assertEquals(array('Head' => 'HeaderTest'), $assets['inline_head']);
+        $this->assertEquals(['Css' => 'CssTest'], $assets['inline_css']);
+        $this->assertEquals(['Js' => 'JsTest'], $assets['inline_js']);
+        $this->assertEquals(['Head' => 'HeaderTest'], $assets['inline_head']);
 
         // Make sure asset files are deduplicated
         $this->assertCount(count(array_unique($assets['css'])), $assets['css']);
@@ -114,7 +114,7 @@ class JavascriptRendererTest extends DebugBarTestCase
 
     public function testRenderHead()
     {
-        $this->r->addInlineAssets(array('Css' => 'CssTest'), array('Js' => 'JsTest'), array('Head' => 'HeaderTest'));
+        $this->r->addInlineAssets(['Css' => 'CssTest'], ['Js' => 'JsTest'], ['Head' => 'HeaderTest']);
 
         $html = $this->r->renderHead();
         // Check for file links
@@ -129,7 +129,7 @@ class JavascriptRendererTest extends DebugBarTestCase
     public function testRenderFullInitialization()
     {
         $this->debugbar->addCollector(new \DebugBar\DataCollector\MessagesCollector());
-        $this->r->addControl('time', array('icon' => 'time', 'map' => 'time', 'default' => '"0s"'));
+        $this->r->addControl('time', ['icon' => 'time', 'map' => 'time', 'default' => '"0s"']);
         $expected = str_replace("\r\n", "\n", rtrim(file_get_contents(__DIR__ . '/full_init.html')));
         $this->assertStringStartsWith($expected, $this->r->render());
     }

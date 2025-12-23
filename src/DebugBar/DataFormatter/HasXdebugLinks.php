@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -16,7 +17,7 @@ trait HasXdebugLinks
 {
     protected $xdebugLinkTemplate = '';
     protected $xdebugShouldUseAjax = false;
-    protected $xdebugReplacements = array();
+    protected $xdebugReplacements = [];
 
     /**
      * Shorten the file path by removing the xdebug path replacements
@@ -82,7 +83,7 @@ trait HasXdebugLinks
             'url' => $url,
             'ajax' => $this->getXdebugShouldUseAjax(),
             'filename' => basename($file),
-            'line' => (string) $line ?: '?'
+            'line' => (string) $line ?: '?',
         ];
     }
 
@@ -103,18 +104,18 @@ trait HasXdebugLinks
      */
     public function setEditorLinkTemplate($editor)
     {
-        $editorLinkTemplates = array(
+        $editorLinkTemplates = [
             'sublime' => 'subl://open?url=file://%f&line=%l',
             'textmate' => 'txmt://open?url=file://%f&line=%l',
             'emacs' => 'emacs://open?url=file://%f&line=%l',
             'macvim' => 'mvim://open/?url=file://%f&line=%l',
             'codelite' => 'codelite://open?file=%f&line=%l',
             'phpstorm' => 'phpstorm://open?file=%f&line=%l',
-            'phpstorm-remote' => 'javascript:(()=>{let r=new XMLHttpRequest;' .
-                'r.open(\'get\',\'http://localhost:63342/api/file/%f:%l\');r.send();})()',
+            'phpstorm-remote' => 'javascript:(()=>{let r=new XMLHttpRequest;'
+                . 'r.open(\'get\',\'http://localhost:63342/api/file/%f:%l\');r.send();})()',
             'idea' => 'idea://open?file=%f&line=%l',
-            'idea-remote' => 'javascript:(()=>{let r=new XMLHttpRequest;' .
-                'r.open(\'get\',\'http://localhost:63342/api/file/?file=%f&line=%l\');r.send();})()',
+            'idea-remote' => 'javascript:(()=>{let r=new XMLHttpRequest;'
+                . 'r.open(\'get\',\'http://localhost:63342/api/file/?file=%f&line=%l\');r.send();})()',
             'vscode' => 'vscode://file/%f:%l',
             'vscode-insiders' => 'vscode-insiders://file/%f:%l',
             'vscode-remote' => 'vscode://vscode-remote/%f:%l',
@@ -129,7 +130,7 @@ trait HasXdebugLinks
             'windsurf' => 'windsurf://file/%f:%l',
             'zed' => 'zed://file/%f:%l',
             'antigravity' => 'antigravity://file/%f:%l',
-        );
+        ];
 
         if (is_string($editor) && isset($editorLinkTemplates[$editor])) {
             $this->setXdebugLinkTemplate($editorLinkTemplates[$editor]);

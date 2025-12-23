@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -19,13 +20,14 @@ use DebugBar\DataFormatter\HasDataFormatter;
  */
 class MessagesCollector extends AbstractLogger implements DataCollectorInterface, MessagesAggregateInterface, Renderable, AssetProvider
 {
-    use HasDataFormatter, HasXdebugLinks;
+    use HasDataFormatter;
+    use HasXdebugLinks;
 
     protected $name;
 
-    protected $messages = array();
+    protected $messages = [];
 
-    protected $aggregates = array();
+    protected $aggregates = [];
 
     /** @var bool */
     protected $collectFile = false;
@@ -149,14 +151,14 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
             $stackItem = $this->getStackTraceItem(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $this->backtraceLimit));
         }
 
-        $this->messages[] = array(
+        $this->messages[] = [
             'message' => $messageText,
             'message_html' => $this->customizeMessageHtml($messageHtml, $message),
             'is_string' => $isString,
             'label' => $label,
             'time' => microtime(true),
             'xdebug_link' => $stackItem ? $this->getXdebugLink($stackItem['file'], $stackItem['line'] ?? null) : null,
-        );
+        ];
     }
 
     /**
@@ -203,7 +205,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
      * @param $message
      * @param array $context
      */
-    public function log($level, $message, array $context = array()): void
+    public function log($level, $message, array $context = []): void
     {
         // For string messages, interpolate the context following PSR-3
         if (is_string($message)) {
@@ -219,10 +221,10 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
      * @param array $context
      * @return string
      */
-    function interpolate($message, array $context = array())
+    public function interpolate($message, array $context = [])
     {
         // build a replacement array with braces around the context keys
-        $replace = array();
+        $replace = [];
         foreach ($context as $key => $val) {
             $placeholder = '{' . $key . '}';
             if (strpos($message, $placeholder) === false) {
@@ -241,7 +243,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
                 $json = @json_encode($val);
                 $replace[$placeholder] = false === $json ? 'null' : 'array' . $json;
             } else {
-                $replace[$placeholder] = '['.gettype($val).']';
+                $replace[$placeholder] = '[' . gettype($val) . ']';
             }
         }
 
@@ -254,7 +256,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
      */
     public function clear()
     {
-        $this->messages = array();
+        $this->messages = [];
     }
 
     /**
@@ -263,10 +265,10 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     public function collect()
     {
         $messages = $this->getMessages();
-        return array(
+        return [
             'count' => count($messages),
-            'messages' => $messages
-        );
+            'messages' => $messages,
+        ];
     }
 
     /**
@@ -280,8 +282,9 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     /**
      * @return array
      */
-    public function getAssets() {
-        return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : array();
+    public function getAssets()
+    {
+        return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : [];
     }
 
     /**
@@ -290,17 +293,17 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     public function getWidgets()
     {
         $name = $this->getName();
-        return array(
-            "$name" => array(
+        return [
+            "$name" => [
                 'icon' => 'logs',
                 "widget" => "PhpDebugBar.Widgets.MessagesWidget",
                 "map" => "$name.messages",
-                "default" => "[]"
-            ),
-            "$name:badge" => array(
+                "default" => "[]",
+            ],
+            "$name:badge" => [
                 "map" => "$name.count",
-                "default" => "null"
-            )
-        );
+                "default" => "null",
+            ],
+        ];
     }
 }
