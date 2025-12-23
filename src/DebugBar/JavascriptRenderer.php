@@ -614,7 +614,6 @@ class JavascriptRenderer
         return $this->ajaxHandlerEnableTab;
     }
 
-
     /**
      * Sets whether datasets are directly loaded or deferred
      *
@@ -635,7 +634,6 @@ class JavascriptRenderer
     {
         return $this->deferDatasets;
     }
-
 
     /**
      * Sets the class name of the js open handler

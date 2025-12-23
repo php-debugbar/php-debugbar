@@ -3,7 +3,6 @@
 namespace DebugBar\Tests\DataCollector;
 
 use DebugBar\Tests\DebugBarTestCase;
-use DebugBar\DebugBar;
 use DebugBar\DataCollector\ConfigCollector;
 
 class ConfigCollectorTest extends DebugBarTestCase

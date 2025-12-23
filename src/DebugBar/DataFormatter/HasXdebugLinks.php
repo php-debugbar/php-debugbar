@@ -11,8 +11,6 @@
 
 namespace DebugBar\DataFormatter;
 
-use DebugBar\DataCollector\DataCollector;
-
 trait HasXdebugLinks
 {
     protected $xdebugLinkTemplate = '';
@@ -36,7 +34,7 @@ trait HasXdebugLinks
         }
 
         foreach (array_keys($this->xdebugReplacements) as $path) {
-            if (strpos($file, $path) === 0) {
+            if (str_starts_with($file, $path)) {
                 $file = substr($file, strlen($path));
                 break;
             }
@@ -64,7 +62,7 @@ trait HasXdebugLinks
         }
 
         foreach ($this->xdebugReplacements as $path => $replacement) {
-            if (strpos($file, $path) === 0) {
+            if (str_starts_with($file, $path)) {
                 $file = $replacement . substr($file, strlen($path));
                 break;
             }

@@ -25,5 +25,4 @@ abstract class DataCollector implements DataCollectorInterface
     public static $defaultDataFormatter;
     public static $defaultVarDumper;
 
-
 }

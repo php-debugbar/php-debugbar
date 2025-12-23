@@ -2,10 +2,6 @@
 
 namespace DebugBar\DataCollector;
 
-use DebugBar\DataCollector\DataCollector;
-use DebugBar\DataCollector\DataCollectorInterface;
-use DebugBar\DataCollector\Renderable;
-
 /**
  * Collector for hit counts.
  */

@@ -3,7 +3,6 @@
 namespace DebugBar\Tests;
 
 use DebugBar\DebugBar;
-use DebugBar\RandomRequestIdGenerator;
 use PHPUnit\Framework\TestCase;
 
 abstract class DebugBarTestCase extends TestCase

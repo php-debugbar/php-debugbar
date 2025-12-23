@@ -12,7 +12,6 @@
 namespace DebugBar\DataCollector;
 
 use Throwable;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 /**
  * Collects info about exceptions
@@ -125,7 +124,6 @@ class ExceptionsCollector extends DataCollector implements Renderable
         $this->exceptions[] = &$warning;
         $this->existingWarnings[$hash] = &$warning;
     }
-
 
     /**
      * Returns the list of exceptions being profiled

@@ -4,7 +4,6 @@ namespace DebugBar\DataCollector\PDO;
 
 use PDO;
 use PDOException;
-use DebugBar\DataCollector\PDO\TraceablePDOStatement;
 
 /**
  * A PDO proxy which traces statements

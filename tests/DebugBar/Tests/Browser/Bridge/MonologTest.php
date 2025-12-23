@@ -2,7 +2,6 @@
 
 namespace DebugBar\Tests\Browser\Bridge;
 
-use DebugBar\Browser\Bridge\WebDriverElement;
 use DebugBar\Tests\Browser\AbstractBrowserTestCase;
 
 class MonologTest extends AbstractBrowserTestCase

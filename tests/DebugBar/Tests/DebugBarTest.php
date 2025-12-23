@@ -2,11 +2,9 @@
 
 namespace DebugBar\Tests;
 
-use DebugBar\DebugBar;
 use DebugBar\DebugBarException;
 use DebugBar\Tests\DataCollector\MockCollector;
 use DebugBar\Tests\Storage\MockStorage;
-use DebugBar\RandomRequestIdGenerator;
 
 class DebugBarTest extends DebugBarTestCase
 {

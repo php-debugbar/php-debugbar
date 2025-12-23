@@ -83,7 +83,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         $normalizedPath = str_replace('\\', '/', $file);
 
         foreach ($this->backtraceExcludePaths as $excludedPath) {
-            if (strpos($normalizedPath, $excludedPath) !== false) {
+            if (str_contains($normalizedPath, $excludedPath)) {
                 return true;
             }
         }
@@ -227,7 +227,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         $replace = [];
         foreach ($context as $key => $val) {
             $placeholder = '{' . $key . '}';
-            if (strpos($message, $placeholder) === false) {
+            if (!str_contains($message, $placeholder)) {
                 continue;
             }
             // check that the value can be cast to string

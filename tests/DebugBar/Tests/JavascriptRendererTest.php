@@ -3,8 +3,6 @@
 namespace DebugBar\Tests;
 
 use DebugBar\JavascriptRenderer;
-use DebugBar\DebugBar;
-use DebugBar\StandardDebugBar;
 
 class JavascriptRendererTest extends DebugBarTestCase
 {

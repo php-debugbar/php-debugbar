@@ -2,7 +2,6 @@
 
 namespace DebugBar\Tests;
 
-use DebugBar\DebugBar;
 use DebugBar\DebugBarException;
 use DebugBar\OpenHandler;
 use DebugBar\Tests\Storage\MockStorage;

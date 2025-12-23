@@ -21,7 +21,6 @@ $debugbar['messages']->addMessage('oups', 'error');
 $debugbar['messages']->addMessage('welcome!', 'success');
 $debugbar['messages']->addMessage('panic!', 'critical');
 
-
 $classDemo = ['FirstClass', 'SecondClass', 'ThirdClass'];
 $classEvent = ['Retrieved', 'Saved', 'Deleted'];
 $debugbar->addCollector(new \DebugBar\DataCollector\ObjectCountCollector());
@@ -57,7 +56,6 @@ $debugbar->addCollector($templateCollector);
 
 $templateCollector->addTemplate('index.php', ['foo' => 'bar'], 'php', __FILE__);
 $templateCollector->addTemplate('index.php', ['foo' => 'quz'], 'php', __FILE__);
-
 
 $debugbar['time']->startMeasure('render');
 
