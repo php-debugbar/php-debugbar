@@ -12,7 +12,7 @@ $debugbarRenderer = $debugbar->getJavascriptRenderer()
                              ->setBaseUrl('../resources')
                              ->setAjaxHandlerEnableTab(true)
                              ->setHideEmptyTabs(true)
-                             ->setUseDistFiles(false)
+                             ->setUseDistFiles(true)
                              ->setTheme($_GET['theme'] ?? 'auto');
 
 //

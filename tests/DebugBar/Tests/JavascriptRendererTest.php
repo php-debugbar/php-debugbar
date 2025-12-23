@@ -107,9 +107,9 @@ class JavascriptRendererTest extends DebugBarTestCase
     {
         $this->r->setUseDistFiles(true);
         $assets = $this->r->getAssets();
-        $this->assertContains('/bpath/dist/debugbar.min.css', $assets['css']);
+        $this->assertContains('/bpath/../dist/debugbar.min.css', $assets['css']);
         $this->assertNotContains('/bpath/widgets.js', $assets['js']);
-        $this->assertContains('/bpath/vendor/highlightjs/highlight.pack.js', $assets['js']);
+        $this->assertNotContains('/bpath/vendor/highlightjs/highlight.pack.js', $assets['js']);
     }
 
     public function testRenderHead()
