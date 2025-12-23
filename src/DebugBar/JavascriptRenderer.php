@@ -52,20 +52,29 @@ class JavascriptRenderer
 
     protected $useDistFiles = true;
 
-    protected $distCssFiles = array('dist/debugbar.min.css');
+    protected $distCssFiles = array('../dist/debugbar.min.css');
 
-    protected $distJsFiles = array('dist/debugbar.min.js');
+    protected $distJsFiles = array('../dist/debugbar.min.js');
 
     /*
      * These files are included in the dist files. When using source, they are added by collectors if needed.
      */
-    protected $distWidgetAssets = [
+    protected $distIncludedAssets = [
+        'debugbar.js',
+        'icons.css',
+        'debugbar.css',
+        'widgets.js',
+        'widgets.css',
+        'openhandler.js',
+        'openhandler.css',
         'widgets/mails/widget.css',
         'widgets/mails/widget.js',
         'widgets/sqlqueries/widget.css',
         'widgets/sqlqueries/widget.js',
         'widgets/templates/widget.css',
         'widgets/templates/widget.js',
+        'highlight.css',
+        'vendor/highlightjs/highlight.pack.js'
     ];
 
     protected $additionalAssets = array();
@@ -746,13 +755,8 @@ class JavascriptRenderer
      */
     public function getAssets(?string $type = null, ?string $relativeTo = self::RELATIVE_PATH): array
     {
-        if ($this->useDistFiles) {
-            $cssFiles = $this->distCssFiles;
-            $jsFiles = $this->distJsFiles;
-        } else {
-            $cssFiles = $this->cssFiles;
-            $jsFiles = $this->jsFiles;
-        }
+        $cssFiles = $this->cssFiles;
+        $jsFiles = $this->jsFiles;
 
         $inlineCss = array();
         $inlineJs = array();
@@ -765,6 +769,17 @@ class JavascriptRenderer
             if ($this->includeVendors === true || in_array('js', $this->includeVendors)) {
                 $jsFiles = array_merge($this->jsVendors, $jsFiles);
             }
+        }
+
+        if ($this->useDistFiles) {
+            $cssFiles = array_merge($this->distCssFiles, $cssFiles);
+            $cssFiles = array_filter($cssFiles, function ($file) {
+                return !in_array($file, $this->distIncludedAssets);
+            });
+            $jsFiles = array_merge($this->distJsFiles, $jsFiles);
+            $jsFiles = array_filter($jsFiles, function ($file) {
+                return !in_array($file, $this->distIncludedAssets);
+            });
         }
 
         if ($relativeTo) {
@@ -787,10 +802,10 @@ class JavascriptRenderer
             $root = $this->getRelativeRoot($relativeTo,
                 $this->makeUriRelativeTo($basePath, $this->basePath),
                 $this->makeUriRelativeTo($baseUrl, $this->baseUrl));
-            if (isset($assets['css']) && !($this->useDistFiles && $basePath === '' && in_array($assets['css'], $this->distWidgetAssets))) {
+            if (isset($assets['css']) && !($this->useDistFiles && $basePath === '' && in_array($assets['css'], $this->distIncludedAssets))) {
                 $cssFiles = array_merge($cssFiles, $this->makeUriRelativeTo((array) $assets['css'], $root));
             }
-            if (isset($assets['js']) && !($this->useDistFiles && $basePath === '' && in_array($assets['js'], $this->distWidgetAssets))) {
+            if (isset($assets['js']) && !($this->useDistFiles && $basePath === '' && in_array($assets['js'], $this->distIncludedAssets))) {
                 $jsFiles = array_merge($jsFiles, $this->makeUriRelativeTo((array) $assets['js'], $root));
             }
 
