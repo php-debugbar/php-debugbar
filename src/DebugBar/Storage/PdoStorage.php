@@ -72,7 +72,7 @@ class PdoStorage implements StorageInterface
         if (($data = $stmt->fetchColumn(0)) !== false) {
             return unserialize($data);
         }
-        return null;
+        return [];
     }
 
     /**

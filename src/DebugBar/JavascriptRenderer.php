@@ -828,7 +828,7 @@ class JavascriptRenderer
      * @param string $relativeTo
      * @param string $basePath
      * @param string $baseUrl
-     * @return string
+     * @return null|string
      */
     protected function getRelativeRoot($relativeTo, $basePath, $baseUrl)
     {
