@@ -1,10 +1,9 @@
 if (typeof PhpDebugBar === 'undefined') {
     // namespace
     window.PhpDebugBar = {};
-    PhpDebugBar.$ = jQuery;
 }
 
-(function ($) {
+(function () {
     const csscls = function (cls) {
         return PhpDebugBar.utils.csscls(cls, 'phpdebugbar-openhandler-');
     };
@@ -253,4 +252,4 @@ if (typeof PhpDebugBar === 'undefined') {
         }
 
     });
-})(PhpDebugBar.$);
+})();

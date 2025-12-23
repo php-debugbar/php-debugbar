@@ -1,10 +1,9 @@
 if (typeof PhpDebugBar === 'undefined') {
     // namespace
     window.PhpDebugBar = {};
-    PhpDebugBar.$ = jQuery;
 }
 
-(function ($) {
+(function () {
     if (typeof PhpDebugBar.utils === 'undefined') {
         PhpDebugBar.utils = {};
     }
@@ -93,7 +92,6 @@ if (typeof PhpDebugBar === 'undefined') {
             this._attributes = { ...this.defaults };
             this._boundAttributes = {};
             this.el = document.createElement(this.tagName);
-            this.$el = $(this.el);
             if (this.className) {
                 this.el.classList.add(...this.className.split(' '));
             }
@@ -160,7 +158,7 @@ if (typeof PhpDebugBar === 'undefined') {
         /**
          * Registers a callback function that will be called whenever the value of the attribute changes
          *
-         * If cb is a jQuery element, text() will be used to fill the element
+         * If cb is a HTMLElement element, textContent will be used to fill the element
          *
          * @param {string | Array} attr
          * @param {Function | HTMLElement} cb
@@ -179,10 +177,6 @@ if (typeof PhpDebugBar === 'undefined') {
             if (cb instanceof HTMLElement) {
                 const el = cb;
                 cb = value => el.textContent = value || '';
-            } else if (typeof cb === 'object') {
-                // TODO: deprecated jquery
-                const el = cb;
-                cb = value => el.text(value || '');
             }
             this._boundAttributes[attr].push(cb);
             if (this.has(attr)) {
@@ -226,7 +220,7 @@ if (typeof PhpDebugBar === 'undefined') {
      * a tab panel which is visible only when the tab is active.
      *
      * The panel must contain a widget. A widget is an object which has
-     * an element property containing something appendable to a jQuery object.
+     * an element property containing something appendable to a HTMLElement object.
      *
      * Options:
      *  - title
@@ -1591,4 +1585,4 @@ if (typeof PhpDebugBar === 'undefined') {
     }
 
     PhpDebugBar.AjaxHandler = AjaxHandler;
-})(PhpDebugBar.$);
+})();

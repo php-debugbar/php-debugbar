@@ -9,8 +9,7 @@
   },
   "type": "module",
   "scripts": {
-    "build": "npm run build:jquery && npm run build:hljs && npm run build:icons && npm run build:minify",
-    "build:jquery": "cp node_modules/jquery/dist/jquery.min.js resources/vendor/jquery/dist/jquery.min.js",
+    "build": "npm run build:hljs && npm run build:icons && npm run build:minify",
     "build:hljs": "esbuild build/build-hljs.js --bundle --minify --format=iife --global-name=phpdebugbar_hljs --outfile=resources/vendor/highlightjs/highlight.pack.js",
     "build:icons": "node build/build-icons.js",
     "build:minify": "node build/build-minify.js",

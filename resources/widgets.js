@@ -1,10 +1,9 @@
 if (typeof PhpDebugBar === 'undefined') {
     // namespace
     window.PhpDebugBar = {};
-    PhpDebugBar.$ = jQuery;
 }
 
-(function ($) {
+(function () {
     /**
      * @namespace
      */
@@ -1250,4 +1249,4 @@ if (typeof PhpDebugBar === 'undefined') {
         }
 
     });
-})(PhpDebugBar.$);
+})();

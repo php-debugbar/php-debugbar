@@ -41,7 +41,6 @@ class JavascriptRenderer
     );
 
     protected $jsVendors = array(
-        'jquery' => 'vendor/jquery/dist/jquery.min.js',
         'highlightjs' => 'vendor/highlightjs/highlight.pack.js'
     );
 
@@ -74,8 +73,6 @@ class JavascriptRenderer
     protected $javascriptClass = 'PhpDebugBar.DebugBar';
 
     protected $variableName = 'phpdebugbar';
-
-    protected $enableJqueryNoConflict = true;
 
     protected $theme = null;
 
@@ -142,7 +139,6 @@ class JavascriptRenderer
      *  - javascript_class
      *  - variable_name
      *  - initialization
-     *  - enable_jquery_noconflict
      *  - use_dist_files
      *  - controls
      *  - disable_controls
@@ -173,9 +169,6 @@ class JavascriptRenderer
         }
         if (array_key_exists('initialization', $options)) {
             $this->setInitialization($options['initialization']);
-        }
-        if (array_key_exists('enable_jquery_noconflict', $options)) {
-            $this->setEnableJqueryNoConflict($options['enable_jquery_noconflict']);
         }
         if (array_key_exists('use_dist_files', $options)) {
             $this->setUseDistFiles($options['use_dist_files']);
@@ -281,11 +274,6 @@ class JavascriptRenderer
         }
         $this->includeVendors = $enabled;
 
-        if (!$enabled || (is_array($enabled) && !in_array('js', $enabled))) {
-            // no need to call jQuery.noConflict() if we do not include our own version
-            $this->enableJqueryNoConflict = false;
-        }
-
         return $this;
     }
 
@@ -302,7 +290,7 @@ class JavascriptRenderer
     /**
      * Disable a specific vendor's assets.
      *
-     * @param  string $name "jquery", "highlightjs"
+     * @param  string $name "highlightjs"
      *
      * @return void
      */
@@ -402,27 +390,6 @@ class JavascriptRenderer
     public function getInitialization()
     {
         return $this->initialization;
-    }
-
-    /**
-     * Sets whether to call jQuery.noConflict()
-     *
-     * @param boolean $enabled
-     */
-    public function setEnableJqueryNoConflict($enabled = true)
-    {
-        $this->enableJqueryNoConflict = $enabled;
-        return $this;
-    }
-
-    /**
-     * Checks if jQuery.noConflict() will be called
-     *
-     * @return boolean
-     */
-    public function isJqueryNoConflictEnabled()
-    {
-        return $this->enableJqueryNoConflict;
     }
 
     /**
@@ -999,10 +966,6 @@ class JavascriptRenderer
 
         foreach ($inlineHead as $content) {
             $html .= $content . "\n";
-        }
-
-        if ($this->enableJqueryNoConflict) {
-            $html .= '<script type="text/javascript"' . $nonce . '>jQuery.noConflict(true);</script>' . "\n";
         }
 
         return $html;

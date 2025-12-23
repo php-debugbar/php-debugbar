@@ -1,4 +1,4 @@
-(function ($) {
+(function () {
     const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
 
     /**
@@ -158,4 +158,4 @@
         }
 
     });
-})(PhpDebugBar.$);
+})();
