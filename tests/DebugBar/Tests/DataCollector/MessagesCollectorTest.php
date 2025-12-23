@@ -42,10 +42,10 @@ class MessagesCollectorTest extends DebugBarTestCase
     public function testAssets()
     {
         $c = new MessagesCollector();
-        $this->assertEmpty($c->getAssets());
+        $this->assertCount(0, $c->getAssets());
 
         $c->useHtmlVarDumper();
-        $this->assertNotEmpty($c->getAssets());
+        $this->assertNotCount(0, $c->getAssets());
     }
 
     public function testHtmlMessages()

@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "psr/log": "^1|^2|^3",
         "symfony/var-dumper": "^5.4|^6.4|^7.3|^8.0"
     },
@@ -30,7 +30,13 @@
         "symfony/browser-kit": "^6.4|7.0",
         "symfony/dom-crawler": "^6.4|^7",
         "symfony/panther": "^1|^2.1",
-        "dbrekelmans/bdi": "^1.4"
+        "dbrekelmans/bdi": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "monolog/monolog": "^3.9",
+        "symfony/mailer": "^5.4|^6.4|^7.3|^8.0",
+        "symfony/event-dispatcher": "^5.4|^6.4|^7.3|^8.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "predis/predis": "^3.3"
     },
     "autoload": {
         "psr-4": {
@@ -43,6 +49,7 @@
         }
     },
     "scripts": {
+        "analyse": "@php vendor/bin/phpstan analyse --memory-limit=1G",
         "demo": [
             "Composer\\Config::disableProcessTimeout",
             "@php -S localhost:8000"

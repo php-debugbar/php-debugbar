@@ -52,8 +52,8 @@ class TraceablePDO extends PDO
     /**
      * Fetch extended error information associated with the last operation on the database handle
      *
-     * @link   http://php.net/manual/en/pdo.errorinfo.php
-     * @return array PDO::errorInfo returns an array of error information
+     * @link   https://www.php.net/manual/en/pdo.errorcode.php
+     * @return string|null Fetch the SQLSTATE associated with the last operation on the database handle
      */
     #[\ReturnTypeWillChange]
     public function errorCode()
@@ -217,6 +217,7 @@ class TraceablePDO extends PDO
         $trace->start();
 
         $ex = null;
+        $result = null;
         try {
             $result = $this->__call($method, $args);
         } catch (PDOException $e) {

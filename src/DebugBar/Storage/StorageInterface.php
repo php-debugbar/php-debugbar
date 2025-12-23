@@ -16,7 +16,7 @@ interface StorageInterface
      * Saves collected data
      *
      * @param string $id
-     * @param string $data
+     * @param array $data
      */
     function save($id, $data);
 

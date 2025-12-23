@@ -192,29 +192,27 @@ class DebugBarVarDumperTest extends DebugBarTestCase
         $out = $d->renderVar($testData);
         $this->assertStringContainsString('ABCDEFGHIJ', $out);
         $this->assertStringNotContainsString('ABCDEFGHIJK', $out);
-
-        // Test 'min_depth' if we are on a Symfony version that supports it
-        if (method_exists('Symfony\Component\VarDumper\Cloner\AbstractCloner', 'setMinDepth')) {
-            $testData = array('one', 'two', 'three', 'four', 'five');
-            $d->resetClonerOptions(array(
-                'max_items' => 3,
-            ));
-            $out = $d->renderVar($testData);
-            foreach ($testData as $search) {
-                $this->assertStringContainsString($search, $out);
-            }
-
-            $d->resetClonerOptions(array(
-                'min_depth' => 0,
-                'max_items' => 3,
-            ));
-            $out = $d->renderVar($testData);
-            $this->assertStringContainsString('one', $out);
-            $this->assertStringContainsString('two', $out);
-            $this->assertStringContainsString('three', $out);
-            $this->assertStringNotContainsString('four', $out);
-            $this->assertStringNotContainsString('five', $out);
+        
+        $testData = array('one', 'two', 'three', 'four', 'five');
+        $d->resetClonerOptions(array(
+            'max_items' => 3,
+        ));
+        $out = $d->renderVar($testData);
+        foreach ($testData as $search) {
+            $this->assertStringContainsString($search, $out);
         }
+
+        $d->resetClonerOptions(array(
+            'min_depth' => 0,
+            'max_items' => 3,
+        ));
+        $out = $d->renderVar($testData);
+        $this->assertStringContainsString('one', $out);
+        $this->assertStringContainsString('two', $out);
+        $this->assertStringContainsString('three', $out);
+        $this->assertStringNotContainsString('four', $out);
+        $this->assertStringNotContainsString('five', $out);
+
     }
 
     public function testDumperOptions()

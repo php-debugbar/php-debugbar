@@ -97,7 +97,7 @@ class DebugBar implements ArrayAccess
     /**
      * Returns an array of all data collectors
      *
-     * @return array[DataCollectorInterface]
+     * @return array|DataCollectorInterface[]
      */
     public function getCollectors()
     {

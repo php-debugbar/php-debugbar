@@ -18,9 +18,6 @@ class SymfonyMailCollector extends DataCollector implements Renderable, AssetPro
     private $messages = array();
 
     /** @var bool */
-    private $showDetailed = false;
-
-    /** @var bool */
     private $showBody = false;
 
     /** @param \Symfony\Component\Mailer\SentMessage $message */

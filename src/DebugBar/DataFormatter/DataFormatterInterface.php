@@ -39,4 +39,12 @@ interface DataFormatterInterface
      * @return string
      */
     function formatBytes($size, $precision = 2);
+
+    /**
+     * Format a classname in a readable string
+     *
+     * @param object $object
+     * @return string
+     */
+    public function formatClassName($object);
 }

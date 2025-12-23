@@ -15,7 +15,7 @@ namespace DebugBar\Storage;
  */
 class RedisStorage implements StorageInterface
 {
-    /** @var \Predis\Client|\Redis */
+    /** @var \Predis\Client|\Redis|\RedisCluster */
     protected $redis;
 
     /** @var string */

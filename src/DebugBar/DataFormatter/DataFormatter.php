@@ -67,13 +67,13 @@ class DataFormatter implements DataFormatterInterface
     }
 
     /**
-     * @param string $size
+     * @param null|float|int|string $size
      * @param int $precision
      * @return string
      */
     public function formatBytes($size, $precision = 2)
     {
-        if ($size === 0 || $size === null) {
+        if ($size === 0 || $size === null || $size === "0") {
             return "0B";
         }
 

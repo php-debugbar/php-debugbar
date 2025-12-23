@@ -11,7 +11,7 @@ use PDOStatement;
  */
 class TraceablePDOStatement extends PDOStatement
 {
-    /** @var PDO */
+    /** @var TraceablePDO */
     protected $pdo;
 
     /** @var array */
@@ -109,6 +109,7 @@ class TraceablePDOStatement extends PDOStatement
         $trace->start();
 
         $ex = null;
+        $result = null;
         try {
             $result = parent::execute($input_parameters);
         } catch (PDOException $e) {

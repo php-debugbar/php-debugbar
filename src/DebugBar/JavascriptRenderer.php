@@ -11,6 +11,7 @@
 namespace DebugBar;
 
 use DebugBar\DataCollector\AssetProvider;
+use DebugBar\DataCollector\DataCollectorInterface;
 use DebugBar\DataCollector\Renderable;
 
 /**
@@ -404,7 +405,7 @@ class JavascriptRenderer
     /**
      * Sets the default theme
      *
-     * @param boolean $hide
+     * @param string $theme
      * @return $this
      */
     public function setTheme($theme='auto')
@@ -616,7 +617,7 @@ class JavascriptRenderer
     /**
      * Sets whether datasets are directly loaded or deferred
      *
-     * @param boolean $enabled
+     * @param boolean $defer
      */
     public function setDeferDatasets($defer = true)
     {
@@ -790,6 +791,7 @@ class JavascriptRenderer
 
         $additionalAssets = $this->additionalAssets;
         // finds assets provided by collectors
+        /** @var DataCollectorInterface $collector */
         foreach ($this->debugBar->getCollectors() as $collector) {
             if (($collector instanceof AssetProvider) && !in_array($collector->getName(), $this->ignoredCollectors)) {
                 $additionalAssets[] = $collector->getAssets();
@@ -841,7 +843,7 @@ class JavascriptRenderer
      * @param string $relativeTo
      * @param string $basePath
      * @param string $baseUrl
-     * @return string
+     * @return null|string
      */
     protected function getRelativeRoot($relativeTo, $basePath, $baseUrl)
     {
@@ -857,9 +859,9 @@ class JavascriptRenderer
     /**
      * Makes a URI relative to another
      *
-     * @param string|array $uri
+     * @param null|string|array $uri
      * @param string $root
-     * @return string
+     * @return string|array
      */
     protected function makeUriRelativeTo($uri, $root)
     {
@@ -1159,6 +1161,7 @@ class JavascriptRenderer
 
         // finds controls provided by collectors
         $widgets = array();
+        /** @var DataCollectorInterface $collector */
         foreach ($this->debugBar->getCollectors() as $collector) {
             if (($collector instanceof Renderable) && !in_array($collector->getName(), $this->ignoredCollectors)) {
                 if ($w = $collector->getWidgets()) {
@@ -1185,7 +1188,7 @@ class JavascriptRenderer
                     $name,
                     isset($options['tab']) ? $options['tab'] : 'PhpDebugBar.DebugBar.Tab',
                     substr(json_encode($opts, JSON_FORCE_OBJECT), 1, -1),
-                    isset($options['widget']) ? sprintf('%s"widget": new %s()', count($opts) ? ', ' : '', $options['widget']) : ''
+                    isset($options['widget']) ? sprintf(', "widget": new %s()', $options['widget']) : ''
                 );
             } elseif (isset($options['indicator']) || isset($options['icon'])) {
                 $js .= sprintf("%s.addIndicator(\"%s\", new %s(%s), \"%s\");\n",
