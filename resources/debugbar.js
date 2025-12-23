@@ -84,6 +84,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
      * Base class for all elements with a visual component
      */
     class Widget {
+        get tagName() { return 'div'; }
+
         constructor(options = {}) {
             this._attributes = { ...this.defaults };
             this._boundAttributes = {};
@@ -192,17 +194,19 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             const Parent = this;
             class Child extends Parent {}
 
-            Object.assign(Child.prototype, props);
+            // Use defineProperties to handle getters/setters properly
+            for (const key in props) {
+                const descriptor = Object.getOwnPropertyDescriptor(props, key);
+                if (descriptor) {
+                    Object.defineProperty(Child.prototype, key, descriptor);
+                }
+            }
             Object.assign(Child, Parent);
             Child.__super__ = Parent.prototype;
 
             return Child;
         }
     }
-
-    // Set default prototype properties
-    Widget.prototype.tagName = 'div';
-    Widget.prototype.className = null;
     Widget.prototype.defaults = {};
 
     PhpDebugBar.Widget = Widget;
@@ -224,9 +228,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
      *  - widget
      *  - data: forward data to widget data
      */
-    const Tab = Widget.extend({
-
-        className: csscls('panel'),
+    class Tab extends Widget {
+        get className() { return csscls('panel'); }
 
         render() {
             this.tab = document.createElement('a');
@@ -272,8 +275,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 }
             });
         }
-
-    });
+    }
 
     // ------------------------------------------------------------------
 
@@ -289,11 +291,9 @@ window.PhpDebugBar = window.PhpDebugBar || {};
      *  - tooltip
      *  - data: alias of title
      */
-    const Indicator = Widget.extend({
-
-        tagName: 'span',
-
-        className: csscls('indicator'),
+    class Indicator extends Widget {
+        get tagName() { return 'span'; }
+        get className() { return csscls('indicator'); }
 
         render() {
             this.icon = document.createElement('i');
@@ -350,20 +350,17 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 }
             });
         }
-
-    });
+    }
 
     /**
      * Displays datasets in a table
      *
      */
-    const Settings = Widget.extend({
+    class Settings extends Widget {
+        get tagName() { return 'form'; }
+        get className() { return csscls('settings'); }
 
-        tagName: 'form',
-
-        className: csscls('settings'),
-
-        settings: {},
+        settings = {};
 
         initialize(options) {
             this.set(options);
@@ -383,7 +380,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                     debugbar.el.setAttribute(`data-${key}`, debugbar.options[key]);
                 }
             }
-        },
+        }
 
         clearSettings() {
             const debugbar = this.get('debugbar');
@@ -407,7 +404,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             }
 
             this.initialize(debugbar.options);
-        },
+        }
 
         storeSetting(key, value) {
             this.settings[key] = value;
@@ -419,7 +416,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             }
 
             localStorage.setItem('phpdebugbar-settings', JSON.stringify(this.settings));
-        },
+        }
 
         render() {
             this.el.innerHTML = '';
@@ -522,8 +519,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 this.autoshow.closest(`.${csscls('form-row')}`).style.display = 'none';
             }
         }
-
-    });
+    }
 
     // ------------------------------------------------------------------
 
@@ -592,16 +588,15 @@ window.PhpDebugBar = window.PhpDebugBar || {};
      * A data map is used to fill those controls with data provided
      * from datasets.
      */
-    const DebugBar = PhpDebugBar.DebugBar = Widget.extend({
+    class DebugBar extends Widget {
+        get className() { return `phpdebugbar ${csscls('minimized')}`; }
 
-        className: `phpdebugbar ${csscls('minimized')}`,
-
-        options: {
+        options = {
             bodyMarginBottom: true,
             theme: 'auto',
             openBtnPosition: 'bottomLeft',
             hideEmptyTabs: false
-        },
+        };
 
         initialize(options = {}) {
             this.options = Object.assign({}, this.options, options);
@@ -627,7 +622,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.settings = new PhpDebugBar.DebugBar.Tab({ icon: 'adjustments-horizontal', title: 'Settings', widget: new Settings({
                 debugbar: this
             }) });
-        },
+        }
 
         /**
          * Register resize event, for resize debugbar with reponsive css.
@@ -643,7 +638,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.respCSSSize = 0;
             window.addEventListener('resize', f);
             setTimeout(f, 20);
-        },
+        }
 
         registerMediaListener() {
             const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)');
@@ -652,7 +647,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                     this.setTheme('auto');
                 }
             });
-        },
+        }
 
         setTheme(theme) {
             this.options.theme = theme;
@@ -666,7 +661,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             if (this.openHandler) {
                 this.openHandler.el.setAttribute('data-theme', theme);
             }
-        },
+        }
 
         /**
          * Resizes the debugbar to fit the current browser window
@@ -704,7 +699,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             // Reset height to ensure bar is still visible
             const currentHeight = this.body.clientHeight || parseInt(localStorage.getItem('phpdebugbar-height'), 10) || 300;
             this.setHeight(currentHeight);
-        },
+        }
 
         /**
          * Initialiazes the UI
@@ -840,7 +835,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 }
             });
             this.body.append(this.settings.el);
-        },
+        }
 
         /**
          * Sets the height of the debugbar body section
@@ -858,7 +853,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.body.style.height = `${height}px`;
             localStorage.setItem('phpdebugbar-height', height);
             this.recomputeBottomOffset();
-        },
+        }
 
         /**
          * Restores the state of the DebugBar using localStorage
@@ -890,7 +885,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                     }
                 }
             }
-        },
+        }
 
         /**
          * Creates and adds a new tab
@@ -907,7 +902,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 widget
             });
             return this.addTab(name, tab);
-        },
+        }
 
         /**
          * Adds a new tab
@@ -941,7 +936,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 this.firstTabName = name;
             }
             return tab;
-        },
+        }
 
         /**
          * Creates and adds an indicator
@@ -959,7 +954,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 tooltip
             });
             return this.addIndicator(name, indicator, position);
-        },
+        }
 
         /**
          * Adds an indicator
@@ -984,7 +979,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
             this.controls[name] = indicator;
             return indicator;
-        },
+        }
 
         /**
          * Returns a control
@@ -996,7 +991,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             if (this.isControl(name)) {
                 return this.controls[name];
             }
-        },
+        }
 
         /**
          * Checks if there's a control under the specified name
@@ -1007,7 +1002,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         isControl(name) {
             return this.controls[name] !== undefined;
-        },
+        }
 
         /**
          * Checks if a tab with the specified name exists
@@ -1018,7 +1013,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         isTab(name) {
             return this.isControl(name) && this.controls[name] instanceof Tab;
-        },
+        }
 
         /**
          * Checks if an indicator with the specified name exists
@@ -1029,7 +1024,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         isIndicator(name) {
             return this.isControl(name) && this.controls[name] instanceof Indicator;
-        },
+        }
 
         /**
          * Removes all tabs and indicators from the debug bar and hides it
@@ -1045,7 +1040,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 control.el.remove();
             }
             this.controls = {};
-        },
+        }
 
         /**
          * Open the debug bar and display the specified tab
@@ -1090,7 +1085,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             localStorage.setItem('phpdebugbar-tab', name);
 
             this.resize();
-        },
+        }
 
         /**
          * Hide panels and minimize the debug bar
@@ -1109,7 +1104,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             localStorage.setItem('phpdebugbar-visible', '0');
             this.el.classList.add(csscls('minimized'));
             this.resize();
-        },
+        }
 
         /**
          * Checks if the panel is minimized
@@ -1118,7 +1113,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         isMinimized() {
             return this.el.classList.contains(csscls('minimized'));
-        },
+        }
 
         /**
          * Close the debug bar
@@ -1133,7 +1128,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             localStorage.setItem('phpdebugbar-open', '0');
             this.el.classList.add(csscls('closed'));
             this.recomputeBottomOffset();
-        },
+        }
 
         /**
          * Checks if the panel is closed
@@ -1142,7 +1137,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         isClosed() {
             return this.el.classList.contains(csscls('closed'));
-        },
+        }
 
         /**
          * Restore the debug bar
@@ -1162,7 +1157,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             }
             this.el.classList.remove(csscls('closed'));
             this.resize();
-        },
+        }
 
         /**
          * Recomputes the margin-bottom css property of the body so
@@ -1178,7 +1173,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 const offset = this.el.offsetHeight + (this.bodyMarginBottomHeight || 0);
                 document.body.style.marginBottom = `${offset}px`;
             }
-        },
+        }
 
         /**
          * Sets the data map used by dataChangeHandler to populate
@@ -1197,7 +1192,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         setDataMap(map) {
             this.dataMap = map;
-        },
+        }
 
         /**
          * Same as setDataMap() but appends to the existing map
@@ -1208,7 +1203,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         addDataMap(map) {
             Object.assign(this.dataMap, map);
-        },
+        }
 
         /**
          * Resets datasets and add one set of data
@@ -1223,7 +1218,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
         setData(data) {
             this.datasets = {};
             return this.addDataSet(data);
-        },
+        }
 
         /**
          * Adds a dataset
@@ -1280,7 +1275,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.resize();
 
             return id;
-        },
+        }
 
         /**
          * Loads a dataset using the open handler
@@ -1298,7 +1293,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 self.resize();
                 callback && callback(data);
             });
-        },
+        }
 
         /**
          * Returns the data from a dataset
@@ -1309,7 +1304,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         getDataSet(id) {
             return this.datasets[id];
-        },
+        }
 
         /**
          * Switch the currently displayed dataset
@@ -1328,7 +1323,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             if (this.datasetTab) {
                 this.datasetTab.get('widget').set('id', id);
             }
-        },
+        }
 
         /**
          * Called when the current dataset is modified.
@@ -1347,7 +1342,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 }
             }
             this.resize();
-        },
+        }
 
         /**
          * Sets the handler to open past dataset
@@ -1363,7 +1358,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             } else {
                 this.openbtn.style.display = 'none';
             }
-        },
+        }
 
         /**
          * Returns the handler to open past dataset
@@ -1373,7 +1368,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         getOpenHandler() {
             return this.openHandler;
-        },
+        }
 
         enableAjaxHandlerTab() {
             this.datasetTab = new PhpDebugBar.DebugBar.Tab({ icon: 'history', title: 'Request history', widget: new PhpDebugBar.Widgets.DatasetWidget({
@@ -1394,8 +1389,9 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.body.append(this.datasetTab.el);
             this.controls.__datasets = this.datasetTab;
         }
-    });
+    }
 
+    PhpDebugBar.DebugBar = DebugBar;
     DebugBar.Tab = Tab;
     DebugBar.Indicator = Indicator;
 
