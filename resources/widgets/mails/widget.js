@@ -1,4 +1,4 @@
-(function ($) {
+(function () {
     const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
 
     /**
@@ -12,52 +12,97 @@
         className: csscls('mails'),
 
         render() {
-            this.$list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer(li, mail) {
-                $('<span />').addClass(csscls('subject')).text(mail.subject).appendTo(li);
-                $('<span />').addClass(csscls('to')).text(mail.to).appendTo(li);
+            this.list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer(li, mail) {
+                const subject = document.createElement('span');
+                subject.classList.add(csscls('subject'));
+                subject.textContent = mail.subject;
+                li.append(subject);
+
+                const to = document.createElement('span');
+                to.classList.add(csscls('to'));
+                to.textContent = mail.to;
+                li.append(to);
+
                 if (mail.body || mail.html) {
-                    const header = $('<span />').addClass(csscls('filename')).text('');
-                    $('<a title="Mail Preview">View Mail</a>').on('click', () => {
+                    const header = document.createElement('span');
+                    header.classList.add(csscls('filename'));
+                    header.textContent = '';
+
+                    const link = document.createElement('a');
+                    link.setAttribute('title', 'Mail Preview');
+                    link.textContent = 'View Mail';
+                    link.classList.add(csscls('editor-link'));
+                    link.addEventListener('click', () => {
                         const popup = window.open('about:blank', 'Mail Preview', 'width=650,height=440,scrollbars=yes');
                         const documentToWriteTo = popup.document;
-                        const headers = !mail.headers
-                            ? ''
-                            : $('<pre style="border: 1px solid #ddd; padding: 5px;" />')
-                                    .append($('<code />').text(mail.headers));
 
-                        let body = $('<pre style="border: 1px solid #ddd; padding: 5px;" />').text(mail.body);
-                        let html = null;
+                        let headersHTML = '';
+                        if (mail.headers) {
+                            const headersPre = document.createElement('pre');
+                            headersPre.style.border = '1px solid #ddd';
+                            headersPre.style.padding = '5px';
+                            const headersCode = document.createElement('code');
+                            headersCode.textContent = mail.headers;
+                            headersPre.append(headersCode);
+                            headersHTML = headersPre.outerHTML;
+                        }
+
+                        const bodyPre = document.createElement('pre');
+                        bodyPre.style.border = '1px solid #ddd';
+                        bodyPre.style.padding = '5px';
+                        bodyPre.textContent = mail.body;
+
+                        let bodyHTML = bodyPre.outerHTML;
+                        let htmlIframeHTML = '';
                         if (mail.html) {
-                            body = $('<details />').append($('<summary>Text version</summary>')).append(body);
-                            html = $('<iframe width="100%" height="400px" sandbox="" referrerpolicy="no-referrer"/>').attr('srcdoc', mail.html);
+                            const details = document.createElement('details');
+                            const summary = document.createElement('summary');
+                            summary.textContent = 'Text version';
+                            details.append(summary);
+                            details.append(bodyPre);
+                            bodyHTML = details.outerHTML;
+
+                            const htmlIframe = document.createElement('iframe');
+                            htmlIframe.setAttribute('width', '100%');
+                            htmlIframe.setAttribute('height', '400px');
+                            htmlIframe.setAttribute('sandbox', '');
+                            htmlIframe.setAttribute('referrerpolicy', 'no-referrer');
+                            htmlIframe.setAttribute('srcdoc', mail.html);
+                            htmlIframeHTML = htmlIframe.outerHTML;
                         }
 
                         documentToWriteTo.open();
-                        documentToWriteTo.write(headers.prop('outerHTML') + body.prop('outerHTML') + (html ? html.prop('outerHTML') : ''));
+                        documentToWriteTo.write(headersHTML + bodyHTML + htmlIframeHTML);
                         documentToWriteTo.close();
-                    }).addClass(csscls('editor-link')).appendTo(header);
-
-                    header.appendTo(li);
+                    });
+                    header.append(link);
+                    li.append(header);
                 }
 
                 if (mail.headers) {
-                    const headers = $('<pre />').addClass(csscls('headers')).appendTo(li);
-                    $('<code />').text(mail.headers).appendTo(headers);
-                    li.click(() => {
-                        if (headers.is(':visible')) {
-                            headers.hide();
+                    const headers = document.createElement('pre');
+                    headers.classList.add(csscls('headers'));
+
+                    const code = document.createElement('code');
+                    code.textContent = mail.headers;
+                    headers.append(code);
+                    li.append(headers);
+
+                    li.addEventListener('click', () => {
+                        if (headers.style.display !== 'none') {
+                            headers.style.display = 'none';
                         } else {
-                            headers.show();
+                            headers.style.display = '';
                         }
                     });
                 }
             } });
-            this.$list.$el.appendTo(this.$el);
+            this.el.append(this.list.el);
 
             this.bindAttr('data', function (data) {
-                this.$list.set('data', data);
+                this.list.set('data', data);
             });
         }
 
     });
-})(PhpDebugBar.$);
+})();

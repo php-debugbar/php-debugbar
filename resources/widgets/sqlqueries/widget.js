@@ -1,4 +1,4 @@
-(function ($) {
+(function () {
     const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
 
     /**
@@ -12,17 +12,21 @@
         className: csscls('sqlqueries'),
 
         onFilterClick(el) {
-            $(el).toggleClass(csscls('excluded'));
-            this.$list.$el.find(`li[connection=${$(el).attr('rel')}]`).toggle();
+            el.classList.toggle(csscls('excluded'));
+            const connection = el.getAttribute('rel');
+            const items = this.list.el.querySelectorAll(`li[connection="${connection}"]`);
+            for (const item of items) {
+                item.style.display = item.style.display === 'none' ? '' : 'none';
+            }
         },
         onCopyToClipboard(el) {
-            const code = $(el).parent('li').find('code').get(0);
+            const code = el.parentElement.querySelector('code');
             const copy = function () {
                 try {
                     if (document.execCommand('copy')) {
-                        $(el).addClass(csscls('copy-clipboard-check'));
+                        el.classList.add(csscls('copy-clipboard-check'));
                         setTimeout(() => {
-                            $(el).removeClass(csscls('copy-clipboard-check'));
+                            el.classList.remove(csscls('copy-clipboard-check'));
                         }, 2000);
                     }
                 } catch (err) {
@@ -46,135 +50,226 @@
             select(code);
         },
         renderList(caption, icon, data) {
-            const $ul = $('<ul />').addClass(csscls('table-list'));
-            const $li = $('<li />').addClass(csscls('table-list-item'));
-            const $span = $('<span />').addClass('phpdebugbar-text-muted');
+            const ul = document.createElement('ul');
+            ul.classList.add(csscls('table-list'));
+
             for (const key in data) {
                 const value = typeof data[key] === 'function' ? `${data[key].name} {}` : data[key];
-                $li.clone().append(typeof value === 'object' && value !== null
-                    ? [$span.clone().text(value.index || key).append('.'), '&nbsp;']
-                            .concat(value.namespace ? [`${value.namespace}::`] : [])
-                            .concat([value.name || value.file])
-                            .concat(value.line ? [$span.clone().text(`:${value.line}`)] : [])
-                    : [$span.clone().text(`${key}:`), '&nbsp;', $span.clone().text(value).html()]
-                ).appendTo($ul);
+                const li = document.createElement('li');
+                li.classList.add(csscls('table-list-item'));
+
+                if (typeof value === 'object' && value !== null) {
+                    const keySpan = document.createElement('span');
+                    keySpan.classList.add('phpdebugbar-text-muted');
+                    keySpan.textContent = value.index || key;
+                    keySpan.append('.');
+                    li.append(keySpan);
+                    li.append('\u00A0');
+
+                    if (value.namespace) {
+                        li.append(`${value.namespace}::`);
+                    }
+
+                    li.append(value.name || value.file);
+
+                    if (value.line) {
+                        const lineSpan = document.createElement('span');
+                        lineSpan.classList.add('phpdebugbar-text-muted');
+                        lineSpan.textContent = `:${value.line}`;
+                        li.append(lineSpan);
+                    }
+                } else {
+                    const keySpan = document.createElement('span');
+                    keySpan.classList.add('phpdebugbar-text-muted');
+                    keySpan.textContent = `${key}:`;
+                    li.append(keySpan);
+                    li.append('\u00A0');
+
+                    const valueSpan = document.createElement('span');
+                    valueSpan.classList.add('phpdebugbar-text-muted');
+                    valueSpan.textContent = value;
+                    li.append(valueSpan.innerHTML);
+                }
+
+                ul.append(li);
             }
+
             caption += icon ? ` <i class="phpdebugbar-fa phpdebugbar-fa-${icon} phpdebugbar-text-muted"></i>` : '';
-            return $('<tr />').append(
-                $('<td />').addClass(csscls('name')).html(caption),
-                $('<td />').addClass(csscls('value')).append($ul)
-            );
+
+            const tr = document.createElement('tr');
+            const nameTd = document.createElement('td');
+            nameTd.classList.add(csscls('name'));
+            nameTd.innerHTML = caption;
+            tr.append(nameTd);
+
+            const valueTd = document.createElement('td');
+            valueTd.classList.add(csscls('value'));
+            valueTd.append(ul);
+            tr.append(valueTd);
+
+            return tr;
         },
         render() {
-            this.$status = $('<div />').addClass(csscls('status')).appendTo(this.$el);
+            this.status = document.createElement('div');
+            this.status.classList.add(csscls('status'));
+            this.el.append(this.status);
 
-            this.$toolbar = $('<div />').addClass(csscls('toolbar')).appendTo(this.$el);
+            this.toolbar = document.createElement('div');
+            this.toolbar.classList.add(csscls('toolbar'));
+            this.el.append(this.toolbar);
 
             let filters = [];
             const self = this;
 
-            this.$list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer(li, stmt) {
+            this.list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer(li, stmt) {
                 if (stmt.slow) {
-                    li.addClass(csscls('sql-slow'));
+                    li.classList.add(csscls('sql-slow'));
                 }
                 if (stmt.width_percent) {
-                    $('<div />').addClass(csscls('bg-measure')).append(
-                        $('<div />').addClass(csscls('value')).css({
-                            left: `${stmt.start_percent}%`,
-                            width: `${Math.max(stmt.width_percent, 0.01)}%`
-                        })
-                    ).appendTo(li);
+                    const bgMeasure = document.createElement('div');
+                    bgMeasure.classList.add(csscls('bg-measure'));
+
+                    const valueDiv = document.createElement('div');
+                    valueDiv.classList.add(csscls('value'));
+                    valueDiv.style.left = `${stmt.start_percent}%`;
+                    valueDiv.style.width = `${Math.max(stmt.width_percent, 0.01)}%`;
+                    bgMeasure.append(valueDiv);
+                    li.append(bgMeasure);
                 }
                 if (stmt.duration_str) {
-                    $('<span title="Duration" />').addClass(csscls('duration')).text(stmt.duration_str).appendTo(li);
+                    const duration = document.createElement('span');
+                    duration.setAttribute('title', 'Duration');
+                    duration.classList.add(csscls('duration'));
+                    duration.textContent = stmt.duration_str;
+                    li.append(duration);
                 }
                 if (stmt.memory_str) {
-                    $('<span title="Memory usage" />').addClass(csscls('memory')).text(stmt.memory_str).appendTo(li);
+                    const memory = document.createElement('span');
+                    memory.setAttribute('title', 'Memory usage');
+                    memory.classList.add(csscls('memory'));
+                    memory.textContent = stmt.memory_str;
+                    li.append(memory);
                 }
                 if (typeof (stmt.row_count) !== 'undefined') {
-                    $('<span title="Row count" />').addClass(csscls('row-count')).text(stmt.row_count).appendTo(li);
+                    const rowCount = document.createElement('span');
+                    rowCount.setAttribute('title', 'Row count');
+                    rowCount.classList.add(csscls('row-count'));
+                    rowCount.textContent = stmt.row_count;
+                    li.append(rowCount);
                 }
                 if (typeof (stmt.stmt_id) !== 'undefined' && stmt.stmt_id) {
-                    $('<span title="Prepared statement ID" />').addClass(csscls('stmt-id')).text(stmt.stmt_id).appendTo(li);
+                    const stmtId = document.createElement('span');
+                    stmtId.setAttribute('title', 'Prepared statement ID');
+                    stmtId.classList.add(csscls('stmt-id'));
+                    stmtId.textContent = stmt.stmt_id;
+                    li.append(stmtId);
                 }
                 if (stmt.connection) {
-                    $('<span title="Connection" />').addClass(csscls('database')).text(stmt.connection).appendTo(li);
-                    li.attr('connection', stmt.connection);
-                    if ($.inArray(stmt.connection, filters) === -1) {
+                    const database = document.createElement('span');
+                    database.setAttribute('title', 'Connection');
+                    database.classList.add(csscls('database'));
+                    database.textContent = stmt.connection;
+                    li.append(database);
+                    li.setAttribute('connection', stmt.connection);
+
+                    if (!filters.includes(stmt.connection)) {
                         filters.push(stmt.connection);
-                        $('<a />')
-                            .addClass(csscls('filter'))
-                            .text(stmt.connection)
-                            .attr('rel', stmt.connection)
-                            .on('click', function () {
-                                self.onFilterClick(this);
-                            })
-                            .appendTo(self.$toolbar);
+
+                        const filterLink = document.createElement('a');
+                        filterLink.classList.add(csscls('filter'));
+                        filterLink.textContent = stmt.connection;
+                        filterLink.setAttribute('rel', stmt.connection);
+                        filterLink.addEventListener('click', function () {
+                            self.onFilterClick(this);
+                        });
+                        self.toolbar.append(filterLink);
+
                         if (filters.length > 1) {
-                            self.$toolbar.show();
-                            self.$list.$el.css('margin-bottom', '20px');
+                            self.toolbar.style.display = '';
+                            self.list.el.style.marginBottom = '20px';
                         }
                     }
                 }
                 if ((!stmt.type || stmt.type === 'query')) {
-                    $('<span title="Copy to clipboard" />')
-                        .addClass(csscls('copy-clipboard'))
-                        .css('cursor', 'pointer')
-                        .html('&#8203;')
-                        .on('click', function (event) {
-                            self.onCopyToClipboard(this);
-                            event.stopPropagation();
-                        })
-                        .appendTo(li);
+                    const copyBtn = document.createElement('span');
+                    copyBtn.setAttribute('title', 'Copy to clipboard');
+                    copyBtn.classList.add(csscls('copy-clipboard'));
+                    copyBtn.style.cursor = 'pointer';
+                    copyBtn.innerHTML = '&#8203;';
+                    copyBtn.addEventListener('click', function (event) {
+                        self.onCopyToClipboard(this);
+                        event.stopPropagation();
+                    });
+                    li.append(copyBtn);
                 }
                 if (typeof (stmt.xdebug_link) !== 'undefined' && stmt.xdebug_link) {
-                    const header = $('<span title="Filename" />').addClass(csscls('filename')).text(stmt.xdebug_link.filename + (stmt.xdebug_link.line ? `#${stmt.xdebug_link.line}` : ''));
-                    $(`<a href="${stmt.xdebug_link.url}"></a>`).on('click', () => {
+                    const header = document.createElement('span');
+                    header.setAttribute('title', 'Filename');
+                    header.classList.add(csscls('filename'));
+                    header.textContent = stmt.xdebug_link.filename + (stmt.xdebug_link.line ? `#${stmt.xdebug_link.line}` : '');
+
+                    const link = document.createElement('a');
+                    link.setAttribute('href', stmt.xdebug_link.url);
+                    link.classList.add(csscls('editor-link'));
+                    link.addEventListener('click', (event) => {
                         event.stopPropagation();
                         if (stmt.xdebug_link.ajax) {
                             fetch(stmt.xdebug_link.url);
                             event.preventDefault();
                         }
-                    }).addClass(csscls('editor-link')).appendTo(header);
-                    header.appendTo(li);
+                    });
+                    header.append(link);
+                    li.append(header);
                 }
                 if (stmt.type === 'transaction') {
-                    $('<strong />').addClass(csscls('sql')).addClass(csscls('name')).text(stmt.sql).appendTo(li);
+                    const strong = document.createElement('strong');
+                    strong.classList.add(csscls('sql'), csscls('name'));
+                    strong.textContent = stmt.sql;
+                    li.append(strong);
                 } else {
-                    $('<code />').addClass(csscls('sql')).html(PhpDebugBar.Widgets.highlight(stmt.sql, 'sql')).appendTo(li);
+                    const code = document.createElement('code');
+                    code.classList.add(csscls('sql'));
+                    code.innerHTML = PhpDebugBar.Widgets.highlight(stmt.sql, 'sql');
+                    li.append(code);
                 }
                 if (typeof (stmt.is_success) !== 'undefined' && !stmt.is_success) {
-                    li.addClass(csscls('error'));
-                    li.append($('<span />').addClass(csscls('error')).text(`[${stmt.error_code}] ${stmt.error_message}`));
+                    li.classList.add(csscls('error'));
+                    const errorSpan = document.createElement('span');
+                    errorSpan.classList.add(csscls('error'));
+                    errorSpan.textContent = `[${stmt.error_code}] ${stmt.error_message}`;
+                    li.append(errorSpan);
                 }
-                const table = $('<table></table>').addClass(csscls('params'));
-                if (stmt.params && !$.isEmptyObject(stmt.params)) {
-                    self.renderList('Params', 'thumb-tack', stmt.params).appendTo(table);
+                const table = document.createElement('table');
+                table.classList.add(csscls('params'));
+
+                if (stmt.params && Object.keys(stmt.params).length > 0) {
+                    table.append(self.renderList('Params', 'thumb-tack', stmt.params));
                 }
-                if (stmt.bindings && !$.isEmptyObject(stmt.bindings)) {
-                    self.renderList('Bindings', 'thumb-tack', stmt.bindings).appendTo(table);
+                if (stmt.bindings && Object.keys(stmt.bindings).length > 0) {
+                    table.append(self.renderList('Bindings', 'thumb-tack', stmt.bindings));
                 }
-                if (stmt.hints && !$.isEmptyObject(stmt.hints)) {
-                    self.renderList('Hints', 'question-circle', stmt.hints).appendTo(table);
+                if (stmt.hints && Object.keys(stmt.hints).length > 0) {
+                    table.append(self.renderList('Hints', 'question-circle', stmt.hints));
                 }
-                if (stmt.backtrace && !$.isEmptyObject(stmt.backtrace)) {
-                    self.renderList('Backtrace', 'list-ul', stmt.backtrace).appendTo(table);
+                if (stmt.backtrace && Object.keys(stmt.backtrace).length > 0) {
+                    table.append(self.renderList('Backtrace', 'list-ul', stmt.backtrace));
                 }
-                if (table.find('tr').length) {
-                    table.appendTo(li);
-                    li.css('cursor', 'pointer').click(() => {
+                if (table.querySelectorAll('tr').length) {
+                    li.append(table);
+                    li.style.cursor = 'pointer';
+                    li.addEventListener('click', () => {
                         if (window.getSelection().type === 'Range') {
                             return '';
                         }
-                        if (table.is(':visible')) {
-                            table.hide();
+                        if (table.style.display !== 'none') {
+                            table.style.display = 'none';
                         } else {
-                            table.show();
+                            table.style.display = '';
                         }
                     });
                 }
             } });
-            this.$list.$el.appendTo(this.$el);
+            this.el.append(this.list.el);
 
             this.bindAttr('data', function (data) {
                 // the PDO collector maybe is empty
@@ -182,9 +277,13 @@
                     return false;
                 }
                 filters = [];
-                this.$toolbar.hide().find(csscls('.filter')).remove();
-                this.$list.set('data', data.statements);
-                this.$status.empty();
+                this.toolbar.style.display = 'none';
+                const toolbarFilters = this.toolbar.querySelectorAll(`.${csscls('filter')}`);
+                for (const filter of toolbarFilters) {
+                    filter.remove();
+                }
+                this.list.set('data', data.statements);
+                this.status.innerHTML = '';
 
                 // Search for duplicate statements.
                 const sql = {};
@@ -194,10 +293,10 @@
                         continue;
                     }
                     let stmt = data.statements[i].sql;
-                    if (data.statements[i].params && !$.isEmptyObject(data.statements[i].params)) {
+                    if (data.statements[i].params && Object.keys(data.statements[i].params).length > 0) {
                         stmt += JSON.stringify(data.statements[i].params);
                     }
-                    if (data.statements[i].bindings && !$.isEmptyObject(data.statements[i].bindings)) {
+                    if (data.statements[i].bindings && Object.keys(data.statements[i].bindings).length > 0) {
                         stmt += JSON.stringify(data.statements[i].bindings);
                     }
                     if (data.statements[i].connection) {
@@ -211,12 +310,18 @@
                     if (sql[stmt].keys.length > 1) {
                         duplicate += sql[stmt].keys.length;
                         for (let i = 0; i < sql[stmt].keys.length; i++) {
-                            this.$list.$el.find(`.${csscls('list-item')}`).eq(sql[stmt].keys[i]).addClass(csscls('sql-duplicate'));
+                            const listItems = this.list.el.querySelectorAll(`.${csscls('list-item')}`);
+                            if (listItems[sql[stmt].keys[i]]) {
+                                listItems[sql[stmt].keys[i]].classList.add(csscls('sql-duplicate'));
+                            }
                         }
                     }
                 }
 
-                const t = $('<span />').text(`${data.nb_statements} statements were executed`).appendTo(this.$status);
+                const t = document.createElement('span');
+                t.textContent = `${data.nb_statements} statements were executed`;
+                this.status.append(t);
+
                 if (data.nb_failed_statements) {
                     t.append(`, ${data.nb_failed_statements} of which failed`);
                 }
@@ -226,21 +331,37 @@
 
                     // add toggler for displaying only duplicated queries
                     const duplicatedText = 'Show only duplicated';
-                    $('<a />').addClass(csscls('duplicates')).click(function () {
-                        $(this).toggleClass('shown-duplicated').text($(this).hasClass('shown-duplicated') ? 'Show All' : duplicatedText);
-                        $(`.${self.className} .${csscls('list-item')}`)
-                            .not(`.${csscls('sql-duplicate')}`)
-                            .toggle();
-                    }).text(duplicatedText).appendTo(t);
+                    const toggleLink = document.createElement('a');
+                    toggleLink.classList.add(csscls('duplicates'));
+                    toggleLink.textContent = duplicatedText;
+                    toggleLink.addEventListener('click', function () {
+                        this.classList.toggle('shown-duplicated');
+                        this.textContent = this.classList.contains('shown-duplicated') ? 'Show All' : duplicatedText;
+
+                        const selector = `.${self.className} .${csscls('list-item')}:not(.${csscls('sql-duplicate')})`;
+                        const items = document.querySelectorAll(selector);
+                        for (const item of items) {
+                            item.style.display = item.style.display === 'none' ? '' : 'none';
+                        }
+                    });
+                    t.append(toggleLink);
                 }
                 if (data.accumulated_duration_str) {
-                    this.$status.append($('<span title="Accumulated duration" />').addClass(csscls('duration')).text(data.accumulated_duration_str));
+                    const duration = document.createElement('span');
+                    duration.setAttribute('title', 'Accumulated duration');
+                    duration.classList.add(csscls('duration'));
+                    duration.textContent = data.accumulated_duration_str;
+                    this.status.append(duration);
                 }
                 if (data.memory_usage_str) {
-                    this.$status.append($('<span title="Memory usage" />').addClass(csscls('memory')).text(data.memory_usage_str));
+                    const memory = document.createElement('span');
+                    memory.setAttribute('title', 'Memory usage');
+                    memory.classList.add(csscls('memory'));
+                    memory.textContent = data.memory_usage_str;
+                    this.status.append(memory);
                 }
             });
         }
 
     });
-})(PhpDebugBar.$);
+})();
