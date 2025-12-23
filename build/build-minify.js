@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const resourcesDir = path.join(__dirname, '../resources');
-const outputDir = resourcesDir + '/dist';
+const outputDir = path.join(__dirname, '../dist');
 
 // Files to concatenate and minify (order matters!)
 const jsFiles = [
@@ -17,7 +17,8 @@ const jsFiles = [
     'openhandler.js',
     'widgets/sqlqueries/widget.js',
     'widgets/templates/widget.js',
-    'widgets/mails/widget.js'
+    'widgets/mails/widget.js',
+    'vendor/highlightjs/highlight.pack.js'
 ];
 
 const cssFiles = [
