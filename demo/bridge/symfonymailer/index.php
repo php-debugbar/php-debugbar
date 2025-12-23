@@ -14,7 +14,6 @@ include __DIR__ . '/../../bootstrap.php';
 $debugbarRenderer->setBaseUrl('../../../resources');
 
 $mailCollector = new SymfonyMailCollector();
-$mailCollector->showMessageDetail();
 $mailCollector->showMessageBody();
 $debugbar->addCollector($mailCollector);
 $logger = new MessagesCollector('mails');

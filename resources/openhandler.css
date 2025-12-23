@@ -6,7 +6,7 @@ div.phpdebugbar-openhandler-overlay {
     height: 100%;
     background: #000;
     opacity: .3;
-    z-index: 20000;
+    z-index: 100000002;
 }
 
 div.phpdebugbar-openhandler {
@@ -22,7 +22,7 @@ div.phpdebugbar-openhandler {
     color: var(--debugbar-text);
     border: 2px solid var(--debugbar-header-border);
     overflow: auto;
-    z-index: 20001;
+    z-index: 100000003;
     font-family: var(--debugbar-font-sans);
     font-size: 14px;
     padding: 0;

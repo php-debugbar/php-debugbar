@@ -75,7 +75,7 @@ div.phpdebugbar {
   border-top: 0;
   font-family: var(--debugbar-font-sans);
   background: var(--debugbar-background);
-  z-index: 10000000000;
+  z-index: 100000000;
   font-size: 14px;
   color: var(--debugbar-text);
   text-align: left;
@@ -122,7 +122,7 @@ div.phpdebugbar-drag-capture {
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 10001;
+  z-index: 100000001;
   background: none;
   display: none;
   cursor: ns-resize;
@@ -448,7 +448,7 @@ a.phpdebugbar-open-btn:after {
     color: var(--debugbar-header-text);
     font-size: 11px;
     padding: 2px 6px;
-    z-index: 1000;
+    z-index: 100000001;
     text-align: center;
     white-space: nowrap;
     right: 0;
@@ -536,7 +536,7 @@ div.phpdebugbar-mini-design a.phpdebugbar-tab {
     color: var(--debugbar-header-text);
     font-size: 11px;
     padding: 2px 6px;
-    z-index: 1000;
+    z-index: 100000001;
     text-align: center;
     right: 0;
     line-height: 1.5;
