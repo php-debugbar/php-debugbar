@@ -7,9 +7,8 @@
      * Options:
      *  - data
      */
-    const SQLQueriesWidget = PhpDebugBar.Widgets.SQLQueriesWidget = PhpDebugBar.Widget.extend({
-
-        className: csscls('sqlqueries'),
+    class SQLQueriesWidget extends PhpDebugBar.Widget {
+        get className() { return csscls('sqlqueries'); }
 
         onFilterClick(el) {
             el.classList.toggle(csscls('excluded'));
@@ -18,7 +17,8 @@
             for (const item of items) {
                 item.style.display = item.style.display === 'none' ? '' : 'none';
             }
-        },
+        }
+
         onCopyToClipboard(el) {
             const code = el.parentElement.querySelector('code');
             const copy = function () {
@@ -48,7 +48,8 @@
                 window.getSelection().removeAllRanges();
             };
             select(code);
-        },
+        }
+
         renderList(caption, icon, data) {
             const ul = document.createElement('ul');
             ul.classList.add(csscls('table-list'));
@@ -108,7 +109,8 @@
             tr.append(valueTd);
 
             return tr;
-        },
+        }
+
         render() {
             this.status = document.createElement('div');
             this.status.classList.add(csscls('status'));
@@ -362,6 +364,6 @@
                 }
             });
         }
-
-    });
+    }
+    PhpDebugBar.Widgets.SQLQueriesWidget = SQLQueriesWidget;
 })();
