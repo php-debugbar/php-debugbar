@@ -1,8 +1,3 @@
-if (typeof PhpDebugBar === 'undefined') {
-    // namespace
-    window.PhpDebugBar = {};
-}
-
 (function () {
     const csscls = function (cls) {
         return PhpDebugBar.utils.csscls(cls, 'phpdebugbar-openhandler-');

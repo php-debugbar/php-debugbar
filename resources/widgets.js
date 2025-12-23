@@ -1,8 +1,3 @@
-if (typeof PhpDebugBar === 'undefined') {
-    // namespace
-    window.PhpDebugBar = {};
-}
-
 (function () {
     /**
      * @namespace

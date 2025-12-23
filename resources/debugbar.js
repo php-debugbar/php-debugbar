@@ -1,12 +1,8 @@
-if (typeof PhpDebugBar === 'undefined') {
-    // namespace
-    window.PhpDebugBar = {};
-}
+window.PhpDebugBar = window.PhpDebugBar || {};
 
 (function () {
-    if (typeof PhpDebugBar.utils === 'undefined') {
-        PhpDebugBar.utils = {};
-    }
+    const PhpDebugBar = window.PhpDebugBar;
+    PhpDebugBar.utils = PhpDebugBar.utils || {};
 
     /**
      * Returns the value from an object property.
