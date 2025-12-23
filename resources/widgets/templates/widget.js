@@ -7,9 +7,8 @@
      * Options:
      *  - data
      */
-    const TemplatesWidget = PhpDebugBar.Widgets.TemplatesWidget = PhpDebugBar.Widget.extend({
-
-        className: csscls('templates'),
+    class TemplatesWidget extends PhpDebugBar.Widget {
+        get className() { return csscls('templates'); }
 
         render() {
             this.status = document.createElement('div');
@@ -156,6 +155,6 @@
                 }
             });
         }
-
-    });
+    }
+    PhpDebugBar.Widgets.TemplatesWidget = TemplatesWidget;
 })();

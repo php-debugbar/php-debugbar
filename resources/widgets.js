@@ -133,18 +133,16 @@
      *  - data
      *  - itemRenderer: a function used to render list items (optional)
      */
-    const ListWidget = PhpDebugBar.Widgets.ListWidget = PhpDebugBar.Widget.extend({
-
-        tagName: 'ul',
-
-        className: csscls('list'),
+    class ListWidget extends PhpDebugBar.Widget {
+        get tagName() { return 'ul'; }
+        get className() { return csscls('list'); }
 
         initialize(options) {
             if (!options.itemRenderer) {
                 options.itemRenderer = this.itemRenderer;
             }
             this.set(options);
-        },
+        }
 
         render() {
             this.bindAttr(['itemRenderer', 'data'], function () {
@@ -161,7 +159,7 @@
                     this.get('itemRenderer')(li, data[i]);
                 }
             });
-        },
+        }
 
         /**
          * Renders the content of a <li> element
@@ -172,8 +170,8 @@
         itemRenderer(li, value) {
             li.innerHTML = renderValue(value);
         }
-
-    });
+    }
+    PhpDebugBar.Widgets.ListWidget = ListWidget;
 
     // ------------------------------------------------------------------
 
@@ -184,11 +182,9 @@
      *  - data
      *  - itemRenderer: a function used to render list items (optional)
      */
-    const KVListWidget = PhpDebugBar.Widgets.KVListWidget = ListWidget.extend({
-
-        tagName: 'dl',
-
-        className: csscls('kvlist'),
+    class KVListWidget extends ListWidget {
+        get tagName() { return 'dl'; }
+        get className() { return csscls('kvlist'); }
 
         render() {
             this.bindAttr(['itemRenderer', 'data'], function () {
@@ -209,7 +205,7 @@
                     this.get('itemRenderer')(dt, dd, key, value);
                 }
             });
-        },
+        }
 
         /**
          * Renders the content of the <dt> and <dd> elements
@@ -223,8 +219,8 @@
             dt.textContent = key;
             dd.innerHTML = htmlize(value);
         }
-
-    });
+    }
+    PhpDebugBar.Widgets.KVListWidget = KVListWidget;
 
     // ------------------------------------------------------------------
 
@@ -235,9 +231,8 @@
      * Options:
      *  - data
      */
-    const VariableListWidget = PhpDebugBar.Widgets.VariableListWidget = KVListWidget.extend({
-
-        className: csscls('kvlist varlist'),
+    class VariableListWidget extends KVListWidget {
+        get className() { return csscls('kvlist varlist'); }
 
         itemRenderer(dt, dd, key, value) {
             const span = document.createElement('span');
@@ -266,8 +261,8 @@
                 }
             });
         }
-
-    });
+    }
+    PhpDebugBar.Widgets.VariableListWidget = VariableListWidget;
 
     // ------------------------------------------------------------------
 
@@ -279,9 +274,8 @@
      * Options:
      *  - data
      */
-    const HtmlVariableListWidget = PhpDebugBar.Widgets.HtmlVariableListWidget = KVListWidget.extend({
-
-        className: csscls('kvlist htmlvarlist'),
+    class HtmlVariableListWidget extends KVListWidget {
+        get className() { return csscls('kvlist htmlvarlist'); }
 
         itemRenderer(dt, dd, key, value) {
             const tempElement = document.createElement('i');
@@ -315,8 +309,8 @@
                 dd.append(header);
             }
         }
-
-    });
+    }
+    PhpDebugBar.Widgets.HtmlVariableListWidget = HtmlVariableListWidget;
 
     // ------------------------------------------------------------------
 
@@ -329,11 +323,9 @@
      *  - key_map: list of keys to be displayed with an optional label
      *             example: {key1: label1, key2: label2} or [key1, key2]
      */
-    const TableVariableListWidget = PhpDebugBar.Widgets.TableVariableListWidget = PhpDebugBar.Widget.extend({
-
-        tagName: 'div',
-
-        className: csscls('tablevarlist'),
+    class TableVariableListWidget extends PhpDebugBar.Widget {
+        get tagName() { return 'div'; }
+        get className() { return csscls('tablevarlist'); }
 
         render() {
             this.bindAttr('data', function (data) {
@@ -461,7 +453,8 @@
                 }
             });
         }
-    });
+    }
+    PhpDebugBar.Widgets.TableVariableListWidget = TableVariableListWidget;
 
     // ------------------------------------------------------------------
 
@@ -471,11 +464,9 @@
      * Options:
      *  - data
      */
-    const IFrameWidget = PhpDebugBar.Widgets.IFrameWidget = PhpDebugBar.Widget.extend({
-
-        tagName: 'iframe',
-
-        className: csscls('iframe'),
+    class IFrameWidget extends PhpDebugBar.Widget {
+        get tagName() { return 'iframe'; }
+        get className() { return csscls('iframe'); }
 
         render() {
             this.el.setAttribute('seamless', 'seamless');
@@ -487,8 +478,8 @@
                 this.el.setAttribute('src', url);
             });
         }
-
-    });
+    }
+    PhpDebugBar.Widgets.IFrameWidget = IFrameWidget;
 
     // ------------------------------------------------------------------
     // Collector specific widgets
@@ -502,9 +493,8 @@
      * Options:
      *  - data
      */
-    const MessagesWidget = PhpDebugBar.Widgets.MessagesWidget = PhpDebugBar.Widget.extend({
-
-        className: csscls('messages'),
+    class MessagesWidget extends PhpDebugBar.Widget {
+        get className() { return csscls('messages'); }
 
         render() {
             const self = this;
@@ -673,7 +663,7 @@
 
                 this.list.set('data', fdata);
             });
-        },
+        }
 
         onFilterClick(el, type) {
             el.classList.toggle(csscls('excluded'));
@@ -687,8 +677,8 @@
 
             this.set(`exclude${type}`, excluded);
         }
-
-    });
+    }
+    PhpDebugBar.Widgets.MessagesWidget = MessagesWidget;
 
     // ------------------------------------------------------------------
 
@@ -698,11 +688,9 @@
      * Options:
      *  - data
      */
-    const TimelineWidget = PhpDebugBar.Widgets.TimelineWidget = PhpDebugBar.Widget.extend({
-
-        tagName: 'ul',
-
-        className: csscls('timeline'),
+    class TimelineWidget extends PhpDebugBar.Widget {
+        get tagName() { return 'ul'; }
+        get className() { return csscls('timeline'); }
 
         render() {
             this.bindAttr('data', function (data) {
@@ -849,8 +837,8 @@
                 }
             });
         }
-
-    });
+    }
+    PhpDebugBar.Widgets.TimelineWidget = TimelineWidget;
 
     // ------------------------------------------------------------------
 
@@ -860,9 +848,8 @@
      * Options:
      *  - data
      */
-    const ExceptionsWidget = PhpDebugBar.Widgets.ExceptionsWidget = PhpDebugBar.Widget.extend({
-
-        className: csscls('exceptions'),
+    class ExceptionsWidget extends PhpDebugBar.Widget {
+        get className() { return csscls('exceptions'); }
 
         render() {
             this.list = new ListWidget({ itemRenderer(li, e) {
@@ -967,15 +954,14 @@
                 }
             });
         }
-
-    });
+    }
+    PhpDebugBar.Widgets.ExceptionsWidget = ExceptionsWidget;
 
     /**
      * Displays datasets in a table
      *
      */
-    const DatasetWidget = PhpDebugBar.Widgets.DatasetWidget = PhpDebugBar.Widget.extend({
-
+    class DatasetWidget extends PhpDebugBar.Widget {
         initialize(options) {
             if (!options.itemRenderer) {
                 options.itemRenderer = this.itemRenderer;
@@ -987,7 +973,7 @@
             this.el.classList.add(csscls('dataset-history'));
 
             this.renderHead();
-        },
+        }
 
         renderHead() {
             this.el.innerHTML = '';
@@ -1088,7 +1074,7 @@
             tableWrapper.append(thead);
             tableWrapper.append(this.table);
             this.el.append(tableWrapper);
-        },
+        }
 
         renderDatasets() {
             this.table.innerHTML = '';
@@ -1104,7 +1090,7 @@
 
                 self.get('itemRenderer')(self, data);
             }
-        },
+        }
 
         render() {
             this.bindAttr('data', function () {
@@ -1144,7 +1130,7 @@
                     targetRow.classList.add(activeClass);
                 }
             });
-        },
+        }
 
         /**
          * Renders the content of a dataset item
@@ -1246,6 +1232,6 @@
                 tr.style.display = 'none';
             }
         }
-
-    });
+    }
+    PhpDebugBar.Widgets.DatasetWidget = DatasetWidget;
 })();

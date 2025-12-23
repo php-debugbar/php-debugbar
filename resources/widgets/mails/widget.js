@@ -7,9 +7,8 @@
      * Options:
      *  - data
      */
-    const MailsWidget = PhpDebugBar.Widgets.MailsWidget = PhpDebugBar.Widget.extend({
-
-        className: csscls('mails'),
+    class MailsWidget extends PhpDebugBar.Widget {
+        get className() { return csscls('mails'); }
 
         render() {
             this.list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer(li, mail) {
@@ -103,6 +102,6 @@
                 this.list.set('data', data);
             });
         }
-
-    });
+    }
+    PhpDebugBar.Widgets.MailsWidget = MailsWidget;
 })();
