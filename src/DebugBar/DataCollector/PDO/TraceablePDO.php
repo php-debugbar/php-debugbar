@@ -217,6 +217,7 @@ class TraceablePDO extends PDO
         $trace->start();
 
         $ex = null;
+        $result = null;
         try {
             $result = $this->__call($method, $args);
         } catch (PDOException $e) {

@@ -109,6 +109,7 @@ class TraceablePDOStatement extends PDOStatement
         $trace->start();
 
         $ex = null;
+        $result = null;
         try {
             $result = parent::execute($input_parameters);
         } catch (PDOException $e) {

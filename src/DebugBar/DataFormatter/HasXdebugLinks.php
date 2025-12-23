@@ -50,7 +50,7 @@ trait HasXdebugLinks
      * @param string $file
      * @param int|null $line
      *
-     * @return array {
+     * @return null|array {
      * @var string   $url
      * @var bool     $ajax should be used to open the url instead of a normal links
      * }

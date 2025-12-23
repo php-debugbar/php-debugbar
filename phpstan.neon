@@ -3,3 +3,7 @@ parameters:
 	paths:
 		- src
 		- tests
+	bootstrapFiles:
+		- tests/phpstan-stubs.php
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon

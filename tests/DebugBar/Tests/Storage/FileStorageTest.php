@@ -61,11 +61,6 @@ class FileStorageTest extends DebugBarTestCase
     {
         $this->s->clear();
 
-        // avoid depreciation message on newer PHPUnit versions.  Can be removed after
-        if (method_exists($this, 'assertFileDoesNotExist')) {
-          $this->assertFileDoesNotExist($this->dirname . '/foo.json');
-        } else {
-          $this->assertFileNotExists($this->dirname . '/foo.json');
-        }
+        $this->assertFileDoesNotExist($this->dirname . '/foo.json');
     }
 }

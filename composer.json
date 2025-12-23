@@ -34,7 +34,8 @@
         "phpstan/phpstan": "^2.1",
         "monolog/monolog": "^3.9",
         "symfony/mailer": "^8.0",
-        "symfony/event-dispatcher": "^8.0"
+        "symfony/event-dispatcher": "^8.0",
+        "phpstan/phpstan-phpunit": "^2.0"
     },
     "autoload": {
         "psr-4": {

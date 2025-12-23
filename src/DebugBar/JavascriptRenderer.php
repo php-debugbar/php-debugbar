@@ -842,9 +842,9 @@ class JavascriptRenderer
     /**
      * Makes a URI relative to another
      *
-     * @param string|array $uri
+     * @param null|string|array $uri
      * @param string $root
-     * @return string
+     * @return string|array
      */
     protected function makeUriRelativeTo($uri, $root)
     {
