@@ -1270,7 +1270,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             option.textContent = label;
             this.datasetsSelect.append(option);
             if (this.datasetsSelect.children.length > 1) {
-                this.datasetsSelect.style.display = '';
+                this.datasetsSelect.style.display = 'block';
             }
 
             if (show === undefined || show) {
