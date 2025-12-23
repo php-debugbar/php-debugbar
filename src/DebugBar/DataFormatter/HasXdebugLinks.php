@@ -99,7 +99,7 @@ trait HasXdebugLinks
     }
 
     /**
-     * @param string $editor
+     * @param null|string $editor
      */
     public function setEditorLinkTemplate($editor)
     {

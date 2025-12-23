@@ -86,7 +86,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
     /**
      * Adds a new PDO instance to be collector
      *
-     * @param TraceablePDO $pdo
+     * @param \PDO $pdo
      * @param string $name Optional connection name
      */
     public function addConnection(\PDO $pdo, $name = null)
@@ -187,10 +187,6 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
             // For showing background measure on Queries tab
             $start_percent = 0;
             foreach ($stmts as $i => $stmt) {
-                if (!isset($stmt['duration'])) {
-                    continue;
-                }
-
                 $width_percent = $stmt['duration'] / $totalTime * 100;
                 $stmts[$i] = array_merge($stmt, [
                     'start_percent' => round($start_percent, 3),

@@ -1173,7 +1173,7 @@ class JavascriptRenderer
                     $name,
                     isset($options['tab']) ? $options['tab'] : 'PhpDebugBar.DebugBar.Tab',
                     substr(json_encode($opts, JSON_FORCE_OBJECT), 1, -1),
-                    isset($options['widget']) ? sprintf('%s"widget": new %s()', count($opts) ? ', ' : '', $options['widget']) : ''
+                    isset($options['widget']) ? sprintf(', "widget": new %s()', $options['widget']) : ''
                 );
             } elseif (isset($options['indicator']) || isset($options['icon'])) {
                 $js .= sprintf("%s.addIndicator(\"%s\", new %s(%s), \"%s\");\n",

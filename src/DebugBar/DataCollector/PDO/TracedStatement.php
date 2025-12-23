@@ -52,8 +52,8 @@ class TracedStatement
     }
 
     /**
-     * @param null $startTime
-     * @param null $startMemory
+     * @param null|float $startTime
+     * @param null|int $startMemory
      */
     public function start($startTime = null, $startMemory = null) : void
     {

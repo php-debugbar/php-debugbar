@@ -70,8 +70,7 @@ class DebugBarVarDumper implements AssetProvider
             if (isset($clonerOptions['max_string'])) {
                 $this->cloner->setMaxString($clonerOptions['max_string']);
             }
-            // setMinDepth was added to Symfony 3.4:
-            if (isset($clonerOptions['min_depth']) && method_exists($this->cloner, 'setMinDepth')) {
+            if (isset($clonerOptions['min_depth'])) {
                 $this->cloner->setMinDepth($clonerOptions['min_depth']);
             }
         }
