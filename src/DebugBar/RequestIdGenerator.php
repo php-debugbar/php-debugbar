@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -20,6 +21,6 @@ class RequestIdGenerator implements RequestIdGeneratorInterface
      */
     public function generate()
     {
-        return 'X'.bin2hex(random_bytes(16));
+        return 'X' . bin2hex(random_bytes(16));
     }
 }

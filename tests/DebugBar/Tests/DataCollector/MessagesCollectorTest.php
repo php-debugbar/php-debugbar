@@ -50,7 +50,7 @@ class MessagesCollectorTest extends DebugBarTestCase
 
     public function testHtmlMessages()
     {
-        $var = array('one', 'two');
+        $var = ['one', 'two'];
 
         $c = new MessagesCollector();
         $this->assertFalse($c->isHtmlVarDumperUsed());

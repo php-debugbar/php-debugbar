@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -31,7 +32,7 @@ class FileStorage implements StorageInterface
     public function save($id, $data)
     {
         if (!file_exists($this->dirname)) {
-            mkdir($this->dirname, 0777, true);
+            mkdir($this->dirname, 0o777, true);
         }
         file_put_contents($this->makeFilename($id), json_encode($data));
     }
@@ -52,26 +53,26 @@ class FileStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function find(array $filters = array(), $max = 20, $offset = 0)
+    public function find(array $filters = [], $max = 20, $offset = 0)
     {
         //Loop through all .json files and remember the modified time and id.
-        $files = array();
+        $files = [];
         foreach (new \DirectoryIterator($this->dirname) as $file) {
             if ($file->getExtension() == 'json') {
-                $files[] = array(
+                $files[] = [
                     'time' => $file->getMTime(),
-                    'id' => $file->getBasename('.json')
-                );
+                    'id' => $file->getBasename('.json'),
+                ];
             }
         }
 
         //Sort the files, newest first
         usort($files, function ($a, $b) {
-                return $a['time'] < $b['time'] ? 1 : -1;
-            });
+            return $a['time'] < $b['time'] ? 1 : -1;
+        });
 
         //Load the metadata and filter the results.
-        $results = array();
+        $results = [];
         $i = 0;
         foreach ($files as $file) {
             //When filter is empty, skip loading the offset
@@ -95,7 +96,7 @@ class FileStorage implements StorageInterface
 
     /**
      * Filter the metadata for matches.
-     * 
+     *
      * @param  array $meta
      * @param  array $filters
      * @return bool
@@ -124,10 +125,10 @@ class FileStorage implements StorageInterface
 
     /**
      * @param  string $id
-     * @return string 
+     * @return string
      */
     public function makeFilename($id)
     {
-        return $this->dirname . basename($id). ".json";
+        return $this->dirname . basename($id) . ".json";
     }
 }

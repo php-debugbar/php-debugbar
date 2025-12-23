@@ -4,7 +4,6 @@ namespace DebugBar\DataCollector\PDO;
 
 use PDO;
 use PDOException;
-use DebugBar\DataCollector\PDO\TraceablePDOStatement;
 
 /**
  * A PDO proxy which traces statements
@@ -23,13 +22,13 @@ class TraceablePDO extends PDO
         $this->pdo->setAttribute(PDO::ATTR_STATEMENT_CLASS, [TraceablePDOStatement::class, [$this]]);
     }
 
-   /**
-    * Initiates a transaction
-    *
-    * @link   http://php.net/manual/en/pdo.begintransaction.php
-    * @return bool TRUE on success or FALSE on failure.
-    */
-    public function beginTransaction() : bool
+    /**
+     * Initiates a transaction
+     *
+     * @link   http://php.net/manual/en/pdo.begintransaction.php
+     * @return bool TRUE on success or FALSE on failure.
+     */
+    public function beginTransaction(): bool
     {
         $this->addPdoEvent('Begin Transaction');
 
@@ -42,7 +41,7 @@ class TraceablePDO extends PDO
      * @link   http://php.net/manual/en/pdo.commit.php
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function commit() : bool
+    public function commit(): bool
     {
         $this->addPdoEvent('Commit Transaction');
 
@@ -67,7 +66,7 @@ class TraceablePDO extends PDO
      * @link   http://php.net/manual/en/pdo.errorinfo.php
      * @return array PDO::errorInfo returns an array of error information
      */
-    public function errorInfo() : array
+    public function errorInfo(): array
     {
         return $this->pdo->errorInfo();
     }
@@ -108,7 +107,7 @@ class TraceablePDO extends PDO
      * @link   http://php.net/manual/en/pdo.intransaction.php
      * @return bool TRUE if a transaction is currently active, and FALSE if not.
      */
-    public function inTransaction() : bool
+    public function inTransaction(): bool
     {
         return $this->pdo->inTransaction();
     }
@@ -182,7 +181,7 @@ class TraceablePDO extends PDO
      * @link   http://php.net/manual/en/pdo.rollback.php
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function rollBack() : bool
+    public function rollBack(): bool
     {
         $this->addPdoEvent('Rollback Transaction');
 
@@ -197,7 +196,7 @@ class TraceablePDO extends PDO
      * @param  mixed $value
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function setAttribute($attribute, $value) : bool
+    public function setAttribute($attribute, $value): bool
     {
         return $this->pdo->setAttribute($attribute, $value);
     }
@@ -243,7 +242,7 @@ class TraceablePDO extends PDO
      *
      * @param TracedStatement $stmt
      */
-    public function addExecutedStatement(TracedStatement $stmt) : void
+    public function addExecutedStatement(TracedStatement $stmt): void
     {
         $this->executedStatements[] = $stmt;
     }
@@ -253,7 +252,7 @@ class TraceablePDO extends PDO
      *
      * @param string $event
      */
-    public function addPdoEvent(string $event) : void
+    public function addPdoEvent(string $event): void
     {
         $stmt = new TracedStatement($event);
         $stmt->setQueryType('transaction');
@@ -268,7 +267,7 @@ class TraceablePDO extends PDO
      *
      * @return float
      */
-    public function getAccumulatedStatementsDuration() : float
+    public function getAccumulatedStatementsDuration(): float
     {
         return array_reduce($this->executedStatements, function ($v, $s) { return $v + $s->getDuration(); }, 0.0);
     }
@@ -278,7 +277,7 @@ class TraceablePDO extends PDO
      *
      * @return int
      */
-    public function getMemoryUsage() : int
+    public function getMemoryUsage(): int
     {
         return array_reduce($this->executedStatements, function ($v, $s) { return $v + $s->getMemoryUsage(); }, 0);
     }
@@ -288,9 +287,12 @@ class TraceablePDO extends PDO
      *
      * @return int
      */
-    public function getPeakMemoryUsage() : int
+    public function getPeakMemoryUsage(): int
     {
-        return array_reduce($this->executedStatements, function ($v, $s) { $m = $s->getEndMemory(); return $m > $v ? $m : $v; }, 0);
+        return array_reduce($this->executedStatements, function ($v, $s) {
+            $m = $s->getEndMemory();
+            return $m > $v ? $m : $v;
+        }, 0);
     }
 
     /**
@@ -298,7 +300,7 @@ class TraceablePDO extends PDO
      *
      * @return TracedStatement[]
      */
-    public function getExecutedStatements() : array
+    public function getExecutedStatements(): array
     {
         return $this->executedStatements;
     }
@@ -308,7 +310,7 @@ class TraceablePDO extends PDO
      *
      * @return TracedStatement[]
      */
-    public function getFailedExecutedStatements() : array
+    public function getFailedExecutedStatements(): array
     {
         return array_filter($this->executedStatements, function ($s) { return !$s->isSuccess(); });
     }

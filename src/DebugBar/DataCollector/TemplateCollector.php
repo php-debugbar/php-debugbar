@@ -44,12 +44,12 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
                 'icon' => 'file-code',
                 'widget' => 'PhpDebugBar.Widgets.TemplatesWidget',
                 'map' => $name,
-                'default' => '[]'
+                'default' => '[]',
             ],
-            "$name:badge"=> [
+            "$name:badge" => [
                 'map' => $name . '.nb_templates',
-                'default' => 0
-            ]
+                'default' => 0,
+            ],
         ];
     }
 
@@ -73,8 +73,8 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
             $params = array_keys($data);
         } elseif ($this->collect_data) {
             $params = array_map(
-                fn ($value) => $this->getDataFormatter()->formatVar($value),
-                $data
+                fn($value) => $this->getDataFormatter()->formatVar($value),
+                $data,
             );
         } else {
             $params = [];

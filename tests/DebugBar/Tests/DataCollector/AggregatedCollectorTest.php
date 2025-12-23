@@ -24,8 +24,8 @@ class AggregatedCollectorTest extends DebugBarTestCase
 
     public function testCollect()
     {
-        $this->c->addCollector(new MockCollector(array('foo' => 'bar'), 'm1'));
-        $this->c->addCollector(new MockCollector(array('bar' => 'foo'), 'm2'));
+        $this->c->addCollector(new MockCollector(['foo' => 'bar'], 'm1'));
+        $this->c->addCollector(new MockCollector(['bar' => 'foo'], 'm2'));
         $data = $this->c->collect();
         $this->assertCount(2, $data);
         $this->assertArrayHasKey('foo', $data);
@@ -36,8 +36,8 @@ class AggregatedCollectorTest extends DebugBarTestCase
 
     public function testMergeProperty()
     {
-        $this->c->addCollector(new MockCollector(array('foo' => array('a' => 'b')), 'm1'));
-        $this->c->addCollector(new MockCollector(array('foo' => array('c' => 'd')), 'm2'));
+        $this->c->addCollector(new MockCollector(['foo' => ['a' => 'b']], 'm1'));
+        $this->c->addCollector(new MockCollector(['foo' => ['c' => 'd']], 'm2'));
         $this->c->setMergeProperty('foo');
         $data = $this->c->collect();
         $this->assertCount(2, $data);
@@ -49,8 +49,8 @@ class AggregatedCollectorTest extends DebugBarTestCase
 
     public function testSort()
     {
-        $this->c->addCollector(new MockCollector(array(array('foo' => 2, 'id' => 1)), 'm1'));
-        $this->c->addCollector(new MockCollector(array(array('foo' => 1, 'id' => 2)), 'm2'));
+        $this->c->addCollector(new MockCollector([['foo' => 2, 'id' => 1]], 'm1'));
+        $this->c->addCollector(new MockCollector([['foo' => 1, 'id' => 2]], 'm2'));
         $this->c->setSort('foo');
         $data = $this->c->collect();
         $this->assertCount(2, $data);

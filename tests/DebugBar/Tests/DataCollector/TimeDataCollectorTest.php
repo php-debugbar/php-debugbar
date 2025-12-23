@@ -18,12 +18,12 @@ class TimeDataCollectorTest extends DebugBarTestCase
 
     public function testAddMeasure()
     {
-        $this->c->addMeasure('foo', $this->s, $this->s + 10, array('a' => 'b'), 'timer');
+        $this->c->addMeasure('foo', $this->s, $this->s + 10, ['a' => 'b'], 'timer');
         $m = $this->c->getMeasures();
         $this->assertCount(1, $m);
         $this->assertEquals('foo', $m[0]['label']);
         $this->assertEquals(10, $m[0]['duration']);
-        $this->assertEquals(array('a' => 'b'), $m[0]['params']);
+        $this->assertEquals(['a' => 'b'], $m[0]['params']);
         $this->assertEquals('timer', $m[0]['collector']);
     }
 
@@ -31,12 +31,12 @@ class TimeDataCollectorTest extends DebugBarTestCase
     {
         $this->c->startMeasure('foo', 'bar', 'baz');
         usleep(1000);
-        $this->c->stopMeasure('foo', array('bar' => 'baz'));
+        $this->c->stopMeasure('foo', ['bar' => 'baz']);
         $m = $this->c->getMeasures();
         $this->assertCount(1, $m);
         $this->assertEquals('bar', $m[0]['label']);
         $this->assertEquals('baz', $m[0]['collector']);
-        $this->assertEquals(array('bar' => 'baz'), $m[0]['params']);
+        $this->assertEquals(['bar' => 'baz'], $m[0]['params']);
         $this->assertLessThan($m[0]['end'], $m[0]['start']);
     }
 
@@ -52,7 +52,7 @@ class TimeDataCollectorTest extends DebugBarTestCase
 
     public function testMeasure()
     {
-        $returned = $this->c->measure('bar', function() {
+        $returned = $this->c->measure('bar', function () {
             usleep(50);
             return 'returnedValue';
         });

@@ -36,7 +36,8 @@
         "symfony/mailer": "^5.4|^6.4|^7.3|^8.0",
         "symfony/event-dispatcher": "^5.4|^6.4|^7.3|^8.0",
         "phpstan/phpstan-phpunit": "^2.0",
-        "predis/predis": "^3.3"
+        "predis/predis": "^3.3",
+        "friendsofphp/php-cs-fixer": "^3.92"
     },
     "autoload": {
         "psr-4": {
@@ -56,6 +57,8 @@
         ],
         "unit-test": "@php vendor/bin/phpunit --testsuite=Unit",
         "browser-test": "@php vendor/bin/phpunit --testsuite=Browser",
+        "check-style": "vendor/bin/php-cs-fixer check -v --diff",
+        "fix-style": "vendor/bin/php-cs-fixer fix -v --diff",
         "browser-debug": [
             "@putenv PANTHER_NO_HEADLESS=1",
             "@php vendor/bin/phpunit --testsuite=Browser --debug"

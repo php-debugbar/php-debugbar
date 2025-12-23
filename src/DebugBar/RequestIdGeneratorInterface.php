@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -21,5 +22,5 @@ interface RequestIdGeneratorInterface
      *
      * @return string
      */
-    function generate();
+    public function generate();
 }

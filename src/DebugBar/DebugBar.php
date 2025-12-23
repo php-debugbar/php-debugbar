@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -30,7 +31,7 @@ class DebugBar implements ArrayAccess
 {
     public static $useOpenHandlerWhenSendingDataHeaders = false;
 
-    protected $collectors = array();
+    protected $collectors = [];
 
     protected $data;
 
@@ -211,28 +212,28 @@ class DebugBar implements ArrayAccess
             } else {
                 $ip = '127.0.0.1';
             }
-            $request_variables = array(
+            $request_variables = [
                 'method' => 'CLI',
                 'uri' => isset($_SERVER['SCRIPT_FILENAME']) ? realpath($_SERVER['SCRIPT_FILENAME']) : null,
-                'ip' => $ip
-            );
+                'ip' => $ip,
+            ];
         } else {
-            $request_variables = array(
-                'method' => isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : null,
-                'uri' => isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null,
-                'ip' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null
-            );
+            $request_variables = [
+                'method' => $_SERVER['REQUEST_METHOD'] ?? null,
+                'uri' => $_SERVER['REQUEST_URI'] ?? null,
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+            ];
         }
-        $this->data = array(
+        $this->data = [
             '__meta' => array_merge(
-                array(
+                [
                     'id' => $this->getCurrentRequestId(),
                     'datetime' => date('Y-m-d H:i:s'),
-                    'utime' => microtime(true)
-                ),
-                $request_variables
-            )
-        );
+                    'utime' => microtime(true),
+                ],
+                $request_variables,
+            ),
+        ];
 
         foreach ($this->collectors as $name => $collector) {
             $this->data[$name] = $collector->collect();
@@ -240,10 +241,10 @@ class DebugBar implements ArrayAccess
 
         // Remove all invalid (non UTF-8) characters
         array_walk_recursive($this->data, function (&$item) {
-                if (is_string($item) && !mb_check_encoding($item, 'UTF-8')) {
-                    $item = mb_convert_encoding($item, 'UTF-8', 'UTF-8');
-                }
-            });
+            if (is_string($item) && !mb_check_encoding($item, 'UTF-8')) {
+                $item = mb_convert_encoding($item, 'UTF-8', 'UTF-8');
+            }
+        });
 
         if ($this->storage !== null) {
             $this->storage->save($this->getCurrentRequestId(), $this->data);
@@ -276,18 +277,18 @@ class DebugBar implements ArrayAccess
      */
     public function getDataAsHeaders($headerName = 'phpdebugbar', $maxHeaderLength = 4096, $maxTotalHeaderLength = 250000)
     {
-        $data = rawurlencode(json_encode(array(
+        $data = rawurlencode(json_encode([
             'id' => $this->getCurrentRequestId(),
-            'data' => $this->getData()
-        )));
+            'data' => $this->getData(),
+        ]));
 
         if (strlen($data) > $maxTotalHeaderLength) {
-            $data = rawurlencode(json_encode(array(
-                'error' => 'Maximum header size exceeded'
-            )));
+            $data = rawurlencode(json_encode([
+                'error' => 'Maximum header size exceeded',
+            ]));
         }
 
-        $chunks = array();
+        $chunks = [];
 
         while (strlen($data) > $maxHeaderLength) {
             $chunks[] = substr($data, 0, $maxHeaderLength);
@@ -295,7 +296,7 @@ class DebugBar implements ArrayAccess
         }
         $chunks[] = $data;
 
-        $headers = array();
+        $headers = [];
         for ($i = 0, $c = count($chunks); $i < $c; $i++) {
             $name = $headerName . ($i > 0 ? "-$i" : '');
             $headers[$name] = $chunks[$i];
@@ -320,7 +321,7 @@ class DebugBar implements ArrayAccess
         if ($useOpenHandler && $this->storage !== null) {
             $this->getData();
             $headerName .= '-id';
-            $headers = array($headerName => $this->getCurrentRequestId());
+            $headers = [$headerName => $this->getCurrentRequestId()];
         } else {
             $headers = $this->getDataAsHeaders($headerName, $maxHeaderLength);
         }
@@ -377,7 +378,7 @@ class DebugBar implements ArrayAccess
             $http->deleteSessionValue($this->stackSessionNamespace);
         }
 
-        $datasets = array();
+        $datasets = [];
         if ($this->isDataPersisted() && !$this->stackAlwaysUseSessionStorage) {
             foreach ($stackedData as $id => $data) {
                 $datasets[$id] = $this->getStorage()->get($id);
@@ -448,7 +449,7 @@ class DebugBar implements ArrayAccess
         }
 
         if (!$http->hasSessionValue($this->stackSessionNamespace)) {
-            $http->setSessionValue($this->stackSessionNamespace, array());
+            $http->setSessionValue($this->stackSessionNamespace, []);
         }
 
         return $http;
