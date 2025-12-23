@@ -39,3 +39,6 @@ jobs:
 
     - name: Execute Unit Tests
       run: vendor/bin/phpunit --testsuite=Unit
+
+    - name: Analyse with PHPStan
+      run: composer analyse

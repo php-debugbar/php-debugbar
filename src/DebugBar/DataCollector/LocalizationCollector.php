@@ -32,7 +32,7 @@ class LocalizationCollector extends DataCollector implements Renderable
      */
     public function getDomain()
     {
-        return textdomain();
+        return textdomain(null);
     }
 
     /**

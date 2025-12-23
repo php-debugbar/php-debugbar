@@ -33,8 +33,8 @@
         "dbrekelmans/bdi": "^1.4",
         "phpstan/phpstan": "^2.1",
         "monolog/monolog": "^3.9",
-        "symfony/mailer": "^8.0",
-        "symfony/event-dispatcher": "^8.0",
+        "symfony/mailer": "^5.4|^6.4|^7.3|^8.0",
+        "symfony/event-dispatcher": "^5.4|^6.4|^7.3|^8.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "predis/predis": "^3.3"
     },
