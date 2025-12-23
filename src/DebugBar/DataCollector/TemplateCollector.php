@@ -19,7 +19,7 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
      * @param bool|string $collectData Collects view data when true
      * @param string[] $excludePaths Paths to exclude from collection
      * @param int|bool $group Group the same templates together
-     * @param TimeDataCollector|null TimeCollector
+     * @param TimeDataCollector|null $timeCollector
      * */
     public function __construct($collectData = true, $excludePaths = [], $group = true, ?TimeDataCollector $timeCollector = null)
     {

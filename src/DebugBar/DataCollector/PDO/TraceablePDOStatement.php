@@ -11,7 +11,7 @@ use PDOStatement;
  */
 class TraceablePDOStatement extends PDOStatement
 {
-    /** @var PDO */
+    /** @var TraceablePDO */
     protected $pdo;
 
     /** @var array */

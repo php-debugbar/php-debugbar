@@ -50,10 +50,7 @@ trait HasXdebugLinks
      * @param string $file
      * @param int|null $line
      *
-     * @return null|array {
-     * @var string   $url
-     * @var bool     $ajax should be used to open the url instead of a normal links
-     * }
+     * @return null|array{url: string, ajax: bool, filename: string, line: string}
      */
     public function getXdebugLink($file, $line = null)
     {
@@ -76,14 +73,17 @@ trait HasXdebugLinks
             '%f' => rawurlencode(str_replace('\\', '/', $file)),
             '%l' => rawurlencode((string) $line ?: 1),
         ]);
-        if ($url) {
-            return [
-                'url' => $url,
-                'ajax' => $this->getXdebugShouldUseAjax(),
-                'filename' => basename($file),
-                'line' => (string) $line ?: '?'
-            ];
+
+        if (!$url) {
+            return null;
         }
+
+        return [
+            'url' => $url,
+            'ajax' => $this->getXdebugShouldUseAjax(),
+            'filename' => basename($file),
+            'line' => (string) $line ?: '?'
+        ];
     }
 
     /**

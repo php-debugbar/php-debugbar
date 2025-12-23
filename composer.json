@@ -35,7 +35,8 @@
         "monolog/monolog": "^3.9",
         "symfony/mailer": "^8.0",
         "symfony/event-dispatcher": "^8.0",
-        "phpstan/phpstan-phpunit": "^2.0"
+        "phpstan/phpstan-phpunit": "^2.0",
+        "predis/predis": "^3.3"
     },
     "autoload": {
         "psr-4": {

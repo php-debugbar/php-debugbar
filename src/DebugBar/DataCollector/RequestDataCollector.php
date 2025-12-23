@@ -55,7 +55,7 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
      * Hide a sensitive value within one of the superglobal arrays.
      *
      * @param string $superGlobalName The name of the superglobal array, e.g. '_GET'
-     * @param string|array $key       The key within the superglobal
+     * @param string|array $keys      The key within the superglobal
      * @return void
      */
     public function hideSuperglobalKeys($superGlobalName, $keys)

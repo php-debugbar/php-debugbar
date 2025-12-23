@@ -11,6 +11,7 @@
 namespace DebugBar;
 
 use DebugBar\DataCollector\AssetProvider;
+use DebugBar\DataCollector\DataCollectorInterface;
 use DebugBar\DataCollector\Renderable;
 
 /**
@@ -395,7 +396,7 @@ class JavascriptRenderer
     /**
      * Sets the default theme
      *
-     * @param boolean $hide
+     * @param string $theme
      * @return $this
      */
     public function setTheme($theme='auto')
@@ -607,7 +608,7 @@ class JavascriptRenderer
     /**
      * Sets whether datasets are directly loaded or deferred
      *
-     * @param boolean $enabled
+     * @param boolean $defer
      */
     public function setDeferDatasets($defer = true)
     {
@@ -775,6 +776,7 @@ class JavascriptRenderer
 
         $additionalAssets = $this->additionalAssets;
         // finds assets provided by collectors
+        /** @var DataCollectorInterface $collector */
         foreach ($this->debugBar->getCollectors() as $collector) {
             if (($collector instanceof AssetProvider) && !in_array($collector->getName(), $this->ignoredCollectors)) {
                 $additionalAssets[] = $collector->getAssets();
@@ -1144,6 +1146,7 @@ class JavascriptRenderer
 
         // finds controls provided by collectors
         $widgets = array();
+        /** @var DataCollectorInterface $collector */
         foreach ($this->debugBar->getCollectors() as $collector) {
             if (($collector instanceof Renderable) && !in_array($collector->getName(), $this->ignoredCollectors)) {
                 if ($w = $collector->getWidgets()) {
