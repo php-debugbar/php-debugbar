@@ -20,11 +20,11 @@ use PDO;
  */
 class PdoStorage implements StorageInterface
 {
-    protected $pdo;
+    protected \PDO $pdo;
 
-    protected $tableName;
+    protected string $tableName;
 
-    protected $sqlQueries = [
+    protected array $sqlQueries = [
         'save' => "INSERT INTO %tablename% (id, data, meta_utime, meta_datetime, meta_uri, meta_ip, meta_method) VALUES (?, ?, ?, ?, ?, ?, ?)",
         'get' => "SELECT data FROM %tablename% WHERE id = ?",
         'find' => "SELECT data FROM %tablename% %where% ORDER BY meta_datetime DESC LIMIT %limit% OFFSET %offset%",
@@ -32,10 +32,9 @@ class PdoStorage implements StorageInterface
     ];
 
     /**
-     * @param \PDO   $pdo       The PDO instance
-     * @param string $tableName
+     * @param \PDO $pdo The PDO instance
      */
-    public function __construct(PDO $pdo, $tableName = 'phpdebugbar', array $sqlQueries = [])
+    public function __construct(PDO $pdo, string $tableName = 'phpdebugbar', array $sqlQueries = [])
     {
         $this->pdo = $pdo;
         $this->tableName = $tableName;
@@ -46,7 +45,7 @@ class PdoStorage implements StorageInterface
      * Sets the sql queries to be used
      *
      */
-    public function setSqlQueries(array $queries)
+    public function setSqlQueries(array $queries): void
     {
         $this->sqlQueries = array_merge($this->sqlQueries, $queries);
     }
@@ -54,7 +53,7 @@ class PdoStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function save($id, $data)
+    public function save(string $id, array $data): void
     {
         $sql = $this->getSqlQuery('save');
         $stmt = $this->pdo->prepare($sql);
@@ -65,7 +64,7 @@ class PdoStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function get($id)
+    public function get(string $id): array
     {
         $sql = $this->getSqlQuery('get');
         $stmt = $this->pdo->prepare($sql);
@@ -79,7 +78,7 @@ class PdoStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function find(array $filters = [], $max = 20, $offset = 0)
+    public function find(array $filters = [], int $max = 20, int $offset = 0): array
     {
         $where = [];
         $params = [];
@@ -114,7 +113,7 @@ class PdoStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function clear()
+    public function clear(): void
     {
         $this->pdo->exec($this->getSqlQuery('clear'));
     }
@@ -122,11 +121,9 @@ class PdoStorage implements StorageInterface
     /**
      * Get a SQL Query for a task, with the variables replaced
      *
-     * @param string $name
      *
-     * @return string
      */
-    protected function getSqlQuery($name, array $vars = [])
+    protected function getSqlQuery(string $name, array $vars = []): string
     {
         $sql = $this->sqlQueries[$name];
         $vars = array_merge(['tablename' => $this->tableName], $vars);

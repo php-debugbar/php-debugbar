@@ -21,19 +21,19 @@ use ReflectionMethod;
  */
 class MemcachedStorage implements StorageInterface
 {
-    protected $memcached;
+    protected Memcached $memcached;
 
-    protected $keyNamespace;
+    protected string $keyNamespace;
 
-    protected $expiration;
+    protected int $expiration;
 
-    protected $newGetMultiSignature;
+    protected ?bool $newGetMultiSignature = null;
 
     /**
      * @param string $keyNamespace Namespace for Memcached key names (to avoid conflict with other Memcached users).
      * @param int    $expiration   Expiration for Memcached entries (see Expiration Times in Memcached documentation).
      */
-    public function __construct(Memcached $memcached, $keyNamespace = 'phpdebugbar', $expiration = 0)
+    public function __construct(Memcached $memcached, string $keyNamespace = 'phpdebugbar', int $expiration = 0)
     {
         $this->memcached = $memcached;
         $this->keyNamespace = $keyNamespace;
@@ -43,7 +43,7 @@ class MemcachedStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function save($id, $data)
+    public function save(string $id, array $data): void
     {
         $key = $this->createKey($id);
         $this->memcached->set($key, $data, $this->expiration);
@@ -58,7 +58,7 @@ class MemcachedStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function get($id)
+    public function get(string $id)
     {
         return $this->memcached->get($this->createKey($id));
     }
@@ -66,7 +66,7 @@ class MemcachedStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function find(array $filters = [], $max = 20, $offset = 0)
+    public function find(array $filters = [], int $max = 20, int $offset = 0): array
     {
         if (!($keys = $this->memcached->get($this->keyNamespace))) {
             return [];
@@ -104,12 +104,9 @@ class MemcachedStorage implements StorageInterface
     /**
      * Filter the metadata for matches.
      *
-     * @param array $meta
-     * @param array $filters
      *
-     * @return bool
      */
-    protected function filter($meta, $filters)
+    protected function filter(array $meta, array $filters): bool
     {
         foreach ($filters as $key => $value) {
             if (!isset($meta[$key]) || fnmatch($value, $meta[$key]) === false) {
@@ -122,7 +119,7 @@ class MemcachedStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function clear()
+    public function clear(): void
     {
         if (!($keys = $this->memcached->get($this->keyNamespace))) {
             return;
@@ -131,12 +128,7 @@ class MemcachedStorage implements StorageInterface
         $this->memcached->deleteMulti(explode('|', $keys));
     }
 
-    /**
-     * @param string $id
-     *
-     * @return string
-     */
-    protected function createKey($id)
+    protected function createKey(string $id): string
     {
         return md5("{$this->keyNamespace}.$id");
     }
@@ -144,10 +136,8 @@ class MemcachedStorage implements StorageInterface
     /**
      * The memcached getMulti function changed in version 3.0.0 to only have two parameters.
      *
-     * @param array $keys
-     * @param int   $flags
      */
-    protected function memcachedGetMulti($keys, $flags)
+    protected function memcachedGetMulti(array $keys, int $flags): mixed
     {
         if ($this->newGetMultiSignature === null) {
             $this->newGetMultiSignature = (new ReflectionMethod('Memcached', 'getMulti'))->getNumberOfParameters() === 2;
@@ -156,7 +146,7 @@ class MemcachedStorage implements StorageInterface
             return $this->memcached->getMulti($keys, $flags);
         }
         $null = null;
-        return $this->memcached->getMulti($keys, $null, $flags);
 
+        return $this->memcached->getMulti($keys, $null, $flags);
     }
 }
