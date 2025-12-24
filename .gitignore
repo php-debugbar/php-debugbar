@@ -10,6 +10,5 @@ composer.lock
 .phpunit.cache/
 /tests/screenshots
 /node_modules
-/package-lock.json
 .DS_Store
 .php-cs-fixer.cache
