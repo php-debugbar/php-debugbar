@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\Tests;
 
 use DebugBar\DataCollector\PDO\TracedStatement;
@@ -32,8 +34,8 @@ class TracedStatementTest extends DebugBarTestCase
         $traced = new TracedStatement($sql, $params);
         $expected = 'select *
                 from geral.exame_part ep
-                where ep.id_exame = <1> and 
-                      ep.id_exame_situacao = <2>';
+                where ep.id_exame = 1 and 
+                      ep.id_exame_situacao = 2';
         $result = $traced->getSqlWithParams();
         $this->assertEquals($expected, $result);
     }
@@ -135,7 +137,7 @@ class TracedStatementTest extends DebugBarTestCase
         ];
 
         $traced = new TracedStatement($sql, $params);
-        $expected = 'UPDATE user SET login_failed_reason = "Life happens" WHERE id = "1234"';
+        $expected = 'UPDATE user SET login_failed_reason = "Life happens" WHERE id = 1234';
         $result = $traced->getSqlWithParams('"');
         $this->assertEquals($expected, $result);
 
@@ -145,7 +147,7 @@ class TracedStatementTest extends DebugBarTestCase
         ];
 
         $traced = new TracedStatement($sql, $params);
-        $expected = 'UPDATE user SET login_failed_reason = NULL WHERE id = "1234"';
+        $expected = 'UPDATE user SET login_failed_reason = NULL WHERE id = 1234';
         $result = $traced->getSqlWithParams('"');
         $this->assertEquals($expected, $result);
     }
@@ -160,7 +162,7 @@ class TracedStatementTest extends DebugBarTestCase
      *                           p.status <> :status;
      * @return void
      */
-    public function testRepeadParamsQuery()
+    public function testRepeatParamsQuery()
     {
         $sql = 'select *
                 from geral.person p
@@ -176,8 +178,8 @@ class TracedStatementTest extends DebugBarTestCase
                 from geral.person p
                 left join geral.contract c
                   on c.id_person = p.id_person
-                where c.status = <1> and 
-                      p.status <> <1>';
+                where c.status = 1 and 
+                      p.status <> 1';
         $result = $traced->getSqlWithParams();
         $this->assertEquals($expected, $result);
     }

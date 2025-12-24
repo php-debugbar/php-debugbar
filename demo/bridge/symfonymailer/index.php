@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use DebugBar\Bridge\Symfony\SymfonyMailCollector;
 use DebugBar\DataCollector\MessagesCollector;
 use Symfony\Component\EventDispatcher\EventDispatcher;

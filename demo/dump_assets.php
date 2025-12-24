@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 include 'bootstrap.php';
 
 if (!isset($_GET['type'])) {

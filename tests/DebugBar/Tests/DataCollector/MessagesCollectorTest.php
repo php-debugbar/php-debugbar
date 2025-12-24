@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\Tests\DataCollector;
 
 use DebugBar\Tests\DebugBarTestCase;

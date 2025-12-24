@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\DataCollector\PDO;
 
 /**
@@ -86,7 +88,7 @@ class TracedStatement
     public function checkParameters(array $params): array
     {
         foreach ($params as &$param) {
-            if (!mb_check_encoding($param ?? '', 'UTF-8')) {
+            if ((is_string($param) || is_array($param)) && !mb_check_encoding($param ?? '', 'UTF-8')) {
                 $param = '[BINARY DATA]';
             }
         }
@@ -126,7 +128,7 @@ class TracedStatement
 
             if (null === $v) {
                 $v = 'NULL';
-            } else {
+            } elseif(is_string($v)) {
                 $backRefSafeV = strtr($v, $cleanBackRefCharMap);
                 $v = "$quoteLeft$backRefSafeV$quoteRight";
             }
@@ -138,12 +140,12 @@ class TracedStatement
             }
 
             $matchRule = "/({$marker}(?!\w))(?=(?:[^$quotationChar]|[$quotationChar][^$quotationChar]*[$quotationChar])*$)/";
-            $count = mb_substr_count($sql, $k);
+            $count = mb_substr_count($sql, (string) $k);
             if ($count < 1) {
                 $count = mb_substr_count($sql, $matchRule);
             }
             for ($i = 0; $i <= $count; $i++) {
-                $sql = preg_replace($matchRule, $v, $sql, 1);
+                $sql = preg_replace($matchRule, (string) $v, $sql, 1);
             }
         }
 

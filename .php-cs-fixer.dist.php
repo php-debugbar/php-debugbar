@@ -32,6 +32,7 @@ return (new Config())
         'no_useless_else'             => true,
         'no_useless_return'           => true,
         'no_extra_blank_lines'        => true,
+        'declare_strict_types'        => true,
     ])
     // 💡 by default, Fixer looks for `*.php` files excluding `./vendor/` - here, you can groom this config
     ->setFinder(
