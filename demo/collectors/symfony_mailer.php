@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+/** @var \DebugBar\DebugBar $debugbar */
+
 use DebugBar\Bridge\Symfony\SymfonyMailCollector;
 use DebugBar\DataCollector\MessagesCollector;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -9,10 +11,6 @@ use Symfony\Component\Mailer\Event\SentMessageEvent;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport\AbstractTransport;
 use Symfony\Component\Mime\Email;
-
-include __DIR__ . '/../../bootstrap.php';
-
-$debugbarRenderer->setBaseUrl('../../../resources');
 
 $mailCollector = new SymfonyMailCollector();
 $mailCollector->showMessageBody();
@@ -49,5 +47,3 @@ $email = (new Email())
     ->html('<div>Here is the message itself</div>');
 
 $mailer->send($email);
-
-render_demo_page();
