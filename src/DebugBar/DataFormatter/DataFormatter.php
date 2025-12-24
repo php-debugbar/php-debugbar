@@ -35,7 +35,7 @@ class DataFormatter implements DataFormatterInterface
      * @param $data
      * @return string
      */
-    public function formatVar($data)
+    public function formatVar(mixed $data): string
     {
         $output = '';
 
@@ -53,11 +53,7 @@ class DataFormatter implements DataFormatterInterface
         return trim($output);
     }
 
-    /**
-     * @param float $seconds
-     * @return string
-     */
-    public function formatDuration($seconds)
+    public function formatDuration(float|int $seconds): string
     {
         if ($seconds < 0.001) {
             return round($seconds * 1000000) . 'μs';
@@ -69,14 +65,10 @@ class DataFormatter implements DataFormatterInterface
         return round($seconds, 2) . 's';
     }
 
-    /**
-     * @param null|float|int|string $size
-     * @param int $precision
-     * @return string
-     */
-    public function formatBytes($size, $precision = 2)
+    public function formatBytes(float|int|string|null $size, int $precision = 2): string
     {
-        if ($size === 0 || $size === null || $size === "0") {
+        $size = (int) $size;
+        if ($size === 0) {
             return "0B";
         }
 
@@ -92,7 +84,7 @@ class DataFormatter implements DataFormatterInterface
      * @param object $object
      * @return string
      */
-    public function formatClassName($object)
+    public function formatClassName(object $object): string
     {
         $class = \get_class($object);
 

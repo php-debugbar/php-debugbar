@@ -57,7 +57,7 @@ class TracedStatement
      * @param null|float $startTime
      * @param null|int $startMemory
      */
-    public function start($startTime = null, $startMemory = null): void
+    public function start(?float $startTime = null, ?int $startMemory = null): void
     {
         $this->startTime = $startTime ?: microtime(true);
         $this->startMemory = $startMemory ?: memory_get_usage(false);
@@ -88,7 +88,7 @@ class TracedStatement
     public function checkParameters(array $params): array
     {
         foreach ($params as &$param) {
-            if ((is_string($param) || is_array($param)) && !mb_check_encoding($param ?? '', 'UTF-8')) {
+            if ((is_string($param) || is_array($param)) && !mb_check_encoding($param, 'UTF-8')) {
                 $param = '[BINARY DATA]';
             }
         }
