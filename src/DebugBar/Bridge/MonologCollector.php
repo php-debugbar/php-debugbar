@@ -30,16 +30,15 @@ use Monolog\Logger;
  */
 class MonologCollector extends AbstractProcessingHandler implements DataCollectorInterface, Renderable, MessagesAggregateInterface
 {
-    protected $name;
+    protected string $name;
 
-    protected $records = [];
+    protected array $records = [];
 
     /**
      * @param int     $level
      * @param boolean $bubble
-     * @param string  $name
      */
-    public function __construct(?Logger $logger = null, $level = Logger::DEBUG, $bubble = true, $name = 'monolog')
+    public function __construct(?Logger $logger = null, $level = Logger::DEBUG, ?bool $bubble = true, string $name = 'monolog')
     {
         parent::__construct($level, $bubble);
         $this->name = $name;
@@ -52,15 +51,12 @@ class MonologCollector extends AbstractProcessingHandler implements DataCollecto
      * Adds logger which messages you want to log
      *
      */
-    public function addLogger(Logger $logger)
+    public function addLogger(Logger $logger): void
     {
         $logger->pushHandler($this);
     }
 
-    /**
-     * @param array|\Monolog\LogRecord $record
-     */
-    protected function write($record): void
+    protected function write(array|\Monolog\LogRecord $record): void
     {
         $this->records[] = [
             'message' => $record['formatted'],
@@ -70,18 +66,12 @@ class MonologCollector extends AbstractProcessingHandler implements DataCollecto
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getMessages()
+    public function getMessages(): array
     {
         return $this->records;
     }
 
-    /**
-     * @return array
-     */
-    public function collect()
+    public function collect(): array
     {
         return [
             'count' => count($this->records),
@@ -89,18 +79,12 @@ class MonologCollector extends AbstractProcessingHandler implements DataCollecto
         ];
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return array
-     */
-    public function getWidgets()
+    public function getWidgets(): array
     {
         $name = $this->getName();
         return [

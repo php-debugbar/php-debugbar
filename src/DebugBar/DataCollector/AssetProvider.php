@@ -39,8 +39,6 @@ interface AssetProvider
      * will use them to deduplicate content.  This is particularly useful if multiple instances of
      * the same asset provider are used.  Inline assets from all collectors are merged together into
      * the same array, so these content IDs effectively deduplicate the inline assets.
-     *
-     * @return array
      */
-    public function getAssets();
+    public function getAssets(): array;
 }

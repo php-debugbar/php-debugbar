@@ -17,8 +17,6 @@ interface MessagesAggregateInterface
 {
     /**
      * Returns collected messages
-     *
-     * @return array
      */
-    public function getMessages();
+    public function getMessages(): array;
 }

@@ -9,29 +9,29 @@ namespace DebugBar\DataCollector\PDO;
  */
 class TracedStatement
 {
-    protected $sql;
+    protected string $sql;
 
-    protected $type;
+    protected ?string $type = null;
 
-    protected $rowCount;
+    protected int $rowCount;
 
-    protected $parameters;
+    protected array $parameters;
 
-    protected $startTime;
+    protected float $startTime;
 
-    protected $endTime;
+    protected float $endTime;
 
-    protected $duration;
+    protected float $duration;
 
-    protected $startMemory;
+    protected int $startMemory;
 
-    protected $endMemory;
+    protected int $endMemory;
 
-    protected $memoryDelta;
+    protected int $memoryDelta;
 
-    protected $exception;
+    protected ?\Exception $exception;
 
-    protected $preparedId;
+    protected ?string $preparedId;
 
     public function __construct(string $sql, array $params = [], ?string $preparedId = null)
     {
@@ -231,10 +231,8 @@ class TracedStatement
 
     /**
      * Returns the exception's code
-     *
-     * @return int|string
      */
-    public function getErrorCode()
+    public function getErrorCode(): int|string
     {
         return $this->exception !== null ? $this->exception->getCode() : 0;
     }

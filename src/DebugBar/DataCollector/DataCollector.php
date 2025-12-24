@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace DebugBar\DataCollector;
 
+use DebugBar\DataFormatter\DataFormatterInterface;
+use DebugBar\DataFormatter\DebugBarVarDumper;
 use DebugBar\DataFormatter\HasDataFormatter;
 use DebugBar\DataFormatter\HasXdebugLinks;
 
@@ -24,7 +26,7 @@ abstract class DataCollector implements DataCollectorInterface
     use HasDataFormatter;
     use HasXdebugLinks;
 
-    public static $defaultDataFormatter;
-    public static $defaultVarDumper;
+    public static ?DataFormatterInterface $defaultDataFormatter = null;
+    public static ?DebugBarVarDumper $defaultVarDumper = null;
 
 }

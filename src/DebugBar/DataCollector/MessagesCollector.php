@@ -25,63 +25,47 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     use HasDataFormatter;
     use HasXdebugLinks;
 
-    protected $name;
+    protected string $name;
 
-    protected $messages = [];
+    protected array $messages = [];
 
-    protected $aggregates = [];
+    /** @var array<MessagesAggregateInterface> */
+    protected array $aggregates = [];
 
-    /** @var bool */
-    protected $collectFile = false;
+    protected bool $collectFile = false;
 
-    /** @var int */
-    protected $backtraceLimit = 5;
+    protected int $backtraceLimit = 5;
 
-    /** @var array */
-    protected $backtraceExcludePaths = ['/vendor/'];
+    /** @var array<string> */
+    protected array $backtraceExcludePaths = ['/vendor/'];
 
-    /**
-     * @param string $name
-     */
-    public function __construct($name = 'messages')
+    public function __construct(string $name = 'messages')
     {
         $this->name = $name;
     }
 
-    /** @return void */
-    public function collectFileTrace($enabled = true)
+    public function collectFileTrace(bool $enabled = true): void
     {
         $this->collectFile = $enabled;
     }
 
-    /**
-     * @param int $limit
-     *
-     * @return void
-     */
-    public function limitBacktrace($limit)
+    public function limitBacktrace(int $limit): void
     {
         $this->backtraceLimit = $limit;
     }
 
     /**
      * Set paths to exclude from the backtrace
-     *
-     * @param array $excludePaths Array of file paths to exclude from backtrace
      */
-    public function addBacktraceExcludePaths($excludePaths)
+    public function addBacktraceExcludePaths(array $excludePaths): void
     {
         $this->backtraceExcludePaths = array_merge($this->backtraceExcludePaths, $excludePaths);
     }
 
     /**
      * Check if the given file is to be excluded from analysis
-     *
-     * @param string $file
-     *
-     * @return bool
      */
-    protected function fileIsInExcludedPath($file)
+    protected function fileIsInExcludedPath(string $file): bool
     {
         $normalizedPath = str_replace('\\', '/', $file);
 
@@ -94,12 +78,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         return false;
     }
 
-    /**
-     * @param string|null $messageHtml
-     *
-     * @return string|null
-     */
-    protected function customizeMessageHtml($messageHtml, $message)
+    protected function customizeMessageHtml(?string $messageHtml, mixed $message): ?string
     {
         $pos = strpos((string) $messageHtml, 'sf-dump-expanded');
         if ($pos !== false) {
@@ -109,12 +88,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         return $messageHtml;
     }
 
-    /**
-     * @param array $stacktrace
-     *
-     * @return array
-     */
-    protected function getStackTraceItem($stacktrace)
+    protected function getStackTraceItem(array $stacktrace): array
     {
         foreach ($stacktrace as $trace) {
             if (!isset($trace['file']) || $this->fileIsInExcludedPath($trace['file'])) {
@@ -131,10 +105,8 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
      * Adds a message
      *
      * A message can be anything from an object to a string
-     *
-     * @param string $label
      */
-    public function addMessage($message, $label = 'info', $isString = true)
+    public function addMessage(mixed $message, string $label = 'info', bool $isString = true): void
     {
         $messageText = $message;
         $messageHtml = null;
@@ -164,9 +136,8 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
 
     /**
      * Aggregates messages from other collectors
-     *
      */
-    public function aggregate(MessagesAggregateInterface $messages)
+    public function aggregate(MessagesAggregateInterface $messages): void
     {
         if ($this->collectFile && method_exists($messages, 'collectFileTrace')) {
             $messages->collectFileTrace();
@@ -175,10 +146,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         $this->aggregates[] = $messages;
     }
 
-    /**
-     * @return array
-     */
-    public function getMessages()
+    public function getMessages(): array
     {
         $messages = $this->messages;
         foreach ($this->aggregates as $collector) {
@@ -211,12 +179,8 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
 
     /**
      * Interpolates context values into the message placeholders.
-     *
-     * @param string $message
-     *
-     * @return string
      */
-    public function interpolate($message, array $context = [])
+    public function interpolate(string $message, array $context = []): string
     {
         // build a replacement array with braces around the context keys
         $replace = [];
@@ -249,15 +213,12 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     /**
      * Deletes all messages
      */
-    public function clear()
+    public function clear(): void
     {
         $this->messages = [];
     }
 
-    /**
-     * @return array
-     */
-    public function collect()
+    public function collect(): array
     {
         $messages = $this->getMessages();
         return [
@@ -266,26 +227,17 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         ];
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return array
-     */
-    public function getAssets()
+    public function getAssets(): array
     {
         return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : [];
     }
 
-    /**
-     * @return array
-     */
-    public function getWidgets()
+    public function getWidgets(): array
     {
         $name = $this->getName();
         return [

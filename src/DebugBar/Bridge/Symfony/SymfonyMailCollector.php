@@ -16,24 +16,23 @@ use Symfony\Component\Mime\Part\AbstractPart;
  */
 class SymfonyMailCollector extends DataCollector implements Renderable, AssetProvider
 {
-    /** @var array */
-    private $messages = [];
+    private array $messages = [];
 
-    /** @var bool */
-    private $showBody = false;
+    private bool $showBody = false;
 
-    /** @param \Symfony\Component\Mailer\SentMessage $message */
-    public function addSymfonyMessage($message)
+    public function addSymfonyMessage(\Symfony\Component\Mailer\SentMessage $message): void
     {
         $this->messages[] = $message->getOriginalMessage();
     }
 
-    public function showMessageBody($show = true)
+    public function showMessageBody(bool $show = true): static
     {
         $this->showBody = $show;
+
+        return $this;
     }
 
-    public function collect()
+    public function collect(): array
     {
         $mails = [];
 
@@ -69,12 +68,12 @@ class SymfonyMailCollector extends DataCollector implements Renderable, AssetPro
         ];
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'symfonymailer_mails';
     }
 
-    public function getWidgets()
+    public function getWidgets(): array
     {
         return [
             'emails' => [
@@ -91,7 +90,7 @@ class SymfonyMailCollector extends DataCollector implements Renderable, AssetPro
         ];
     }
 
-    public function getAssets()
+    public function getAssets(): array
     {
         return [
             'css' => 'widgets/mails/widget.css',

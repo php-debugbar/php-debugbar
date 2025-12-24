@@ -18,18 +18,12 @@ namespace DebugBar\DataCollector;
  */
 class PhpInfoCollector extends DataCollector implements Renderable
 {
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'php';
     }
 
-    /**
-     * @return array
-     */
-    public function collect()
+    public function collect(): array
     {
         return [
             'version' => implode('.', [PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION]),
@@ -37,10 +31,7 @@ class PhpInfoCollector extends DataCollector implements Renderable
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getWidgets()
+    public function getWidgets(): array
     {
         return [
             "php_version" => [

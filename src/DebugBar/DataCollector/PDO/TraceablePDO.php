@@ -12,11 +12,10 @@ use PDOException;
  */
 class TraceablePDO extends PDO
 {
-    /** @var PDO */
-    protected $pdo;
+    protected PDO $pdo;
 
     /** @var TracedStatement[] */
-    protected $executedStatements = [];
+    protected array $executedStatements = [];
 
     public function __construct(PDO $pdo)
     {
@@ -212,11 +211,9 @@ class TraceablePDO extends PDO
      *
      * @link   http://php.net/manual/en/pdo.setattribute.php
      *
-     * @param int $attribute
-     *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function setAttribute($attribute, $value): bool
+    public function setAttribute(int $attribute, mixed $value): bool
     {
         return $this->pdo->setAttribute($attribute, $value);
     }
@@ -330,17 +327,17 @@ class TraceablePDO extends PDO
         return array_filter($this->executedStatements, function ($s) { return !$s->isSuccess(); });
     }
 
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         return $this->pdo->$name;
     }
 
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value): void
     {
         $this->pdo->$name = $value;
     }
 
-    public function __call($name, $args)
+    public function __call(string $name, array $args): mixed
     {
         return call_user_func_array([$this->pdo, $name], $args);
     }

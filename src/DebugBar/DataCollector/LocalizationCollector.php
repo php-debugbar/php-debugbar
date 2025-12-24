@@ -20,28 +20,21 @@ class LocalizationCollector extends DataCollector implements Renderable
 {
     /**
      * Get the current locale
-     *
-     * @return string
      */
-    public function getLocale()
+    public function getLocale(): string|false
     {
         return setlocale(LC_ALL, 0);
     }
 
     /**
      * Get the current translations domain
-     *
-     * @return string
      */
-    public function getDomain()
+    public function getDomain(): string|false
     {
         return textdomain(null);
     }
 
-    /**
-     * @return array
-     */
-    public function collect()
+    public function collect(): array
     {
         return [
             'locale' => $this->getLocale(),
@@ -49,18 +42,12 @@ class LocalizationCollector extends DataCollector implements Renderable
         ];
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'localization';
     }
 
-    /**
-     * @return array
-     */
-    public function getWidgets()
+    public function getWidgets(): array
     {
         return [
             'domain' => [

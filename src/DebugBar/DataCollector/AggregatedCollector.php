@@ -28,20 +28,16 @@ use DebugBar\DebugBarException;
  */
 class AggregatedCollector implements DataCollectorInterface, ArrayAccess
 {
-    protected $name;
+    protected string $name;
 
-    protected $mergeProperty;
+    protected ?string $mergeProperty;
 
-    protected $sort;
+    protected bool|string $sort;
 
-    protected $collectors = [];
+    /** @var array<string, DataCollectorInterface> */
+    protected array $collectors = [];
 
-    /**
-     * @param string  $name
-     * @param string  $mergeProperty
-     * @param boolean $sort
-     */
-    public function __construct($name, $mergeProperty = null, $sort = false)
+    public function __construct(string $name, ?string $mergeProperty = null, bool|string $sort = false)
     {
         $this->name = $name;
         $this->mergeProperty = $mergeProperty;
@@ -60,15 +56,13 @@ class AggregatedCollector implements DataCollectorInterface, ArrayAccess
 
     /**
      * Merge data from one of the key/value pair of the collected data
-     *
-     * @param string $property
      */
-    public function setMergeProperty($property): void
+    public function setMergeProperty(string $property): void
     {
         $this->mergeProperty = $property;
     }
 
-    public function getMergeProperty(): string
+    public function getMergeProperty(): ?string
     {
         return $this->mergeProperty;
     }
@@ -78,18 +72,13 @@ class AggregatedCollector implements DataCollectorInterface, ArrayAccess
      *
      * If true, sorts using sort()
      * If it is a string, sorts the data using the value from a key/value pair of the array
-     *
-     * @param bool|string $sort
      */
-    public function setSort($sort): void
+    public function setSort(bool|string $sort): void
     {
         $this->sort = $sort;
     }
 
-    /**
-     * @return bool|string
-     */
-    public function getSort()
+    public function getSort(): bool|string
     {
         return $this->sort;
     }
@@ -110,10 +99,8 @@ class AggregatedCollector implements DataCollectorInterface, ArrayAccess
 
     /**
      * Sorts the collected data
-     *
-     * @param array $data
      */
-    protected function sort($data): array
+    protected function sort(array $data): array
     {
         if (is_string($this->sort)) {
             $p = $this->sort;
@@ -140,26 +127,25 @@ class AggregatedCollector implements DataCollectorInterface, ArrayAccess
     /**
      * @throws DebugBarException
      */
-    public function offsetSet($key, $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         throw new DebugBarException("AggregatedCollector[] is read-only");
     }
 
-    #[\ReturnTypeWillChange]
-    public function offsetGet($key)
+    public function offsetGet(mixed $offset): DataCollectorInterface
     {
-        return $this->collectors[$key];
+        return $this->collectors[$offset];
     }
 
-    public function offsetExists($key): bool
+    public function offsetExists(mixed $offset): bool
     {
-        return isset($this->collectors[$key]);
+        return isset($this->collectors[$offset]);
     }
 
     /**
      * @throws DebugBarException
      */
-    public function offsetUnset($key): void
+    public function offsetUnset(mixed $offset): void
     {
         throw new DebugBarException("AggregatedCollector[] is read-only");
     }

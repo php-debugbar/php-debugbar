@@ -13,11 +13,9 @@ use PDOStatement;
  */
 class TraceablePDOStatement extends PDOStatement
 {
-    /** @var TraceablePDO */
-    protected $pdo;
+    protected TraceablePDO $pdo;
 
-    /** @var array */
-    protected $boundParameters = [];
+    protected array $boundParameters = [];
 
     /**
      * TraceablePDOStatement constructor.

@@ -9,28 +9,28 @@ use DebugBar\DataCollector\Renderable;
 
 class MockCollector extends DataCollector implements Renderable
 {
-    protected $data;
-    protected $name;
-    protected $widgets;
+    protected array $data;
+    protected string $name;
+    protected array $widgets;
 
-    public function __construct($data = [], $name = 'mock', $widgets = [])
+    public function __construct(array $data = [], string $name = 'mock', array $widgets = [])
     {
         $this->data = $data;
         $this->name = $name;
         $this->widgets = $widgets;
     }
 
-    public function collect()
+    public function collect(): array
     {
         return $this->data;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getWidgets()
+    public function getWidgets(): array
     {
         return $this->widgets;
     }
