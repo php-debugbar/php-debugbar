@@ -9,5 +9,3 @@ $logger = new Monolog\Logger('demo');
 $debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
 
 $logger->info('hello world');
-
-render_demo_page();
