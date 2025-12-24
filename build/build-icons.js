@@ -12,7 +12,7 @@ const icons = [
     'adjustments-horizontal',
     'arrow-right',
     'arrows-left-right',
-    'bolt',
+    // 'bolt',
     'bookmark',
     'box',
     'briefcase',
