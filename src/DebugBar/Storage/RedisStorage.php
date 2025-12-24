@@ -37,9 +37,9 @@ class RedisStorage implements StorageInterface
      */
     public function save(string $id, array $data): void
     {
-        $this->redis->hSet("$this->hash:meta", $id, serialize($data['__meta']));
+        $this->redis->hSet("$this->hash:meta", $id, json_encode($data['__meta']));
         unset($data['__meta']);
-        $this->redis->hSet("$this->hash:data", $id, serialize($data));
+        $this->redis->hSet("$this->hash:data", $id, json_encode($data));
     }
 
     /**
@@ -48,8 +48,8 @@ class RedisStorage implements StorageInterface
     public function get(string $id): array
     {
         return array_merge(
-            unserialize($this->redis->hGet("$this->hash:data", $id)) ?: [],
-            ['__meta' => unserialize($this->redis->hGet("$this->hash:meta", $id))],
+            json_decode($this->redis->hGet("$this->hash:data", $id), true) ?: [],
+            ['__meta' => json_decode($this->redis->hGet("$this->hash:meta", $id), true)],
         );
     }
 
@@ -73,7 +73,7 @@ class RedisStorage implements StorageInterface
             }
 
             foreach ($data as $meta) {
-                if ($meta = unserialize($meta)) {
+                if ($meta = json_decode($meta, true)) {
                     if ($this->filter($meta, $filters)) {
                         $results[] = $meta;
                     }

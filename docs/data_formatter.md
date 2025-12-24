@@ -83,17 +83,6 @@ not take place by default, because not all collectors will use the variable dump
         }
     }
 
-You might want to clone a variable initially, and only dump it at a later time. This is supported by
-the `captureVar()` and `renderCapturedVar()` functions. It's also possible to render only portions
-of a cloned variable at a time.
-
-    $testData = array('one', 'two', 'three');
-    $cloned_variable = $this->getVarDumper()->captureVar($testData);
-    
-    // Later, when you want to render it. Note the second parameter is $seekPath; here we specify
-    // to only render the second array element (index 1). $html will therefore only contain 'two'.
-    $html = $this->getVarDumper()->renderCapturedVar($cloned_variable, array(1));
-
 ## Text formatting
 
 An instance of `DebugBar\DataFormatter\DataFormatterInterface` is used by collectors to

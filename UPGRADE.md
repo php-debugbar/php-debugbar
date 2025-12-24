@@ -15,3 +15,8 @@ This makes it easier to updates these collectors for specific versions.
  - Removed get/setBindAjaxHandlerToJquery (Use bind to fetch/xhr instead)
  - Removed Assetic collection (use getAssets() directly if needed) 
  - Removed RequireJS support
+ - Removed captureVar and renderCapturedVar from DebugBarVarDumper
+
+
+### Other changes
+ - Storage now uses json instead of serialize, so old data cannot be read.

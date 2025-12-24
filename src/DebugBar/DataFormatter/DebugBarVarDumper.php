@@ -195,18 +195,6 @@ class DebugBarVarDumper
     }
 
     /**
-     * Captures the data from a variable and serializes it for later rendering.
-     *
-     * @param mixed $data The variable to capture.
-     *
-     * @return string Serialized variable data.
-     */
-    public function captureVar(mixed $data): string
-    {
-        return serialize($this->getCloner()->cloneVar($data));
-    }
-
-    /**
      * Gets the display options for the HTML dumper.
      *
      */
@@ -214,40 +202,16 @@ class DebugBarVarDumper
     {
         $displayOptions = [];
         $dumperOptions = $this->getDumperOptions();
-        // Only used by Symfony 3.2 and newer:
         if (isset($dumperOptions['expanded_depth'])) {
             $displayOptions['maxDepth'] = $dumperOptions['expanded_depth'];
         }
-        // Only used by Symfony 3.2 and newer:
         if (isset($dumperOptions['max_string'])) {
             $displayOptions['maxStringLength'] = $dumperOptions['max_string'];
         }
-        // Only used by Symfony 3.2 and newer:
         if (isset($dumperOptions['file_link_format'])) {
             $displayOptions['fileLinkFormat'] = $dumperOptions['file_link_format'];
         }
         return $displayOptions;
-    }
-
-    /**
-     * Renders previously-captured data from captureVar to HTML and returns it as a string.
-     *
-     * @param string $capturedData Captured data from captureVar.
-     * @param array  $seekPath     Pass an array of keys to traverse if you only want to render a subset
-     *                             of the data.
-     *
-     * @return string HTML rendering of the variable.
-     */
-    public function renderCapturedVar(string $capturedData, array $seekPath = []): string
-    {
-        /** @var Data $data */
-        $data = unserialize($capturedData);
-
-        foreach ($seekPath as $key) {
-            $data = $data->seek($key);
-        }
-
-        return $this->dump($data);
     }
 
     /**
