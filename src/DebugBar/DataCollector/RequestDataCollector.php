@@ -57,8 +57,9 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
     /**
      * Hide a sensitive value within one of the superglobal arrays.
      *
-     * @param string $superGlobalName The name of the superglobal array, e.g. '_GET'
-     * @param string|array $keys      The key within the superglobal
+     * @param string       $superGlobalName The name of the superglobal array, e.g. '_GET'
+     * @param string|array $keys            The key within the superglobal
+     *
      * @return void
      */
     public function hideSuperglobalKeys($superGlobalName, $keys)
@@ -83,8 +84,8 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
      * only '*' characters for string values.
      * Non-string values will be replaced with a fixed asterisk count.
      *
-     * @param array|\ArrayAccess  $superGlobal     One of the superglobal arrays
-     * @param string $superGlobalName The name of the superglobal array, e.g. '_GET'
+     * @param array|\ArrayAccess $superGlobal     One of the superglobal arrays
+     * @param string             $superGlobalName The name of the superglobal array, e.g. '_GET'
      *
      * @return array $values without sensitive data
      */

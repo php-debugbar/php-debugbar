@@ -8,17 +8,20 @@ use DebugBar\DataCollector\PDO\TracedStatement;
 
 /**
  * Class TracedStatementTest
+ *
  * @package DebugBar\Tests
  */
 class TracedStatementTest extends DebugBarTestCase
 {
     /**
      * Check if query parameters are being replaced in the correct way
+     *
      * @bugFix Before fix it : select *
      *                          from geral.exame_part ep
      *                           where ep.id_exame = <1> and
      *                             ep.id_exame_situacao = <2>'
      *                            ep.id_exame_situacao = <1>_situacao
+     *
      * @return void
      */
     public function testReplacementParamsQuery()
@@ -154,12 +157,14 @@ class TracedStatementTest extends DebugBarTestCase
 
     /**
      * Check if query parameters are being replaced in the correct way
+     *
      * @bugFix Before fix it : select *
      *                          from geral.person p
      *                           left join geral.contract c
      *                             on c.id_person = p.id_person
      *                           where c.status = <1> and
      *                           p.status <> :status;
+     *
      * @return void
      */
     public function testRepeatParamsQuery()
@@ -186,9 +191,11 @@ class TracedStatementTest extends DebugBarTestCase
 
     /**
      * Check that query parameters are being replaced only once
+     *
      * @bugFix Before fix it: select * from
      *                          `my_table` where `my_field` between
      *                           <2018-01-01> and <2018-01-01>
+     *
      * @return void
      */
     public function testParametersAreNotRepeated()

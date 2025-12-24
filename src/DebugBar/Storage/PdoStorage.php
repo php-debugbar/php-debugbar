@@ -32,9 +32,8 @@ class PdoStorage implements StorageInterface
     ];
 
     /**
-     * @param \PDO $pdo The PDO instance
+     * @param \PDO   $pdo       The PDO instance
      * @param string $tableName
-     * @param array $sqlQueries
      */
     public function __construct(PDO $pdo, $tableName = 'phpdebugbar', array $sqlQueries = [])
     {
@@ -46,7 +45,6 @@ class PdoStorage implements StorageInterface
     /**
      * Sets the sql queries to be used
      *
-     * @param array $queries
      */
     public function setSqlQueries(array $queries)
     {
@@ -124,8 +122,8 @@ class PdoStorage implements StorageInterface
     /**
      * Get a SQL Query for a task, with the variables replaced
      *
-     * @param  string $name
-     * @param  array  $vars
+     * @param string $name
+     *
      * @return string
      */
     protected function getSqlQuery($name, array $vars = [])

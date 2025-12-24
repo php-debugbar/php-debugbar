@@ -26,10 +26,6 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
 
     protected $slowThreshold;
 
-    /**
-     * @param \PDO $pdo
-     * @param TimeDataCollector $timeCollector
-     */
     public function __construct(?\PDO $pdo = null, ?TimeDataCollector $timeCollector = null)
     {
         $this->timeCollector = $timeCollector;
@@ -52,7 +48,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
     /**
      * Enable/disable the shaded duration background on queries
      *
-     * @param  bool $enabled
+     * @param bool $enabled
      */
     public function setDurationBackground($enabled)
     {
@@ -62,7 +58,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
     /**
      * Highlights queries that exceed the threshold
      *
-     * @param  int|float $threshold miliseconds value
+     * @param int|float $threshold miliseconds value
      */
     public function setSlowThreshold($threshold)
     {
@@ -88,7 +84,6 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
     /**
      * Adds a new PDO instance to be collector
      *
-     * @param \PDO $pdo
      * @param string $name Optional connection name
      */
     public function addConnection(\PDO $pdo, $name = null)
@@ -152,9 +147,8 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
     /**
      * Collects data from a single TraceablePDO instance
      *
-     * @param TraceablePDO $pdo
-     * @param TimeDataCollector $timeCollector
      * @param string|null $connectionName the pdo connection (eg default | read | write)
+     *
      * @return array
      */
     protected function collectPDO(TraceablePDO $pdo, ?TimeDataCollector $timeCollector = null, $connectionName = null)

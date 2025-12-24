@@ -37,7 +37,6 @@ class ExceptionsCollector extends DataCollector implements Renderable
     /**
      * Adds a Throwable to be profiled in the debug bar
      *
-     * @param Throwable $e
      */
     public function addThrowable(\Throwable $e)
     {
@@ -81,10 +80,11 @@ class ExceptionsCollector extends DataCollector implements Renderable
     /**
      * Adds an warning to be profiled in the debug bar
      *
-     * @param int $errno
+     * @param int    $errno
      * @param string $errstr
      * @param string $errfile
-     * @param int $errline
+     * @param int    $errline
+     *
      * @return void
      */
     public function addWarning($errno, $errstr, $errfile = '', $errline = 0)
@@ -180,6 +180,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
      * Returns Throwable data as an string
      *
      * @param Throwable $e
+     *
      * @return string
      */
     public function formatTraceAsString($e)
@@ -202,6 +203,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
      * Returns Throwable data as an array
      *
      * @param Throwable|array $e
+     *
      * @return array
      */
     public function formatThrowableData($e)

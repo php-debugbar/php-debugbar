@@ -19,7 +19,7 @@ interface StorageInterface
      * Saves collected data
      *
      * @param string $id
-     * @param array $data
+     * @param array  $data
      */
     public function save($id, $data);
 
@@ -27,6 +27,7 @@ interface StorageInterface
      * Returns collected data with the specified id
      *
      * @param string $id
+     *
      * @return array
      */
     public function get($id);
@@ -34,9 +35,9 @@ interface StorageInterface
     /**
      * Returns a metadata about collected data
      *
-     * @param array $filters
      * @param integer $max
      * @param integer $offset
+     *
      * @return array
      */
     public function find(array $filters = [], $max = 20, $offset = 0);

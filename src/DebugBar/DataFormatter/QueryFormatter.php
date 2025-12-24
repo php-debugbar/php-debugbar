@@ -10,7 +10,8 @@ class QueryFormatter extends DataFormatter
     /**
      * Removes extra spaces at the beginning and end of the SQL query and its lines.
      *
-     * @param  string $sql
+     * @param string $sql
+     *
      * @return string
      */
     public function formatSql($sql)
@@ -24,8 +25,6 @@ class QueryFormatter extends DataFormatter
     /**
      * Check bindings for illegal (non UTF-8) strings, like Binary data.
      *
-     * @param $bindings
-     * @return mixed
      */
     public function checkBindings($bindings)
     {
@@ -50,7 +49,8 @@ class QueryFormatter extends DataFormatter
     /**
      * Format a source object.
      *
-     * @param  object|null  $source  If the backtrace is disabled, the $source will be null.
+     * @param object|null $source If the backtrace is disabled, the $source will be null.
+     *
      * @return string
      */
     public function formatSource($source, $short = false)

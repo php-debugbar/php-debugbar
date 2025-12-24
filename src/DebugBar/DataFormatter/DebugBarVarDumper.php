@@ -212,6 +212,7 @@ class DebugBarVarDumper implements AssetProvider
      * Captures the data from a variable and serializes it for later rendering.
      *
      * @param mixed $data The variable to capture.
+     *
      * @return string Serialized variable data.
      */
     public function captureVar($data)
@@ -247,8 +248,9 @@ class DebugBarVarDumper implements AssetProvider
      * Renders previously-captured data from captureVar to HTML and returns it as a string.
      *
      * @param string $capturedData Captured data from captureVar.
-     * @param array $seekPath Pass an array of keys to traverse if you only want to render a subset
-     *                        of the data.
+     * @param array  $seekPath     Pass an array of keys to traverse if you only want to render a subset
+     *                             of the data.
+     *
      * @return string HTML rendering of the variable.
      */
     public function renderCapturedVar($capturedData, $seekPath = [])
@@ -267,6 +269,7 @@ class DebugBarVarDumper implements AssetProvider
      * Captures and renders the data from a variable to HTML and returns it as a string.
      *
      * @param mixed $data The variable to capture and render.
+     *
      * @return string HTML rendering of the variable.
      */
     public function renderVar($data)
@@ -293,7 +296,6 @@ class DebugBarVarDumper implements AssetProvider
     /**
      * Helper function to dump a Data object to HTML.
      *
-     * @param Data $data
      * @return string
      */
     protected function dump(Data $data)

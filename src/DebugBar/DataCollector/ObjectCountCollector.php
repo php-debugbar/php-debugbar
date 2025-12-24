@@ -52,8 +52,8 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
 
     /**
      * @param string|mixed $class
-     * @param int $count
-     * @param string $key
+     * @param int          $count
+     * @param string       $key
      */
     public function countClass($class, $count = 1, $key = 'value')
     {

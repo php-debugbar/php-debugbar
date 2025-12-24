@@ -18,9 +18,6 @@ namespace DebugBar;
  */
 class PhpHttpDriver implements HttpDriverInterface
 {
-    /**
-     * @param array $headers
-     */
     public function setHeaders(array $headers)
     {
         foreach ($headers as $name => $value) {
@@ -47,6 +44,7 @@ class PhpHttpDriver implements HttpDriverInterface
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public function hasSessionValue($name)
@@ -56,7 +54,6 @@ class PhpHttpDriver implements HttpDriverInterface
 
     /**
      * @param string $name
-     * @return mixed
      */
     public function getSessionValue($name)
     {

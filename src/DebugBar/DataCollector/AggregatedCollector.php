@@ -37,8 +37,8 @@ class AggregatedCollector implements DataCollectorInterface, ArrayAccess
     protected $collectors = [];
 
     /**
-     * @param string $name
-     * @param string $mergeProperty
+     * @param string  $name
+     * @param string  $mergeProperty
      * @param boolean $sort
      */
     public function __construct($name, $mergeProperty = null, $sort = false)
@@ -48,17 +48,11 @@ class AggregatedCollector implements DataCollectorInterface, ArrayAccess
         $this->sort = $sort;
     }
 
-    /**
-     * @param DataCollectorInterface $collector
-     */
     public function addCollector(DataCollectorInterface $collector): void
     {
         $this->collectors[$collector->getName()] = $collector;
     }
 
-    /**
-     * @return array
-     */
     public function getCollectors(): array
     {
         return $this->collectors;
@@ -74,9 +68,6 @@ class AggregatedCollector implements DataCollectorInterface, ArrayAccess
         $this->mergeProperty = $property;
     }
 
-    /**
-     * @return string
-     */
     public function getMergeProperty(): string
     {
         return $this->mergeProperty;
@@ -103,9 +94,6 @@ class AggregatedCollector implements DataCollectorInterface, ArrayAccess
         return $this->sort;
     }
 
-    /**
-     * @return array
-     */
     public function collect(): array
     {
         $aggregate = [];
@@ -124,7 +112,6 @@ class AggregatedCollector implements DataCollectorInterface, ArrayAccess
      * Sorts the collected data
      *
      * @param array $data
-     * @return array
      */
     protected function sort($data): array
     {
@@ -142,9 +129,6 @@ class AggregatedCollector implements DataCollectorInterface, ArrayAccess
         return $data;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -154,8 +138,6 @@ class AggregatedCollector implements DataCollectorInterface, ArrayAccess
     // ArrayAccess implementation
 
     /**
-     * @param mixed $key
-     * @param mixed $value
      * @throws DebugBarException
      */
     public function offsetSet($key, $value): void
@@ -163,27 +145,18 @@ class AggregatedCollector implements DataCollectorInterface, ArrayAccess
         throw new DebugBarException("AggregatedCollector[] is read-only");
     }
 
-    /**
-     * @param mixed $key
-     * @return mixed
-     */
     #[\ReturnTypeWillChange]
     public function offsetGet($key)
     {
         return $this->collectors[$key];
     }
 
-    /**
-     * @param mixed $key
-     * @return bool
-     */
     public function offsetExists($key): bool
     {
         return isset($this->collectors[$key]);
     }
 
     /**
-     * @param mixed $key
      * @throws DebugBarException
      */
     public function offsetUnset($key): void

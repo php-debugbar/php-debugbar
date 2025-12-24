@@ -28,6 +28,7 @@ trait HasDataFormatter
      * rich variable rendering.
      *
      * @param bool $value
+     *
      * @return $this
      */
     public function useHtmlVarDumper($value = true)
@@ -40,7 +41,6 @@ trait HasDataFormatter
      * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
      * rendering.
      *
-     * @return mixed
      */
     public function isHtmlVarDumperUsed()
     {
@@ -50,7 +50,6 @@ trait HasDataFormatter
     /**
      * Sets the default data formater instance used by all collectors subclassing this class
      *
-     * @param DataFormatterInterface $formater
      */
     public static function setDefaultDataFormatter(DataFormatterInterface $formater)
     {
@@ -73,7 +72,6 @@ trait HasDataFormatter
     /**
      * Sets the data formater instance used by this collector
      *
-     * @param DataFormatterInterface $formater
      * @return $this
      */
     public function setDataFormatter(DataFormatterInterface $formater)
@@ -95,7 +93,6 @@ trait HasDataFormatter
     /**
      * Sets the default variable dumper used by all collectors subclassing this class
      *
-     * @param DebugBarVarDumper $varDumper
      */
     public static function setDefaultVarDumper(DebugBarVarDumper $varDumper)
     {
@@ -118,7 +115,6 @@ trait HasDataFormatter
     /**
      * Sets the variable dumper instance used by this collector
      *
-     * @param DebugBarVarDumper $varDumper
      * @return $this
      */
     public function setVarDumper(DebugBarVarDumper $varDumper)

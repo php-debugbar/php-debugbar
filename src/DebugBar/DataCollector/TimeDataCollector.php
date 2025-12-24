@@ -73,10 +73,10 @@ class TimeDataCollector extends DataCollector implements Renderable
     /**
      * Starts a measure
      *
-     * @param string $name Internal name, used to stop the measure
-     * @param string|null $label Public name
+     * @param string      $name      Internal name, used to stop the measure
+     * @param string|null $label     Public name
      * @param string|null $collector The source of the collector
-     * @param string|null $group The group for aggregates
+     * @param string|null $group     The group for aggregates
      */
     public function startMeasure($name, $label = null, $collector = null, $group = null)
     {
@@ -94,6 +94,7 @@ class TimeDataCollector extends DataCollector implements Renderable
      * Check a measure exists
      *
      * @param string $name
+     *
      * @return bool
      */
     public function hasStartedMeasure($name)
@@ -105,7 +106,8 @@ class TimeDataCollector extends DataCollector implements Renderable
      * Stops a measure
      *
      * @param string $name
-     * @param array $params
+     * @param array  $params
+     *
      * @throws DebugBarException
      */
     public function stopMeasure($name, $params = [])
@@ -131,10 +133,10 @@ class TimeDataCollector extends DataCollector implements Renderable
     /**
      * Adds a measure
      *
-     * @param string $label
-     * @param float $start
-     * @param float $end
-     * @param array $params
+     * @param string      $label
+     * @param float       $start
+     * @param float       $end
+     * @param array       $params
      * @param string|null $collector
      * @param string|null $group
      */
@@ -164,11 +166,9 @@ class TimeDataCollector extends DataCollector implements Renderable
     /**
      * Utility function to measure the execution of a Closure
      *
-     * @param string $label
-     * @param \Closure $closure
+     * @param string      $label
      * @param string|null $collector
      * @param string|null $group
-     * @return mixed
      */
     public function measure($label, \Closure $closure, $collector = null, $group = null)
     {
@@ -225,6 +225,7 @@ class TimeDataCollector extends DataCollector implements Renderable
 
     /**
      * @return array
+     *
      * @throws DebugBarException
      */
     public function collect()

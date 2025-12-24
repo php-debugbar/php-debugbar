@@ -35,10 +35,9 @@ class MonologCollector extends AbstractProcessingHandler implements DataCollecto
     protected $records = [];
 
     /**
-     * @param Logger $logger
-     * @param int $level
+     * @param int     $level
      * @param boolean $bubble
-     * @param string $name
+     * @param string  $name
      */
     public function __construct(?Logger $logger = null, $level = Logger::DEBUG, $bubble = true, $name = 'monolog')
     {
@@ -52,7 +51,6 @@ class MonologCollector extends AbstractProcessingHandler implements DataCollecto
     /**
      * Adds logger which messages you want to log
      *
-     * @param Logger $logger
      */
     public function addLogger(Logger $logger)
     {

@@ -99,8 +99,9 @@ class FileStorage implements StorageInterface
     /**
      * Filter the metadata for matches.
      *
-     * @param  array $meta
-     * @param  array $filters
+     * @param array $meta
+     * @param array $filters
+     *
      * @return bool
      */
     protected function filter($meta, $filters)
@@ -126,7 +127,8 @@ class FileStorage implements StorageInterface
     }
 
     /**
-     * @param  string $id
+     * @param string $id
+     *
      * @return string
      */
     public function makeFilename($id)

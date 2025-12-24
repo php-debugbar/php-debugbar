@@ -31,10 +31,6 @@ class DataFormatter implements DataFormatterInterface
         $this->dumper = new CliDumper();
     }
 
-    /**
-     * @param $data
-     * @return string
-     */
     public function formatVar(mixed $data): string
     {
         $output = '';
@@ -80,10 +76,6 @@ class DataFormatter implements DataFormatterInterface
         return $sign . round(pow(1024, $base - floor($base)), $precision) . $suffixes[(int) floor($base)];
     }
 
-    /**
-     * @param object $object
-     * @return string
-     */
     public function formatClassName(object $object): string
     {
         $class = \get_class($object);

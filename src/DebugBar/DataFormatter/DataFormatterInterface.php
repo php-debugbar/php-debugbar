@@ -21,8 +21,6 @@ interface DataFormatterInterface
     /**
      * Transforms a PHP variable to a string representation
      *
-     * @param mixed $data
-     * @return string
      */
     public function formatVar(mixed $data): string;
 
@@ -35,17 +33,14 @@ interface DataFormatterInterface
     /**
      * Transforms a size in bytes to a human readable string
      *
-     * @param string $size
+     * @param string  $size
      * @param integer $precision
-     * @return string
      */
     public function formatBytes(float|int|string|null $size, int $precision = 2): string;
 
     /**
      * Format a classname in a readable string
      *
-     * @param object $object
-     * @return string
      */
     public function formatClassName(object $object): string;
 }

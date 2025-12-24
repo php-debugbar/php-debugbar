@@ -38,13 +38,13 @@ abstract class DebugBarTestCase extends TestCase
     public function assertJsonHasProperty($json, $property)
     {
         $data = json_decode($json, true);
-        $this->assertTrue(array_key_exists($property, $data));
+        $this->assertArrayHasKey($property, $data);
     }
 
     public function assertJsonPropertyEquals($json, $property, $expected)
     {
         $data = json_decode($json, true);
-        $this->assertTrue(array_key_exists($property, $data));
+        $this->assertArrayHasKey($property, $data);
         $this->assertEquals($expected, $data[$property]);
     }
 }

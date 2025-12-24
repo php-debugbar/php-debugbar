@@ -23,6 +23,7 @@ trait HasXdebugLinks
      * Shorten the file path by removing the xdebug path replacements
      *
      * @param string $file
+     *
      * @return string
      */
     public function normalizeFilePath($file)
@@ -48,7 +49,7 @@ trait HasXdebugLinks
     /**
      * Get an Xdebug Link to a file
      *
-     * @param string $file
+     * @param string   $file
      * @param int|null $line
      *
      * @return null|array{url: string, ajax: bool, filename: string, line: string}
@@ -139,7 +140,7 @@ trait HasXdebugLinks
 
     /**
      * @param string $xdebugLinkTemplate
-     * @param bool $shouldUseAjax
+     * @param bool   $shouldUseAjax
      */
     public function setXdebugLinkTemplate($xdebugLinkTemplate, $shouldUseAjax = false)
     {

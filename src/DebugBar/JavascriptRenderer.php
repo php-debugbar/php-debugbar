@@ -116,7 +116,6 @@ class JavascriptRenderer
     protected $cspNonce;
 
     /**
-     * @param \DebugBar\DebugBar $debugBar
      * @param string $baseUrl
      * @param string $basePath
      */
@@ -303,7 +302,7 @@ class JavascriptRenderer
     /**
      * Disable a specific vendor's assets.
      *
-     * @param  string $name "highlightjs"
+     * @param string $name "highlightjs"
      *
      * @return void
      */
@@ -409,6 +408,7 @@ class JavascriptRenderer
      * Sets the default theme
      *
      * @param string $theme
+     *
      * @return $this
      */
     public function setTheme($theme = 'auto')
@@ -421,6 +421,7 @@ class JavascriptRenderer
      * Sets whether to hide empty tabs or not
      *
      * @param boolean $hide
+     *
      * @return $this
      */
     public function setHideEmptyTabs($hide = true)
@@ -453,7 +454,6 @@ class JavascriptRenderer
      * "icon" or "widget" are at least needed
      *
      * @param string $name
-     * @param array $options
      */
     public function addControl($name, array $options)
     {
@@ -683,6 +683,7 @@ class JavascriptRenderer
      * Sets the CSP Nonce (or remove it by setting to null)
      *
      * @param string|null $nonce
+     *
      * @return $this
      */
     public function setCspNonce($nonce = null)
@@ -704,10 +705,11 @@ class JavascriptRenderer
     /**
      * Add assets stored in files to render in the head
      *
-     * @param array $cssFiles An array of filenames
-     * @param array $jsFiles  An array of filenames
+     * @param array  $cssFiles An array of filenames
+     * @param array  $jsFiles  An array of filenames
      * @param string $basePath Base path of those files
      * @param string $baseUrl  Base url of those files
+     *
      * @return $this
      */
     public function addAssets($cssFiles, $jsFiles, $basePath = null, $baseUrl = null)
@@ -736,6 +738,7 @@ class JavascriptRenderer
      * @param array $inlineJs   An array map of content ID to inline JS content (not including <script> tag)
      * @param array $inlineHead An array map of content ID to arbitrary inline HTML content (typically
      *                          <style>/<script> tags); it must be embedded within the <head> element
+     *
      * @return $this
      */
     public function addInlineAssets($inlineCss, $inlineJs, $inlineHead)
@@ -751,9 +754,8 @@ class JavascriptRenderer
     /**
      * Returns the list of asset files
      *
-     * @param string|null $type 'css', 'js', 'inline_css', 'inline_js', 'inline_head', or null for all
+     * @param string|null $type       'css', 'js', 'inline_css', 'inline_js', 'inline_head', or null for all
      * @param string|null $relativeTo The type of path to which filenames must be relative (path, url or null)
-     * @return array
      */
     public function getAssets(?string $type = null, ?string $relativeTo = self::RELATIVE_PATH): array
     {
@@ -846,6 +848,7 @@ class JavascriptRenderer
      * @param string $relativeTo
      * @param string $basePath
      * @param string $baseUrl
+     *
      * @return null|string
      */
     protected function getRelativeRoot($relativeTo, $basePath, $baseUrl)
@@ -863,7 +866,8 @@ class JavascriptRenderer
      * Makes a URI relative to another
      *
      * @param null|string|array $uri
-     * @param string $root
+     * @param string            $root
+     *
      * @return string|array
      */
     protected function makeUriRelativeTo($uri, $root)
@@ -922,9 +926,9 @@ class JavascriptRenderer
     /**
      * Write assets to standard output or in a file
      *
-     * @param array|null $files Filenames containing assets
-     * @param array|null $content Inline content to dump
-     * @param string $targetFilename
+     * @param array|null $files          Filenames containing assets
+     * @param array|null $content        Inline content to dump
+     * @param string     $targetFilename
      */
     protected function dumpAssets($files = null, $content = null, $targetFilename = null)
     {
@@ -994,10 +998,11 @@ class JavascriptRenderer
     /**
      * Register shutdown to display the debug bar
      *
-     * @param boolean $here Set position of HTML. True if is to current position or false for end file
-     * @param boolean $initialize Whether to render the de bug bar initialization code
-     * @param bool $renderStackedData
-     * @param bool $head
+     * @param boolean $here              Set position of HTML. True if is to current position or false for end file
+     * @param boolean $initialize        Whether to render the de bug bar initialization code
+     * @param bool    $renderStackedData
+     * @param bool    $head
+     *
      * @return string Return "{--DEBUGBAR_OB_START_REPLACE_ME--}" or return an empty string if $here == false
      */
     public function renderOnShutdown($here = true, $initialize = true, $renderStackedData = true, $head = false)
@@ -1017,6 +1022,7 @@ class JavascriptRenderer
      * @param boolean $here
      * @param boolean $initialize
      * @param boolean $renderStackedData
+     *
      * @return string
      */
     public function renderOnShutdownWithHead($here = true, $initialize = true, $renderStackedData = true)
@@ -1027,10 +1033,10 @@ class JavascriptRenderer
     /**
      * Is callback function for register_shutdown_function(...)
      *
-     * @param boolean $here Set position of HTML. True if is to current position or false for end file
-     * @param boolean $initialize Whether to render the de bug bar initialization code
-     * @param bool $renderStackedData
-     * @param bool $head
+     * @param boolean $here              Set position of HTML. True if is to current position or false for end file
+     * @param boolean $initialize        Whether to render the de bug bar initialization code
+     * @param bool    $renderStackedData
+     * @param bool    $head
      */
     public function replaceTagInBuffer($here = true, $initialize = true, $renderStackedData = true, $head = false)
     {
@@ -1051,8 +1057,9 @@ class JavascriptRenderer
      *
      * AJAX request should not render the initialization code.
      *
-     * @param boolean $initialize Whether or not to render the debug bar initialization code
+     * @param boolean $initialize        Whether or not to render the debug bar initialization code
      * @param boolean $renderStackedData Whether or not to render the stacked data
+     *
      * @return string
      */
     public function render($initialize = true, $renderStackedData = true)
@@ -1158,6 +1165,7 @@ class JavascriptRenderer
      * Controls can be defined by collectors themselves or using {@see addControl()}
      *
      * @param string $varname Debug bar's variable name
+     *
      * @return string
      */
     protected function getJsControlsDefinitionCode($varname)
@@ -1234,8 +1242,8 @@ class JavascriptRenderer
      * Returns the js code needed to add a dataset
      *
      * @param string $requestId
-     * @param array $data
-     * @param mixed $suffix
+     * @param array  $data
+     *
      * @return string
      */
     protected function getAddDatasetCode($requestId, $data, $suffix = null)
@@ -1254,7 +1262,7 @@ class JavascriptRenderer
      * Returns the js code needed to load a dataset with the OpenHandler
      *
      * @param string $requestId
-     * @param mixed $suffix
+     *
      * @return string
      */
     protected function getLoadDatasetCode($requestId, $suffix = null)
@@ -1270,6 +1278,7 @@ class JavascriptRenderer
 
     /**
      * If a nonce it set, create the correct attribute
+     *
      * @return string
      */
     protected function getNonceAttribute()

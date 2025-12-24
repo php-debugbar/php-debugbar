@@ -23,7 +23,6 @@ class ConfigCollector extends DataCollector implements Renderable, AssetProvider
     protected $data;
 
     /**
-     * @param array  $data
      * @param string $name
      */
     public function __construct(array $data = [], $name = 'config')
@@ -35,7 +34,6 @@ class ConfigCollector extends DataCollector implements Renderable, AssetProvider
     /**
      * Sets the data
      *
-     * @param array $data
      */
     public function setData(array $data)
     {

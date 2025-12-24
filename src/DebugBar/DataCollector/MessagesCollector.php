@@ -78,6 +78,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
      * Check if the given file is to be excluded from analysis
      *
      * @param string $file
+     *
      * @return bool
      */
     protected function fileIsInExcludedPath($file)
@@ -95,7 +96,6 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
 
     /**
      * @param string|null $messageHtml
-     * @param mixed $message
      *
      * @return string|null
      */
@@ -132,7 +132,6 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
      *
      * A message can be anything from an object to a string
      *
-     * @param mixed $message
      * @param string $label
      */
     public function addMessage($message, $label = 'info', $isString = true)
@@ -166,7 +165,6 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     /**
      * Aggregates messages from other collectors
      *
-     * @param MessagesAggregateInterface $messages
      */
     public function aggregate(MessagesAggregateInterface $messages)
     {
@@ -202,11 +200,6 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         return $messages;
     }
 
-    /**
-     * @param $level
-     * @param $message
-     * @param array $context
-     */
     public function log($level, $message, array $context = []): void
     {
         // For string messages, interpolate the context following PSR-3
@@ -220,7 +213,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
      * Interpolates context values into the message placeholders.
      *
      * @param string $message
-     * @param array $context
+     *
      * @return string
      */
     public function interpolate($message, array $context = [])
