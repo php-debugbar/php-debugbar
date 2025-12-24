@@ -17,7 +17,6 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
     protected ?TimeDataCollector $timeCollector;
 
     /**
-     * Create a ViewCollector
      *
      * @param string[] $excludePaths Paths to exclude from collection
      */

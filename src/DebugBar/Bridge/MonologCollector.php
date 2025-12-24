@@ -17,6 +17,7 @@ use DebugBar\DataCollector\DataCollectorInterface;
 use DebugBar\DataCollector\MessagesAggregateInterface;
 use DebugBar\DataCollector\Renderable;
 use Monolog\Handler\AbstractProcessingHandler;
+use Monolog\Level;
 use Monolog\Logger;
 
 /**
@@ -34,11 +35,7 @@ class MonologCollector extends AbstractProcessingHandler implements DataCollecto
 
     protected array $records = [];
 
-    /**
-     * @param int     $level
-     * @param boolean $bubble
-     */
-    public function __construct(?Logger $logger = null, $level = Logger::DEBUG, ?bool $bubble = true, string $name = 'monolog')
+    public function __construct(?Logger $logger = null, int|Level|string $level = Level::Debug, ?bool $bubble = true, string $name = 'monolog')
     {
         parent::__construct($level, $bubble);
         $this->name = $name;
@@ -47,10 +44,6 @@ class MonologCollector extends AbstractProcessingHandler implements DataCollecto
         }
     }
 
-    /**
-     * Adds logger which messages you want to log
-     *
-     */
     public function addLogger(Logger $logger): void
     {
         $logger->pushHandler($this);
