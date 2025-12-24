@@ -73,12 +73,12 @@ class OpenHandler
     {
         $max = 20;
         if (isset($request['max'])) {
-            $max = $request['max'];
+            $max = (int) $request['max'];
         }
 
         $offset = 0;
         if (isset($request['offset'])) {
-            $offset = $request['offset'];
+            $offset = (int) $request['offset'];
         }
 
         $filters = [];
