@@ -39,6 +39,8 @@ interface AssetProvider extends DataCollectorInterface
      * will use them to deduplicate content.  This is particularly useful if multiple instances of
      * the same asset provider are used.  Inline assets from all collectors are merged together into
      * the same array, so these content IDs effectively deduplicate the inline assets.
+     *
+     * @return array{base_path?: string, base_url?: string, css?: string|list<string>, js?: string|list<string>, inline_css?: array<string, string>, inline_js?: array<string, string>, inline_head?: array<string, string>}
      */
     public function getAssets(): array;
 }
