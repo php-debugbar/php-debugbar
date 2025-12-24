@@ -18,10 +18,7 @@ namespace DebugBar;
  */
 class RequestIdGenerator implements RequestIdGeneratorInterface
 {
-    /**
-     * @return string
-     */
-    public function generate()
+    public function generate(): string
     {
         return 'X' . bin2hex(random_bytes(16));
     }
