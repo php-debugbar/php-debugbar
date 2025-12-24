@@ -1,0 +1,42 @@
+name: Check Minified Files
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  check-minified:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    name: Check Minified Files
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build all files
+      run: npm run build
+
+    - name: Check for changes
+      run: |
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "Error: Minified files are out of date!"
+          echo "Please run 'npm run build' and commit the changes."
+          git status
+          git diff
+          exit 1
+        fi
