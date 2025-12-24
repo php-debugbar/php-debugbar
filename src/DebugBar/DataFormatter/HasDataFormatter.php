@@ -30,7 +30,7 @@ trait HasDataFormatter
      *
      * @return $this
      */
-    public function useHtmlVarDumper(bool $value = true): self
+    public function useHtmlVarDumper(bool $value = true): static
     {
         $this->useHtmlVarDumper = $value;
         return $this;
@@ -72,7 +72,7 @@ trait HasDataFormatter
      *
      * @return $this
      */
-    public function setDataFormatter(DataFormatterInterface $formatter): self
+    public function setDataFormatter(DataFormatterInterface $formatter): static
     {
         $this->dataFormatter = $formatter;
         return $this;
@@ -111,7 +111,7 @@ trait HasDataFormatter
      *
      * @return $this
      */
-    public function setVarDumper(DebugBarVarDumper $varDumper): self
+    public function setVarDumper(DebugBarVarDumper $varDumper): static
     {
         $this->varDumper = $varDumper;
         return $this;
