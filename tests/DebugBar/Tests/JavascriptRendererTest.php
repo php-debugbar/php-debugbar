@@ -8,8 +8,7 @@ use DebugBar\JavascriptRenderer;
 
 class JavascriptRendererTest extends DebugBarTestCase
 {
-    /** @var JavascriptRenderer  */
-    protected $r;
+    protected JavascriptRenderer $r;
 
     public function setUp(): void
     {
@@ -20,7 +19,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->r->setUseDistFiles(false);
     }
 
-    public function testOptions()
+    public function testOptions(): void
     {
         $this->r->setOptions([
             'base_path' => '/foo',
@@ -63,7 +62,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertEquals('open.php', $this->r->getOpenHandlerUrl());
     }
 
-    public function testAddAssets()
+    public function testAddAssets(): void
     {
         // Use a loop to test deduplication of assets
         for ($i = 0; $i < 2; ++$i) {
@@ -87,7 +86,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertStringContainsString('<script type="text/javascript" src="/foobar/foo.js"></script>', $html);
     }
 
-    public function testGetAssets()
+    public function testGetAssets(): void
     {
         $assets = $this->r->getAssets();
         $this->assertContains('/bpath/debugbar.css', $assets['css']);
@@ -95,7 +94,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertContains('/bpath/vendor/highlightjs/highlight.pack.js', $assets['js']);
     }
 
-    public function testGetAssetsExludeVendors()
+    public function testGetAssetsExludeVendors(): void
     {
         $this->r->setIncludeVendors(false);
         $js = $this->r->getAssets('js');
@@ -103,7 +102,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertNotContains('/bpath/vendor/highlightjs/highlight.pack.js', $js);
     }
 
-    public function testGetDistAssets()
+    public function testGetDistAssets(): void
     {
         $this->r->setUseDistFiles(true);
         $assets = $this->r->getAssets();
@@ -112,7 +111,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertNotContains('/bpath/vendor/highlightjs/highlight.pack.js', $assets['js']);
     }
 
-    public function testRenderHead()
+    public function testRenderHead(): void
     {
         $this->r->addInlineAssets(['Css' => 'CssTest'], ['Js' => 'JsTest'], ['Head' => 'HeaderTest']);
 
@@ -126,7 +125,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertStringContainsString('HeaderTest', $html);
     }
 
-    public function testRenderFullInitialization()
+    public function testRenderFullInitialization(): void
     {
         $this->debugbar->addCollector(new \DebugBar\DataCollector\MessagesCollector());
         $this->r->addControl('time', ['icon' => 'time', 'map' => 'time', 'default' => '"0s"']);
@@ -134,7 +133,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertStringStartsWith($expected, $this->r->render());
     }
 
-    public function testRenderConstructorOnly()
+    public function testRenderConstructorOnly(): void
     {
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setJavascriptClass('Foobar');
@@ -143,28 +142,28 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertStringStartsWith("<script type=\"text/javascript\">\nvar foovar = new Foobar();\nfoovar.addDataSet(", $this->r->render());
     }
 
-    public function testRenderConstructorWithNonce()
+    public function testRenderConstructorWithNonce(): void
     {
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setCspNonce('mynonce');
         $this->assertStringStartsWith("<script type=\"text/javascript\" nonce=\"mynonce\">\nvar phpdebugbar = new PhpDebugBar.DebugBar();", $this->r->render());
     }
 
-    public function testRenderConstructorWithEmptyTabsHidden()
+    public function testRenderConstructorWithEmptyTabsHidden(): void
     {
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setHideEmptyTabs(true);
         $this->assertStringStartsWith("<script type=\"text/javascript\">\nvar phpdebugbar = new PhpDebugBar.DebugBar({\"hideEmptyTabs\":true});\n", $this->r->render());
     }
 
-    public function testRenderConstructorWithTheme()
+    public function testRenderConstructorWithTheme(): void
     {
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setTheme('dark');
         $this->assertStringStartsWith("<script type=\"text/javascript\">\nvar phpdebugbar = new PhpDebugBar.DebugBar({\"theme\":\"dark\"});", $this->r->render());
     }
 
-    public function testCanDisableSpecificVendors()
+    public function testCanDisableSpecificVendors(): void
     {
         $this->assertStringContainsString('highlight.pack.js', $this->r->renderHead());
         $this->r->disableVendor('highlightjs');

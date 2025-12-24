@@ -11,11 +11,12 @@ class DebugBarVarDumperTest extends DebugBarTestCase
 {
     public const STYLE_STRING = 'SpecialStyleString';
 
-    private $testStyles = [
+    /** @var array<string, string> */
+    private array $testStyles = [
         'default' => self::STYLE_STRING,
     ];
 
-    public function testBasicFunctionality()
+    public function testBasicFunctionality(): void
     {
         // Test that we can render a simple variable without dump headers
         $d = new DebugBarVarDumper();
@@ -26,7 +27,7 @@ class DebugBarVarDumperTest extends DebugBarTestCase
         $this->assertStringNotContainsString(self::STYLE_STRING, $out); // make sure there's no dump header
     }
 
-    public function testAssetProvider()
+    public function testAssetProvider(): void
     {
         $d = new DebugBarVarDumper();
         $d->mergeDumperOptions(['styles' => $this->testStyles]);
@@ -42,7 +43,7 @@ class DebugBarVarDumperTest extends DebugBarTestCase
         $this->assertStringContainsString(self::STYLE_STRING, $assetText);
     }
 
-    public function testBasicOptionOperations()
+    public function testBasicOptionOperations(): void
     {
         // Test basic get/merge/reset functionality for cloner
         $d = new DebugBarVarDumper();
@@ -103,7 +104,7 @@ class DebugBarVarDumperTest extends DebugBarTestCase
         ], $options);
     }
 
-    public function testClonerOptions()
+    public function testClonerOptions(): void
     {
         // Test the actual operation of the cloner options
         $d = new DebugBarVarDumper();
@@ -181,7 +182,7 @@ class DebugBarVarDumperTest extends DebugBarTestCase
 
     }
 
-    public function testDumperOptions()
+    public function testDumperOptions(): void
     {
         // Test the actual operation of the dumper options
         $d = new DebugBarVarDumper();

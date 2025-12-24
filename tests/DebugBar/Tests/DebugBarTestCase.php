@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 abstract class DebugBarTestCase extends TestCase
 {
-    protected $debugbar;
+    protected DebugBar $debugbar;
 
     public function setUp(): void
     {
@@ -17,31 +17,31 @@ abstract class DebugBarTestCase extends TestCase
         $this->debugbar->setHttpDriver($http = new MockHttpDriver());
     }
 
-    public function assertJsonIsArray($json)
+    public function assertJsonIsArray(string $json): void
     {
         $data = json_decode($json);
         $this->assertIsArray($data);
     }
 
-    public function assertJsonIsObject($json)
+    public function assertJsonIsObject(string $json): void
     {
         $data = json_decode($json);
         $this->assertIsObject($data);
     }
 
-    public function assertJsonArrayNotEmpty($json)
+    public function assertJsonArrayNotEmpty(string $json): void
     {
         $data = json_decode($json, true);
         $this->assertTrue(is_array($data) && !empty($data));
     }
 
-    public function assertJsonHasProperty($json, $property)
+    public function assertJsonHasProperty(string $json, string $property): void
     {
         $data = json_decode($json, true);
         $this->assertArrayHasKey($property, $data);
     }
 
-    public function assertJsonPropertyEquals($json, $property, $expected)
+    public function assertJsonPropertyEquals(string $json, string $property, mixed $expected): void
     {
         $data = json_decode($json, true);
         $this->assertArrayHasKey($property, $data);

@@ -11,14 +11,14 @@ use Symfony\Component\Panther\PantherTestCase;
 /** @internal */
 abstract class AbstractBrowserTestCase extends PantherTestCase
 {
-    public function isTabActive(Crawler $crawler, $tab)
+    public function isTabActive(Crawler $crawler, string $tab): bool
     {
         $node = $crawler->filter('a.phpdebugbar-tab[data-collector="' . $tab . '"]');
 
         return str_contains($node->attr('class'), 'phpdebugbar-active')  ;
     }
 
-    public function getTabLink(Crawler $crawler, $tab): Link|\Symfony\Component\DomCrawler\Link
+    public function getTabLink(Crawler $crawler, string $tab): Link|\Symfony\Component\DomCrawler\Link
     {
         return $crawler->filter('a.phpdebugbar-tab[data-collector="' . $tab . '"]')->link();
     }

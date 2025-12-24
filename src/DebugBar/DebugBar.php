@@ -28,6 +28,8 @@ use DebugBar\Storage\StorageInterface;
  *     $debugbar->addCollector(new DataCollector\MessagesCollector());
  *     $debugbar['messages']->addMessage("foobar");
  * </code>
+ *
+ * @implements ArrayAccess<string, DataCollectorInterface>
  */
 class DebugBar implements ArrayAccess
 {

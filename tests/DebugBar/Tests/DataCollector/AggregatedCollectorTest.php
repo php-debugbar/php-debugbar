@@ -9,14 +9,14 @@ use DebugBar\DataCollector\AggregatedCollector;
 
 class AggregatedCollectorTest extends DebugBarTestCase
 {
-    private $c;
+    private AggregatedCollector $c;
 
     public function setUp(): void
     {
         $this->c = new AggregatedCollector('test');
     }
 
-    public function testAddCollector()
+    public function testAddCollector(): void
     {
         $this->c->addCollector($c = new MockCollector());
         $this->assertContains($c, $this->c->getCollectors());
@@ -24,7 +24,7 @@ class AggregatedCollectorTest extends DebugBarTestCase
         $this->assertArrayHasKey('mock', $this->c);
     }
 
-    public function testCollect()
+    public function testCollect(): void
     {
         $this->c->addCollector(new MockCollector(['foo' => 'bar'], 'm1'));
         $this->c->addCollector(new MockCollector(['bar' => 'foo'], 'm2'));
@@ -36,7 +36,7 @@ class AggregatedCollectorTest extends DebugBarTestCase
         $this->assertEquals('foo', $data['bar']);
     }
 
-    public function testMergeProperty()
+    public function testMergeProperty(): void
     {
         $this->c->addCollector(new MockCollector(['foo' => ['a' => 'b']], 'm1'));
         $this->c->addCollector(new MockCollector(['foo' => ['c' => 'd']], 'm2'));
@@ -49,7 +49,7 @@ class AggregatedCollectorTest extends DebugBarTestCase
         $this->assertEquals('d', $data['c']);
     }
 
-    public function testSort()
+    public function testSort(): void
     {
         $this->c->addCollector(new MockCollector([['foo' => 2, 'id' => 1]], 'm1'));
         $this->c->addCollector(new MockCollector([['foo' => 1, 'id' => 2]], 'm2'));

@@ -19,7 +19,7 @@ interface StorageInterface
      * Saves collected data
      *
      */
-    public function save(string $id, array $data);
+    public function save(string $id, array $data): void;
 
     /**
      * Returns collected data with the specified id

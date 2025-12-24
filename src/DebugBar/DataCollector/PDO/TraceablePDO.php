@@ -169,7 +169,7 @@ class TraceablePDO extends PDO
      *                                    failure.
      */
     #[\ReturnTypeWillChange]
-    public function query($statement, $fetchMode = null, ...$fetchModeArgs)
+    public function query(mixed $statement, mixed $fetchMode = null, mixed ...$fetchModeArgs)
     {
         return $this->profileCall('query', $statement, func_get_args());
     }

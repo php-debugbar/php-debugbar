@@ -10,7 +10,7 @@ use DebugBar\Tests\Storage\MockStorage;
 
 class OpenHandlerTest extends DebugBarTestCase
 {
-    private $openHandler;
+    private OpenHandler $openHandler;
 
     public function setUp(): void
     {
@@ -19,14 +19,14 @@ class OpenHandlerTest extends DebugBarTestCase
         $this->openHandler = new OpenHandler($this->debugbar);
     }
 
-    public function testFind()
+    public function testFind(): void
     {
         $request = [];
         $result = $this->openHandler->handle($request, false, false);
         $this->assertJsonArrayNotEmpty($result);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $request = ['op' => 'get', 'id' => 'foo'];
         $result = $this->openHandler->handle($request, false, false);
@@ -36,14 +36,14 @@ class OpenHandlerTest extends DebugBarTestCase
         $this->assertEquals('foo', $data['__meta']['id']);
     }
 
-    public function testGetMissingId()
+    public function testGetMissingId(): void
     {
         $this->expectException(DebugBarException::class);
 
         $this->openHandler->handle(['op' => 'get'], false, false);
     }
 
-    public function testClear()
+    public function testClear(): void
     {
         $result = $this->openHandler->handle(['op' => 'clear'], false, false);
         $this->assertJsonPropertyEquals($result, 'success', true);

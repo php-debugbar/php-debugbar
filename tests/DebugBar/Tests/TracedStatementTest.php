@@ -22,9 +22,8 @@ class TracedStatementTest extends DebugBarTestCase
      *                             ep.id_exame_situacao = <2>'
      *                            ep.id_exame_situacao = <1>_situacao
      *
-     * @return void
      */
-    public function testReplacementParamsQuery()
+    public function testReplacementParamsQuery(): void
     {
         $sql = 'select *
                 from geral.exame_part ep
@@ -43,7 +42,7 @@ class TracedStatementTest extends DebugBarTestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testReplacementParamsContainingBackReferenceSyntaxGeneratesCorrectString()
+    public function testReplacementParamsContainingBackReferenceSyntaxGeneratesCorrectString(): void
     {
         $hashedPassword = '$2y$10$S3Y/kSsx8Z5BPtdd9.k3LOkbQ0egtsUHBT9EGQ.spxsmaEWbrxBW2';
         $sql = "UPDATE user SET password = :password";
@@ -61,7 +60,7 @@ class TracedStatementTest extends DebugBarTestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testReplacementParamsContainingPotentialAdditionalQuestionMarkPlaceholderGeneratesCorrectString()
+    public function testReplacementParamsContainingPotentialAdditionalQuestionMarkPlaceholderGeneratesCorrectString(): void
     {
         $hasQuestionMark = "Asking a question?";
         $string = "Asking for a friend";
@@ -91,7 +90,7 @@ class TracedStatementTest extends DebugBarTestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testReplacementParamsContainingPotentialAdditionalNamedPlaceholderGeneratesCorrectString()
+    public function testReplacementParamsContainingPotentialAdditionalNamedPlaceholderGeneratesCorrectString(): void
     {
         $hasQuestionMark = "Asking a question with a :string inside";
         $string = "Asking for a friend";
@@ -130,7 +129,7 @@ class TracedStatementTest extends DebugBarTestCase
      *
      * @link https://www.php.net/manual/en/migration81.deprecated.php#migration81.deprecated.core.null-not-nullable-internal
      */
-    public function testReplacementParamsContainingLiteralNullValueGeneratesCorrectString()
+    public function testReplacementParamsContainingLiteralNullValueGeneratesCorrectString(): void
     {
         $sql = 'UPDATE user SET login_failed_reason = :nullable_reason WHERE id = :id';
 
@@ -165,9 +164,8 @@ class TracedStatementTest extends DebugBarTestCase
      *                           where c.status = <1> and
      *                           p.status <> :status;
      *
-     * @return void
      */
-    public function testRepeatParamsQuery()
+    public function testRepeatParamsQuery(): void
     {
         $sql = 'select *
                 from geral.person p
@@ -196,9 +194,8 @@ class TracedStatementTest extends DebugBarTestCase
      *                          `my_table` where `my_field` between
      *                           <2018-01-01> and <2018-01-01>
      *
-     * @return void
      */
-    public function testParametersAreNotRepeated()
+    public function testParametersAreNotRepeated(): void
     {
         $query = 'select * from `my_table` where `my_field` between ? and ?';
         $bindings = [

@@ -9,9 +9,9 @@ use DebugBar\Storage\FileStorage;
 
 class FileStorageTest extends DebugBarTestCase
 {
-    private $dirname;
-    private $s;
-    private $data;
+    private string $dirname;
+    private FileStorage $s;
+    private array $data;
 
     public function setUp(): void
     {
@@ -40,26 +40,26 @@ class FileStorageTest extends DebugBarTestCase
         rmdir($this->dirname);
     }
 
-    public function testSave()
+    public function testSave(): void
     {
         $this->s->save('foo', $this->data);
         $this->assertFileExists($this->dirname . '/foo.json');
         $this->assertJsonStringEqualsJsonFile($this->dirname . '/foo.json', json_encode($this->data));
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $data = $this->s->get('bar');
         $this->assertEquals($this->data, $data);
     }
 
-    public function testFind()
+    public function testFind(): void
     {
         $results = $this->s->find();
         $this->assertContains($this->data['__meta'], $results);
     }
 
-    public function testClear()
+    public function testClear(): void
     {
         $this->s->clear();
 

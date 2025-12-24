@@ -73,6 +73,8 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
      * Blacklisted values will be replaced by a equal length string containing
      * only '*' characters for string values.
      * Non-string values will be replaced with a fixed asterisk count.
+     *
+     * @param array|\ArrayAccess<mixed, mixed> $superGlobal
      */
     private function masked(array|\ArrayAccess $superGlobal, string $superGlobalName): array
     {
