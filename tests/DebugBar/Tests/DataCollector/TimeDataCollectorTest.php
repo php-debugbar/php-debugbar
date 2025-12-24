@@ -9,8 +9,8 @@ use DebugBar\DataCollector\TimeDataCollector;
 
 class TimeDataCollectorTest extends DebugBarTestCase
 {
-    private $s;
-    private $c;
+    private float $s;
+    private TimeDataCollector $c;
 
     public function setUp(): void
     {
@@ -18,7 +18,7 @@ class TimeDataCollectorTest extends DebugBarTestCase
         $this->c = new TimeDataCollector($this->s);
     }
 
-    public function testAddMeasure()
+    public function testAddMeasure(): void
     {
         $this->c->addMeasure('foo', $this->s, $this->s + 10, ['a' => 'b'], 'timer');
         $m = $this->c->getMeasures();
@@ -29,7 +29,7 @@ class TimeDataCollectorTest extends DebugBarTestCase
         $this->assertEquals('timer', $m[0]['collector']);
     }
 
-    public function testStartStopMeasure()
+    public function testStartStopMeasure(): void
     {
         $this->c->startMeasure('foo', 'bar', 'baz');
         usleep(1000);
@@ -42,7 +42,7 @@ class TimeDataCollectorTest extends DebugBarTestCase
         $this->assertLessThan($m[0]['end'], $m[0]['start']);
     }
 
-    public function testCollect()
+    public function testCollect(): void
     {
         $this->c->addMeasure('foo', 0, 10);
         $this->c->addMeasure('bar', 10, 20);
@@ -52,7 +52,7 @@ class TimeDataCollectorTest extends DebugBarTestCase
         $this->assertCount(2, $data['measures']);
     }
 
-    public function testMeasure()
+    public function testMeasure(): void
     {
         $returned = $this->c->measure('bar', function () {
             usleep(50);

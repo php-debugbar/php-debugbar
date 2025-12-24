@@ -28,6 +28,8 @@ use DebugBar\Storage\StorageInterface;
  *     $debugbar->addCollector(new DataCollector\MessagesCollector());
  *     $debugbar['messages']->addMessage("foobar");
  * </code>
+ *
+ * @implements ArrayAccess<string, DataCollectorInterface>
  */
 class DebugBar implements ArrayAccess
 {
@@ -446,11 +448,8 @@ class DebugBar implements ArrayAccess
     /**
      * Returns a JavascriptRenderer for this instance
      *
-     * @param string $baseUrl
-     * @param string $basePath
-     *
      */
-    public function getJavascriptRenderer($baseUrl = null, $basePath = null): JavascriptRenderer
+    public function getJavascriptRenderer(?string $baseUrl = null, ?string $basePath = null): JavascriptRenderer
     {
         if ($this->jsRenderer === null) {
             $this->jsRenderer = new JavascriptRenderer($this, $baseUrl, $basePath);

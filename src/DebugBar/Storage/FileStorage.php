@@ -46,7 +46,12 @@ class FileStorage implements StorageInterface
             return [];
         }
 
-        return json_decode(file_get_contents($fileName), true);
+        $content = file_get_contents($fileName);
+        if ($content === false) {
+            throw new \RuntimeException("Unable to read file $fileName");
+        }
+
+        return json_decode($content, true);
     }
 
     /**

@@ -17,6 +17,8 @@ interface MessagesAggregateInterface extends DataCollectorInterface
 {
     /**
      * Returns collected messages
+     *
+     * @return array<int, array>
      */
     public function getMessages(): array;
 }

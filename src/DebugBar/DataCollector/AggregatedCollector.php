@@ -25,6 +25,8 @@ use DebugBar\DebugBarException;
  * $aggcollector->addCollector(new MessagesCollector('msg2'));
  * $aggcollector['msg1']->addMessage('hello world');
  * </code>
+ *
+ * @implements ArrayAccess<string, DataCollectorInterface>
  */
 class AggregatedCollector implements DataCollectorInterface, ArrayAccess
 {

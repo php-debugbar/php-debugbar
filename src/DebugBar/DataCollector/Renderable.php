@@ -21,6 +21,8 @@ interface Renderable extends DataCollectorInterface
     /**
      * Returns a hash where keys are control names and their values
      * an array of options as defined in {@see DebugBar\JavascriptRenderer::addControl()}
+     *
+     * @return array<string, array{icon?: string, widget?: string, map?: string, default?: float|int|string, title?: string, tooltip?: string}>
      */
     public function getWidgets(): array;
 }

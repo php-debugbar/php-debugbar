@@ -9,7 +9,7 @@ use DebugBar\DataCollector\ConfigCollector;
 
 class ConfigCollectorTest extends DebugBarTestCase
 {
-    public function testCollect()
+    public function testCollect(): void
     {
         $c = new ConfigCollector(['s' => 'bar', 'a' => [], 'o' => new \stdClass()]);
         $data = $c->collect();
@@ -20,14 +20,14 @@ class ConfigCollectorTest extends DebugBarTestCase
         $this->assertArrayHasKey('o', $data);
     }
 
-    public function testName()
+    public function testName(): void
     {
         $c = new ConfigCollector([], 'foo');
         $this->assertEquals('foo', $c->getName());
         $this->assertArrayHasKey('foo', $c->getWidgets());
     }
 
-    public function testAssets()
+    public function testAssets(): void
     {
         $c = new ConfigCollector();
         $this->assertEmpty($c->getAssets());
@@ -36,7 +36,7 @@ class ConfigCollectorTest extends DebugBarTestCase
         $this->assertNotEmpty($c->getAssets());
     }
 
-    public function testHtmlRendering()
+    public function testHtmlRendering(): void
     {
         $c = new ConfigCollector(['k' => ['one', 'two']]);
 

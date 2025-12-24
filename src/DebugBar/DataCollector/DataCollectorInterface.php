@@ -21,7 +21,7 @@ interface DataCollectorInterface
     /**
      * Called by the DebugBar when data needs to be collected
      *
-     * @return array Collected data
+     * @return array<int|string, mixed> Collected data
      */
     public function collect(): array;
 
