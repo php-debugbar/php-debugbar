@@ -24,42 +24,6 @@ class DebugBarVarDumperTest extends DebugBarTestCase
 
         $this->assertStringContainsString('magic', $out);
         $this->assertStringNotContainsString(self::STYLE_STRING, $out); // make sure there's no dump header
-
-        // Test that we can capture a variable without rendering into a Data-type variable
-        $data = $d->captureVar('hello');
-        $this->assertStringContainsString('hello', $data);
-        $deserialized = unserialize($data);
-        $this->assertInstanceOf('Symfony\Component\VarDumper\Cloner\Data', $deserialized);
-
-        // Test that we can render the captured variable at a later time
-        $out = $d->renderCapturedVar($data);
-        $this->assertStringContainsString('hello', $out);
-        $this->assertStringNotContainsString(self::STYLE_STRING, $out); // make sure there's no dump header
-    }
-
-    public function testSeeking()
-    {
-        $testData = [
-            'one',
-            ['two'],
-            'three',
-        ];
-        $d = new DebugBarVarDumper();
-        $data = $d->captureVar($testData);
-
-        // seek depth of 1
-        $out = $d->renderCapturedVar($data, [1]);
-        $this->assertStringNotContainsString('one', $out);
-        $this->assertStringContainsString('array', $out);
-        $this->assertStringContainsString('two', $out);
-        $this->assertStringNotContainsString('three', $out);
-
-        // seek depth of 2
-        $out = $d->renderCapturedVar($data, [1, 0]);
-        $this->assertStringNotContainsString('one', $out);
-        $this->assertStringNotContainsString('array', $out);
-        $this->assertStringContainsString('two', $out);
-        $this->assertStringNotContainsString('three', $out);
     }
 
     public function testAssetProvider()

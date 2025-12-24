@@ -58,7 +58,7 @@ class PdoStorage implements StorageInterface
         $sql = $this->getSqlQuery('save');
         $stmt = $this->pdo->prepare($sql);
         $meta = $data['__meta'];
-        $stmt->execute([$id, serialize($data), $meta['utime'], $meta['datetime'], $meta['uri'], $meta['ip'], $meta['method']]);
+        $stmt->execute([$id, json_encode($data), $meta['utime'], $meta['datetime'], $meta['uri'], $meta['ip'], $meta['method']]);
     }
 
     /**
@@ -70,7 +70,7 @@ class PdoStorage implements StorageInterface
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$id]);
         if (($data = $stmt->fetchColumn(0)) !== false) {
-            return unserialize($data);
+            return json_decode($data, true);
         }
         return [];
     }
@@ -103,7 +103,7 @@ class PdoStorage implements StorageInterface
 
         $results = [];
         foreach ($stmt->fetchAll() as $row) {
-            $data = unserialize($row['data']);
+            $data = json_decode($row['data'], true);
             $results[] = $data['__meta'];
             unset($data);
         }
