@@ -769,7 +769,6 @@ class JavascriptRenderer
 
         $additionalAssets = $this->additionalAssets;
         // finds assets provided by collectors
-        /** @var DataCollectorInterface $collector */
         foreach ($this->debugBar->getCollectors() as $collector) {
             if (($collector instanceof AssetProvider) && !in_array($collector->getName(), $this->ignoredCollectors)) {
                 $additionalAssets[] = $collector->getAssets();
@@ -836,10 +835,8 @@ class JavascriptRenderer
     /**
      * Makes a URI relative to another
      *
-     * @param null|string|array $uri
-     *
      */
-    protected function makeUriRelativeTo(string|array $uri, string $root): string|array
+    protected function makeUriRelativeTo(null|string|array $uri, string $root): string|array
     {
         if (!$root) {
             return $uri;
@@ -996,7 +993,7 @@ class JavascriptRenderer
      * @param boolean $here       Set position of HTML. True if is to current position or false for end file
      * @param boolean $initialize Whether to render the de bug bar initialization code
      */
-    public function replaceTagInBuffer(bool $here = true, bool $initialize = true, bool $renderStackedData = true, bool $head = false): string
+    public function replaceTagInBuffer(bool $here = true, bool $initialize = true, bool $renderStackedData = true, bool $head = false): void
     {
         $render = ($head ? $this->renderHead() : "")
             . $this->render($initialize, $renderStackedData);
@@ -1130,7 +1127,6 @@ class JavascriptRenderer
 
         // finds controls provided by collectors
         $widgets = [];
-        /** @var DataCollectorInterface $collector */
         foreach ($this->debugBar->getCollectors() as $collector) {
             if (($collector instanceof Renderable) && !in_array($collector->getName(), $this->ignoredCollectors)) {
                 if ($w = $collector->getWidgets()) {

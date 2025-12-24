@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace DebugBar\DataCollector;
 
-interface MessagesAggregateInterface
+interface MessagesAggregateInterface extends DataCollectorInterface
 {
     /**
      * Returns collected messages

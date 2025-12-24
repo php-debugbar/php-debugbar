@@ -147,6 +147,7 @@ class MemcachedStorage implements StorageInterface
         }
         $null = null;
 
+        /** @phpstan-ignore arguments.count */
         return $this->memcached->getMulti($keys, $null, $flags);
     }
 }

@@ -16,7 +16,7 @@ namespace DebugBar\DataCollector;
 /**
  * Indicates that a DataCollector provides some assets
  */
-interface AssetProvider
+interface AssetProvider extends DataCollectorInterface
 {
     /**
      * Returns an array with the following keys:

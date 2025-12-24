@@ -15,7 +15,7 @@ use Symfony\Component\VarDumper\Cloner\VarCloner;
  * Cloning is decoupled from rendering, so that dumper users can have the fastest possible cloning
  * performance, while delaying rendering until it is actually needed.
  */
-class DebugBarVarDumper implements AssetProvider
+class DebugBarVarDumper
 {
     protected static array $defaultClonerOptions = [];
 
