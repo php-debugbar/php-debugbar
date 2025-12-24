@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-include __DIR__ . '/../../bootstrap.php';
-
-$debugbarRenderer->setBaseUrl('../../../resources');
+/** @var \DebugBar\DebugBar $debugbar */
 
 $logger = new Monolog\Logger('demo');
 

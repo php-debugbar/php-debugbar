@@ -1,7 +1,8 @@
 <?php
 
-use DebugBar\DataCollector\PDO\TraceablePDO;
-use DebugBar\DataCollector\PDO\PDOCollector;
+declare(strict_types=1);
+
+/** @var \DebugBar\DebugBar $debugbar */
 
 include 'bootstrap.php';
 
@@ -21,41 +22,13 @@ $debugbar['messages']->addMessage('oups', 'error');
 $debugbar['messages']->addMessage('welcome!', 'success');
 $debugbar['messages']->addMessage('panic!', 'critical');
 
-$classDemo = ['FirstClass', 'SecondClass', 'ThirdClass'];
-$classEvent = ['Retrieved', 'Saved', 'Deleted'];
-$debugbar->addCollector(new \DebugBar\DataCollector\ObjectCountCollector());
-$debugbar['counter']->collectCountSummary(true);
-$debugbar['counter']->setKeyMap($classEvent);
-for ($i = 0; $i <= 20; $i++) {
-    $debugbar['counter']->countClass($classDemo[rand(0, 2)], 1, $classEvent[rand(0, 2)]);
-}
 
-// PDO
-$pdo = new TraceablePDO(new PDO('sqlite::memory:'));
-$debugbar->addCollector(new PDOCollector($pdo));
-$debugbar['pdo']->setDurationBackground(true);
+require __DIR__ . '/collectors/counter.php';
+require __DIR__ . '/collectors/templates.php';
+require __DIR__ . '/collectors/pdo.php';
+require __DIR__ . '/collectors/monolog.php';
+require __DIR__ . '/collectors/symfony_mailer.php';
 
-$pdo->exec('create table users (name varchar)');
-$stmt = $pdo->prepare('insert into users (name) values (?)');
-$stmt->execute(['foo']);
-$stmt->execute(['bar']);
-
-$users = $pdo->query('select * from users')->fetchAll();
-$stmt = $pdo->prepare('select * from users where name=?');
-$stmt->execute(['foo']);
-$foo = $stmt->fetch();
-
-$stmt = $pdo->prepare('select * from users where name=?');
-$stmt->execute(['<script>alert();</script>']);
-$foo = $stmt->fetch();
-
-$pdo->exec('delete from users');
-
-$templateCollector = new \DebugBar\DataCollector\TemplateCollector();
-$debugbar->addCollector($templateCollector);
-
-$templateCollector->addTemplate('index.php', ['foo' => 'bar'], 'php', __FILE__);
-$templateCollector->addTemplate('index.php', ['foo' => 'quz'], 'php', __FILE__);
 
 $debugbar['time']->startMeasure('render');
 
@@ -74,16 +47,6 @@ render_demo_page(function () {
 <h2>Stack</h2>
 <ul>
     <li><a href="stack.php">perform a redirect</a></li>
-</ul>
-<h2>PDO</h2>
-<ul>
-    <li><a href="pdo.php">PDO demo</a></li>
-</ul>
-<h2>Bridges</h2>
-<p>(you need to install needed dependencies first, run <code>composer.phar install</code> in each demo folders)</p>
-<ul>
-    <li><a href="bridge/monolog">Monolog</a></li>
-    <li><a href="bridge/symfonymailer">Symfony mailer</a></li>
 </ul>
 <?php
 });
