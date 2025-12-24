@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\DataFormatter\VarDumper;
 
 use Symfony\Component\VarDumper\Dumper\HtmlDumper;

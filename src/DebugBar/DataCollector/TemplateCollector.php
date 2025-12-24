@@ -1,27 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\DataCollector;
 
 use DebugBar\DataFormatter\SimpleFormatter;
 
 class TemplateCollector extends DataCollector implements Renderable, AssetProvider
 {
-    protected $name;
-    protected $templates = [];
-    protected $collect_data;
-    protected $exclude_paths;
-    protected $group;
-    protected $timeCollector;
+    protected string $name;
+    protected array $templates = [];
+    protected bool|string $collect_data;
+    /** @var array<string> */
+    protected array $exclude_paths;
+    protected int|bool $group;
+    protected ?TimeDataCollector $timeCollector;
 
     /**
      * Create a ViewCollector
      *
-     * @param bool|string $collectData Collects view data when true
      * @param string[] $excludePaths Paths to exclude from collection
-     * @param int|bool $group Group the same templates together
-     * @param TimeDataCollector|null $timeCollector
-     * */
-    public function __construct($collectData = true, $excludePaths = [], $group = true, ?TimeDataCollector $timeCollector = null)
+     */
+    public function __construct(bool|string $collectData = true, array $excludePaths = [], int|bool $group = true, ?TimeDataCollector $timeCollector = null)
     {
         $this->setDataFormatter(new SimpleFormatter());
         $this->collect_data = $collectData;
@@ -31,12 +31,12 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
         $this->timeCollector = $timeCollector;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'templates';
     }
 
-    public function getWidgets()
+    public function getWidgets(): array
     {
         $name = $this->getName();
         return [
@@ -53,10 +53,7 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getAssets()
+    public function getAssets(): array
     {
         return [
             'css' => 'widgets/templates/widget.css',
@@ -64,7 +61,7 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
         ];
     }
 
-    public function addTemplate(string $name, array $data, ?string $type, ?string $path)
+    public function addTemplate(string $name, array $data, ?string $type, ?string $path): void
     {
         // Prevent duplicates
         $hash = $type . $path . $name . ($this->collect_data ? implode(array_keys($data)) : '');
@@ -96,7 +93,7 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
         $this->templates[] = $template;
     }
 
-    public function collect()
+    public function collect(): array
     {
         if ($this->group === true || count($this->templates) > $this->group) {
             $templates = [];

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -14,7 +16,7 @@ namespace DebugBar\DataCollector;
 /**
  * Indicates that a DataCollector provides some assets
  */
-interface AssetProvider
+interface AssetProvider extends DataCollectorInterface
 {
     /**
      * Returns an array with the following keys:
@@ -37,8 +39,6 @@ interface AssetProvider
      * will use them to deduplicate content.  This is particularly useful if multiple instances of
      * the same asset provider are used.  Inline assets from all collectors are merged together into
      * the same array, so these content IDs effectively deduplicate the inline assets.
-     *
-     * @return array
      */
-    public function getAssets();
+    public function getAssets(): array;
 }

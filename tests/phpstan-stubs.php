@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Symfony\Component\Panther;
 
 abstract class PantherTestCase extends \PHPUnit\Framework\TestCase

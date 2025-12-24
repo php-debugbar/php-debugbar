@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -16,31 +18,28 @@ interface StorageInterface
     /**
      * Saves collected data
      *
-     * @param string $id
-     * @param array $data
      */
-    public function save($id, $data);
+    public function save(string $id, array $data);
 
     /**
      * Returns collected data with the specified id
      *
-     * @param string $id
+     *
      * @return array
      */
-    public function get($id);
+    public function get(string $id);
 
     /**
      * Returns a metadata about collected data
      *
-     * @param array $filters
      * @param integer $max
      * @param integer $offset
-     * @return array
+     *
      */
-    public function find(array $filters = [], $max = 20, $offset = 0);
+    public function find(array $filters = [], int $max = 20, int $offset = 0): array;
 
     /**
      * Clears all the collected data
      */
-    public function clear();
+    public function clear(): void;
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\DataFormatter;
 
 /**
@@ -10,11 +12,7 @@ namespace DebugBar\DataFormatter;
 #[\AllowDynamicProperties]
 class SimpleFormatter extends DataFormatter
 {
-    /**
-     * @param $data
-     * @return string
-     */
-    public function formatVar($data)
+    public function formatVar(mixed $data): string
     {
         return $this->exportValue($data);
     }
@@ -27,9 +25,10 @@ class SimpleFormatter extends DataFormatter
      * @param bool  $deep  Only for internal usage
      *
      * @return string The string representation of the given value
+     *
      *  @author Bernhard Schussek <bschussek@gmail.com>
      */
-    private function exportValue($value, $depth = 1, $deep = false)
+    private function exportValue(mixed $value, int $depth = 1, bool $deep = false): string
     {
         if ($value instanceof \__PHP_Incomplete_Class) {
             return sprintf('__PHP_Incomplete_Class(%s)', $this->getClassNameFromIncomplete($value));
@@ -92,11 +91,9 @@ class SimpleFormatter extends DataFormatter
     }
 
     /**
-     * @param \__PHP_Incomplete_Class $value
-     * @return mixed
      * @author Bernhard Schussek <bschussek@gmail.com>
      */
-    private function getClassNameFromIncomplete(\__PHP_Incomplete_Class $value)
+    private function getClassNameFromIncomplete(\__PHP_Incomplete_Class $value): string
     {
         $array = new \ArrayObject($value);
 

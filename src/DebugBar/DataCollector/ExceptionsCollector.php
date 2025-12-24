@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -18,26 +20,24 @@ use Throwable;
  */
 class ExceptionsCollector extends DataCollector implements Renderable
 {
-    protected $exceptions = [];
-    protected $existingWarnings = [];
-    protected $chainExceptions = false;
+    /** @var array<Throwable|array> */
+    protected array $exceptions = [];
+    /** @var array<string, array> */
+    protected array $existingWarnings = [];
+    protected bool $chainExceptions = false;
 
     /**
      * Adds an exception to be profiled in the debug bar. Same as addThrowable
-     *
-     * @param \Exception $e
      */
-    public function addException(\Throwable $e)
+    public function addException(\Throwable $e): void
     {
         $this->addThrowable($e);
     }
 
     /**
      * Adds a Throwable to be profiled in the debug bar
-     *
-     * @param Throwable $e
      */
-    public function addThrowable(\Throwable $e)
+    public function addThrowable(\Throwable $e): void
     {
         $this->exceptions[] = $e;
         if ($this->chainExceptions && $previous = $e->getPrevious()) {
@@ -47,20 +47,16 @@ class ExceptionsCollector extends DataCollector implements Renderable
 
     /**
      * Configure whether or not all chained exceptions should be shown.
-     *
-     * @param bool $chainExceptions
      */
-    public function setChainExceptions($chainExceptions = true)
+    public function setChainExceptions(bool $chainExceptions = true): void
     {
         $this->chainExceptions = $chainExceptions;
     }
 
     /**
      * Start collecting warnings, notices and deprecations
-     *
-     * @param bool $preserveOriginalHandler
      */
-    public function collectWarnings($preserveOriginalHandler = true)
+    public function collectWarnings(bool $preserveOriginalHandler = true): void
     {
         $self = $this;
         $originalHandler = $preserveOriginalHandler ? set_error_handler(null) : null;
@@ -78,14 +74,8 @@ class ExceptionsCollector extends DataCollector implements Renderable
 
     /**
      * Adds an warning to be profiled in the debug bar
-     *
-     * @param int $errno
-     * @param string $errstr
-     * @param string $errfile
-     * @param int $errline
-     * @return void
      */
-    public function addWarning($errno, $errstr, $errfile = '', $errline = 0)
+    public function addWarning(int $errno, string $errstr, string $errfile = '', int $errline = 0): void
     {
         $hash = md5("{$errno}-{$errstr}-{$errfile}-{$errline}");
         if (isset($this->existingWarnings[$hash])) {
@@ -130,12 +120,12 @@ class ExceptionsCollector extends DataCollector implements Renderable
      *
      * @return array<Throwable|array>
      */
-    public function getExceptions()
+    public function getExceptions(): array
     {
         return $this->exceptions;
     }
 
-    public function collect()
+    public function collect(): array
     {
         return [
             'count' => count($this->exceptions),
@@ -145,10 +135,8 @@ class ExceptionsCollector extends DataCollector implements Renderable
 
     /**
      * Returns Throwable trace as an formated array
-     *
-     * @return array
      */
-    public function formatTrace(array $trace)
+    public function formatTrace(array $trace): array
     {
         if (! empty($this->xdebugReplacements)) {
             $trace = array_map(function ($track) {
@@ -176,11 +164,8 @@ class ExceptionsCollector extends DataCollector implements Renderable
 
     /**
      * Returns Throwable data as an string
-     *
-     * @param Throwable $e
-     * @return string
      */
-    public function formatTraceAsString($e)
+    public function formatTraceAsString(\Throwable $e): string
     {
         if (! empty($this->xdebugReplacements)) {
             return implode("\n", array_map(function ($track) {
@@ -198,11 +183,8 @@ class ExceptionsCollector extends DataCollector implements Renderable
 
     /**
      * Returns Throwable data as an array
-     *
-     * @param Throwable|array $e
-     * @return array
      */
-    public function formatThrowableData($e)
+    public function formatThrowableData(\Throwable|array $e): array
     {
         if (is_array($e)) {
             return $e;
@@ -235,18 +217,12 @@ class ExceptionsCollector extends DataCollector implements Renderable
         ];
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'exceptions';
     }
 
-    /**
-     * @return array
-     */
-    public function getWidgets()
+    public function getWidgets(): array
     {
         return [
             'exceptions' => [

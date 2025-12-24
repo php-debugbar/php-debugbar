@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -20,46 +22,40 @@ interface HttpDriverInterface
     /**
      * Sets HTTP headers
      *
-     * @param array $headers
-     * @return void
      */
-    public function setHeaders(array $headers);
+    public function setHeaders(array $headers): void;
 
     /**
      * Checks if the session is started
      *
      * @return boolean
      */
-    public function isSessionStarted();
+    public function isSessionStarted(): bool;
 
     /**
      * Sets a value in the session
      *
-     * @param string $name
      * @param string $value
      */
-    public function setSessionValue($name, $value);
+    public function setSessionValue(string $name, mixed $value);
 
     /**
      * Checks if a value is in the session
      *
-     * @param string $name
+     *
      * @return boolean
      */
-    public function hasSessionValue($name);
+    public function hasSessionValue(string $name): bool;
 
     /**
      * Returns a value from the session
      *
-     * @param string $name
-     * @return mixed
      */
-    public function getSessionValue($name);
+    public function getSessionValue(string $name): mixed;
 
     /**
      * Deletes a value from the session
      *
-     * @param string $name
      */
-    public function deleteSessionValue($name);
+    public function deleteSessionValue(string $name): void;
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -19,33 +21,24 @@ interface DataFormatterInterface
     /**
      * Transforms a PHP variable to a string representation
      *
-     * @param mixed $data
-     * @return string
      */
-    public function formatVar($data);
+    public function formatVar(mixed $data): string;
 
     /**
      * Transforms a duration in seconds in a readable string
      *
-     * @param float $seconds
-     * @return string
      */
-    public function formatDuration($seconds);
+    public function formatDuration(int|float $seconds): string;
 
     /**
      * Transforms a size in bytes to a human readable string
      *
-     * @param string $size
-     * @param integer $precision
-     * @return string
-     */
-    public function formatBytes($size, $precision = 2);
+     * */
+    public function formatBytes(float|int|string|null $size, int $precision = 2): string;
 
     /**
      * Format a classname in a readable string
      *
-     * @param object $object
-     * @return string
      */
-    public function formatClassName($object);
+    public function formatClassName(object $object): string;
 }

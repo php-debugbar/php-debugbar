@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\Tests\Browser;
 
 use Facebook\WebDriver\WebDriverDimension;

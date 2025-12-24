@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -16,20 +18,17 @@ namespace DebugBar\Storage;
  */
 class FileStorage implements StorageInterface
 {
-    protected $dirname;
+    protected string $dirname;
 
     /**
      * @param string $dirname Directories where to store files
      */
-    public function __construct($dirname)
+    public function __construct(string $dirname)
     {
         $this->dirname = rtrim($dirname, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function save($id, $data)
+    public function save(string $id, array $data): void
     {
         if (!file_exists($this->dirname)) {
             mkdir($this->dirname, 0o777, true);
@@ -40,7 +39,7 @@ class FileStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function get($id)
+    public function get(string $id): array
     {
         $fileName = $this->makeFilename($id);
         if (!file_exists($fileName)) {
@@ -53,7 +52,7 @@ class FileStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function find(array $filters = [], $max = 20, $offset = 0)
+    public function find(array $filters = [], int $max = 20, int $offset = 0): array
     {
         //Loop through all .json files and remember the modified time and id.
         $files = [];
@@ -97,11 +96,9 @@ class FileStorage implements StorageInterface
     /**
      * Filter the metadata for matches.
      *
-     * @param  array $meta
-     * @param  array $filters
-     * @return bool
+     *
      */
-    protected function filter($meta, $filters)
+    protected function filter(array $meta, array $filters): bool
     {
         foreach ($filters as $key => $value) {
             if (!isset($meta[$key]) || fnmatch($value, $meta[$key]) === false) {
@@ -114,7 +111,7 @@ class FileStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function clear()
+    public function clear(): void
     {
         foreach (new \DirectoryIterator($this->dirname) as $file) {
             if (substr($file->getFilename(), 0, 1) !== '.') {
@@ -123,11 +120,7 @@ class FileStorage implements StorageInterface
         }
     }
 
-    /**
-     * @param  string $id
-     * @return string
-     */
-    public function makeFilename($id)
+    public function makeFilename(string $id): string
     {
         return $this->dirname . basename($id) . ".json";
     }

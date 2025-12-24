@@ -12,6 +12,8 @@ return (new Config())
     ->setRules([
         '@auto' => true,
         '@PER-CS' => true,
+        '@PHP8x2Migration' => true,
+        '@PHPUnit10x0Migration:risky' => true,
         //Modernize code
         'array_push'              => true,
         'modernize_strpos'        => true,
@@ -32,12 +34,21 @@ return (new Config())
         'no_useless_else'             => true,
         'no_useless_return'           => true,
         'no_extra_blank_lines'        => true,
+
+        //PHPdocs
+        'no_superfluous_phpdoc_tags'    => true,
+        'no_empty_phpdoc'               => true,
+        'phpdoc_align'                  => true,
+        'phpdoc_separation'             => true,
+
+        // Strict
+        'declare_strict_types'        => true,
     ])
     // 💡 by default, Fixer looks for `*.php` files excluding `./vendor/` - here, you can groom this config
     ->setFinder(
         (new Finder())
             // 💡 root folder to check
-            ->in(__DIR__)
+            ->in([__DIR__ . '/src', __DIR__ . '/tests'])
             // 💡 additional files, eg bin entry file
             // ->append([__DIR__.'/bin-entry-file'])
             // 💡 folders to exclude, if any

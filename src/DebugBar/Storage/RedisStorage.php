@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -16,17 +18,15 @@ namespace DebugBar\Storage;
  */
 class RedisStorage implements StorageInterface
 {
-    /** @var \Predis\Client|\Redis|\RedisCluster */
-    protected $redis;
+    protected \Predis\Client|\Redis|\RedisCluster|null $redis = null;
 
     /** @var string */
     protected $hash;
 
     /**
-     * @param  \Predis\Client|\Redis $redis Redis Client
-     * @param string $hash
+     * @param \Predis\Client|\Redis $redis Redis Client
      */
-    public function __construct($redis, $hash = 'phpdebugbar')
+    public function __construct(\Predis\Client|\Redis|\RedisCluster $redis, string $hash = 'phpdebugbar')
     {
         $this->redis = $redis;
         $this->hash = $hash;
@@ -35,7 +35,7 @@ class RedisStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function save($id, $data)
+    public function save(string $id, array $data): void
     {
         $this->redis->hSet("$this->hash:meta", $id, serialize($data['__meta']));
         unset($data['__meta']);
@@ -45,7 +45,7 @@ class RedisStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function get($id)
+    public function get(string $id): array
     {
         return array_merge(
             unserialize($this->redis->hGet("$this->hash:data", $id)) ?: [],
@@ -56,7 +56,7 @@ class RedisStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function find(array $filters = [], $max = 20, $offset = 0)
+    public function find(array $filters = [], int $max = 20, int $offset = 0): array
     {
         $results = [];
         $isPhpRedis = get_class($this->redis) === 'Redis' || get_class($this->redis) === 'RedisCluster';
@@ -91,7 +91,7 @@ class RedisStorage implements StorageInterface
     /**
      * Filter the metadata for matches.
      */
-    protected function filter($meta, $filters)
+    protected function filter(array $meta, array $filters): bool
     {
         foreach ($filters as $key => $value) {
             if (!isset($meta[$key]) || fnmatch($value, $meta[$key]) === false) {
@@ -104,7 +104,7 @@ class RedisStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function clear()
+    public function clear(): void
     {
         $this->redis->del("$this->hash:data");
         $this->redis->del("$this->hash:meta");

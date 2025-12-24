@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -20,7 +22,6 @@ interface RequestIdGeneratorInterface
      * To avoid any potential confusion in ID --> value maps, the returned value must be
      * guaranteed to not be all-numeric.
      *
-     * @return string
      */
-    public function generate();
+    public function generate(): string;
 }

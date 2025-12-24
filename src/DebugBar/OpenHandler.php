@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -16,10 +18,9 @@ namespace DebugBar;
  */
 class OpenHandler
 {
-    protected $debugBar;
+    protected DebugBar $debugBar;
 
     /**
-     * @param DebugBar $debugBar
      * @throws DebugBarException
      */
     public function __construct(DebugBar $debugBar)
@@ -33,13 +34,10 @@ class OpenHandler
     /**
      * Handles the current request
      *
-     * @param array $request Request data
-     * @param bool $echo
-     * @param bool $sendHeader
-     * @return string
+     *
      * @throws DebugBarException
      */
-    public function handle($request = null, $echo = true, $sendHeader = true)
+    public function handle(?array $request = null, bool $echo = true, bool $sendHeader = true): string
     {
         if ($request === null) {
             $request = $_REQUEST;
@@ -63,15 +61,15 @@ class OpenHandler
         if ($echo) {
             echo $response;
         }
+
         return $response;
     }
 
     /**
      * Find operation
-     * @param $request
-     * @return array
+     *
      */
-    protected function find($request)
+    protected function find(array $request): array
     {
         $max = 20;
         if (isset($request['max'])) {
@@ -95,11 +93,11 @@ class OpenHandler
 
     /**
      * Get operation
-     * @param $request
-     * @return array
+     *
+     *
      * @throws DebugBarException
      */
-    protected function get($request)
+    protected function get(array $request): array
     {
         if (!isset($request['id'])) {
             throw new DebugBarException("Missing 'id' parameter in 'get' operation");
@@ -110,7 +108,7 @@ class OpenHandler
     /**
      * Clear operation
      */
-    protected function clear($request)
+    protected function clear(): array
     {
         $this->debugBar->getStorage()->clear();
         return ['success' => true];

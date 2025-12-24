@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -14,13 +16,11 @@ namespace DebugBar\DataCollector;
 /**
  * Indicates that a DataCollector is renderable using JavascriptRenderer
  */
-interface Renderable
+interface Renderable extends DataCollectorInterface
 {
     /**
      * Returns a hash where keys are control names and their values
      * an array of options as defined in {@see DebugBar\JavascriptRenderer::addControl()}
-     *
-     * @return array
      */
-    public function getWidgets();
+    public function getWidgets(): array;
 }

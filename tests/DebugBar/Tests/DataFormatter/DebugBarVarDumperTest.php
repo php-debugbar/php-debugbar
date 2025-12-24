@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\Tests\DataFormatter;
 
 use DebugBar\DataFormatter\DebugBarVarDumper;
