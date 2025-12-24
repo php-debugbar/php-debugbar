@@ -15,18 +15,16 @@ namespace DebugBar\DataFormatter;
 
 trait HasXdebugLinks
 {
-    protected $xdebugLinkTemplate = '';
-    protected $xdebugShouldUseAjax = false;
-    protected $xdebugReplacements = [];
+    protected string $xdebugLinkTemplate = '';
+    protected bool $xdebugShouldUseAjax = false;
+    protected array $xdebugReplacements = [];
 
     /**
      * Shorten the file path by removing the xdebug path replacements
      *
-     * @param string $file
      *
-     * @return string
      */
-    public function normalizeFilePath($file)
+    public function normalizeFilePath(string $file): string
     {
         if (empty($file)) {
             return '';
@@ -49,12 +47,10 @@ trait HasXdebugLinks
     /**
      * Get an Xdebug Link to a file
      *
-     * @param string   $file
-     * @param int|null $line
      *
      * @return null|array{url: string, ajax: bool, filename: string, line: string}
      */
-    public function getXdebugLink($file, $line = null)
+    public function getXdebugLink(string $file, ?int $line = null): ?array
     {
         if (empty($file)) {
             return null;
@@ -88,10 +84,7 @@ trait HasXdebugLinks
         ];
     }
 
-    /**
-     * @return string
-     */
-    public function getXdebugLinkTemplate()
+    public function getXdebugLinkTemplate(): string
     {
         if (empty($this->xdebugLinkTemplate) && !empty(ini_get('xdebug.file_link_format'))) {
             $this->xdebugLinkTemplate = ini_get('xdebug.file_link_format');
@@ -100,10 +93,7 @@ trait HasXdebugLinks
         return $this->xdebugLinkTemplate;
     }
 
-    /**
-     * @param null|string $editor
-     */
-    public function setEditorLinkTemplate($editor)
+    public function setEditorLinkTemplate(string $editor): void
     {
         $editorLinkTemplates = [
             'sublime' => 'subl://open?url=file://%f&line=%l',
@@ -133,16 +123,12 @@ trait HasXdebugLinks
             'antigravity' => 'antigravity://file/%f:%l',
         ];
 
-        if (is_string($editor) && isset($editorLinkTemplates[$editor])) {
+        if (isset($editorLinkTemplates[$editor])) {
             $this->setXdebugLinkTemplate($editorLinkTemplates[$editor]);
         }
     }
 
-    /**
-     * @param string $xdebugLinkTemplate
-     * @param bool   $shouldUseAjax
-     */
-    public function setXdebugLinkTemplate($xdebugLinkTemplate, $shouldUseAjax = false)
+    public function setXdebugLinkTemplate(string $xdebugLinkTemplate, bool $shouldUseAjax = false): void
     {
         if ($xdebugLinkTemplate === 'idea') {
             $this->xdebugLinkTemplate = 'http://localhost:63342/api/file/?file=%f&line=%l';
@@ -153,10 +139,7 @@ trait HasXdebugLinks
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function getXdebugShouldUseAjax()
+    public function getXdebugShouldUseAjax(): bool
     {
         return $this->xdebugShouldUseAjax;
     }
@@ -170,34 +153,24 @@ trait HasXdebugLinks
      *
      * @return array key-value-pairs of replacements, key = path on server, value = replacement
      */
-    public function getXdebugReplacements()
+    public function getXdebugReplacements(): array
     {
         return $this->xdebugReplacements;
     }
 
-    /**
-     * @param array $xdebugReplacements
-     */
-    public function addXdebugReplacements($xdebugReplacements)
+    public function addXdebugReplacements(array $xdebugReplacements): void
     {
         foreach ($xdebugReplacements as $serverPath => $replacement) {
             $this->setXdebugReplacement($serverPath, $replacement);
         }
     }
 
-    /**
-     * @param array $xdebugReplacements
-     */
-    public function setXdebugReplacements($xdebugReplacements)
+    public function setXdebugReplacements(array $xdebugReplacements): void
     {
         $this->xdebugReplacements = $xdebugReplacements;
     }
 
-    /**
-     * @param string $serverPath
-     * @param string $replacement
-     */
-    public function setXdebugReplacement($serverPath, $replacement)
+    public function setXdebugReplacement(string $serverPath, string $replacement): void
     {
         $this->xdebugReplacements[$serverPath] = $replacement;
     }

@@ -18,13 +18,10 @@ use Symfony\Component\VarDumper\Dumper\CliDumper;
 
 class DataFormatter implements DataFormatterInterface
 {
-    public $cloner;
+    public VarCloner $cloner;
 
-    public $dumper;
+    public CliDumper $dumper;
 
-    /**
-     * DataFormatter constructor.
-     */
     public function __construct()
     {
         $this->cloner = new VarCloner();

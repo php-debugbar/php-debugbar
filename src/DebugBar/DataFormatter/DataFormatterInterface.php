@@ -33,9 +33,7 @@ interface DataFormatterInterface
     /**
      * Transforms a size in bytes to a human readable string
      *
-     * @param string  $size
-     * @param integer $precision
-     */
+     * */
     public function formatBytes(float|int|string|null $size, int $precision = 2): string;
 
     /**

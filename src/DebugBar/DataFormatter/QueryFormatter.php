@@ -10,11 +10,9 @@ class QueryFormatter extends DataFormatter
     /**
      * Removes extra spaces at the beginning and end of the SQL query and its lines.
      *
-     * @param string $sql
      *
-     * @return string
      */
-    public function formatSql($sql)
+    public function formatSql(string $sql): string
     {
         $sql = preg_replace("/\?(?=(?:[^'\\\']*'[^'\\']*')*[^'\\\']*$)(?:\?)/", '?', $sql);
         $sql = trim(preg_replace("/\s*\n\s*/", "\n", $sql));
@@ -26,7 +24,7 @@ class QueryFormatter extends DataFormatter
      * Check bindings for illegal (non UTF-8) strings, like Binary data.
      *
      */
-    public function checkBindings($bindings)
+    public function checkBindings(array $bindings): array
     {
         foreach ($bindings as &$binding) {
             if (is_string($binding) && !mb_check_encoding($binding, 'UTF-8')) {
@@ -51,9 +49,8 @@ class QueryFormatter extends DataFormatter
      *
      * @param object|null $source If the backtrace is disabled, the $source will be null.
      *
-     * @return string
      */
-    public function formatSource($source, $short = false)
+    public function formatSource(?object $source, bool $short = false): string
     {
         if (! is_object($source)) {
             return '';
