@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DebugBar\DataFormatter;
 
-use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataFormatter\VarDumper\DebugBarHtmlDumper;
 use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Component\VarDumper\Cloner\VarCloner;

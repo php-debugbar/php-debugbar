@@ -34,11 +34,10 @@ class OpenHandler
     /**
      * Handles the current request
      *
-     * @param array $request Request data
      *
      * @throws DebugBarException
      */
-    public function handle(array $request = null, bool $echo = true, bool $sendHeader = true): string
+    public function handle(?array $request = null, bool $echo = true, bool $sendHeader = true): string
     {
         if ($request === null) {
             $request = $_REQUEST;

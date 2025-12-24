@@ -300,7 +300,7 @@ class DebugBar implements ArrayAccess
      *
      * @return $this
      */
-    public function sendDataInHeaders(bool $useOpenHandler = null, string $headerName = 'phpdebugbar', int $maxHeaderLength = 4096): static
+    public function sendDataInHeaders(?bool $useOpenHandler = null, string $headerName = 'phpdebugbar', int $maxHeaderLength = 4096): static
     {
         if ($useOpenHandler === null) {
             $useOpenHandler = self::$useOpenHandlerWhenSendingDataHeaders;

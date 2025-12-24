@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace DebugBar;
 
 use DebugBar\DataCollector\AssetProvider;
-use DebugBar\DataCollector\DataCollectorInterface;
 use DebugBar\DataCollector\Renderable;
 
 /**
@@ -836,7 +835,7 @@ class JavascriptRenderer
      * Makes a URI relative to another
      *
      */
-    protected function makeUriRelativeTo(null|string|array $uri, string $root): string|array
+    protected function makeUriRelativeTo(string|array|null $uri, string $root): string|array
     {
         if (!$root) {
             return $uri;
