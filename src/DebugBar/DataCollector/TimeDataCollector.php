@@ -197,7 +197,7 @@ class TimeDataCollector extends DataCollector implements Renderable
             'end' => $this->requestEndTime,
             'duration' => $this->getRequestDuration(),
             'duration_str' => $this->getDataFormatter()->formatDuration($this->getRequestDuration()),
-            'measures' => array_values($this->measures),
+            'measures' => $this->measures,
         ];
     }
 

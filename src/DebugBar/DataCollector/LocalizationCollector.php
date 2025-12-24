@@ -23,6 +23,7 @@ class LocalizationCollector extends DataCollector implements Renderable
      */
     public function getLocale(): string|false
     {
+        /** @phpstan-ignore argument.type */
         return setlocale(LC_ALL, 0);
     }
 

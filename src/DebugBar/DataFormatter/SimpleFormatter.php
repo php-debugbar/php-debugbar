@@ -72,7 +72,7 @@ class SimpleFormatter extends DataFormatter
         }
 
         if (is_resource($value)) {
-            return sprintf('Resource(%s#%d)', get_resource_type($value), $value);
+            return sprintf('Resource(%s#%d)', get_resource_type($value), (int) $value);
         }
 
         if (null === $value) {

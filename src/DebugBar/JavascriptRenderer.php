@@ -679,7 +679,7 @@ class JavascriptRenderer
     /**
      * Add assets stored in files to render in the head
      *
-     * @param array|string $cssFiles An array of filenamess
+     * @param array|string $cssFiles An array of filenames
      * @param array|string $jsFiles  An array of filenames
      * @param ?string      $basePath Base path of those files
      * @param ?string      $baseUrl  Base url of those files

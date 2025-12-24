@@ -35,15 +35,12 @@ interface HttpDriverInterface
     /**
      * Sets a value in the session
      *
-     * @param string $value
      */
     public function setSessionValue(string $name, mixed $value);
 
     /**
      * Checks if a value is in the session
      *
-     *
-     * @return boolean
      */
     public function hasSessionValue(string $name): bool;
 
