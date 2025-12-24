@@ -22,13 +22,11 @@ $debugbar['messages']->addMessage('oups', 'error');
 $debugbar['messages']->addMessage('welcome!', 'success');
 $debugbar['messages']->addMessage('panic!', 'critical');
 
-
 require __DIR__ . '/collectors/counter.php';
 require __DIR__ . '/collectors/templates.php';
 require __DIR__ . '/collectors/pdo.php';
 require __DIR__ . '/collectors/monolog.php';
 require __DIR__ . '/collectors/symfony_mailer.php';
-
 
 $debugbar['time']->startMeasure('render');
 

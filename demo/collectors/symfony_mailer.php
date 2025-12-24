@@ -47,4 +47,3 @@ $email = (new Email())
     ->html('<div>Here is the message itself</div>');
 
 $mailer->send($email);
-

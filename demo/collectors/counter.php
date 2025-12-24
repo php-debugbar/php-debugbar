@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 /** @var \DebugBar\DebugBar $debugbar */
 
-
 $classDemo = ['FirstClass', 'SecondClass', 'ThirdClass'];
 $classEvent = ['Retrieved', 'Saved', 'Deleted'];
 $debugbar->addCollector(new \DebugBar\DataCollector\ObjectCountCollector());
