@@ -1,13 +1,12 @@
 <?php
 
-include __DIR__ . '/../vendor/autoload.php';
+declare(strict_types=1);
 
-// for stack data
-session_start();
+include __DIR__ . '/../vendor/autoload.php';
 
 use DebugBar\StandardDebugBar;
 
-$debugbar = new StandardDebugBar();
+$debugbar = new \DebugBar\DebugBar();
 $debugbarRenderer = $debugbar->getJavascriptRenderer();
 
 $assets = $debugbarRenderer->getDistIncludedAssets();
