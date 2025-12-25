@@ -28,6 +28,14 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 8.4
+
+    - name: Install dependencies
+      run: composer update --prefer-dist --no-progress
+
     - name: Build all files
       run: npm run build
 
