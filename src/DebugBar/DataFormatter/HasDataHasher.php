@@ -19,23 +19,41 @@ use DebugBar\DebugBarException;
 
 trait HasDataHasher
 {
-    public static function setDataHasher(DataHasher $dataHasher): void
+    protected ?DataHasher $dataHasher = null;
+
+    public static function setDefaultDataHasher(DataHasher $dataHasher): void
     {
-        DataCollector::$dataHasher = $dataHasher;
+        DataCollector::$defaultDataHasher = $dataHasher;
     }
 
-    public static function hasDataHasher(): bool
+    public static function getDefaultDataHasher(): DataHasher
     {
-        return DataCollector::$dataHasher !== null;
-    }
-
-    public static function getDataHasher(): DataHasher
-    {
-        if (DataCollector::$dataHasher === null) {
+        if (DataCollector::$defaultDataHasher === null) {
             throw new DebugBarException("Not DataHasher is set in DebugBar");
         }
 
-        return DataCollector::$dataHasher;
+        return DataCollector::$defaultDataHasher;
     }
 
+    public function setDataHasher(DataHasher $dataHasher): void
+    {
+        $this->dataHasher = $dataHasher;
+    }
+
+    public function hasDataHasher(): bool
+    {
+        return $this->dataHasher !== null || static::$defaultDataHasher !== null;
+    }
+
+    /**
+     * @throws DebugBarException
+     */
+    public function getDataHasher(): DataHasher
+    {
+        if ($this->dataHasher === null) {
+            $this->dataHasher = DataCollector::getDefaultDataHasher();
+        }
+
+        return $this->dataHasher;
+    }
 }

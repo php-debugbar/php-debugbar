@@ -31,6 +31,6 @@ abstract class DataCollector implements DataCollectorInterface
 
     public static ?DataFormatterInterface $defaultDataFormatter = null;
     public static ?DebugBarVarDumper $defaultVarDumper = null;
-    public static ?DataHasher $dataHasher = null;
+    public static ?DataHasher $defaultDataHasher = null;
 
 }

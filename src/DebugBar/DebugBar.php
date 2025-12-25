@@ -466,7 +466,7 @@ class DebugBar implements ArrayAccess
     {
         $this->dataHasher = $dataHasher;
 
-        DataCollector::setDataHasher($dataHasher);
+        DataCollector::setDefaultDataHasher($dataHasher);
 
         return $this;
     }
