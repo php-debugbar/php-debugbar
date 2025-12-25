@@ -121,24 +121,24 @@ class OpenHandler
 
     /**
      * Execute an action
-     * @param $request
+     * @param array $request
      * @return mixed
      * @throws DebugBarException
      */
-    protected function execute($request)
+    protected function execute(array $request): mixed
     {
         if (!isset($request['collector']) || !isset($request['action']) || !isset($request['signature'])) {
             throw new DebugBarException("Missing 'collector', 'action' and/or 'signature' parameter in 'execute' operation");
         }
 
-        if (!DebugBar::hasDataHasher()) {
+        if (!$this->debugBar->hasDataHasher()) {
             throw new DebugBarException("Not DataHasher is set in DebugBar, which is required for 'execute' operations");
         }
 
         // Get the signature and remove if before checking the payload.
         $signature = $request['signature'];
 
-        if (!DebugBar::getDataHasher()->verify($request, $signature)) {
+        if (!$this->debugBar->getDataHasher()->verify($request, $signature)) {
             throw new DebugBarException("Signature does not match in 'execute' operation");
         }
 

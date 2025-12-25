@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace DebugBar;
 
 use ArrayAccess;
+use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\DataCollectorInterface;
 use DebugBar\Storage\StorageInterface;
 
@@ -35,13 +36,13 @@ class DebugBar implements ArrayAccess
 {
     public static bool $useOpenHandlerWhenSendingDataHeaders = false;
 
-    public static DataHasher|null $dataHasher;
-
     protected array $collectors = [];
 
     protected ?array $data = null;
 
     protected ?JavascriptRenderer $jsRenderer = null;
+
+    protected ?DataHasher $dataHasher = null;
 
     protected ?RequestIdGeneratorInterface $requestIdGenerator = null;
 
@@ -55,7 +56,7 @@ class DebugBar implements ArrayAccess
 
     protected bool $stackAlwaysUseSessionStorage = false;
 
-    protected $hashKey;
+    protected ?string $hashKey = null;
 
     /**
      * Adds a data collector
@@ -461,38 +462,26 @@ class DebugBar implements ArrayAccess
         return $this->jsRenderer;
     }
 
-
-    /**
-     * Returns the default data formater
-     *
-     * @return DataHasher
-     */
-    public static function setDataHasher(DataHasher $dataHasher)
+    public function setDataHasher(DataHasher $dataHasher): static
     {
-        static::$dataHasher = $dataHasher;
+        $this->dataHasher = $dataHasher;
+
+        DataCollector::setDataHasher($dataHasher);
+
+        return $this;
     }
 
-    /**
-     * Check if the data hasher is set
-     *
-     * @return bool
-     */
-    public static function hasDataHasher() : bool
+    public function hasDataHasher() : bool
     {
-        return isset(static::$dataHasher);
+        return $this->dataHasher !== null;
     }
 
-    /**
-     * Returns the data hasher
-     *
-     * @return DataHasher
-     */
-    public static function getDataHasher() : DataHasher
+    public function getDataHasher() : DataHasher
     {
-        if (!isset(static::$dataHasher)) {
+        if ($this->dataHasher === null) {
             throw new DebugBarException('DataHasher is not set');
         }
-        return static::$dataHasher;
+        return $this->dataHasher;
     }
 
     // --------------------------------------------

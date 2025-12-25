@@ -53,11 +53,11 @@ class OpenHandlerTest extends DebugBarTestCase
         $this->assertJsonPropertyEquals($result, 'success', true);
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $this->debugbar->addCollector(new MockActionCollector([], 'mock-action'));
         $dataHasher = new DataHasher('secret');
-        DebugBar::setDataHasher($dataHasher);
+        $this->debugbar->setDataHasher($dataHasher);
 
         $data = [
             'op' => 'execute',
@@ -71,11 +71,11 @@ class OpenHandlerTest extends DebugBarTestCase
         $this->assertJsonPropertyEquals($result, 'result', 'done');
     }
 
-    public function testExecuteWrongSignature()
+    public function testExecuteWrongSignature(): void
     {
         $this->debugbar->addCollector(new MockActionCollector([], 'mock-action'));
         $dataHasher = new DataHasher('secret');
-        DebugBar::setDataHasher($dataHasher);
+        $this->debugbar->setDataHasher($dataHasher);
 
         $data = [
             'op' => 'execute',

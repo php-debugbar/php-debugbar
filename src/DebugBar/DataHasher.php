@@ -13,13 +13,13 @@ namespace DebugBar;
 /**
  * Data Hasher
  */
-class DataHasher
+readonly class DataHasher
 {
-    public function __construct(private string $key)
+    public function __construct(private readonly string $key)
     {
     }
 
-    public function sign($data)
+    public function sign(mixed $data): string
     {
         if (is_array($data)){
             sort($data);
@@ -29,7 +29,7 @@ class DataHasher
         return hash_hmac('sha256', $data, $this->key);
     }
 
-    public function verify($data, string $signature)
+    public function verify(mixed $data, string $signature): bool
     {
         if (is_array($data) && isset($data['signature'])) {
             unset ($data['signature']);

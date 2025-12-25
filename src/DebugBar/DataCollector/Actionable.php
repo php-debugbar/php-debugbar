@@ -22,5 +22,5 @@ interface Actionable
      * @param array|null $payload
      * @return mixed
      */
-    function executionAction($action, array $payload = null);
+    function executionAction(string $action, ?array $payload = null): mixed;
 }
