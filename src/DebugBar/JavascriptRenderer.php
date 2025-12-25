@@ -815,6 +815,33 @@ class JavascriptRenderer
         return $type ? $files[$type] : $files;
     }
 
+    public function getDistIncludedAssets(?string $type = null, ?string $relativeTo = self::RELATIVE_PATH): array
+    {
+        $cssFiles = [];
+        $jsFiles = [];
+        foreach ($this->distIncludedAssets as $asset) {
+            $ext = strtolower(pathinfo($asset, PATHINFO_EXTENSION));
+            if ($ext == 'css') {
+                $cssFiles[] = $asset;
+            } elseif ($ext == 'js') {
+                $jsFiles[] = $asset;
+            }
+        }
+
+        if ($relativeTo) {
+            $root = $this->getRelativeRoot($relativeTo, $this->basePath, $this->baseUrl);
+            $cssFiles = $this->makeUriRelativeTo($cssFiles, $root);
+            $jsFiles = $this->makeUriRelativeTo($jsFiles, $root);
+        }
+
+        $files = [
+            'css' => $cssFiles,
+            'js' => $jsFiles,
+        ];
+
+        return $type ? $files[$type] : $files;
+    }
+
     /**
      * Returns the correct base according to the type
      *
@@ -891,7 +918,7 @@ class JavascriptRenderer
      * @param array|null $files   Filenames containing assets
      * @param array|null $content Inline content to dump
      */
-    protected function dumpAssets(?array $files = null, ?array $content = null, ?string $targetFilename = null): void
+    public function dumpAssets(?array $files = null, ?array $content = null, ?string $targetFilename = null): void
     {
         $dumpedContent = '';
         if ($files) {
