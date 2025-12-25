@@ -119,6 +119,8 @@ class OpenHandler
     /**
      * Execute an action
      *
+     * @param array{collector: string, action: string, signature: string, payload?: array, ...} $request
+     *
      * @throws DebugBarException
      */
     protected function execute(array $request): mixed
