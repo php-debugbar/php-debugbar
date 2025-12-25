@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -10,21 +13,18 @@
 
 namespace DebugBar\DataFormatter;
 
-use DebugBar\DataCollector\DataCollector;
-
 trait HasXdebugLinks
 {
-    protected $xdebugLinkTemplate = '';
-    protected $xdebugShouldUseAjax = false;
-    protected $xdebugReplacements = array();
+    protected string $xdebugLinkTemplate = '';
+    protected bool $xdebugShouldUseAjax = false;
+    protected array $xdebugReplacements = [];
 
     /**
      * Shorten the file path by removing the xdebug path replacements
      *
-     * @param string $file
-     * @return string
+     *
      */
-    public function normalizeFilePath($file)
+    public function normalizeFilePath(string $file): string
     {
         if (empty($file)) {
             return '';
@@ -35,7 +35,7 @@ trait HasXdebugLinks
         }
 
         foreach (array_keys($this->xdebugReplacements) as $path) {
-            if (strpos($file, $path) === 0) {
+            if (str_starts_with($file, $path)) {
                 $file = substr($file, strlen($path));
                 break;
             }
@@ -47,15 +47,10 @@ trait HasXdebugLinks
     /**
      * Get an Xdebug Link to a file
      *
-     * @param string $file
-     * @param int|null $line
      *
-     * @return array {
-     * @var string   $url
-     * @var bool     $ajax should be used to open the url instead of a normal links
-     * }
+     * @return null|array{url: string, ajax: bool, filename: string, line: string}
      */
-    public function getXdebugLink($file, $line = null)
+    public function getXdebugLink(string $file, ?int $line = null): ?array
     {
         if (empty($file)) {
             return null;
@@ -66,7 +61,7 @@ trait HasXdebugLinks
         }
 
         foreach ($this->xdebugReplacements as $path => $replacement) {
-            if (strpos($file, $path) === 0) {
+            if (str_starts_with($file, $path)) {
                 $file = $replacement . substr($file, strlen($path));
                 break;
             }
@@ -74,22 +69,22 @@ trait HasXdebugLinks
 
         $url = strtr($this->getXdebugLinkTemplate(), [
             '%f' => rawurlencode(str_replace('\\', '/', $file)),
-            '%l' => rawurlencode((string) $line ?: 1),
+            '%l' => rawurlencode((string) $line ?: "1"),
         ]);
-        if ($url) {
-            return [
-                'url' => $url,
-                'ajax' => $this->getXdebugShouldUseAjax(),
-                'filename' => basename($file),
-                'line' => (string) $line ?: '?'
-            ];
+
+        if (!$url) {
+            return null;
         }
+
+        return [
+            'url' => $url,
+            'ajax' => $this->getXdebugShouldUseAjax(),
+            'filename' => basename($file),
+            'line' => (string) $line ?: '?',
+        ];
     }
 
-    /**
-     * @return string
-     */
-    public function getXdebugLinkTemplate()
+    public function getXdebugLinkTemplate(): string
     {
         if (empty($this->xdebugLinkTemplate) && !empty(ini_get('xdebug.file_link_format'))) {
             $this->xdebugLinkTemplate = ini_get('xdebug.file_link_format');
@@ -98,23 +93,20 @@ trait HasXdebugLinks
         return $this->xdebugLinkTemplate;
     }
 
-    /**
-     * @param string $editor
-     */
-    public function setEditorLinkTemplate($editor)
+    public function setEditorLinkTemplate(string $editor): void
     {
-        $editorLinkTemplates = array(
+        $editorLinkTemplates = [
             'sublime' => 'subl://open?url=file://%f&line=%l',
             'textmate' => 'txmt://open?url=file://%f&line=%l',
             'emacs' => 'emacs://open?url=file://%f&line=%l',
             'macvim' => 'mvim://open/?url=file://%f&line=%l',
             'codelite' => 'codelite://open?file=%f&line=%l',
             'phpstorm' => 'phpstorm://open?file=%f&line=%l',
-            'phpstorm-remote' => 'javascript:(()=>{let r=new XMLHttpRequest;' .
-                'r.open(\'get\',\'http://localhost:63342/api/file/%f:%l\');r.send();})()',
+            'phpstorm-remote' => 'javascript:(()=>{let r=new XMLHttpRequest;'
+                . 'r.open(\'get\',\'http://localhost:63342/api/file/%f:%l\');r.send();})()',
             'idea' => 'idea://open?file=%f&line=%l',
-            'idea-remote' => 'javascript:(()=>{let r=new XMLHttpRequest;' .
-                'r.open(\'get\',\'http://localhost:63342/api/file/?file=%f&line=%l\');r.send();})()',
+            'idea-remote' => 'javascript:(()=>{let r=new XMLHttpRequest;'
+                . 'r.open(\'get\',\'http://localhost:63342/api/file/?file=%f&line=%l\');r.send();})()',
             'vscode' => 'vscode://file/%f:%l',
             'vscode-insiders' => 'vscode-insiders://file/%f:%l',
             'vscode-remote' => 'vscode://vscode-remote/%f:%l',
@@ -126,32 +118,28 @@ trait HasXdebugLinks
             'espresso' => 'x-espresso://open?filepath=%f&lines=%l',
             'netbeans' => 'netbeans://open/?f=%f:%l',
             'cursor' => 'cursor://file/%f:%l',
-        );
+            'windsurf' => 'windsurf://file/%f:%l',
+            'zed' => 'zed://file/%f:%l',
+            'antigravity' => 'antigravity://file/%f:%l',
+        ];
 
-        if (is_string($editor) && isset($editorLinkTemplates[$editor])) {
+        if (isset($editorLinkTemplates[$editor])) {
             $this->setXdebugLinkTemplate($editorLinkTemplates[$editor]);
         }
     }
 
-    /**
-     * @param string $xdebugLinkTemplate
-     * @param bool $shouldUseAjax
-     */
-    public function setXdebugLinkTemplate($xdebugLinkTemplate, $shouldUseAjax = false)
+    public function setXdebugLinkTemplate(string $xdebugLinkTemplate, bool $shouldUseAjax = false): void
     {
         if ($xdebugLinkTemplate === 'idea') {
-            $this->xdebugLinkTemplate  = 'http://localhost:63342/api/file/?file=%f&line=%l';
+            $this->xdebugLinkTemplate = 'http://localhost:63342/api/file/?file=%f&line=%l';
             $this->xdebugShouldUseAjax = true;
         } else {
-            $this->xdebugLinkTemplate  = $xdebugLinkTemplate;
+            $this->xdebugLinkTemplate = $xdebugLinkTemplate;
             $this->xdebugShouldUseAjax = $shouldUseAjax;
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function getXdebugShouldUseAjax()
+    public function getXdebugShouldUseAjax(): bool
     {
         return $this->xdebugShouldUseAjax;
     }
@@ -165,34 +153,24 @@ trait HasXdebugLinks
      *
      * @return array key-value-pairs of replacements, key = path on server, value = replacement
      */
-    public function getXdebugReplacements()
+    public function getXdebugReplacements(): array
     {
         return $this->xdebugReplacements;
     }
 
-    /**
-     * @param array $xdebugReplacements
-     */
-    public function addXdebugReplacements($xdebugReplacements)
+    public function addXdebugReplacements(array $xdebugReplacements): void
     {
         foreach ($xdebugReplacements as $serverPath => $replacement) {
             $this->setXdebugReplacement($serverPath, $replacement);
         }
     }
 
-    /**
-     * @param array $xdebugReplacements
-     */
-    public function setXdebugReplacements($xdebugReplacements)
+    public function setXdebugReplacements(array $xdebugReplacements): void
     {
         $this->xdebugReplacements = $xdebugReplacements;
     }
 
-    /**
-     * @param string $serverPath
-     * @param string $replacement
-     */
-    public function setXdebugReplacement($serverPath, $replacement)
+    public function setXdebugReplacement(string $serverPath, string $replacement): void
     {
         $this->xdebugReplacements[$serverPath] = $replacement;
     }

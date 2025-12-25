@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -15,22 +18,31 @@ namespace DebugBar\DataCollector;
  */
 class RequestDataCollector extends DataCollector implements Renderable, AssetProvider
 {
-    /**
-     * @return array
-     */
-    public function collect()
+    /** @var array<string, array<string>> */
+    private array $blacklist = [
+        '_GET' => [],
+        '_POST' => [],
+        '_COOKIE' => [],
+        '_SESSION' => [],
+    ];
+
+    public function collect(): array
     {
-        $vars = array('_GET', '_POST', '_SESSION', '_COOKIE');
-        $data = array();
+        $vars = array_keys($this->blacklist);
+        $data = [];
 
         foreach ($vars as $var) {
-            if (isset($GLOBALS[$var])) {
-                $key = "$" . $var;
-                if ($this->isHtmlVarDumperUsed()) {
-                    $data[$key] = $this->getVarDumper()->renderVar($GLOBALS[$var]);
-                } else {
-                    $data[$key] = $this->getDataFormatter()->formatVar($GLOBALS[$var]);
-                }
+            if (! isset($GLOBALS[$var])) {
+                continue;
+            }
+
+            $key = "$" . $var;
+            $value = $this->masked($GLOBALS[$var], $var);
+
+            if ($this->isHtmlVarDumperUsed()) {
+                $data[$key] = $this->getVarDumper()->renderVar($value);
+            } else {
+                $data[$key] = $this->getDataFormatter()->formatVar($value);
             }
         }
 
@@ -38,35 +50,69 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
     }
 
     /**
-     * @return string
+     * Hide a sensitive value within one of the superglobal arrays.
      */
-    public function getName()
+    public function hideSuperglobalKeys(string $superGlobalName, string|array $keys): void
+    {
+        if (!is_array($keys)) {
+            $keys = [$keys];
+        }
+
+        if (!isset($this->blacklist[$superGlobalName])) {
+            $this->blacklist[$superGlobalName] = [];
+        }
+
+        foreach ($keys as $key) {
+            $this->blacklist[$superGlobalName][] = $key;
+        }
+    }
+
+    /**
+     * Checks all values within the given superGlobal array.
+     *
+     * Blacklisted values will be replaced by a equal length string containing
+     * only '*' characters for string values.
+     * Non-string values will be replaced with a fixed asterisk count.
+     *
+     * @param array|\ArrayAccess<mixed, mixed> $superGlobal
+     */
+    private function masked(array|\ArrayAccess $superGlobal, string $superGlobalName): array
+    {
+        $blacklisted = $this->blacklist[$superGlobalName];
+
+        $values = $superGlobal;
+
+        foreach ($blacklisted as $key) {
+            if (isset($superGlobal[$key])) {
+                $values[$key] = str_repeat('*', is_string($superGlobal[$key]) ? strlen($superGlobal[$key]) : 3);
+            }
+        }
+
+        return $values;
+    }
+
+    public function getName(): string
     {
         return 'request';
     }
 
-    /**
-     * @return array
-     */
-    public function getAssets() {
-        return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : array();
+    public function getAssets(): array
+    {
+        return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : [];
     }
 
-    /**
-     * @return array
-     */
-    public function getWidgets()
+    public function getWidgets(): array
     {
         $widget = $this->isHtmlVarDumperUsed()
             ? "PhpDebugBar.Widgets.HtmlVariableListWidget"
             : "PhpDebugBar.Widgets.VariableListWidget";
-        return array(
-            "request" => array(
-                "icon" => "tags",
+        return [
+            "request" => [
+                "icon" => "arrows-left-right",
                 "widget" => $widget,
                 "map" => "request",
-                "default" => "{}"
-            )
-        );
+                "default" => "{}",
+            ],
+        ];
     }
 }

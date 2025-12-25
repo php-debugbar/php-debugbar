@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\Tests\DataCollector;
 
 use DebugBar\Tests\DebugBarTestCase;
@@ -7,7 +9,7 @@ use DebugBar\DataCollector\MessagesCollector;
 
 class MessagesCollectorTest extends DebugBarTestCase
 {
-    public function testAddMessageAndLog()
+    public function testAddMessageAndLog(): void
     {
         $c = new MessagesCollector();
         $c->addMessage('foobar');
@@ -17,7 +19,7 @@ class MessagesCollectorTest extends DebugBarTestCase
         $this->assertCount(2, $c->getMessages());
     }
 
-    public function testAggregate()
+    public function testAggregate(): void
     {
         $a = new MessagesCollector('a');
         $c = new MessagesCollector('c');
@@ -30,7 +32,7 @@ class MessagesCollectorTest extends DebugBarTestCase
         $this->assertEquals('a', $msgs[1]['collector']);
     }
 
-    public function testCollect()
+    public function testCollect(): void
     {
         $c = new MessagesCollector();
         $c->addMessage('foo');
@@ -39,18 +41,18 @@ class MessagesCollectorTest extends DebugBarTestCase
         $this->assertEquals($c->getMessages(), $data['messages']);
     }
 
-    public function testAssets()
+    public function testAssets(): void
     {
         $c = new MessagesCollector();
-        $this->assertEmpty($c->getAssets());
+        $this->assertCount(0, $c->getAssets());
 
         $c->useHtmlVarDumper();
-        $this->assertNotEmpty($c->getAssets());
+        $this->assertNotCount(0, $c->getAssets());
     }
 
-    public function testHtmlMessages()
+    public function testHtmlMessages(): void
     {
-        $var = array('one', 'two');
+        $var = ['one', 'two'];
 
         $c = new MessagesCollector();
         $this->assertFalse($c->isHtmlVarDumperUsed());

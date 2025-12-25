@@ -1,0 +1,12 @@
+parameters:
+	level: 6
+	paths:
+		- src
+		- tests
+	bootstrapFiles:
+		- tests/phpstan-stubs.php
+	ignoreErrors:
+		-
+		    identifier: missingType.iterableValue
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon

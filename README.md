@@ -1,13 +1,13 @@
 # PHP Debug Bar
 
-[![Latest Stable Version](https://img.shields.io/packagist/v/maximebf/debugbar?label=Stable)](https://packagist.org/packages/maximebf/debugbar) [![Total Downloads](https://img.shields.io/packagist/dt/maximebf/debugbar?label=Downloads)](https://packagist.org/packages/maximebf/debugbar) [![License](https://img.shields.io/badge/Licence-MIT-4d9283)](https://packagist.org/packages/maximebf/debugbar) [![Tests](https://github.com/maximebf/php-debugbar/actions/workflows/run-tests.yml/badge.svg)](https://github.com/maximebf/php-debugbar/actions/workflows/run-tests.yml)
+[![Latest Stable Version](https://img.shields.io/packagist/v/php-debugbar/php-debugbar?label=Stable)](https://packagist.org/packages/php-debugbar/php-debugbar) [![Total Downloads](https://img.shields.io/packagist/dt/maximebf/debugbar?label=Downloads)](https://packagist.org/packages/php-debugbar/php-debugbar) [![License](https://img.shields.io/badge/Licence-MIT-4d9283)](https://packagist.org/packages/php-debugbar/php-debugbar) [![Tests](https://github.com/maximebf/php-debugbar/actions/workflows/run-tests.yml/badge.svg)](https://github.com/php-debugbar/php-debugbar/actions/workflows/run-tests.yml)
 
 Displays a debug bar in the browser with information from php.
 No more `var_dump()` in your code!
 
 > **Note: Debug Bar is for development use only. Never install this on websites that are publicly accessible.**
 
-![Screenshot](https://raw.github.com/maximebf/php-debugbar/master/docs/screenshot.png)
+![Screenshot](https://raw.github.com/php-debugbar/php-debugbar/master/docs/screenshot.png)
 
 **Features:**
 
@@ -19,7 +19,7 @@ No more `var_dump()` in your code!
  - The client side bar is 100% coded in javascript
  - Easily create your own collectors and their associated view in the bar
  - Save and re-open previous requests
- - [Very well documented](http://phpdebugbar.com/docs)
+ - [Very well documented](http://php-debugbar.com/docs/)
 
 Includes collectors for:
 
@@ -33,8 +33,8 @@ Includes collectors for:
   - [Swift Mailer](http://swiftmailer.org/)
   - [Twig](http://twig.symfony.com/)
 
-Checkout the [demo](https://github.com/maximebf/php-debugbar/tree/master/demo) for
-examples and [phpdebugbar.com](http://phpdebugbar.com) for a live example.
+Checkout the [demo](https://github.com/php-debugbar/php-debugbar/tree/master/demo) for
+examples and [phpdebugbar.com](http://php-debugbar.com) for a live example.
 
 Integrations with other frameworks:
 
@@ -60,7 +60,7 @@ The best way to install DebugBar is using [Composer](http://getcomposer.org)
 with the following command:
 
 ```bash
-composer require maximebf/debugbar --dev
+composer require --dev php-debugbar/php-debugbar
 ```
 
 ## Quick start
@@ -109,7 +109,7 @@ $debugbar["messages"]->addMessage("hello world!");
  - `TimeDataCollector` (*time*)
  - `ExceptionsCollector` (*exceptions*)
 
-Learn more about DebugBar in the [docs](http://phpdebugbar.com/docs).
+Learn more about DebugBar in the [docs](http://php-debugbar.com/docs/).
 
 
 ## Demo
@@ -126,3 +126,10 @@ Then visit http://localhost:8000/demo/
 
 To test, run `php vendor/bin/phpunit`. 
 To debug Browser tests, you can run `PANTHER_NO_HEADLESS=1 vendor/bin/phpunit --debug`. Run `vendor/bin/bdi detect drivers` to download the latest drivers.
+
+## Javascript Linting
+When contributing to the JavaScript codebase:
+1. Run `npm run lint` before committing
+2. Fix any errors (warnings are acceptable but should be minimized)
+3. Use `npm run lint:fix` for automatic fixes where possible
+4. Follow the ES6+ patterns established in the codebase

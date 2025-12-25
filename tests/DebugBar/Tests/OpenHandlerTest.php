@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\Tests;
 
 use DebugBar\DataHasher;
@@ -12,25 +14,25 @@ use DebugBar\Tests\Storage\MockStorage;
 
 class OpenHandlerTest extends DebugBarTestCase
 {
-    private $openHandler;
+    private OpenHandler $openHandler;
 
     public function setUp(): void
     {
         parent::setUp();
-        $this->debugbar->setStorage(new MockStorage(array('foo' => array('__meta' => array('id' => 'foo')))));
+        $this->debugbar->setStorage(new MockStorage(['foo' => ['__meta' => ['id' => 'foo']]]));
         $this->openHandler = new OpenHandler($this->debugbar);
     }
 
-    public function testFind()
+    public function testFind(): void
     {
-        $request = array();
+        $request = [];
         $result = $this->openHandler->handle($request, false, false);
         $this->assertJsonArrayNotEmpty($result);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
-        $request = array('op' => 'get', 'id' => 'foo');
+        $request = ['op' => 'get', 'id' => 'foo'];
         $result = $this->openHandler->handle($request, false, false);
         $this->assertJsonIsObject($result);
         $this->assertJsonHasProperty($result, '__meta');
@@ -38,16 +40,16 @@ class OpenHandlerTest extends DebugBarTestCase
         $this->assertEquals('foo', $data['__meta']['id']);
     }
 
-    public function testGetMissingId()
+    public function testGetMissingId(): void
     {
         $this->expectException(DebugBarException::class);
 
-        $this->openHandler->handle(array('op' => 'get'), false, false);
+        $this->openHandler->handle(['op' => 'get'], false, false);
     }
 
-    public function testClear()
+    public function testClear(): void
     {
-        $result = $this->openHandler->handle(array('op' => 'clear'), false, false);
+        $result = $this->openHandler->handle(['op' => 'clear'], false, false);
         $this->assertJsonPropertyEquals($result, 'success', true);
     }
 

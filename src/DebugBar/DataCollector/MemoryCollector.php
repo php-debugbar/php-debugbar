@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -15,22 +18,20 @@ namespace DebugBar\DataCollector;
  */
 class MemoryCollector extends DataCollector implements Renderable
 {
-    protected $realUsage = false;
+    protected bool $realUsage = false;
 
-    protected $memoryRealStart = 0;
+    protected int $memoryRealStart = 0;
 
-    protected $memoryStart = 0;
+    protected int $memoryStart = 0;
 
-    protected $peakUsage = 0;
+    protected int $peakUsage = 0;
 
-    protected $precision = 0;
+    protected int $precision = 0;
 
     /**
      * Set the precision of the 'peak_usage_str' output.
-     *
-     * @param int $precision
      */
-    public function setPrecision($precision)
+    public function setPrecision(int $precision): void
     {
         $this->precision = $precision;
     }
@@ -38,10 +39,8 @@ class MemoryCollector extends DataCollector implements Renderable
     /**
      * Returns whether total allocated memory page size is used instead of actual used memory size
      * by the application.  See $real_usage parameter on memory_get_peak_usage for details.
-     *
-     * @return bool
      */
-    public function getRealUsage()
+    public function getRealUsage(): bool
     {
         return $this->realUsage;
     }
@@ -49,20 +48,16 @@ class MemoryCollector extends DataCollector implements Renderable
     /**
      * Sets whether total allocated memory page size is used instead of actual used memory size
      * by the application.  See $real_usage parameter on memory_get_peak_usage for details.
-     *
-     * @param bool $realUsage
      */
-    public function setRealUsage($realUsage)
+    public function setRealUsage(bool $realUsage): void
     {
         $this->realUsage = $realUsage;
     }
 
     /**
      * Reset memory baseline, to measure multiple requests in a long running process
-     *
-     * @return void
      */
-    public function resetMemoryBaseline()
+    public function resetMemoryBaseline(): void
     {
         $this->memoryStart = memory_get_usage(false);
         $this->memoryRealStart = memory_get_usage(true);
@@ -70,10 +65,8 @@ class MemoryCollector extends DataCollector implements Renderable
 
     /**
      * Returns the peak memory usage
-     *
-     * @return integer
      */
-    public function getPeakUsage()
+    public function getPeakUsage(): int
     {
         return $this->peakUsage - ($this->realUsage ? $this->memoryRealStart : $this->memoryStart);
     }
@@ -81,43 +74,34 @@ class MemoryCollector extends DataCollector implements Renderable
     /**
      * Updates the peak memory usage value
      */
-    public function updatePeakUsage()
+    public function updatePeakUsage(): void
     {
         $this->peakUsage = memory_get_peak_usage($this->realUsage);
     }
 
-    /**
-     * @return array
-     */
-    public function collect()
+    public function collect(): array
     {
         $this->updatePeakUsage();
-        return array(
+        return [
             'peak_usage' => $this->getPeakUsage(),
-            'peak_usage_str' => $this->getDataFormatter()->formatBytes($this->getPeakUsage(), $this->precision)
-        );
+            'peak_usage_str' => $this->getDataFormatter()->formatBytes($this->getPeakUsage(), $this->precision),
+        ];
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'memory';
     }
 
-    /**
-     * @return array
-     */
-    public function getWidgets()
+    public function getWidgets(): array
     {
-        return array(
-            "memory" => array(
-                "icon" => "cogs",
+        return [
+            "memory" => [
+                "icon" => "server-cog",
                 "tooltip" => "Memory Usage",
                 "map" => "memory.peak_usage_str",
-                "default" => "'0B'"
-            )
-        );
+                "default" => "'0B'",
+            ],
+        ];
     }
 }

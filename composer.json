@@ -17,15 +17,27 @@
         }
     ],
     "require": {
-        "php": "^8",
+        "php": "^8.2",
         "psr/log": "^1|^2|^3",
-        "symfony/var-dumper": "^4|^5|^6|^7"
+        "symfony/var-dumper": "^5.4|^6.4|^7.3|^8.0"
+    },
+    "replace": {
+        "maximebf/debugbar": "self.version"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8|^9",
-        "twig/twig": "^1.38|^2.7|^3.0",
+        "phpunit/phpunit": "^10",
+        "twig/twig": "^3.11.2",
+        "symfony/browser-kit": "^6.4|7.0",
+        "symfony/dom-crawler": "^6.4|^7",
         "symfony/panther": "^1|^2.1",
-        "dbrekelmans/bdi": "^1"
+        "dbrekelmans/bdi": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "monolog/monolog": "^3.9",
+        "symfony/mailer": "^5.4|^6.4|^7.3|^8.0",
+        "symfony/event-dispatcher": "^5.4|^6.4|^7.3|^8.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "predis/predis": "^3.3",
+        "friendsofphp/php-cs-fixer": "^3.92"
     },
     "autoload": {
         "psr-4": {
@@ -38,12 +50,15 @@
         }
     },
     "scripts": {
+        "analyse": "@php vendor/bin/phpstan analyse --memory-limit=1G",
         "demo": [
             "Composer\\Config::disableProcessTimeout",
             "@php -S localhost:8000"
         ],
         "unit-test": "@php vendor/bin/phpunit --testsuite=Unit",
         "browser-test": "@php vendor/bin/phpunit --testsuite=Browser",
+        "check-style": "vendor/bin/php-cs-fixer check -v --diff",
+        "fix-style": "vendor/bin/php-cs-fixer fix -v --diff",
         "browser-debug": [
             "@putenv PANTHER_NO_HEADLESS=1",
             "@php vendor/bin/phpunit --testsuite=Browser --debug"
@@ -56,7 +71,7 @@
     },
      "extra": {
         "branch-alias": {
-            "dev-master": "2.0-dev"
+            "dev-master": "2.2-dev"
         }
     }
 }

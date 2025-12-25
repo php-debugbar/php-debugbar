@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -14,6 +17,7 @@ use DebugBar\DataCollector\DataCollectorInterface;
 use DebugBar\DataCollector\MessagesAggregateInterface;
 use DebugBar\DataCollector\Renderable;
 use Monolog\Handler\AbstractProcessingHandler;
+use Monolog\Level;
 use Monolog\Logger;
 
 /**
@@ -27,17 +31,11 @@ use Monolog\Logger;
  */
 class MonologCollector extends AbstractProcessingHandler implements DataCollectorInterface, Renderable, MessagesAggregateInterface
 {
-    protected $name;
+    protected string $name;
 
-    protected $records = array();
+    protected array $records = [];
 
-    /**
-     * @param Logger $logger
-     * @param int $level
-     * @param boolean $bubble
-     * @param string $name
-     */
-    public function __construct(?Logger $logger = null, $level = Logger::DEBUG, $bubble = true, $name = 'monolog')
+    public function __construct(?Logger $logger = null, int|Level|string $level = Level::Debug, ?bool $bubble = true, string $name = 'monolog')
     {
         parent::__construct($level, $bubble);
         $this->name = $name;
@@ -46,73 +44,53 @@ class MonologCollector extends AbstractProcessingHandler implements DataCollecto
         }
     }
 
-    /**
-     * Adds logger which messages you want to log
-     *
-     * @param Logger $logger
-     */
-    public function addLogger(Logger $logger)
+    public function addLogger(Logger $logger): void
     {
         $logger->pushHandler($this);
     }
 
-    /**
-     * @param array|\Monolog\LogRecord $record
-     */
-    protected function write($record): void
+    protected function write(array|\Monolog\LogRecord $record): void
     {
-        $this->records[] = array(
+        $this->records[] = [
             'message' => $record['formatted'],
             'is_string' => true,
             'label' => strtolower($record['level_name']),
-            'time' => $record['datetime']->format('U')
-        );
+            'time' => $record['datetime']->format('U'),
+        ];
     }
 
-    /**
-     * @return array
-     */
-    public function getMessages()
+    public function getMessages(): array
     {
         return $this->records;
     }
 
-    /**
-     * @return array
-     */
-    public function collect()
+    public function collect(): array
     {
-        return array(
+        return [
             'count' => count($this->records),
-            'records' => $this->records
-        );
+            'records' => $this->records,
+        ];
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return array
-     */
-    public function getWidgets()
+    public function getWidgets(): array
     {
         $name = $this->getName();
-        return array(
-            $name => array(
-                "icon" => "suitcase",
+        return [
+            $name => [
+                "icon" => "briefcase",
                 "widget" => "PhpDebugBar.Widgets.MessagesWidget",
                 "map" => "$name.records",
-                "default" => "[]"
-            ),
-            "$name:badge" => array(
+                "default" => "[]",
+            ],
+            "$name:badge" => [
                 "map" => "$name.count",
-                "default" => "null"
-            )
-        );
+                "default" => "null",
+            ],
+        ];
     }
 }

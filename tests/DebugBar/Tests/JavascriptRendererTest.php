@@ -1,15 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\Tests;
 
 use DebugBar\JavascriptRenderer;
-use DebugBar\DebugBar;
-use DebugBar\StandardDebugBar;
 
 class JavascriptRendererTest extends DebugBarTestCase
 {
-    /** @var JavascriptRenderer  */
-    protected $r;
+    protected JavascriptRenderer $r;
 
     public function setUp(): void
     {
@@ -17,33 +16,32 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->r = new JavascriptRenderer($this->debugbar);
         $this->r->setBasePath('/bpath');
         $this->r->setBaseUrl('/burl');
+        $this->r->setUseDistFiles(false);
     }
 
-    public function testOptions()
+    public function testOptions(): void
     {
-        $this->r->setOptions(array(
+        $this->r->setOptions([
             'base_path' => '/foo',
             'base_url' => '/foo',
             'include_vendors' => false,
             'javascript_class' => 'Foobar',
             'variable_name' => 'foovar',
             'initialization' => JavascriptRenderer::INITIALIZE_CONTROLS,
-            'enable_jquery_noconflict' => true,
-            'controls' => array(
-                'memory' => array(
+            'controls' => [
+                'memory' => [
                     "icon" => "cogs",
                     "map" => "memory.peak_usage_str",
-                    "default" => "'0B'"
-                )
-            ),
-            'disable_controls' => array('messages'),
+                    "default" => "'0B'",
+                ],
+            ],
+            'disable_controls' => ['messages'],
             'ignore_collectors' => 'config',
             'ajax_handler_classname' => 'AjaxFoo',
-            'ajax_handler_bind_to_jquery' => false,
             'ajax_handler_auto_show' => false,
             'open_handler_classname' => 'OpenFoo',
-            'open_handler_url' => 'open.php'
-        ));
+            'open_handler_url' => 'open.php',
+        ]);
 
         $this->assertEquals('/foo', $this->r->getBasePath());
         $this->assertEquals('/foo', $this->r->getBaseUrl());
@@ -51,7 +49,6 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertEquals('Foobar', $this->r->getJavascriptClass());
         $this->assertEquals('foovar', $this->r->getVariableName());
         $this->assertEquals(JavascriptRenderer::INITIALIZE_CONTROLS, $this->r->getInitialization());
-        $this->assertTrue($this->r->isJqueryNoConflictEnabled());
         $controls = $this->r->getControls();
         $this->assertCount(2, $controls);
         $this->assertArrayHasKey('memory', $controls);
@@ -59,52 +56,64 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertNull($controls['messages']);
         $this->assertContains('config', $this->r->getIgnoredCollectors());
         $this->assertEquals('AjaxFoo', $this->r->getAjaxHandlerClass());
-        $this->assertFalse($this->r->isAjaxHandlerBoundToJquery());
+        $this->assertTrue($this->r->isAjaxHandlerBoundToFetch());
         $this->assertFalse($this->r->isAjaxHandlerAutoShow());
         $this->assertEquals('OpenFoo', $this->r->getOpenHandlerClass());
         $this->assertEquals('open.php', $this->r->getOpenHandlerUrl());
     }
 
-    public function testAddAssets()
+    public function testAddAssets(): void
     {
         // Use a loop to test deduplication of assets
         for ($i = 0; $i < 2; ++$i) {
             $this->r->addAssets('foo.css', 'foo.js', '/bar', '/foobar');
-            $this->r->addInlineAssets(array('Css' => 'CssTest'), array('Js' => 'JsTest'), array('Head' => 'HeaderTest'));
+            $this->r->addInlineAssets(['Css' => 'CssTest'], ['Js' => 'JsTest'], ['Head' => 'HeaderTest']);
         }
 
         // Make sure all the right assets are returned by getAssets
-        list($css, $js, $inline_css, $inline_js, $inline_head) = $this->r->getAssets();
-        $this->assertContains('/bar/foo.css', $css);
-        $this->assertContains('/bar/foo.js', $js);
-        $this->assertEquals(array('Css' => 'CssTest'), $inline_css);
-        $this->assertEquals(array('Js' => 'JsTest'), $inline_js);
-        $this->assertEquals(array('Head' => 'HeaderTest'), $inline_head);
+        $assets = $this->r->getAssets();
+        $this->assertContains('/bar/foo.css', $assets['css']);
+        $this->assertContains('/bar/foo.js', $assets['js']);
+        $this->assertEquals(['Css' => 'CssTest'], $assets['inline_css']);
+        $this->assertEquals(['Js' => 'JsTest'], $assets['inline_js']);
+        $this->assertEquals(['Head' => 'HeaderTest'], $assets['inline_head']);
 
         // Make sure asset files are deduplicated
-        $this->assertCount(count(array_unique($css)), $css);
-        $this->assertCount(count(array_unique($js)), $js);
+        $this->assertCount(count(array_unique($assets['css'])), $assets['css']);
+        $this->assertCount(count(array_unique($assets['js'])), $assets['js']);
 
         $html = $this->r->renderHead();
         $this->assertStringContainsString('<script type="text/javascript" src="/foobar/foo.js"></script>', $html);
     }
 
-    public function testGetAssets()
+    public function testGetAssets(): void
     {
-        list($css, $js) = $this->r->getAssets();
-        $this->assertContains('/bpath/debugbar.css', $css);
-        $this->assertContains('/bpath/widgets.js', $js);
-        $this->assertContains('/bpath/vendor/jquery/dist/jquery.min.js', $js);
+        $assets = $this->r->getAssets();
+        $this->assertContains('/bpath/debugbar.css', $assets['css']);
+        $this->assertContains('/bpath/widgets.js', $assets['js']);
+        $this->assertContains('/bpath/vendor/highlightjs/highlight.pack.js', $assets['js']);
+    }
 
+    public function testGetAssetsExludeVendors(): void
+    {
         $this->r->setIncludeVendors(false);
         $js = $this->r->getAssets('js');
         $this->assertContains('/bpath/debugbar.js', $js);
-        $this->assertNotContains('/bpath/vendor/jquery/dist/jquery.min.js', $js);
+        $this->assertNotContains('/bpath/vendor/highlightjs/highlight.pack.js', $js);
     }
 
-    public function testRenderHead()
+    public function testGetDistAssets(): void
     {
-        $this->r->addInlineAssets(array('Css' => 'CssTest'), array('Js' => 'JsTest'), array('Head' => 'HeaderTest'));
+        $this->r->setUseDistFiles(true);
+        $assets = $this->r->getAssets();
+        $this->assertContains('/bpath/../dist/debugbar.min.css', $assets['css']);
+        $this->assertNotContains('/bpath/widgets.js', $assets['js']);
+        $this->assertNotContains('/bpath/vendor/highlightjs/highlight.pack.js', $assets['js']);
+    }
+
+    public function testRenderHead(): void
+    {
+        $this->r->addInlineAssets(['Css' => 'CssTest'], ['Js' => 'JsTest'], ['Head' => 'HeaderTest']);
 
         $html = $this->r->renderHead();
         // Check for file links
@@ -114,70 +123,50 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertStringContainsString('<style type="text/css">CssTest</style>', $html);
         $this->assertStringContainsString('<script type="text/javascript">JsTest</script>', $html);
         $this->assertStringContainsString('HeaderTest', $html);
-        // Check jQuery noConflict
-        $this->assertStringContainsString('jQuery.noConflict(true);', $html);
-
-        // Check for absence of jQuery noConflict
-        $this->r->setEnableJqueryNoConflict(false);
-        $html = $this->r->renderHead();
-        $this->assertStringNotContainsString('noConflict', $html);
     }
 
-    public function testRenderFullInitialization()
+    public function testRenderFullInitialization(): void
     {
         $this->debugbar->addCollector(new \DebugBar\DataCollector\MessagesCollector());
-        $this->r->addControl('time', array('icon' => 'time', 'map' => 'time', 'default' => '"0s"'));
+        $this->r->addControl('time', ['icon' => 'time', 'map' => 'time', 'default' => '"0s"']);
         $expected = str_replace("\r\n", "\n", rtrim(file_get_contents(__DIR__ . '/full_init.html')));
         $this->assertStringStartsWith($expected, $this->r->render());
     }
 
-    public function testRenderConstructorOnly()
+    public function testRenderConstructorOnly(): void
     {
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setJavascriptClass('Foobar');
         $this->r->setVariableName('foovar');
-        $this->r->setAjaxHandlerClass(false);
+        $this->r->setAjaxHandlerClass(null);
         $this->assertStringStartsWith("<script type=\"text/javascript\">\nvar foovar = new Foobar();\nfoovar.addDataSet(", $this->r->render());
     }
 
-    public function testRenderConstructorWithNonce()
+    public function testRenderConstructorWithNonce(): void
     {
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setCspNonce('mynonce');
         $this->assertStringStartsWith("<script type=\"text/javascript\" nonce=\"mynonce\">\nvar phpdebugbar = new PhpDebugBar.DebugBar();", $this->r->render());
     }
 
-    public function testRenderConstructorWithEmptyTabsHidden()
+    public function testRenderConstructorWithEmptyTabsHidden(): void
     {
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setHideEmptyTabs(true);
         $this->assertStringStartsWith("<script type=\"text/javascript\">\nvar phpdebugbar = new PhpDebugBar.DebugBar({\"hideEmptyTabs\":true});\n", $this->r->render());
     }
 
-    public function testRenderConstructorWithTheme()
+    public function testRenderConstructorWithTheme(): void
     {
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setTheme('dark');
         $this->assertStringStartsWith("<script type=\"text/javascript\">\nvar phpdebugbar = new PhpDebugBar.DebugBar({\"theme\":\"dark\"});", $this->r->render());
     }
 
-    public function testJQueryNoConflictAutoDisabling()
+    public function testCanDisableSpecificVendors(): void
     {
-        $this->assertTrue($this->r->isJqueryNoConflictEnabled());
-        $this->r->setIncludeVendors(false);
-        $this->assertFalse($this->r->isJqueryNoConflictEnabled());
-        $this->r->setEnableJqueryNoConflict(true);
-        $this->r->setIncludeVendors('css');
-        $this->assertFalse($this->r->isJqueryNoConflictEnabled());
-        $this->r->setEnableJqueryNoConflict(true);
-        $this->r->setIncludeVendors(array('css', 'js'));
-        $this->assertTrue($this->r->isJqueryNoConflictEnabled());
-    }
-
-    public function testCanDisableSpecificVendors()
-    {
-        $this->assertStringContainsString('jquery.min.js', $this->r->renderHead());
-        $this->r->disableVendor('jquery');
-        $this->assertStringNotContainsString('jquery.min.js', $this->r->renderHead());
+        $this->assertStringContainsString('highlight.pack.js', $this->r->renderHead());
+        $this->r->disableVendor('highlightjs');
+        $this->assertStringNotContainsString('highlight.pack.js', $this->r->renderHead());
     }
 }

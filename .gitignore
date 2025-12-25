@@ -9,3 +9,6 @@ composer.lock
 /chromedriver
 .phpunit.cache/
 /tests/screenshots
+/node_modules
+.DS_Store
+.php-cs-fixer.cache
