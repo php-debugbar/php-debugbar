@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * This file is part of the DebugBar package.
  *
@@ -18,9 +20,6 @@ interface Actionable
     /**
      * Execute an action with a possible payload.
      *
-     * @param string $action
-     * @param array|null $payload
-     * @return mixed
      */
-    function executionAction(string $action, ?array $payload = null): mixed;
+    public function executionAction(string $action, ?array $payload = null): mixed;
 }

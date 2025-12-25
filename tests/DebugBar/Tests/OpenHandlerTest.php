@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace DebugBar\Tests;
 
 use DebugBar\DataHasher;
-use DebugBar\DebugBar;
 use DebugBar\DebugBarException;
 use DebugBar\OpenHandler;
 use DebugBar\Tests\DataCollector\MockActionCollector;
-use DebugBar\Tests\DataCollector\MockCollector;
 use DebugBar\Tests\Storage\MockStorage;
 
 class OpenHandlerTest extends DebugBarTestCase

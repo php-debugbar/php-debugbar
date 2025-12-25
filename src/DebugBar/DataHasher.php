@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * This file is part of the DebugBar package.
  *
@@ -15,13 +17,11 @@ namespace DebugBar;
  */
 readonly class DataHasher
 {
-    public function __construct(private readonly string $key)
-    {
-    }
+    public function __construct(private readonly string $key) {}
 
     public function sign(mixed $data): string
     {
-        if (is_array($data)){
+        if (is_array($data)) {
             sort($data);
         }
         $data = json_encode($data);
@@ -32,7 +32,7 @@ readonly class DataHasher
     public function verify(mixed $data, string $signature): bool
     {
         if (is_array($data) && isset($data['signature'])) {
-            unset ($data['signature']);
+            unset($data['signature']);
         }
 
         return hash_equals($this->sign($data), $signature);

@@ -471,12 +471,12 @@ class DebugBar implements ArrayAccess
         return $this;
     }
 
-    public function hasDataHasher() : bool
+    public function hasDataHasher(): bool
     {
         return $this->dataHasher !== null;
     }
 
-    public function getDataHasher() : DataHasher
+    public function getDataHasher(): DataHasher
     {
         if ($this->dataHasher === null) {
             throw new DebugBarException('DataHasher is not set');

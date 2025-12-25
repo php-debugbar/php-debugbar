@@ -14,9 +14,6 @@ declare(strict_types=1);
 namespace DebugBar;
 
 use DebugBar\DataCollector\Actionable;
-use DebugBar\DataCollector\DataCollector;
-use DebugBar\DataFormatter\DataFormatter;
-use DebugBar\DataFormatter\DataFormatterInterface;
 
 /**
  * Handler to list and open saved dataset
@@ -121,8 +118,7 @@ class OpenHandler
 
     /**
      * Execute an action
-     * @param array $request
-     * @return mixed
+     *
      * @throws DebugBarException
      */
     protected function execute(array $request): mixed
