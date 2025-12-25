@@ -22,11 +22,31 @@ readonly class DataHasher
     public function sign(mixed $data): string
     {
         if (is_array($data)) {
-            sort($data);
+            $data = $this->normalizeArray($data);
         }
         $data = json_encode($data);
 
         return hash_hmac('sha256', $data, $this->key);
+    }
+
+    /**
+     * Recursively normalize an array for consistent hashing.
+     * Sorts arrays by keys to ensure consistent ordering regardless of input order.
+     */
+    private function normalizeArray(array $array): array
+    {
+        $result = [];
+        
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $result[$key] = $this->normalizeArray($value);
+            } else {
+                $result[$key] = $value;
+            }
+        }
+        
+        ksort($result);
+        return $result;
     }
 
     public function verify(mixed $data, string $signature): bool
