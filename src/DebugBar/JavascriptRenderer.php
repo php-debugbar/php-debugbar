@@ -730,6 +730,7 @@ class JavascriptRenderer
      *
      * @param string|null $type       'css', 'js', 'inline_css', 'inline_js', 'inline_head', or null for all
      * @param string|null $relativeTo The type of path to which filenames must be relative (path, url or null)
+     *
      * @return ($type is null ? array{css: string[], js: string[], inline_css: string[], inline_js: string[], inline_head: string[]} : string[])
      */
     public function getAssets(?string $type = null, ?string $relativeTo = self::RELATIVE_PATH): array
