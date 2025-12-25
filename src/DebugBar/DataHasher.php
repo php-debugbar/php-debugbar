@@ -32,19 +32,18 @@ readonly class DataHasher
     /**
      * Recursively normalize an array for consistent hashing.
      * Sorts arrays by keys to ensure consistent ordering regardless of input order.
+     *
+     * @param array $array The array to normalize
+     * @return array The normalized array with sorted keys
      */
     private function normalizeArray(array $array): array
     {
         $result = [];
-        
+
         foreach ($array as $key => $value) {
-            if (is_array($value)) {
-                $result[$key] = $this->normalizeArray($value);
-            } else {
-                $result[$key] = $value;
-            }
+            $result[$key] = is_array($value) ? $this->normalizeArray($value) : $value;
         }
-        
+
         ksort($result);
         return $result;
     }
