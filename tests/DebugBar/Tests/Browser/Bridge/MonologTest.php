@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\Tests\Browser\Bridge;
 
-use DebugBar\Browser\Bridge\WebDriverElement;
 use DebugBar\Tests\Browser\AbstractBrowserTestCase;
 
 class MonologTest extends AbstractBrowserTestCase
@@ -28,7 +29,7 @@ class MonologTest extends AbstractBrowserTestCase
         $crawler = $client->waitForVisibility('.phpdebugbar-panel[data-collector=monolog]');
 
         $messages = $crawler->filter('.phpdebugbar-panel[data-collector=monolog] .phpdebugbar-widgets-value')
-            ->each(function($node){
+            ->each(function ($node) {
                 return $node->getText();
             });
 

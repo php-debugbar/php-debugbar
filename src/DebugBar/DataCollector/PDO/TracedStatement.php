@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\DataCollector\PDO;
 
 /**
@@ -7,35 +9,30 @@ namespace DebugBar\DataCollector\PDO;
  */
 class TracedStatement
 {
-    protected $sql;
+    protected string $sql;
 
-    protected $type;
+    protected ?string $type = null;
 
-    protected $rowCount;
+    protected int $rowCount;
 
-    protected $parameters;
+    protected array $parameters;
 
-    protected $startTime;
+    protected float $startTime;
 
-    protected $endTime;
+    protected float $endTime;
 
-    protected $duration;
+    protected float $duration;
 
-    protected $startMemory;
+    protected int $startMemory;
 
-    protected $endMemory;
+    protected int $endMemory;
 
-    protected $memoryDelta;
+    protected int $memoryDelta;
 
-    protected $exception;
+    protected ?\Exception $exception;
 
-    protected $preparedId;
+    protected ?string $preparedId;
 
-    /**
-     * @param string $sql
-     * @param array $params
-     * @param null|string $preparedId
-     */
     public function __construct(string $sql, array $params = [], ?string $preparedId = null)
     {
         $this->sql = $sql;
@@ -43,31 +40,18 @@ class TracedStatement
         $this->preparedId = $preparedId;
     }
 
-    /**
-     * @param string $type
-     */
-    public function setQueryType(string $type) : void
+    public function setQueryType(string $type): void
     {
         $this->type = $type;
     }
 
-    /**
-     * @param null $startTime
-     * @param null $startMemory
-     */
-    public function start($startTime = null, $startMemory = null) : void
+    public function start(?float $startTime = null, ?int $startMemory = null): void
     {
         $this->startTime = $startTime ?: microtime(true);
         $this->startMemory = $startMemory ?: memory_get_usage(false);
     }
 
-    /**
-     * @param \Exception|null $exception
-     * @param int $rowCount
-     * @param float $endTime
-     * @param int $endMemory
-     */
-    public function end(?\Exception $exception = null, int $rowCount = 0, ?float $endTime = null, ?int $endMemory = null) : void
+    public function end(?\Exception $exception = null, int $rowCount = 0, ?float $endTime = null, ?int $endMemory = null): void
     {
         $this->endTime = $endTime ?: microtime(true);
         $this->duration = $this->endTime - $this->startTime;
@@ -80,13 +64,11 @@ class TracedStatement
     /**
      * Check parameters for illegal (non UTF-8) strings, like Binary data.
      *
-     * @param array $params
-     * @return array
      */
-    public function checkParameters(array $params) : array
+    public function checkParameters(array $params): array
     {
         foreach ($params as &$param) {
-            if (!mb_check_encoding($param ?? '', 'UTF-8')) {
+            if ((is_string($param) || is_array($param)) && !mb_check_encoding($param, 'UTF-8')) {
                 $param = '[BINARY DATA]';
             }
         }
@@ -96,9 +78,8 @@ class TracedStatement
     /**
      * Returns the SQL string used for the query, without filled parameters
      *
-     * @return string
      */
-    public function getSql() : string
+    public function getSql(): string
     {
         return $this->sql;
     }
@@ -106,10 +87,8 @@ class TracedStatement
     /**
      * Returns the SQL string with any parameters used embedded
      *
-     * @param string $quotationChar
-     * @return string
      */
-    public function getSqlWithParams(string $quotationChar = '<>') : string
+    public function getSqlWithParams(string $quotationChar = '<>'): string
     {
         if (($l = strlen($quotationChar)) > 1) {
             $quoteLeft = substr($quotationChar, 0, $l / 2);
@@ -126,7 +105,7 @@ class TracedStatement
 
             if (null === $v) {
                 $v = 'NULL';
-            } else {
+            } elseif (is_string($v)) {
                 $backRefSafeV = strtr($v, $cleanBackRefCharMap);
                 $v = "$quoteLeft$backRefSafeV$quoteRight";
             }
@@ -138,12 +117,12 @@ class TracedStatement
             }
 
             $matchRule = "/({$marker}(?!\w))(?=(?:[^$quotationChar]|[$quotationChar][^$quotationChar]*[$quotationChar])*$)/";
-            $count = mb_substr_count($sql, $k);
+            $count = mb_substr_count($sql, (string) $k);
             if ($count < 1) {
                 $count = mb_substr_count($sql, $matchRule);
             }
             for ($i = 0; $i <= $count; $i++) {
-                $sql = preg_replace($matchRule, $v, $sql, 1);
+                $sql = preg_replace($matchRule, (string) $v, $sql, 1);
             }
         }
 
@@ -155,9 +134,8 @@ class TracedStatement
     /**
      * Returns the number of rows affected/returned
      *
-     * @return int
      */
-    public function getRowCount() : int
+    public function getRowCount(): int
     {
         return $this->rowCount;
     }
@@ -165,13 +143,12 @@ class TracedStatement
     /**
      * Returns an array of parameters used with the query
      *
-     * @return array
      */
-    public function getParameters() : array
+    public function getParameters(): array
     {
         $params = [];
         foreach ($this->parameters as $name => $param) {
-            $params[$name] = htmlentities($param?:"", ENT_QUOTES, 'UTF-8', false);
+            $params[$name] = htmlentities($param ?: "", ENT_QUOTES, 'UTF-8', false);
         }
         return $params;
     }
@@ -179,9 +156,8 @@ class TracedStatement
     /**
      * Returns the prepared statement id
      *
-     * @return null|string
      */
-    public function getPreparedId() : ?string
+    public function getPreparedId(): ?string
     {
         return $this->preparedId;
     }
@@ -191,23 +167,17 @@ class TracedStatement
      *
      * @return boolean
      */
-    public function isPrepared() : bool
+    public function isPrepared(): bool
     {
         return $this->preparedId !== null;
     }
 
-    /**
-     * @return float
-     */
-    public function getStartTime() : float
+    public function getStartTime(): float
     {
         return $this->startTime;
     }
 
-    /**
-     * @return float
-     */
-    public function getEndTime() : float
+    public function getEndTime(): float
     {
         return $this->endTime;
     }
@@ -215,25 +185,18 @@ class TracedStatement
     /**
      * Returns the duration in seconds + microseconds of the execution
      *
-     * @return float
      */
-    public function getDuration() : float
+    public function getDuration(): float
     {
         return $this->duration;
     }
 
-    /**
-     * @return int
-     */
-    public function getStartMemory() : int
+    public function getStartMemory(): int
     {
         return $this->startMemory;
     }
 
-    /**
-     * @return int
-     */
-    public function getEndMemory() : int
+    public function getEndMemory(): int
     {
         return $this->endMemory;
     }
@@ -241,9 +204,8 @@ class TracedStatement
     /**
      * Returns the memory usage during the execution
      *
-     * @return int
      */
-    public function getMemoryUsage() : int
+    public function getMemoryUsage(): int
     {
         return $this->memoryDelta;
     }
@@ -253,7 +215,7 @@ class TracedStatement
      *
      * @return boolean
      */
-    public function isSuccess() : bool
+    public function isSuccess(): bool
     {
         return $this->exception === null;
     }
@@ -261,19 +223,16 @@ class TracedStatement
     /**
      * Returns the exception triggered
      *
-     * @return \Exception
      */
-    public function getException() : \Exception
-	{
+    public function getException(): \Exception
+    {
         return $this->exception;
     }
 
     /**
      * Returns the exception's code
-     *
-     * @return int|string
      */
-    public function getErrorCode()
+    public function getErrorCode(): int|string
     {
         return $this->exception !== null ? $this->exception->getCode() : 0;
     }
@@ -281,9 +240,8 @@ class TracedStatement
     /**
      * Returns the exception's message
      *
-     * @return string
      */
-    public function getErrorMessage() : string
+    public function getErrorMessage(): string
     {
         return $this->exception !== null ? $this->exception->getMessage() : '';
     }
@@ -291,9 +249,8 @@ class TracedStatement
     /**
      * Returns the query type
      *
-     * @return string
      */
-    public function getQueryType() : string
+    public function getQueryType(): string
     {
         return $this->type !== null ? $this->type : '';
     }

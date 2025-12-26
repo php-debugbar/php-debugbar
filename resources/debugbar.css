@@ -1,0 +1,653 @@
+/* Hide debugbar when printing a page */
+@media print {
+  div.phpdebugbar {
+    display: none;
+  }
+}
+
+div.phpdebugbar,
+div.phpdebugbar-openhandler {
+  --debugbar-background: #fff;
+  --debugbar-background-alt: #fafafa;
+  --debugbar-text: #222;
+  --debugbar-text-muted: #888;
+  --debugbar-border: #eee;
+
+  --debugbar-header: #efefef;
+  --debugbar-header-text: #555;
+  --debugbar-header-border: #ddd;
+
+  --debugbar-active: #ccc;
+  --debugbar-active-text: #666;
+
+  --debugbar-icons: #555;
+  --debugbar-badge: #ccc;
+  --debugbar-badge-text: #555;
+
+  --debugbar-badge-active: #555;
+  --debugbar-badge-active-text: #fff;
+
+  --debugbar-link: #888;
+  --debugbar-hover: #aaa;
+
+  --debugbar-accent: #6BB7D8;
+  --debugbar-accent-border: #477e96;
+
+  --debugbar-font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --debugbar-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+div.phpdebugbar[data-theme='dark'],
+div.phpdebugbar-openhandler[data-theme='dark'] {
+  --debugbar-background: #2a2a2a;
+  --debugbar-background-alt: #333333;
+  --debugbar-text: #e0e0e0;
+  --debugbar-text-muted: #aaaaaa;
+  --debugbar-border: #3a3a3a;
+
+  --debugbar-header: #1e1e1e;
+  --debugbar-header-text: #cccccc;
+  --debugbar-header-border: #444;
+
+  --debugbar-active: #444;
+  --debugbar-active-text: #e0e0e0;
+
+  --debugbar-icons: #cccccc;
+  --debugbar-badge: #444;
+  --debugbar-badge-text: #cccccc;
+
+  --debugbar-badge-active: #cccccc;
+  --debugbar-badge-active-text: #1e1e1e;
+
+  --debugbar-accent: #4F8FB3;
+  --debugbar-accent-border: #3F7A94;
+
+  --debugbar-link: #aaaaaa;
+  --debugbar-hover: #888888;
+}
+
+
+div.phpdebugbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  border-top: 0;
+  font-family: var(--debugbar-font-sans);
+  background: var(--debugbar-background);
+  z-index: 100000000;
+  font-size: 14px;
+  color: var(--debugbar-text);
+  text-align: left;
+  line-height: 1.2em;
+  letter-spacing: normal;
+  direction: ltr;
+}
+
+div.phpdebugbar[data-openBtnPosition="bottomRight"].phpdebugbar-closed,
+div.phpdebugbar[data-openBtnPosition="topRight"].phpdebugbar-closed {
+  left:auto;
+  right: 0;
+}
+
+div.phpdebugbar[data-openBtnPosition="topRight"].phpdebugbar-closed,
+div.phpdebugbar[data-openBtnPosition="topLeft"].phpdebugbar-closed {
+  bottom:auto;
+  top: 0;
+  border-bottom: 1px solid var(--debugbar-header-border);
+}
+
+div.phpdebugbar[data-openBtnPosition="bottomRight"].phpdebugbar-closed,
+div.phpdebugbar[data-openBtnPosition="bottomLeft"].phpdebugbar-closed {
+  border-top: 1px solid var(--debugbar-header-border);
+}
+
+.phpdebugbar-closed[data-openBtnPosition="bottomLeft"],
+.phpdebugbar-closed[data-openBtnPosition="topLeft"] {
+  border-right: 1px solid var(--debugbar-header-border);
+}
+.phpdebugbar-closed[data-openBtnPosition="bottomRight"],
+.phpdebugbar-closed[data-openBtnPosition="topRight"] {
+  border-left: 1px solid var(--debugbar-header-border);
+}
+
+div.phpdebugbar a,
+div.phpdebugbar-openhandler {
+  cursor: pointer;
+}
+
+div.phpdebugbar-drag-capture {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100000001;
+  background: none;
+  display: none;
+  cursor: ns-resize;
+}
+
+div.phpdebugbar-closed {
+    width: auto;
+}
+
+div.phpdebugbar * {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: normal;
+  text-decoration: none;
+  clear: initial;
+  width: auto;
+  direction: ltr;
+  text-align: left;
+  -moz-box-sizing: content-box;
+       box-sizing: content-box;
+}
+
+div.phpdebugbar select, div.phpdebugbar input {
+  appearance: auto;
+}
+
+div.phpdebugbar ol, div.phpdebugbar ul {
+  list-style: none;
+}
+
+div.phpdebugbar ul li, div.phpdebugbar ol li, div.phpdebugbar dl li {
+  line-height: normal;
+}
+
+div.phpdebugbar table, .phpdebugbar-openhandler table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: inherit;
+}
+
+div.phpdebugbar input[type='text'], div.phpdebugbar input[type='password'], div.phpdebugbar select {
+  font-family: var(--debugbar-font-sans);
+  background: var(--debugbar-background);
+  font-size: 14px;
+  color: var(--debugbar-text);
+  padding: 0;
+  border: 1px solid var(--debugbar-border);
+  border-radius: 0.25rem;
+  margin: 0;
+}
+
+div.phpdebugbar code, div.phpdebugbar pre, div.phpdebugbar samp {
+  background: none;
+  font-family: var(--debugbar-font-mono);
+  font-size: 1em;
+  border: 0 !important;
+  padding: 0;
+  margin: 0;
+}
+
+div.phpdebugbar code, div.phpdebugbar pre {
+  color: var(--debugbar-text);
+}
+
+div.phpdebugbar pre.sf-dump {
+  background: none !important;
+  z-index: 0 !important;
+  display: block !important;
+  color: #a0a000;
+  outline: 0;
+}
+
+div.phpdebugbar pre.sf-dump .sf-dump-private {
+  color: grey;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-public {
+  color: #ffcc00;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-protected {
+  color: #a0a000;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-private {
+  color: #9d9266;
+}
+
+a.phpdebugbar-restore-btn {
+  float: left;
+  padding: 5px 8px;
+  font-size: 14px;
+  color: var(--debugbar-icons);
+  text-decoration: none;
+}
+
+div.phpdebugbar-resize-handle {
+  display: none;
+  height: 4px;
+  margin-top: -4px;
+  width: 100%;
+  background: none;
+  border-bottom: 1px solid var(--debugbar-header-border);
+  cursor: ns-resize;
+}
+
+div.phpdebugbar-minimized{
+  border-top: 1px solid var(--debugbar-header-border);
+}
+
+/* -------------------------------------- */
+
+a.phpdebugbar-restore-btn:after {
+    -webkit-mask-image: var(--debugbar-icon-brand-php);
+    mask-image: var(--debugbar-icon-brand-php);
+    -webkit-mask-size: 20px 20px;
+    mask-size: 20px 20px;
+    background-color: var(--debugbar-icons);
+}
+div.phpdebugbar-header {
+  background-color: var(--debugbar-header);
+  min-height: 32px;
+  line-height: 16px;
+}
+div.phpdebugbar-header:before, div.phpdebugbar-header:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+div.phpdebugbar-header:after {
+  clear: both;
+}
+div.phpdebugbar-header-left {
+  float: left;
+}
+div.phpdebugbar-header-right {
+  float: right;
+}
+div.phpdebugbar-header > div > * {
+  padding: 5px;
+  font-size: 13px;
+  height: 22px;
+  color: var(--debugbar-header-text);
+  text-decoration: none;
+}
+div.phpdebugbar-header-left > *,
+div.phpdebugbar-header-right > * {
+  line-height: 0;
+  display: flex;
+  align-items: center;
+}
+div.phpdebugbar-header-left > * {
+  float: left;
+}
+div.phpdebugbar-header-right > * {
+  float: right;
+}
+div.phpdebugbar-header-right > select {
+  padding: 0;
+  line-height: 1em;
+  background-color: var(--debugbar-header);
+  color: var(--debugbar-header-text);
+}
+
+/* -------------------------------------- */
+
+span.phpdebugbar-indicator,
+a.phpdebugbar-indicator
+{
+  border-right: 1px solid var(--debugbar-header-border);
+}
+
+.phpdebugbar[data-hideEmptyTabs=true] .phpdebugbar-tab[data-empty=true] {
+  display: none;
+}
+
+a.phpdebugbar-tab.phpdebugbar-active {
+  background: var(--debugbar-active);
+  color: var(--debugbar-active-text);
+}
+  a.phpdebugbar-tab .phpdebugbar-text {
+    font-size: 14px;
+  }
+  a.phpdebugbar-tab span.phpdebugbar-badge {
+    display: none;
+    margin-left: 5px;
+    font-size: 11px;
+    line-height: 14px;
+    padding: 0 6px;
+    background: var(--debugbar-badge);
+    border-radius: 4px;
+    color: var(--debugbar-badge-text);
+    font-weight: normal;
+    text-shadow: none;
+  }
+  a.phpdebugbar-tab.phpdebugbar-active  span.phpdebugbar-badge {
+    background: var(--debugbar-badge-active);
+    color: var(--debugbar-badge-active-text);
+  }
+
+  a.phpdebugbar-tab i {
+    display: none;
+    vertical-align: middle;
+  }
+
+/* Icon base styles */
+.phpdebugbar-icon::before,
+i.phpdebugbar-icon::before {
+  content: "";
+  display: inline-block;
+  width: 1.3em;
+  height: 1.3em;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
+  /* Use mask to allow currentColor to work */
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: currentColor;
+}
+  a.phpdebugbar-tab span.phpdebugbar-badge.phpdebugbar-visible {
+    display: inline;
+  }
+  a.phpdebugbar-tab span.phpdebugbar-badge.phpdebugbar-important {
+    background: #ed6868;
+    color: white;
+  }
+
+a.phpdebugbar-close-btn,
+a.phpdebugbar-open-btn,
+a.phpdebugbar-restore-btn,
+a.phpdebugbar-minimize-btn,
+a.phpdebugbar-maximize-btn,
+a.phpdebugbar-tab.phpdebugbar-tab-history,
+a.phpdebugbar-tab.phpdebugbar-tab-settings {
+  width: 16px;
+  height: 22px;
+}
+
+a.phpdebugbar-close-btn,
+a.phpdebugbar-open-btn,
+a.phpdebugbar-restore-btn,
+a.phpdebugbar-minimize-btn ,
+a.phpdebugbar-maximize-btn {
+    width: 16px;
+    height: 22px;
+    position: relative;
+}
+
+a.phpdebugbar-close-btn:after,
+a.phpdebugbar-open-btn:after,
+a.phpdebugbar-restore-btn:after,
+a.phpdebugbar-minimize-btn:after,
+a.phpdebugbar-maximize-btn:after {
+    content: " ";
+    display: block;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--debugbar-icons);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: 18px 18px;
+    mask-size: 18px 18px;
+}
+
+a.phpdebugbar-restore-btn:after {
+  -webkit-mask-size: 20px 20px;
+  mask-size: 20px 20px;
+}
+
+a.phpdebugbar-maximize-btn { display: none}
+
+a.phpdebugbar-minimize-btn { display: block}
+
+div.phpdebugbar-minimized a.phpdebugbar-maximize-btn { display: block}
+
+div.phpdebugbar-minimized a.phpdebugbar-minimize-btn { display: none}
+
+a.phpdebugbar-minimize-btn:after {
+  -webkit-mask-image: var(--debugbar-icon-chevron-down);
+  mask-image: var(--debugbar-icon-chevron-down);
+}
+
+a.phpdebugbar-maximize-btn:after {
+  -webkit-mask-image: var(--debugbar-icon-chevron-up);
+  mask-image: var(--debugbar-icon-chevron-up);
+}
+
+a.phpdebugbar-close-btn:after {
+  -webkit-mask-image: var(--debugbar-icon-x);
+  mask-image: var(--debugbar-icon-x);
+}
+
+a.phpdebugbar-open-btn:after {
+  -webkit-mask-image: var(--debugbar-icon-folder-open);
+  mask-image: var(--debugbar-icon-folder-open);
+}
+
+.phpdebugbar-indicator {
+  position: relative;
+  cursor: pointer;
+}
+  .phpdebugbar-indicator span.phpdebugbar-text {
+    margin-left: 5px;
+  }
+  .phpdebugbar-indicator span.phpdebugbar-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 38px;
+    background: var(--debugbar-header);
+    border: 1px solid var(--debugbar-header-border);
+    color: var(--debugbar-header-text);
+    font-size: 11px;
+    padding: 2px 6px;
+    z-index: 100000001;
+    text-align: center;
+    white-space: nowrap;
+    right: 0;
+    line-height: 1.5;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+  }
+  .phpdebugbar-indicator:hover span.phpdebugbar-tooltip:not(.phpdebugbar-disabled) {
+    display: block;
+  }
+  .phpdebugbar-indicator span.phpdebugbar-tooltip dl {
+    display: grid;
+    grid-gap: 4px 10px;
+    grid-template-columns: max-content;
+  }
+  .phpdebugbar-indicator span.phpdebugbar-tooltip dl dt {
+    font-weight: bold;
+    text-align: left;
+  }
+  .phpdebugbar-indicator span.phpdebugbar-tooltip dl dd {
+    margin: 0;
+    grid-column-start: 2;
+    text-align: left;
+  }
+
+.phpdebugbar select.phpdebugbar-datasets-switcher {
+  float: right;
+  display: none;
+  max-width: 200px;
+  height: 22px;
+  padding: 4px 0;
+  border: none;
+}
+
+.phpdebugbar button,
+.phpdebugbar-openhandler button {
+  color: var(--debugbar-header-text);
+  background-color: var(--debugbar-header);
+  border: 1px solid var(--debugbar-header-border);
+  border-radius: 0.25rem;
+  margin: 0 5px;
+  padding: 0 12px;
+  height: 20px;
+  line-height: normal;
+  cursor: pointer;
+}
+
+/* -------------------------------------- */
+
+div.phpdebugbar-body {
+  border-top: 1px solid var(--debugbar-header-border);
+  display: none;
+  position: relative;
+  height: 300px;
+}
+
+/* -------------------------------------- */
+
+div.phpdebugbar-panel {
+  display: none;
+  height: 100%;
+  overflow: auto;
+  width: 100%;
+}
+div.phpdebugbar-panel.phpdebugbar-active {
+  display: block;
+}
+
+/* -------------------------------------- */
+
+div.phpdebugbar-mini-design a.phpdebugbar-tab {
+  position: relative;
+  border-right: 1px solid var(--debugbar-header-border);
+}
+  div.phpdebugbar-mini-design a.phpdebugbar-tab span.phpdebugbar-text {
+    display: none;
+  }
+  div.phpdebugbar-mini-design a.phpdebugbar-tab:hover span.phpdebugbar-text {
+    display: block;
+    position: absolute;
+    top: -30px;
+    background: var(--debugbar-background);
+    opacity: 1;
+    border: 1px solid var(--debugbar-header-border);
+    color: var(--debugbar-header-text);
+    font-size: 11px;
+    padding: 2px 6px;
+    z-index: 100000001;
+    text-align: center;
+    right: 0;
+    line-height: 1.5;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+  }
+  div.phpdebugbar-mini-design a.phpdebugbar-tab i {
+    display:inline-block;
+  }
+
+/* -------------------------------------- */
+
+  a.phpdebugbar-tab.phpdebugbar-tab-history {
+    width: auto;
+    min-width: 22px;
+  }
+  a.phpdebugbar-tab.phpdebugbar-tab-history,
+  a.phpdebugbar-tab.phpdebugbar-tab-settings {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  a.phpdebugbar-tab.phpdebugbar-tab-history .phpdebugbar-text,
+  a.phpdebugbar-tab.phpdebugbar-tab-settings .phpdebugbar-text {
+      display: none;
+      white-space: nowrap;
+  }
+  a.phpdebugbar-tab.phpdebugbar-tab-history i,
+  a.phpdebugbar-tab.phpdebugbar-tab-settings i{
+    display:inline-block;
+  }
+  .phpdebugbar-widgets-dataset-history table {
+      width: 100%;
+      table-layout: fixed;
+  }
+    .phpdebugbar-widgets-dataset-history table th {
+        font-weight: bold;
+    }
+    .phpdebugbar-widgets-dataset-history table td, .phpdebugbar-widgets-dataset-history table th {
+        padding: 6px 3px;
+        border-bottom: 1px solid var(--debugbar-border);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .phpdebugbar-widgets-dataset-history table td a{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .phpdebugbar-widgets-dataset-history table tr.phpdebugbar-widgets-active {
+        background: var(--debugbar-active);
+        color: var(--debugbar-active-text);
+    }
+    .phpdebugbar-widgets-dataset-history span.phpdebugbar-badge {
+        margin: 0 5px 0 2px;
+        font-size: 11px;
+        line-height: 14px;
+        padding: 0 6px;
+        background: var(--debugbar-badge);
+        border-radius: 4px;
+        color: var(--debugbar-badge-text);
+        font-weight: normal;
+        text-shadow: none;
+        vertical-align: middle;
+    }
+    .phpdebugbar-widgets-dataset-history .phpdebugbar-widgets-dataset-actions {
+        text-align: center;
+        padding: 7px 0;
+        position: sticky;
+        top: 0;
+        background: var(--debugbar-background);
+    }
+    .phpdebugbar-widgets-dataset-history .phpdebugbar-widgets-dataset-actions a {
+        margin: 0 10px;
+    }
+    .phpdebugbar-widgets-dataset-history .phpdebugbar-widgets-dataset-actions input {
+        margin: 5px;
+    }
+
+
+/* -------------------------------------- */
+
+
+.phpdebugbar-settings .phpdebugbar-form-row {
+  display: block;
+  border-top: 1px solid var(--debugbar-border);
+  min-height: 17px;
+  padding: 5px 10px;
+}
+.phpdebugbar-settings .phpdebugbar-form-label {
+  width: 200px;
+  font-weight: bold;
+  display: inline-block;
+  clear: none;
+}
+.phpdebugbar-settings .phpdebugbar-form-input {
+  font-weight: bold;
+  display: inline-block;
+  clear: none;
+}
+.phpdebugbar-settings input[type="text"],
+.phpdebugbar-settings select
+{
+  margin: 0 5px;
+  min-width: 200px;
+}
+
+.phpdebugbar-settings input[type="checkbox"]
+{
+  margin: 0 5px;
+}
+

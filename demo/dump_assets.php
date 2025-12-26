@@ -1,5 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
+/** @var \DebugBar\DebugBar $debugbar */
+/** @var \DebugBar\JavascriptRenderer $debugbarRenderer */
+
 include 'bootstrap.php';
 
 if (!isset($_GET['type'])) {
@@ -7,9 +12,9 @@ if (!isset($_GET['type'])) {
 }
 
 if ($_GET['type'] == 'css') {
-    header('content-type', 'text/css');
+    header('content-type: text/css');
     $debugbarRenderer->dumpCssAssets();
-} else if ($_GET['type'] == 'js') {
-    header('content-type', 'text/javascript');
+} elseif ($_GET['type'] == 'js') {
+    header('content-type: text/javascript');
     $debugbarRenderer->dumpJsAssets();
 }

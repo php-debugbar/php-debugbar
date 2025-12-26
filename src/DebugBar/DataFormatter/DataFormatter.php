@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -15,24 +18,17 @@ use Symfony\Component\VarDumper\Dumper\CliDumper;
 
 class DataFormatter implements DataFormatterInterface
 {
-    public $cloner;
+    public VarCloner $cloner;
 
-    public $dumper;
+    public CliDumper $dumper;
 
-    /**
-     * DataFormatter constructor.
-     */
     public function __construct()
     {
         $this->cloner = new VarCloner();
         $this->dumper = new CliDumper();
     }
 
-    /**
-     * @param $data
-     * @return string
-     */
-    public function formatVar($data)
+    public function formatVar(mixed $data): string
     {
         $output = '';
 
@@ -42,19 +38,15 @@ class DataFormatter implements DataFormatterInterface
                 // A negative depth means "end of dump"
                 if ($depth >= 0) {
                     // Adds a two spaces indentation to the line
-                    $output .= str_repeat('  ', $depth).$line."\n";
+                    $output .= str_repeat('  ', $depth) . $line . "\n";
                 }
-            }
+            },
         );
 
         return trim($output);
     }
 
-    /**
-     * @param float $seconds
-     * @return string
-     */
-    public function formatDuration($seconds)
+    public function formatDuration(float|int $seconds): string
     {
         if ($seconds < 0.001) {
             return round($seconds * 1000000) . 'μs';
@@ -66,14 +58,10 @@ class DataFormatter implements DataFormatterInterface
         return round($seconds, 2) . 's';
     }
 
-    /**
-     * @param string $size
-     * @param int $precision
-     * @return string
-     */
-    public function formatBytes($size, $precision = 2)
+    public function formatBytes(float|int|string|null $size, int $precision = 2): string
     {
-        if ($size === 0 || $size === null) {
+        $size = (int) $size;
+        if ($size === 0) {
             return "0B";
         }
 
@@ -81,15 +69,11 @@ class DataFormatter implements DataFormatterInterface
         $size = abs($size);
 
         $base = log($size) / log(1024);
-        $suffixes = array('B', 'KB', 'MB', 'GB', 'TB');
+        $suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
         return $sign . round(pow(1024, $base - floor($base)), $precision) . $suffixes[(int) floor($base)];
     }
 
-    /**
-     * @param object $object
-     * @return string
-     */
-    public function formatClassName($object)
+    public function formatClassName(object $object): string
     {
         $class = \get_class($object);
 

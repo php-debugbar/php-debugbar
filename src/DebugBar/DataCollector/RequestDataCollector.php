@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -15,23 +18,18 @@ namespace DebugBar\DataCollector;
  */
 class RequestDataCollector extends DataCollector implements Renderable, AssetProvider
 {
-    /**
-     * @var array[]
-     */
-    private $blacklist = [
+    /** @var array<string, array<string>> */
+    private array $blacklist = [
         '_GET' => [],
         '_POST' => [],
         '_COOKIE' => [],
         '_SESSION' => [],
     ];
 
-    /**
-     * @return array
-     */
-    public function collect()
+    public function collect(): array
     {
         $vars = array_keys($this->blacklist);
-        $data = array();
+        $data = [];
 
         foreach ($vars as $var) {
             if (! isset($GLOBALS[$var])) {
@@ -53,12 +51,8 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
 
     /**
      * Hide a sensitive value within one of the superglobal arrays.
-     *
-     * @param string $superGlobalName The name of the superglobal array, e.g. '_GET'
-     * @param string|array $key       The key within the superglobal
-     * @return void
      */
-    public function hideSuperglobalKeys($superGlobalName, $keys)
+    public function hideSuperglobalKeys(string $superGlobalName, string|array $keys): void
     {
         if (!is_array($keys)) {
             $keys = [$keys];
@@ -80,12 +74,9 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
      * only '*' characters for string values.
      * Non-string values will be replaced with a fixed asterisk count.
      *
-     * @param array|\ArrayAccess  $superGlobal     One of the superglobal arrays
-     * @param string $superGlobalName The name of the superglobal array, e.g. '_GET'
-     *
-     * @return array $values without sensitive data
+     * @param array|\ArrayAccess<mixed, mixed> $superGlobal
      */
-    private function masked($superGlobal, $superGlobalName)
+    private function masked(array|\ArrayAccess $superGlobal, string $superGlobalName): array
     {
         $blacklisted = $this->blacklist[$superGlobalName];
 
@@ -100,36 +91,28 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
         return $values;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'request';
     }
 
-    /**
-     * @return array
-     */
-    public function getAssets() {
-        return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : array();
+    public function getAssets(): array
+    {
+        return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : [];
     }
 
-    /**
-     * @return array
-     */
-    public function getWidgets()
+    public function getWidgets(): array
     {
         $widget = $this->isHtmlVarDumperUsed()
             ? "PhpDebugBar.Widgets.HtmlVariableListWidget"
             : "PhpDebugBar.Widgets.VariableListWidget";
-        return array(
-            "request" => array(
-                "icon" => "tags",
+        return [
+            "request" => [
+                "icon" => "arrows-left-right",
                 "widget" => $widget,
                 "map" => "request",
-                "default" => "{}"
-            )
-        );
+                "default" => "{}",
+            ],
+        ];
     }
 }
