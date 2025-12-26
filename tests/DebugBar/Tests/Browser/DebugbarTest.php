@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\Tests\Browser;
 
 use Facebook\WebDriver\WebDriverDimension;
 use Facebook\WebDriver\WebDriverElement;
 
-class DebugbarTest extends AbstractBrowserTest
+class DebugbarTest extends AbstractBrowserTestCase
 {
     public function testDebugbarTab(): void
     {
@@ -26,18 +28,18 @@ class DebugbarTest extends AbstractBrowserTest
         $crawler = $client->waitForVisibility('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-list');
 
         $messages = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-value')
-            ->each(function(WebDriverElement $node){
+            ->each(function (WebDriverElement $node) {
                 return $node->getText();
             });
 
         $this->assertEquals('hello', $messages[0]);
-        $this->assertCount(4, $messages);
+        $this->assertCount(7, $messages);
 
         // Close it again
         $client->click($this->getTabLink($crawler, 'messages'));
         $client->waitForInvisibility('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-list');
 
-        $client->takeScreenshot(__DIR__ .'/../../../screenshots/minimized.png');
+        $client->takeScreenshot(__DIR__ . '/../../../screenshots/minimized.png');
     }
 
     public function testDebugbarLightMode(): void
@@ -56,7 +58,7 @@ class DebugbarTest extends AbstractBrowserTest
             $client->click($this->getTabLink($crawler, 'messages'));
         }
 
-        $client->takeScreenshot(__DIR__ .'/../../../screenshots/light.png');
+        $client->takeScreenshot(__DIR__ . '/../../../screenshots/light.png');
     }
 
     public function testDebugbarDarkMode(): void
@@ -75,7 +77,7 @@ class DebugbarTest extends AbstractBrowserTest
             $client->click($this->getTabLink($crawler, 'messages'));
         }
 
-        $client->takeScreenshot(__DIR__ .'/../../../screenshots/dark.png');
+        $client->takeScreenshot(__DIR__ . '/../../../screenshots/dark.png');
     }
 
     public function testDebugbarAjax(): void
@@ -101,13 +103,15 @@ class DebugbarTest extends AbstractBrowserTest
         $client->waitForElementToContain('.phpdebugbar-datasets-switcher', 'ajax.php');
 
         $messages = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-value')
-            ->each(function(WebDriverElement $node){
+            ->each(function (WebDriverElement $node) {
                 return $node->getText();
             });
 
         $this->assertEquals('hello from ajax', $messages[0]);
 
         $crawler->selectLink('load ajax content with exception')->click();
+
+        $client->waitForVisibility('.phpdebugbar-tab[data-collector="exceptions"]');
 
         $client->click($this->getTabLink($crawler, 'exceptions'));
 
@@ -119,14 +123,44 @@ class DebugbarTest extends AbstractBrowserTest
         $client->waitForVisibility('.phpdebugbar-panel[data-collector=__datasets] .phpdebugbar-widgets-table-row');
 
         $requests = $crawler->filter('.phpdebugbar-panel[data-collector=__datasets] .phpdebugbar-widgets-table-row')
-            ->each(function(WebDriverElement $node){
+            ->each(function (WebDriverElement $node) {
                 return $node->getText();
             });
         $this->assertStringContainsString('GET /demo/', $requests[0]);
         $this->assertStringContainsString('GET /demo/ajax.php (ajax)', $requests[1]);
         $this->assertStringContainsString('GET /demo/ajax_exception.php (ajax)', $requests[2]);
 
-        $client->takeScreenshot(__DIR__ .'/../../../screenshots/ajax.png');
+        $client->takeScreenshot(__DIR__ . '/../../../screenshots/ajax.png');
+    }
+
+    public function testMonologCollector(): void
+    {
+        $client = static::createPantherClient();
+        $size = new WebDriverDimension(1920, 800);
+        $client->manage()->window()->setSize($size);
+
+        $client->request('GET', '/demo/');
+
+        // Wait for Debugbar to load
+        $crawler = $client->waitFor('.phpdebugbar-body');
+        usleep(1000);
+
+        if (!$this->isTabActive($crawler, 'database')) {
+            $client->click($this->getTabLink($crawler, 'database'));
+        }
+
+        $crawler = $client->waitForVisibility('.phpdebugbar-panel[data-collector=database]');
+
+        $statements = $crawler->filter('.phpdebugbar-panel[data-collector=database] .phpdebugbar-widgets-sql')
+            ->each(function ($node) {
+                return $node->getText();
+            });
+
+        $this->assertEquals('insert into users (name) values (?)', $statements[1]);
+        $this->assertCount(7, $statements);
+
+        $client->takeScreenshot(__DIR__ . '/../../../screenshots/pdo.png');
+
     }
 
 }

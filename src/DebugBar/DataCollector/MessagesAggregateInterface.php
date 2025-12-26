@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -10,12 +13,12 @@
 
 namespace DebugBar\DataCollector;
 
-interface MessagesAggregateInterface
+interface MessagesAggregateInterface extends DataCollectorInterface
 {
     /**
      * Returns collected messages
      *
-     * @return array
+     * @return array<int, array>
      */
-    public function getMessages();
+    public function getMessages(): array;
 }

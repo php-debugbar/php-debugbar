@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\Bridge\Symfony;
 
 use DebugBar\DataCollector\AssetProvider;
@@ -14,37 +16,25 @@ use Symfony\Component\Mime\Part\AbstractPart;
  */
 class SymfonyMailCollector extends DataCollector implements Renderable, AssetProvider
 {
-    /** @var array */
-    private $messages = array();
+    private array $messages = [];
 
-    /** @var bool */
-    private $showDetailed = false;
+    private bool $showBody = false;
 
-    /** @var bool */
-    private $showBody = false;
-
-    /** @param \Symfony\Component\Mailer\SentMessage $message */
-    public function addSymfonyMessage($message)
+    public function addSymfonyMessage(\Symfony\Component\Mailer\SentMessage $message): void
     {
         $this->messages[] = $message->getOriginalMessage();
     }
 
-    /**
-     * @deprecated use showMessageBody()
-     */
-    public function showMessageDetail()
-    {
-        $this->showMessageBody(true);
-    }
-
-    public function showMessageBody($show = true)
+    public function showMessageBody(bool $show = true): static
     {
         $this->showBody = $show;
+
+        return $this;
     }
 
-    public function collect()
+    public function collect(): array
     {
-        $mails = array();
+        $mails = [];
 
         foreach ($this->messages as $message) {
             /* @var \Symfony\Component\Mime\Message $message */
@@ -72,39 +62,39 @@ class SymfonyMailCollector extends DataCollector implements Renderable, AssetPro
             $mails[] = $mail;
         }
 
-        return array(
+        return [
             'count' => count($mails),
             'mails' => $mails,
-        );
+        ];
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'symfonymailer_mails';
     }
 
-    public function getWidgets()
+    public function getWidgets(): array
     {
-        return array(
-            'emails' => array(
+        return [
+            'emails' => [
                 'icon' => 'inbox',
                 'widget' => 'PhpDebugBar.Widgets.MailsWidget',
                 'map' => 'symfonymailer_mails.mails',
                 'default' => '[]',
-                'title' => 'Mails'
-            ),
-            'emails:badge' => array(
+                'title' => 'Mails',
+            ],
+            'emails:badge' => [
                 'map' => 'symfonymailer_mails.count',
-                'default' => 'null'
-            )
-        );
+                'default' => 'null',
+            ],
+        ];
     }
 
-    public function getAssets()
+    public function getAssets(): array
     {
-        return array(
+        return [
             'css' => 'widgets/mails/widget.css',
-            'js' => 'widgets/mails/widget.js'
-        );
+            'js' => 'widgets/mails/widget.js',
+        ];
     }
 }

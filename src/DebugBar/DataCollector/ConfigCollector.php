@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -15,15 +18,11 @@ namespace DebugBar\DataCollector;
  */
 class ConfigCollector extends DataCollector implements Renderable, AssetProvider
 {
-    protected $name;
+    protected string $name;
 
-    protected $data;
+    protected array $data;
 
-    /**
-     * @param array  $data
-     * @param string $name
-     */
-    public function __construct(array $data = array(), $name = 'config')
+    public function __construct(array $data = [], string $name = 'config')
     {
         $this->name = $name;
         $this->data = $data;
@@ -31,24 +30,19 @@ class ConfigCollector extends DataCollector implements Renderable, AssetProvider
 
     /**
      * Sets the data
-     *
-     * @param array $data
      */
-    public function setData(array $data)
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
 
-    /**
-     * @return array
-     */
-    public function collect()
+    public function collect(): array
     {
-        $data = array();
+        $data = [];
         foreach ($this->data as $k => $v) {
             if ($this->isHtmlVarDumperUsed()) {
                 $v = $this->getVarDumper()->renderVar($v);
-            } else if (!is_string($v)) {
+            } elseif (!is_string($v)) {
                 $v = $this->getDataFormatter()->formatVar($v);
             }
             $data[$k] = $v;
@@ -56,37 +50,29 @@ class ConfigCollector extends DataCollector implements Renderable, AssetProvider
         return $data;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return array
-     */
-    public function getAssets() {
-        return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : array();
+    public function getAssets(): array
+    {
+        return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : [];
     }
 
-    /**
-     * @return array
-     */
-    public function getWidgets()
+    public function getWidgets(): array
     {
         $name = $this->getName();
         $widget = $this->isHtmlVarDumperUsed()
             ? "PhpDebugBar.Widgets.HtmlVariableListWidget"
             : "PhpDebugBar.Widgets.VariableListWidget";
-        return array(
-            "$name" => array(
-                "icon" => "gear",
+        return [
+            "$name" => [
+                "icon" => "adjustments",
                 "widget" => $widget,
                 "map" => "$name",
-                "default" => "{}"
-            )
-        );
+                "default" => "{}",
+            ],
+        ];
     }
 }

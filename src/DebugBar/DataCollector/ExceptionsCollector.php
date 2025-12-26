@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -10,50 +13,40 @@
 
 namespace DebugBar\DataCollector;
 
-use Exception;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
+use Throwable;
 
 /**
  * Collects info about exceptions
  */
 class ExceptionsCollector extends DataCollector implements Renderable
 {
-    /** @var string */
-    private $name = 'exceptions';
-    /** @var string */
-    private $icon = 'bug';
-    /** @var array */
-    protected $exceptions = array();
-    /** @var bool */
-    protected $chainExceptions = false;
+    protected string $name = 'exceptions';
+    protected string $icon = 'bug';
+    protected array $exceptions = array();
+    protected bool $chainExceptions = false;
 
     /**
      * @param string $name
      * @param string $icon
      */
-    public function __construct($name = 'exceptions', $icon = 'bug')
+    public function __construct(string $name = 'exceptions', string $icon = 'bug')
     {
         $this->name = $name;
         $this->icon = $icon;
     }
 
     /**
-     * Adds an exception to be profiled in the debug bar
-     *
-     * @param Exception $e
-     * @deprecated in favor on addThrowable
+     * Adds an exception to be profiled in the debug bar. Same as addThrowable
      */
-    public function addException(Exception $e)
+    public function addException(\Throwable $e): void
     {
         $this->addThrowable($e);
     }
 
     /**
      * Adds a Throwable to be profiled in the debug bar
-     *
-     * @param \Throwable $e
      */
-    public function addThrowable($e)
+    public function addThrowable(\Throwable $e): void
     {
         $this->exceptions[] = $e;
         if ($this->chainExceptions && $previous = $e->getPrevious()) {
@@ -63,50 +56,96 @@ class ExceptionsCollector extends DataCollector implements Renderable
 
     /**
      * Configure whether or not all chained exceptions should be shown.
-     *
-     * @param bool $chainExceptions
      */
-    public function setChainExceptions($chainExceptions = true)
+    public function setChainExceptions(bool $chainExceptions = true): void
     {
         $this->chainExceptions = $chainExceptions;
     }
 
     /**
+     * Start collecting warnings, notices and deprecations
+     */
+    public function collectWarnings(bool $preserveOriginalHandler = true): void
+    {
+        $self = $this;
+        $originalHandler = $preserveOriginalHandler ? set_error_handler(null) : null;
+
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($self, $originalHandler) {
+            $self->addWarning($errno, $errstr, $errfile, $errline);
+
+            if ($originalHandler) {
+                return call_user_func($originalHandler, $errno, $errstr, $errfile, $errline);
+            }
+
+            return false;
+        });
+    }
+
+    /**
+     * Adds an warning to be profiled in the debug bar
+     */
+    public function addWarning(int $errno, string $errstr, string $errfile = '', int $errline = 0): void
+    {
+        $hash = md5("{$errno}-{$errstr}-{$errfile}-{$errline}");
+        if (isset($this->existingWarnings[$hash])) {
+            $this->existingWarnings[$hash]['count']++;
+
+            return;
+        }
+
+        $errorTypes = [
+            1    => 'E_ERROR',
+            2    => 'E_WARNING',
+            4    => 'E_PARSE',
+            8    => 'E_NOTICE',
+            16   => 'E_CORE_ERROR',
+            32   => 'E_CORE_WARNING',
+            64   => 'E_COMPILE_ERROR',
+            128  => 'E_COMPILE_WARNING',
+            256  => 'E_USER_ERROR',
+            512  => 'E_USER_WARNING',
+            1024 => 'E_USER_NOTICE',
+            2048 => 'E_STRICT',
+            4096 => 'E_RECOVERABLE_ERROR',
+            8192 => 'E_DEPRECATED',
+            16384 => 'E_USER_DEPRECATED',
+        ];
+
+        $warning = [
+            'count' => 1,
+            'type' => $errorTypes[$errno] ?? 'UNKNOWN',
+            'message' => $errstr,
+            'code' => $errno,
+            'file' => $this->normalizeFilePath($errfile),
+            'line' => $errline,
+            'xdebug_link' => $this->getXdebugLink($errfile, $errline),
+        ];
+        $this->exceptions[] = &$warning;
+        $this->existingWarnings[$hash] = &$warning;
+    }
+
+    /**
      * Returns the list of exceptions being profiled
      *
-     * @return array[\Throwable]
+     * @return array<Throwable|array>
      */
-    public function getExceptions()
+    public function getExceptions(): array
     {
         return $this->exceptions;
     }
 
-    public function collect()
+    public function collect(): array
     {
-        return array(
+        return [
             'count' => count($this->exceptions),
-            'exceptions' => array_map(array($this, 'formatThrowableData'), $this->exceptions)
-        );
-    }
-
-    /**
-     * Returns exception data as an array
-     *
-     * @param Exception $e
-     * @return array
-     * @deprecated in favor on formatThrowableData
-     */
-    public function formatExceptionData(Exception $e)
-    {
-        return $this->formatThrowableData($e);
+            'exceptions' => array_map([$this, 'formatThrowableData'], $this->exceptions),
+        ];
     }
 
     /**
      * Returns Throwable trace as an formated array
-     *
-     * @return array
      */
-    public function formatTrace(array $trace)
+    public function formatTrace(array $trace): array
     {
         if (! empty($this->xdebugReplacements)) {
             $trace = array_map(function ($track) {
@@ -134,11 +173,8 @@ class ExceptionsCollector extends DataCollector implements Renderable
 
     /**
      * Returns Throwable data as an string
-     *
-     * @param \Throwable $e
-     * @return string
      */
-    public function formatTraceAsString($e)
+    public function formatTraceAsString(\Throwable $e): string
     {
         if (! empty($this->xdebugReplacements)) {
             return implode("\n", array_map(function ($track) {
@@ -156,19 +192,20 @@ class ExceptionsCollector extends DataCollector implements Renderable
 
     /**
      * Returns Throwable data as an array
-     *
-     * @param \Throwable $e
-     * @return array
      */
-    public function formatThrowableData($e)
+    public function formatThrowableData(\Throwable|array $e): array
     {
+        if (is_array($e)) {
+            return $e;
+        }
+
         $filePath = $e->getFile();
         if ($filePath && file_exists($filePath)) {
             $lines = file($filePath);
             $start = $e->getLine() - 4;
             $lines = array_slice($lines, $start < 0 ? 0 : $start, 7);
         } else {
-            $lines = array('Cannot open the file ('.$this->normalizeFilePath($filePath).') in which the exception occurred');
+            $lines = ['Cannot open the file (' . $this->normalizeFilePath($filePath) . ') in which the exception occurred'];
         }
 
         $traceHtml = null;
@@ -176,7 +213,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
             $traceHtml = $this->getVarDumper()->renderVar($this->formatTrace($e->getTrace()));
         }
 
-        return array(
+        return [
             'type' => get_class($e),
             'message' => $e->getMessage(),
             'code' => $e->getCode(),
@@ -185,36 +222,30 @@ class ExceptionsCollector extends DataCollector implements Renderable
             'stack_trace' => $traceHtml ? null : $this->formatTraceAsString($e),
             'stack_trace_html' => $traceHtml,
             'surrounding_lines' => $lines,
-            'xdebug_link' => $this->getXdebugLink($filePath, $e->getLine())
-        );
+            'xdebug_link' => $this->getXdebugLink($filePath, $e->getLine()),
+        ];
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return array
-     */
-    public function getWidgets()
+    public function getWidgets(): array
     {
         $name = $this->getName();
 
-        return array(
-            "$name" => array(
+        return [
+            "$name" => [
                 'icon' => $this->icon,
                 'widget' => 'PhpDebugBar.Widgets.ExceptionsWidget',
                 'map' => "$name.exceptions",
                 'default' => '[]'
-            ),
-            "$name:badge" => array(
+            ],
+            "$name:badge" => [
                 'map' => "$name.count",
                 'default' => 'null'
-            )
-        );
+            ]
+        ];
     }
 }

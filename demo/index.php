@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+/** @var \DebugBar\DebugBar $debugbar */
+
 include 'bootstrap.php';
 
 $debugbar['messages']->addMessage('hello');
@@ -13,19 +17,21 @@ usleep(200);
 $debugbar['time']->stopMeasure('op2');
 
 $debugbar['messages']->addMessage('world', 'warning');
-$debugbar['messages']->addMessage(array('toto' => array('titi', 'tata')));
+$debugbar['messages']->addMessage(['toto' => ['titi', 'tata']]);
 $debugbar['messages']->addMessage('oups', 'error');
+$debugbar['messages']->addMessage('welcome!', 'success');
+$debugbar['messages']->addMessage('panic!', 'critical');
 
-$classDemo = array('FirstClass', 'SecondClass', 'ThirdClass');
-$debugbar->addCollector(new \DebugBar\DataCollector\ObjectCountCollector());
-for ($i = 0; $i <=20; $i++) {
-    $debugbar['counter']->countClass($classDemo[rand(0, 2)]);
-}
+require __DIR__ . '/collectors/counter.php';
+require __DIR__ . '/collectors/templates.php';
+require __DIR__ . '/collectors/pdo.php';
+require __DIR__ . '/collectors/monolog.php';
+require __DIR__ . '/collectors/symfony_mailer.php';
 
 $debugbar['time']->startMeasure('render');
 
-render_demo_page(function() {
-?>
+render_demo_page(function () {
+    ?>
 <h2>AJAX</h2>
 <ul>
     <li><a href="ajax.php" class="ajax">load ajax content</a></li>
@@ -39,22 +45,6 @@ render_demo_page(function() {
 <h2>Stack</h2>
 <ul>
     <li><a href="stack.php">perform a redirect</a></li>
-</ul>
-<h2>PDO</h2>
-<ul>
-    <li><a href="pdo.php">PDO demo</a></li>
-</ul>
-<h2>Bridges</h2>
-<p>(you need to install needed dependencies first, run <code>composer.phar install</code> in each demo folders)</p>
-<ul>
-    <li><a href="bridge/cachecache">CacheCache</a></li>
-    <li><a href="bridge/doctrine">Doctrine</a></li>
-    <li><a href="bridge/monolog">Monolog</a></li>
-    <li><a href="bridge/propel">Propel</a></li>
-    <li><a href="bridge/slim">Slim</a></li>
-    <li><a href="bridge/swiftmailer">Swift mailer</a></li>
-    <li><a href="bridge/symfonymailer">Symfony mailer</a></li>
-    <li><a href="bridge/twig">Twig</a></li>
 </ul>
 <?php
 });

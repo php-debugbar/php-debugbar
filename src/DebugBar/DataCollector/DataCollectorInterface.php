@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -18,14 +21,12 @@ interface DataCollectorInterface
     /**
      * Called by the DebugBar when data needs to be collected
      *
-     * @return array Collected data
+     * @return array<int|string, mixed> Collected data
      */
-    function collect();
+    public function collect(): array;
 
     /**
      * Returns the unique name of the collector
-     *
-     * @return string
      */
-    function getName();
+    public function getName(): string;
 }
