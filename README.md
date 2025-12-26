@@ -7,34 +7,44 @@ No more `var_dump()` in your code!
 
 > **Note: Debug Bar is for development use only. Never install this on websites that are publicly accessible.**
 
+## V3 Beta
+Currently v3 is in beta. You can install it with `composer require php-debugbar/php-debugbar:^3.0@beta`.
+See the [Upgrade guide](UPGRADE.md) for more information and breaking changes.
+
 ![Screenshot](https://raw.github.com/php-debugbar/php-debugbar/master/docs/screenshot.png)
 
 **Features:**
 
- - Generic debug bar
+ - Generic Debug Bar for PHP projects
  - Easy to integrate with any project
  - Clean, fast and easy to use interface
  - Handles AJAX request
  - Includes generic data collectors and collectors for well known libraries
- - The client side bar is 100% coded in javascript
+ - The client side bar is 100% coded in plain javascript
  - Easily create your own collectors and their associated view in the bar
  - Save and re-open previous requests
  - [Very well documented](http://php-debugbar.com/docs/)
 
 Includes collectors for:
-
+  - Messages
+  - Config
+  - Time
+  - Memory
+  - Exceptions
+  - PHP Info
+  - Request Data
+  - Templates
+  - Object Count
   - [PDO](http://php.net/manual/en/book.pdo.php)
-  - [CacheCache](http://maximebf.github.io/CacheCache/)
-  - [Doctrine](http://doctrine-project.org)
   - [Monolog](https://github.com/Seldaek/monolog)
-  - [Propel](http://propelorm.org/)
-  - [Slim](http://slimframework.com)
   - [Symfony Mailer](https://symfony.com/doc/current/mailer.html)
-  - [Swift Mailer](http://swiftmailer.org/)
-  - [Twig](http://twig.symfony.com/)
 
 Checkout the [demo](https://github.com/php-debugbar/php-debugbar/tree/master/demo) for
 examples and [phpdebugbar.com](http://php-debugbar.com) for a live example.
+
+Additional collectors are available here:
+ - [Twig](https://github.com/php-debugbar/twig-bridge)
+ - [Doctrine](https://github.com/php-debugbar/doctrine-bridge)
 
 Integrations with other frameworks:
 
@@ -111,7 +121,6 @@ $debugbar["messages"]->addMessage("hello world!");
 
 Learn more about DebugBar in the [docs](http://php-debugbar.com/docs/).
 
-
 ## Demo
 
 To run the demo, clone this repository and start the Built-In PHP webserver from the root:
@@ -127,9 +136,16 @@ Then visit http://localhost:8000/demo/
 To test, run `php vendor/bin/phpunit`. 
 To debug Browser tests, you can run `PANTHER_NO_HEADLESS=1 vendor/bin/phpunit --debug`. Run `vendor/bin/bdi detect drivers` to download the latest drivers.
 
-## Javascript Linting
+## Contributing
 When contributing to the JavaScript codebase:
-1. Run `npm run lint` before committing
+
+1. Run `npm run lint` and `npm run build` before committing 
 2. Fix any errors (warnings are acceptable but should be minimized)
 3. Use `npm run lint:fix` for automatic fixes where possible
 4. Follow the ES6+ patterns established in the codebase
+
+When contributing to the PHP codebase:
+
+1. Run `composer check-style` and `composer analyse` before committing.
+2. Make sure the tests pass (see above)
+3. Verify that the demo works correctly (`php -S localhost:8000 demo/`)

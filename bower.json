@@ -1,7 +1,0 @@
-{
-  "name": "maximebf/php-debugbar",
-  "dependencies": {
-    "jquery": "^3.7",
-    "font-awesome": "^4.7"
-  }
-}
