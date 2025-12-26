@@ -22,14 +22,10 @@ class ExceptionsCollector extends DataCollector implements Renderable
 {
     protected string $name = 'exceptions';
     protected string $icon = 'bug';
-    protected array $exceptions = array();
+    protected array $exceptions = [];
     protected array $existingWarnings = [];
     protected bool $chainExceptions = false;
 
-    /**
-     * @param string $name
-     * @param string $icon
-     */
     public function __construct(string $name = 'exceptions', string $icon = 'bug')
     {
         $this->name = $name;
@@ -241,11 +237,11 @@ class ExceptionsCollector extends DataCollector implements Renderable
                 'icon' => $this->icon,
                 'widget' => 'PhpDebugBar.Widgets.ExceptionsWidget',
                 'map' => "$name.exceptions",
-                'default' => '[]'
+                'default' => '[]',
             ],
             "$name:badge" => [
                 'map' => "$name.count",
-                'default' => 'null'
+                'default' => 'null',
             ]
         ];
     }
