@@ -5,6 +5,7 @@ include __DIR__ . '/../vendor/autoload.php';
 // for stack data
 session_start();
 
+use DebugBar\DataHasher;
 use DebugBar\StandardDebugBar;
 
 $debugbar = new StandardDebugBar();
@@ -15,6 +16,7 @@ $debugbarRenderer = $debugbar->getJavascriptRenderer()
                              ->setUseDistFiles(true)
                              ->setTheme($_GET['theme'] ?? 'auto');
 
+$debugbar->setDataHasher(new DataHasher('demo'));
 //
 // create a writable profiles folder in the demo directory to uncomment the following lines
 //

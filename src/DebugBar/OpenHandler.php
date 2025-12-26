@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace DebugBar;
 
+use DebugBar\DataCollector\Actionable;
+
 /**
  * Handler to list and open saved dataset
  */
@@ -46,7 +48,7 @@ class OpenHandler
         $op = 'find';
         if (isset($request['op'])) {
             $op = $request['op'];
-            if (!in_array($op, ['find', 'get', 'clear'])) {
+            if (!in_array($op, ['find', 'get', 'clear', 'execute'])) {
                 throw new DebugBarException("Invalid operation '{$request['op']}'");
             }
         }
@@ -112,5 +114,48 @@ class OpenHandler
     {
         $this->debugBar->getStorage()->clear();
         return ['success' => true];
+    }
+
+    /**
+     * Execute an action
+     *
+     *
+     * @throws DebugBarException
+     */
+    protected function execute(array $request): mixed
+    {
+        if (!isset($request['collector']) || !isset($request['action']) || !isset($request['signature'])) {
+            throw new DebugBarException("Missing 'collector', 'action' and/or 'signature' parameter in 'execute' operation");
+        }
+
+        if (!$this->debugBar->hasDataHasher()) {
+            throw new DebugBarException("No DataHasher is set in DebugBar, which is required for 'execute' operations");
+        }
+
+        // Get the signature and remove if before checking the payload.
+        $signature = $request['signature'];
+        $collector = $request['collector'];
+        $action = $request['action'];
+
+        $data = [
+            'collector' => $collector,
+            'action' => $action,
+            'payload' => $request['payload'] ?? null,
+        ];
+
+        if (!$this->debugBar->getDataHasher()->verify($data, $signature)) {
+            throw new DebugBarException("Signature does not match in 'execute' operation");
+        }
+
+        if (!$this->debugBar->hasCollector($request['collector'])) {
+            throw new DebugBarException("Collector {$request['collector']} not found in 'execute' operation");
+        }
+
+        $collector = $this->debugBar->getCollector($request['collector']);
+        if (!$collector instanceof Actionable) {
+            throw new DebugBarException("Collector {$request['collector']} found in 'execute' operation does not implement the Actionable interface");
+        }
+
+        return $collector->executionAction($request['action'], $request['payload'] ?? null);
     }
 }

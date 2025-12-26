@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace DebugBar;
 
 use ArrayAccess;
+use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\DataCollectorInterface;
 use DebugBar\Storage\StorageInterface;
 
@@ -41,6 +42,8 @@ class DebugBar implements ArrayAccess
 
     protected ?JavascriptRenderer $jsRenderer = null;
 
+    protected ?DataHasher $dataHasher = null;
+
     protected ?RequestIdGeneratorInterface $requestIdGenerator = null;
 
     protected ?string $requestId = null;
@@ -52,6 +55,8 @@ class DebugBar implements ArrayAccess
     protected string $stackSessionNamespace = 'PHPDEBUGBAR_STACK_DATA';
 
     protected bool $stackAlwaysUseSessionStorage = false;
+
+    protected ?string $hashKey = null;
 
     /**
      * Adds a data collector
@@ -455,6 +460,28 @@ class DebugBar implements ArrayAccess
             $this->jsRenderer = new JavascriptRenderer($this, $baseUrl, $basePath);
         }
         return $this->jsRenderer;
+    }
+
+    public function setDataHasher(DataHasher $dataHasher): static
+    {
+        $this->dataHasher = $dataHasher;
+
+        DataCollector::setDefaultDataHasher($dataHasher);
+
+        return $this;
+    }
+
+    public function hasDataHasher(): bool
+    {
+        return $this->dataHasher !== null;
+    }
+
+    public function getDataHasher(): DataHasher
+    {
+        if ($this->dataHasher === null) {
+            throw new DebugBarException('DataHasher is not set');
+        }
+        return $this->dataHasher;
     }
 
     // --------------------------------------------

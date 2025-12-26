@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace DebugBar\Tests;
 
+use DebugBar\DataHasher;
 use DebugBar\DebugBarException;
 use DebugBar\OpenHandler;
+use DebugBar\Tests\DataCollector\MockActionCollector;
 use DebugBar\Tests\Storage\MockStorage;
 
 class OpenHandlerTest extends DebugBarTestCase
@@ -47,5 +49,41 @@ class OpenHandlerTest extends DebugBarTestCase
     {
         $result = $this->openHandler->handle(['op' => 'clear'], false, false);
         $this->assertJsonPropertyEquals($result, 'success', true);
+    }
+
+    public function testExecute(): void
+    {
+        $this->debugbar->addCollector(new MockActionCollector([], 'mock-action'));
+        $dataHasher = new DataHasher('secret');
+        $this->debugbar->setDataHasher($dataHasher);
+
+        $data = [
+            'op' => 'execute',
+            'collector' => 'mock-action',
+            'action' => 'run',
+        ];
+
+        $data['signature'] = $dataHasher->sign($data);
+
+        $result = $this->openHandler->handle($data, false, false);
+        $this->assertJsonPropertyEquals($result, 'result', 'done');
+    }
+
+    public function testExecuteWrongSignature(): void
+    {
+        $this->debugbar->addCollector(new MockActionCollector([], 'mock-action'));
+        $dataHasher = new DataHasher('secret');
+        $this->debugbar->setDataHasher($dataHasher);
+
+        $data = [
+            'op' => 'execute',
+            'collector' => 'mock-action',
+            'action' => 'run',
+            'signature' => 'invalid',
+        ];
+
+        $this->expectExceptionMessage("Signature does not match in 'execute' operation");
+
+        $this->openHandler->handle($data, false, false);
     }
 }
