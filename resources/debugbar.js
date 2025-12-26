@@ -477,7 +477,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
             this.bindAttr('autoshow', function () {
                 this.autoshow.checked = this.get('autoshow');
-                this.autoshow.closest(`.${csscls('form-row')}`).style.display = '';
+                const row = this.autoshow.closest(`.${csscls('form-row')}`);
+                if (row) {
+                    row.style.display = '';
+                }
             });
 
             const autoshowLabel = document.createElement('label');
@@ -515,7 +518,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 self.el.append(formRow);
             }
 
-            if (!this.ajaxHandler) {
+            if (!debugbar.ajaxHandler) {
                 this.autoshow.closest(`.${csscls('form-row')}`).style.display = 'none';
             }
         }
