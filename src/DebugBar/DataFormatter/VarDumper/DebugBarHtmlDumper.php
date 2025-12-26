@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DebugBar\DataFormatter\VarDumper;
 
 use Symfony\Component\VarDumper\Dumper\HtmlDumper;
@@ -13,21 +15,21 @@ class DebugBarHtmlDumper extends HtmlDumper
     /**
      * Resets an HTML header.
      */
-    public function resetDumpHeader()
+    public function resetDumpHeader(): void
     {
         $this->dumpHeader = null;
     }
 
-    public function getDumpHeaderByDebugBar() 
+    public function getDumpHeaderByDebugBar(): string
     {
         $header = str_replace('pre.sf-dump', '.phpdebugbar pre.sf-dump', $this->getDumpHeader());
 
         if (isset(self::$themes['dark'])) {
             $line = '';
             foreach (self::$themes['dark'] as $class => $style) {
-                $line .= ".phpdebugbar[data-theme='dark'] pre.sf-dump".('default' === $class ? ', pre.sf-dump' : '').' .sf-dump-'.$class.'{'.$style.'}';
+                $line .= ".phpdebugbar[data-theme='dark'] pre.sf-dump" . ('default' === $class ? ', pre.sf-dump' : '') . ' .sf-dump-' . $class . '{' . $style . '}';
             }
-            $line .= ".phpdebugbar[data-theme='dark'] " . 'pre.sf-dump .sf-dump-ellipsis-note{'.self::$themes['dark']['note'].'}';
+            $line .= ".phpdebugbar[data-theme='dark'] " . 'pre.sf-dump .sf-dump-ellipsis-note{' . self::$themes['dark']['note'] . '}';
             $header = str_replace('</style>', $line . '</style>', $header);
         }
 

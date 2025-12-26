@@ -1,0 +1,224 @@
+pre code.phpdebugbar-hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em;
+}
+code.phpdebugbar-hljs {
+  padding: 3px 5px;
+}
+/*!
+  Theme: GitHub
+  Description: Light theme as seen on github.com
+  Author: github.com
+  Maintainer: @Hirse
+  Updated: 2021-05-15
+
+  Outdated base version: https://github.com/primer/github-syntax-light
+  Current colors taken from GitHub's CSS
+*/
+.phpdebugbar-hljs {
+  color: var(--debugbar-text);
+}
+.phpdebugbar-hljs-doctag,
+.phpdebugbar-hljs-keyword,
+.phpdebugbar-hljs-meta .phpdebugbar-hljs-keyword,
+.phpdebugbar-hljs-template-tag,
+.phpdebugbar-hljs-template-variable,
+.phpdebugbar-hljs-type,
+.phpdebugbar-hljs-variable.language_ {
+  /* prettylights-syntax-keyword */
+  color: #d73a49
+}
+.phpdebugbar-hljs-title,
+.phpdebugbar-hljs-title.class_,
+.phpdebugbar-hljs-title.class_.inherited__,
+.phpdebugbar-hljs-title.function_ {
+  /* prettylights-syntax-entity */
+  color: #6f42c1
+}
+.phpdebugbar-hljs-attr,
+.phpdebugbar-hljs-attribute,
+.phpdebugbar-hljs-literal,
+.phpdebugbar-hljs-meta,
+.phpdebugbar-hljs-number,
+.phpdebugbar-hljs-operator,
+.phpdebugbar-hljs-variable,
+.phpdebugbar-hljs-selector-attr,
+.phpdebugbar-hljs-selector-class,
+.phpdebugbar-hljs-selector-id {
+  /* prettylights-syntax-constant */
+  color: #005cc5
+}
+.phpdebugbar-hljs-regexp,
+.phpdebugbar-hljs-string,
+.phpdebugbar-hljs-meta .phpdebugbar-hljs-string {
+  /* prettylights-syntax-string */
+  color: #032f62
+}
+.phpdebugbar-hljs-built_in,
+.phpdebugbar-hljs-symbol {
+  /* prettylights-syntax-variable */
+  color: #e36209
+}
+.phpdebugbar-hljs-comment,
+.phpdebugbar-hljs-code,
+.phpdebugbar-hljs-formula {
+  /* prettylights-syntax-comment */
+  color: #6a737d
+}
+.phpdebugbar-hljs-name,
+.phpdebugbar-hljs-quote,
+.phpdebugbar-hljs-selector-tag,
+.phpdebugbar-hljs-selector-pseudo {
+  /* prettylights-syntax-entity-tag */
+  color: #22863a
+}
+.phpdebugbar-hljs-subst {
+  /* prettylights-syntax-storage-modifier-import */
+  color: #24292e
+}
+.phpdebugbar-hljs-section {
+  /* prettylights-syntax-markup-heading */
+  color: #005cc5;
+  font-weight: bold
+}
+.phpdebugbar-hljs-bullet {
+  /* prettylights-syntax-markup-list */
+  color: #735c0f
+}
+.phpdebugbar-hljs-emphasis {
+  /* prettylights-syntax-markup-italic */
+  color: #24292e;
+  font-style: italic
+}
+.phpdebugbar-hljs-strong {
+  /* prettylights-syntax-markup-bold */
+  color: #24292e;
+  font-weight: bold
+}
+.phpdebugbar-hljs-addition {
+  /* prettylights-syntax-markup-inserted */
+  color: #22863a;
+  background-color: #f0fff4
+}
+.phpdebugbar-hljs-deletion {
+  /* prettylights-syntax-markup-deleted */
+  color: #b31d28;
+  background-color: #ffeef0
+}
+.phpdebugbar-hljs-char.escape_,
+.phpdebugbar-hljs-link,
+.phpdebugbar-hljs-params,
+.phpdebugbar-hljs-property,
+.phpdebugbar-hljs-punctuation,
+.phpdebugbar-hljs-tag {
+  /* purposely ignored */
+
+}
+
+/*!
+  Theme: GitHub Dark
+  Description: Dark theme as seen on github.com
+  Author: github.com
+  Maintainer: @Hirse
+  Updated: 2021-05-15
+
+  Outdated base version: https://github.com/primer/github-syntax-dark
+  Current colors taken from GitHub's CSS
+*/
+[data-theme='dark'] .phpdebugbar-hljs-doctag,
+[data-theme='dark'] .phpdebugbar-hljs-keyword,
+[data-theme='dark'] .phpdebugbar-hljs-meta [data-theme='dark'] .phpdebugbar-hljs-keyword,
+[data-theme='dark'] .phpdebugbar-hljs-template-tag,
+[data-theme='dark'] .phpdebugbar-hljs-template-variable,
+[data-theme='dark'] .phpdebugbar-hljs-type,
+[data-theme='dark'] .phpdebugbar-hljs-variable.language_ {
+  /* prettylights-syntax-keyword */
+  color: #ff7b72
+}
+[data-theme='dark'] .phpdebugbar-hljs-title,
+[data-theme='dark'] .phpdebugbar-hljs-title.class_,
+[data-theme='dark'] .phpdebugbar-hljs-title.class_.inherited__,
+[data-theme='dark'] .phpdebugbar-hljs-title.function_ {
+  /* prettylights-syntax-entity */
+  color: #d2a8ff
+}
+[data-theme='dark'] .phpdebugbar-hljs-attr,
+[data-theme='dark'] .phpdebugbar-hljs-attribute,
+[data-theme='dark'] .phpdebugbar-hljs-literal,
+[data-theme='dark'] .phpdebugbar-hljs-meta,
+[data-theme='dark'] .phpdebugbar-hljs-number,
+[data-theme='dark'] .phpdebugbar-hljs-operator,
+[data-theme='dark'] .phpdebugbar-hljs-variable,
+[data-theme='dark'] .phpdebugbar-hljs-selector-attr,
+[data-theme='dark'] .phpdebugbar-hljs-selector-class,
+[data-theme='dark'] .phpdebugbar-hljs-selector-id {
+  /* prettylights-syntax-constant */
+  color: #79c0ff
+}
+[data-theme='dark'] .phpdebugbar-hljs-regexp,
+[data-theme='dark'] .phpdebugbar-hljs-string,
+[data-theme='dark'] .phpdebugbar-hljs-meta [data-theme='dark'] .phpdebugbar-hljs-string {
+  /* prettylights-syntax-string */
+  color: #a5d6ff
+}
+[data-theme='dark'] .phpdebugbar-hljs-built_in,
+[data-theme='dark'] .phpdebugbar-hljs-symbol {
+  /* prettylights-syntax-variable */
+  color: #ffa657
+}
+[data-theme='dark'] .phpdebugbar-hljs-comment,
+[data-theme='dark'] .phpdebugbar-hljs-code,
+[data-theme='dark'] .phpdebugbar-hljs-formula {
+  /* prettylights-syntax-comment */
+  color: #8b949e
+}
+[data-theme='dark'] .phpdebugbar-hljs-name,
+[data-theme='dark'] .phpdebugbar-hljs-quote,
+[data-theme='dark'] .phpdebugbar-hljs-selector-tag,
+[data-theme='dark'] .phpdebugbar-hljs-selector-pseudo {
+  /* prettylights-syntax-entity-tag */
+  color: #7ee787
+}
+[data-theme='dark'] .phpdebugbar-hljs-subst {
+  /* prettylights-syntax-storage-modifier-import */
+  color: #c9d1d9
+}
+[data-theme='dark'] .phpdebugbar-hljs-section {
+  /* prettylights-syntax-markup-heading */
+  color: #1f6feb;
+  font-weight: bold
+}
+[data-theme='dark'] .phpdebugbar-hljs-bullet {
+  /* prettylights-syntax-markup-list */
+  color: #f2cc60
+}
+[data-theme='dark'] .phpdebugbar-hljs-emphasis {
+  /* prettylights-syntax-markup-italic */
+  color: #c9d1d9;
+  font-style: italic
+}
+[data-theme='dark'] .phpdebugbar-hljs-strong {
+  /* prettylights-syntax-markup-bold */
+  color: #c9d1d9;
+  font-weight: bold
+}
+[data-theme='dark'] .phpdebugbar-hljs-addition {
+  /* prettylights-syntax-markup-inserted */
+  color: #aff5b4;
+  background-color: #033a16
+}
+[data-theme='dark'] .phpdebugbar-hljs-deletion {
+  /* prettylights-syntax-markup-deleted */
+  color: #ffdcd7;
+  background-color: #67060c
+}
+[data-theme='dark'] .phpdebugbar-hljs-char.escape_,
+[data-theme='dark'] .phpdebugbar-hljs-link,
+[data-theme='dark'] .phpdebugbar-hljs-params,
+[data-theme='dark'] .phpdebugbar-hljs-property,
+[data-theme='dark'] .phpdebugbar-hljs-punctuation,
+[data-theme='dark'] .phpdebugbar-hljs-tag {
+  /* purposely ignored */
+
+}

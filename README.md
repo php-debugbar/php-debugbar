@@ -126,3 +126,10 @@ Then visit http://localhost:8000/demo/
 
 To test, run `php vendor/bin/phpunit`. 
 To debug Browser tests, you can run `PANTHER_NO_HEADLESS=1 vendor/bin/phpunit --debug`. Run `vendor/bin/bdi detect drivers` to download the latest drivers.
+
+## Javascript Linting
+When contributing to the JavaScript codebase:
+1. Run `npm run lint` before committing
+2. Fix any errors (warnings are acceptable but should be minimized)
+3. Use `npm run lint:fix` for automatic fixes where possible
+4. Follow the ES6+ patterns established in the codebase

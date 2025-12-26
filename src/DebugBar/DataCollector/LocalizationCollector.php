@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -17,57 +20,45 @@ class LocalizationCollector extends DataCollector implements Renderable
 {
     /**
      * Get the current locale
-     *
-     * @return string
      */
-    public function getLocale()
+    public function getLocale(): string|false
     {
+        /** @phpstan-ignore argument.type */
         return setlocale(LC_ALL, 0);
     }
 
     /**
      * Get the current translations domain
-     *
-     * @return string
      */
-    public function getDomain()
+    public function getDomain(): string|false
     {
-        return textdomain();
+        return textdomain(null);
     }
 
-    /**
-     * @return array
-     */
-    public function collect()
+    public function collect(): array
     {
-        return array(
-          'locale' => $this->getLocale(),
-          'domain' => $this->getDomain(),
-        );
+        return [
+            'locale' => $this->getLocale(),
+            'domain' => $this->getDomain(),
+        ];
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'localization';
     }
 
-    /**
-     * @return array
-     */
-    public function getWidgets()
+    public function getWidgets(): array
     {
-        return array(
-            'domain' => array(
+        return [
+            'domain' => [
                 'icon' => 'bookmark',
                 'map'  => 'localization.domain',
-            ),
-            'locale' => array(
+            ],
+            'locale' => [
                 'icon' => 'flag',
                 'map'  => 'localization.locale',
-            )
-        );
+            ],
+        ];
     }
 }

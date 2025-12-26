@@ -1,0 +1,92 @@
+
+div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status {
+  font-family: var(--debugbar-font-mono);
+  padding: 6px 6px;
+  border-bottom: 1px solid var(--debugbar-border);
+  font-weight: bold;
+  color: var(--debugbar-text);
+  background-color: var(--debugbar-background-alt);
+}
+
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count,
+div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type {
+  float: right;
+  margin-left: 8px;
+  color: var(--debugbar-text);
+}
+div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-render-time,
+div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-memory,
+div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-param-count,
+div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status a.phpdebugbar-widgets-editor-link,
+div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugbar-widgets-type {
+  color: var(--debugbar-text);
+}
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before,
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before,
+div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before,
+div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
+{
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-right: 4px;
+  vertical-align: middle;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: currentColor;
+}
+div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:hover
+{
+    color: var(--debugbar-hover);
+}
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time:before {
+  -webkit-mask-image: var(--debugbar-icon-clock);
+  mask-image: var(--debugbar-icon-clock);
+}
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory:before {
+  -webkit-mask-image: var(--debugbar-icon-cpu);
+  mask-image: var(--debugbar-icon-cpu);
+}
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before {
+  -webkit-mask-image: var(--debugbar-icon-table);
+  mask-image: var(--debugbar-icon-table);
+}
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before {
+  -webkit-mask-image: var(--debugbar-icon-code);
+  mask-image: var(--debugbar-icon-code);
+}
+div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before {
+  -webkit-mask-image: var(--debugbar-icon-external-link);
+  mask-image: var(--debugbar-icon-external-link);
+  margin-left: 4px;
+}
+div.phpdebugbar-widgets-templates table.phpdebugbar-widgets-params {
+  display: none;
+  width: 70%;
+  margin: 10px;
+  border: 1px solid var(--debugbar-border);
+  font-family: var(--debugbar-font-mono);
+  border-collapse: collapse;
+}
+div.phpdebugbar-widgets-templates table.phpdebugbar-widgets-params td {
+  border: 1px solid var(--debugbar-border);
+  padding: 0 5px;
+}
+div.phpdebugbar-widgets-templates table.phpdebugbar-widgets-params .phpdebugbar-widgets-name {
+  width: 20%;
+  font-weight: bold;
+  vertical-align: top;
+}
+div.phpdebugbar[data-theme='dark'] div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-callgraph > pre * {
+  background-color: inherit !important;
+}

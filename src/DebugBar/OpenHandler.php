@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /*
  * This file is part of the DebugBar package.
  *
@@ -15,10 +18,9 @@ namespace DebugBar;
  */
 class OpenHandler
 {
-    protected $debugBar;
+    protected DebugBar $debugBar;
 
     /**
-     * @param DebugBar $debugBar
      * @throws DebugBarException
      */
     public function __construct(DebugBar $debugBar)
@@ -32,13 +34,10 @@ class OpenHandler
     /**
      * Handles the current request
      *
-     * @param array $request Request data
-     * @param bool $echo
-     * @param bool $sendHeader
-     * @return string
+     *
      * @throws DebugBarException
      */
-    public function handle($request = null, $echo = true, $sendHeader = true)
+    public function handle(?array $request = null, bool $echo = true, bool $sendHeader = true): string
     {
         if ($request === null) {
             $request = $_REQUEST;
@@ -47,43 +46,43 @@ class OpenHandler
         $op = 'find';
         if (isset($request['op'])) {
             $op = $request['op'];
-            if (!in_array($op, array('find', 'get', 'clear'))) {
+            if (!in_array($op, ['find', 'get', 'clear'])) {
                 throw new DebugBarException("Invalid operation '{$request['op']}'");
             }
         }
 
         if ($sendHeader) {
-            $this->debugBar->getHttpDriver()->setHeaders(array(
-                    'Content-Type' => 'application/json'
-                ));
+            $this->debugBar->getHttpDriver()->setHeaders([
+                'Content-Type' => 'application/json',
+            ]);
         }
 
-        $response = json_encode(call_user_func(array($this, $op), $request));
+        $response = json_encode(call_user_func([$this, $op], $request));
         if ($echo) {
             echo $response;
         }
+
         return $response;
     }
 
     /**
      * Find operation
-     * @param $request
-     * @return array
+     *
      */
-    protected function find($request)
+    protected function find(array $request): array
     {
         $max = 20;
         if (isset($request['max'])) {
-            $max = $request['max'];
+            $max = (int) $request['max'];
         }
 
         $offset = 0;
         if (isset($request['offset'])) {
-            $offset = $request['offset'];
+            $offset = (int) $request['offset'];
         }
 
-        $filters = array();
-        foreach (array('utime', 'datetime', 'ip', 'uri', 'method') as $key) {
+        $filters = [];
+        foreach (['utime', 'datetime', 'ip', 'uri', 'method'] as $key) {
             if (isset($request[$key])) {
                 $filters[$key] = $request[$key];
             }
@@ -94,11 +93,11 @@ class OpenHandler
 
     /**
      * Get operation
-     * @param $request
-     * @return array
+     *
+     *
      * @throws DebugBarException
      */
-    protected function get($request)
+    protected function get(array $request): array
     {
         if (!isset($request['id'])) {
             throw new DebugBarException("Missing 'id' parameter in 'get' operation");
@@ -109,9 +108,9 @@ class OpenHandler
     /**
      * Clear operation
      */
-    protected function clear($request)
+    protected function clear(): array
     {
         $this->debugBar->getStorage()->clear();
-        return array('success' => true);
+        return ['success' => true];
     }
 }
