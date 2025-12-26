@@ -119,7 +119,6 @@ class OpenHandler
     /**
      * Execute an action
      *
-     * @param array{collector: string, action: string, signature: string, payload?: array, ...} $request
      *
      * @throws DebugBarException
      */
@@ -130,13 +129,21 @@ class OpenHandler
         }
 
         if (!$this->debugBar->hasDataHasher()) {
-            throw new DebugBarException("Not DataHasher is set in DebugBar, which is required for 'execute' operations");
+            throw new DebugBarException("No DataHasher is set in DebugBar, which is required for 'execute' operations");
         }
 
         // Get the signature and remove if before checking the payload.
         $signature = $request['signature'];
+        $collector = $request['collector'];
+        $action = $request['action'];
 
-        if (!$this->debugBar->getDataHasher()->verify($request, $signature)) {
+        $data = [
+            'collector' => $collector,
+            'action' => $action,
+            'payload' => $request['payload'] ?? null,
+        ];
+
+        if (!$this->debugBar->getDataHasher()->verify($data, $signature)) {
             throw new DebugBarException("Signature does not match in 'execute' operation");
         }
 

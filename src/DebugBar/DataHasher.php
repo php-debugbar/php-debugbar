@@ -34,6 +34,7 @@ readonly class DataHasher
      * Sorts arrays by keys to ensure consistent ordering regardless of input order.
      *
      * @param array $array The array to normalize
+     *
      * @return array The normalized array with sorted keys
      */
     private function normalizeArray(array $array): array

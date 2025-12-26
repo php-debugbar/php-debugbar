@@ -47,4 +47,13 @@ trait HasDataHasher
 
         return $this->dataHasher;
     }
+
+    public function getSignature(string $action, mixed $payload = null): string
+    {
+        return $this->getDataHasher()->sign([
+            'collector' => $this->getName(),
+            'action' => $action,
+            'payload' => $payload,
+        ]);
+    }
 }

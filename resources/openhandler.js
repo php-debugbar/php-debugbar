@@ -230,6 +230,16 @@
             this.ajax({ op: 'clear' }, callback);
         },
 
+        executeAction(collector, action, signature, payload, callback) {
+            this.ajax({
+                op: 'execute',
+                collector: collector,
+                action: action,
+                signature: signature,
+                payload: payload || null
+            }, callback);
+        },
+
         ajax(data, callback) {
             let url = this.get('url');
             if (data) {

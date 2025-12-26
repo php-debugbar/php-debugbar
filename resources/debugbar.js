@@ -86,6 +86,13 @@ window.PhpDebugBar = window.PhpDebugBar || {};
     class Widget {
         get tagName() { return 'div'; }
 
+        /**
+         * Returns the debugbar instance
+         *
+         * @return {DebugBar}
+         */
+        get debugbar() { return this.get('debugbar'); }
+
         constructor(options = {}) {
             this._attributes = { ...this.defaults };
             this._boundAttributes = {};
@@ -917,6 +924,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 throw new Error(`${name} already exists`);
             }
 
+            tab.set('debugbar', this);
+            if (tab.get('widget')) {
+                tab.get('widget').set('debugbar', this);
+            }
             const self = this;
             this.headerLeft.append(tab.tab);
             tab.tab.addEventListener('click', () => {
