@@ -23,6 +23,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
     protected string $name = 'exceptions';
     protected string $icon = 'bug';
     protected array $exceptions = array();
+    protected array $existingWarnings = [];
     protected bool $chainExceptions = false;
 
     /**
