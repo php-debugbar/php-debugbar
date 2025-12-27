@@ -202,6 +202,7 @@ class DebugBarVarDumperTest extends DebugBarTestCase
         $this->markTestSkipped('Currently not supported');
 
         // Test the actual operation of the dumper options
+        /** @phpstan-ignore deadCode.unreachable */
         $d = new DebugBarVarDumper();
 
         // Test that the 'expanded_depth' option affects output

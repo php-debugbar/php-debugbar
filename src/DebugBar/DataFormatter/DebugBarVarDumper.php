@@ -246,14 +246,13 @@ class DebugBarVarDumper
     protected function dump(Data $data): string
     {
         $dumper = $this->getDumper();
-        $output = fopen('php://memory', 'r+b');
-        $dumper->setOutput($output);
+        $result = '';
         $dumper->setDumpHeader(''); // we don't actually want a dump header
-        // NOTE:  Symfony 3.2 added the third $extraDisplayOptions parameter.  Older versions will
-        // safely ignore it.
-        $dumper->dump($data, null, $this->getDisplayOptions());
-        $result = stream_get_contents($output, -1, 0);
-        fclose($output);
+        $dumper->dump($data, function (string $line, int $depth, string $indentPad) use (&$result): void {
+            if (-1 !== $depth) {
+                $result .= str_repeat($indentPad, $depth) . $line . "\n";
+            }
+        }, $this->getDisplayOptions());
         return $result;
     }
 }
