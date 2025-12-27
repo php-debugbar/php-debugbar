@@ -8,7 +8,9 @@
      *  - data
      */
     class TemplatesWidget extends PhpDebugBar.Widget {
-        get className() { return csscls('templates'); }
+        get className() {
+            return csscls('templates');
+        }
 
         render() {
             this.status = document.createElement('div');

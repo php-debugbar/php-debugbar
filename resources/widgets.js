@@ -134,8 +134,13 @@
      *  - itemRenderer: a function used to render list items (optional)
      */
     class ListWidget extends PhpDebugBar.Widget {
-        get tagName() { return 'ul'; }
-        get className() { return csscls('list'); }
+        get tagName() {
+            return 'ul';
+        }
+
+        get className() {
+            return csscls('list');
+        }
 
         initialize(options) {
             if (!options.itemRenderer) {
@@ -183,8 +188,13 @@
      *  - itemRenderer: a function used to render list items (optional)
      */
     class KVListWidget extends ListWidget {
-        get tagName() { return 'dl'; }
-        get className() { return csscls('kvlist'); }
+        get tagName() {
+            return 'dl';
+        }
+
+        get className() {
+            return csscls('kvlist');
+        }
 
         render() {
             this.bindAttr(['itemRenderer', 'data'], function () {
@@ -232,7 +242,9 @@
      *  - data
      */
     class VariableListWidget extends KVListWidget {
-        get className() { return csscls('kvlist varlist'); }
+        get className() {
+            return csscls('kvlist varlist');
+        }
 
         itemRenderer(dt, dd, key, value) {
             const span = document.createElement('span');
@@ -275,7 +287,9 @@
      *  - data
      */
     class HtmlVariableListWidget extends KVListWidget {
-        get className() { return csscls('kvlist htmlvarlist'); }
+        get className() {
+            return csscls('kvlist htmlvarlist');
+        }
 
         itemRenderer(dt, dd, key, value) {
             const tempElement = document.createElement('i');
@@ -324,8 +338,13 @@
      *             example: {key1: label1, key2: label2} or [key1, key2]
      */
     class TableVariableListWidget extends PhpDebugBar.Widget {
-        get tagName() { return 'div'; }
-        get className() { return csscls('tablevarlist'); }
+        get tagName() {
+            return 'div';
+        }
+
+        get className() {
+            return csscls('tablevarlist');
+        }
 
         render() {
             this.bindAttr('data', function (data) {
@@ -465,8 +484,13 @@
      *  - data
      */
     class IFrameWidget extends PhpDebugBar.Widget {
-        get tagName() { return 'iframe'; }
-        get className() { return csscls('iframe'); }
+        get tagName() {
+            return 'iframe';
+        }
+
+        get className() {
+            return csscls('iframe');
+        }
 
         render() {
             this.el.setAttribute('seamless', 'seamless');
@@ -494,7 +518,9 @@
      *  - data
      */
     class MessagesWidget extends PhpDebugBar.Widget {
-        get className() { return csscls('messages'); }
+        get className() {
+            return csscls('messages');
+        }
 
         render() {
             const self = this;
@@ -506,6 +532,19 @@
                     val.classList.add(csscls('value'));
                     val.innerHTML = value.message_html;
                     li.append(val);
+
+                    // get the id for sfDump
+                    const pre = val.querySelector('pre.sf-dump[id]');
+                    const sfDumpId = pre ? pre.id : null;
+
+                    // Run sfDump if needed
+                    if (sfDumpId && typeof window.Sfdump === 'function') {
+                        try {
+                            window.Sfdump(sfDumpId, { maxDepth: 0 });
+                        } catch (e) {
+                            console.error('Sfdump failed:', e);
+                        }
+                    }
                 } else {
                     let m = value.message;
                     if (m.length > 100) {
@@ -689,8 +728,13 @@
      *  - data
      */
     class TimelineWidget extends PhpDebugBar.Widget {
-        get tagName() { return 'ul'; }
-        get className() { return csscls('timeline'); }
+        get tagName() {
+            return 'ul';
+        }
+
+        get className() {
+            return csscls('timeline');
+        }
 
         render() {
             this.bindAttr('data', function (data) {
@@ -849,7 +893,9 @@
      *  - data
      */
     class ExceptionsWidget extends PhpDebugBar.Widget {
-        get className() { return csscls('exceptions'); }
+        get className() {
+            return csscls('exceptions');
+        }
 
         render() {
             this.list = new ListWidget({ itemRenderer(li, e) {
@@ -924,7 +970,7 @@
 
                         const note = samp.parentElement.querySelector('>.sf-dump-note');
                         if (note) {
-                            note.innerHTML = note.innerHTML.replace(/^array:/, '<span class="sf-dump-key">Stack Trace:</span> ') + ' files';
+                            note.innerHTML = `${note.innerHTML.replace(/^array:/, '<span class="sf-dump-key">Stack Trace:</span> ')} files`;
                         }
                     }
                     li.append(trace);
