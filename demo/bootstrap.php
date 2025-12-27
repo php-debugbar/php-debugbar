@@ -22,6 +22,14 @@ $debugbar->setStorage(new DebugBar\Storage\FileStorage(__DIR__ . '/profiles'));
 // $debugbar->setStorage(new DebugBar\Storage\RedisStorage(new Predis\Client()));
 $debugbarRenderer->setOpenHandlerUrl('open.php');
 
+// configs
+// $debugbar->useHtmlVarDumper();
+// $debugbar->setEditor('vscode');
+// $debugbar->setEditor('vscode');
+// $debugbar->setRemoteReplacements(['/remote/demo/' => '/home/demo/']);
+// $debugbar['messages']->collectFileTrace();
+// $debugbar['time']->showMemoryUsage();
+
 function render_demo_page(?Closure $callback = null)
 {
     global $debugbarRenderer;

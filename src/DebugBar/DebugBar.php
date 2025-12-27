@@ -51,7 +51,15 @@ class DebugBar implements ArrayAccess
 
     protected string $stackSessionNamespace = 'PHPDEBUGBAR_STACK_DATA';
 
+    protected bool $useHtmlVarDumper = false;
+
     protected bool $stackAlwaysUseSessionStorage = false;
+
+    protected ?string $editorTemplate = null;
+
+    protected ?string $editorLinkTemplate = null;
+
+    protected ?array $remotePathReplacements = null;
 
     /**
      * Adds a data collector
@@ -68,6 +76,18 @@ class DebugBar implements ArrayAccess
         }
         if (isset($this->collectors[$collector->getName()])) {
             throw new DebugBarException("'{$collector->getName()}' is already a registered collector");
+        }
+        if ($this->useHtmlVarDumper && method_exists($collector, 'useHtmlVarDumper')) {
+            $collector->useHtmlVarDumper($this->useHtmlVarDumper);
+        }
+        if ($this->editorTemplate && method_exists($collector, 'setEditorLinkTemplate')) {
+            $collector->setEditorLinkTemplate($this->editorTemplate);
+        }
+        if ($this->editorLinkTemplate && method_exists($collector, 'setXdebugLinkTemplate')) {
+            $collector->setXdebugLinkTemplate($this->editorLinkTemplate);
+        }
+        if ($this->remotePathReplacements && method_exists($collector, 'setXdebugReplacements')) {
+            $collector->setXdebugReplacements($this->remotePathReplacements);
         }
         $this->collectors[$collector->getName()] = $collector;
         return $this;
@@ -189,6 +209,20 @@ class DebugBar implements ArrayAccess
             $this->httpDriver = new PhpHttpDriver();
         }
         return $this->httpDriver;
+    }
+
+    /**
+     * Set the sinfony html avr dumper globally
+     */
+    public function useHtmlVarDumper(bool $value = true): void
+    {
+        $this->useHtmlVarDumper = $value;
+
+        foreach ($this->collectors as $collector) {
+            if (method_exists($collector, 'useHtmlVarDumper')) {
+                $collector->useHtmlVarDumper($this->useHtmlVarDumper);
+            }
+        }
     }
 
     /**
@@ -455,6 +489,54 @@ class DebugBar implements ArrayAccess
             $this->jsRenderer = new JavascriptRenderer($this, $baseUrl, $basePath);
         }
         return $this->jsRenderer;
+    }
+
+    /**
+     * Set the editor globally, e.g., `vscode`
+     */
+    public function setEditor(string $editor): void
+    {
+        $this->editorTemplate = $editor;
+        $this->editorLinkTemplate = null;
+
+        foreach ($this->collectors as $collector) {
+            if (method_exists($collector, 'setEditorLinkTemplate')) {
+                $collector->setEditorLinkTemplate($this->editorTemplate);
+            }
+        }
+    }
+
+    /**
+     * Set the editor link template globally,
+     * `%f` = file, `%l` = line, e.g., `vscode://file/%f:%l`
+     */
+    public function setEditorTemplate(string $editorLinkTemplate, bool $shouldUseAjax = false): void
+    {
+        $this->editorTemplate = null;
+        $this->editorLinkTemplate = !$shouldUseAjax ? $editorLinkTemplate
+            : "javascript:(()=>{let r=new XMLHttpRequest;r.open('get','{$editorLinkTemplate}');r.send();})()";
+
+        foreach ($this->collectors as $collector) {
+            if (method_exists($collector, 'setXdebugLinkTemplate')) {
+                $collector->setXdebugLinkTemplate($this->editorLinkTemplate);
+            }
+        }
+    }
+
+    /**
+     * Set server path replacements, server paths will be mapped to local paths
+     * e.g., `['/var/www/remote/' => '/home/local/']`,
+     * '/var/www/remote/app/path' will become to '/home/local/app/path'
+     */
+    public function setRemoteReplacements(array $remotePathReplacements): void
+    {
+        $this->remotePathReplacements = $remotePathReplacements;
+
+        foreach ($this->collectors as $collector) {
+            if (method_exists($collector, 'setXdebugReplacements')) {
+                $collector->setXdebugReplacements($this->remotePathReplacements);
+            }
+        }
     }
 
     // --------------------------------------------
