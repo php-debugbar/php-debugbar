@@ -8,7 +8,9 @@
      *  - data
      */
     class SQLQueriesWidget extends PhpDebugBar.Widget {
-        get className() { return csscls('sqlqueries'); }
+        get className() {
+            return csscls('sqlqueries');
+        }
 
         onFilterClick(el) {
             el.classList.toggle(csscls('excluded'));
