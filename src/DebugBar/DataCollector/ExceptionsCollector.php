@@ -242,7 +242,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
             "$name:badge" => [
                 'map' => "$name.count",
                 'default' => 'null',
-            ]
+            ],
         ];
     }
 }
