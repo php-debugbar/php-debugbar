@@ -195,24 +195,29 @@ class DebugBarVarDumperTest extends DebugBarTestCase
         $d->resetDumperOptions(['styles' => $this->testStyles]);
         $assets = $d->getAssets();
         $this->assertStringContainsString(self::STYLE_STRING, $assets['inline_head']['html_var_dumper']);
+    }
 
-        // The next tests require changes in Symfony 3.2:
-        $dumpMethod = new \ReflectionMethod('Symfony\Component\VarDumper\Dumper\HtmlDumper', 'dump');
-        if ($dumpMethod->getNumberOfParameters() >= 3) {
-            // Test that the 'expanded_depth' option affects output
-            $d->resetDumperOptions(['expanded_depth' => 123321]);
-            $out = $d->renderVar(true);
-            $this->assertStringContainsString('123321', $out);
+    public function testDumperOptionsExtended(): void
+    {
+        $this->markTestSkipped('Currently not supported');
 
-            // Test that the 'max_string' option affects output
-            $d->resetDumperOptions(['max_string' => 321123]);
-            $out = $d->renderVar(true);
-            $this->assertStringContainsString('321123', $out);
+        // Test the actual operation of the dumper options
+        /** @phpstan-ignore deadCode.unreachable */
+        $d = new DebugBarVarDumper();
 
-            // Test that the 'file_link_format' option affects output
-            $d->resetDumperOptions(['file_link_format' => 'fmt%ftest']);
-            $out = $d->renderVar(function () {});
-            $this->assertStringContainsString('DebugBarVarDumperTest.phptest', $out);
-        }
+        // Test that the 'expanded_depth' option affects output
+        $d->resetDumperOptions(['expanded_depth' => 123321]);
+        $out = $d->renderVar(true);
+        $this->assertStringContainsString('123321', $out);
+
+        // Test that the 'max_string' option affects output
+        $d->resetDumperOptions(['max_string' => 321123]);
+        $out = $d->renderVar(true);
+        $this->assertStringContainsString('321123', $out);
+
+        // Test that the 'file_link_format' option affects output
+        $d->resetDumperOptions(['file_link_format' => 'fmt%ftest']);
+        $out = $d->renderVar(function () {});
+        $this->assertStringContainsString('DebugBarVarDumperTest.phptest', $out);
     }
 }

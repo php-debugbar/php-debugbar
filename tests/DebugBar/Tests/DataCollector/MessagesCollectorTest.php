@@ -44,6 +44,7 @@ class MessagesCollectorTest extends DebugBarTestCase
     public function testAssets(): void
     {
         $c = new MessagesCollector();
+        $c->useHtmlVarDumper(false);
         $this->assertCount(0, $c->getAssets());
 
         $c->useHtmlVarDumper();
@@ -55,6 +56,7 @@ class MessagesCollectorTest extends DebugBarTestCase
         $var = ['one', 'two'];
 
         $c = new MessagesCollector();
+        $c->useHtmlVarDumper(false);
         $this->assertFalse($c->isHtmlVarDumperUsed());
         $c->addMessage($var);
         $data = $c->collect();

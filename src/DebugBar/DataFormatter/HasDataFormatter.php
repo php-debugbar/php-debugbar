@@ -17,9 +17,7 @@ use DebugBar\DataCollector\DataCollector;
 
 trait HasDataFormatter
 {
-    // The HTML var dumper requires debug bar users to support the new inline assets, which not all
-    // may support yet - so return false by default for now.
-    protected bool $useHtmlVarDumper = false;
+    protected bool $useHtmlVarDumper = true;
     protected ?DataFormatterInterface $dataFormatter = null;
     protected ?DebugBarVarDumper $varDumper = null;
 

@@ -533,6 +533,19 @@
                     val.classList.add(csscls('value'));
                     val.innerHTML = value.message_html;
                     li.append(val);
+
+                    // get the id for sfDump
+                    const pre = val.querySelector('pre.sf-dump[id]');
+                    const sfDumpId = pre ? pre.id : null;
+
+                    // Run sfDump if needed
+                    if (sfDumpId && typeof window.Sfdump === 'function') {
+                        try {
+                            window.Sfdump(sfDumpId, { maxDepth: 0 });
+                        } catch (e) {
+                            console.error('Sfdump failed:', e);
+                        }
+                    }
                 } else {
                     let m = value.message;
                     if (m.length > 100) {

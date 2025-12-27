@@ -40,7 +40,7 @@ class ConfigCollector extends DataCollector implements Renderable, AssetProvider
     {
         $data = [];
         foreach ($this->data as $k => $v) {
-            if ($this->isHtmlVarDumperUsed()) {
+            if ($this->isHtmlVarDumperUsed() && !is_string($v)) {
                 $v = $this->getVarDumper()->renderVar($v);
             } elseif (!is_string($v)) {
                 $v = $this->getDataFormatter()->formatVar($v);

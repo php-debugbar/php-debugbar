@@ -51,7 +51,7 @@ class DebugBar implements ArrayAccess
 
     protected string $stackSessionNamespace = 'PHPDEBUGBAR_STACK_DATA';
 
-    protected bool $useHtmlVarDumper = false;
+    protected bool $useHtmlVarDumper = true;
 
     protected bool $stackAlwaysUseSessionStorage = false;
 
