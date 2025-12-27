@@ -34,7 +34,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
 
     protected bool $collectFile = false;
 
-    protected int $backtraceLimit = 5;
+    protected int $backtraceLimit = 15;
 
     /** @var array<string> */
     protected array $backtraceExcludePaths = ['/vendor/'];
