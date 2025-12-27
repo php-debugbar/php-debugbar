@@ -84,7 +84,9 @@ window.PhpDebugBar = window.PhpDebugBar || {};
      * Base class for all elements with a visual component
      */
     class Widget {
-        get tagName() { return 'div'; }
+        get tagName() {
+            return 'div';
+        }
 
         constructor(options = {}) {
             this._attributes = { ...this.defaults };
@@ -229,7 +231,9 @@ window.PhpDebugBar = window.PhpDebugBar || {};
      *  - data: forward data to widget data
      */
     class Tab extends Widget {
-        get className() { return csscls('panel'); }
+        get className() {
+            return csscls('panel');
+        }
 
         render() {
             this.tab = document.createElement('a');
@@ -271,7 +275,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.bindAttr('data', function (data) {
                 if (this.has('widget')) {
                     this.get('widget').set('data', data);
-                    this.tab.setAttribute('data-empty', Object.keys(data).length === 0 || data.count === 0)
+                    this.tab.setAttribute('data-empty', Object.keys(data).length === 0 || data.count === 0);
                 }
             });
         }
@@ -292,8 +296,13 @@ window.PhpDebugBar = window.PhpDebugBar || {};
      *  - data: alias of title
      */
     class Indicator extends Widget {
-        get tagName() { return 'span'; }
-        get className() { return csscls('indicator'); }
+        get tagName() {
+            return 'span';
+        }
+
+        get className() {
+            return csscls('indicator');
+        }
 
         render() {
             this.icon = document.createElement('i');
@@ -357,8 +366,13 @@ window.PhpDebugBar = window.PhpDebugBar || {};
      *
      */
     class Settings extends Widget {
-        get tagName() { return 'form'; }
-        get className() { return csscls('settings'); }
+        get tagName() {
+            return 'form';
+        }
+
+        get className() {
+            return csscls('settings');
+        }
 
         settings = {};
 
@@ -562,7 +576,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             }
 
             // filename is a number, path could be like /action/{id}
-            if (uri.length && !isNaN(filename)) {
+            if (uri.length && !Number.isNaN(filename)) {
                 filename = `${uri.pop()}/${filename}`;
             }
 
@@ -592,7 +606,9 @@ window.PhpDebugBar = window.PhpDebugBar || {};
      * from datasets.
      */
     class DebugBar extends Widget {
-        get className() { return `phpdebugbar ${csscls('minimized')}`; }
+        get className() {
+            return `phpdebugbar ${csscls('minimized')}`;
+        }
 
         options = {
             bodyMarginBottom: true,
@@ -676,14 +692,14 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
             let contentSize = this.respCSSSize;
             if (this.respCSSSize === 0) {
-                const visibleChildren = Array.from(this.header.children).filter(el => {
+                const visibleChildren = Array.from(this.header.children).filter((el) => {
                     return el.offsetParent !== null;
                 });
                 for (const child of visibleChildren) {
                     const styles = window.getComputedStyle(child);
-                    contentSize += child.offsetWidth +
-                        parseFloat(styles.marginLeft) +
-                        parseFloat(styles.marginRight);
+                    contentSize += child.offsetWidth
+                        + Number.parseFloat(styles.marginLeft)
+                        + Number.parseFloat(styles.marginRight);
                 }
             }
 
@@ -700,7 +716,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             }
 
             // Reset height to ensure bar is still visible
-            const currentHeight = this.body.clientHeight || parseInt(localStorage.getItem('phpdebugbar-height'), 10) || 300;
+            const currentHeight = this.body.clientHeight || Number.parseInt(localStorage.getItem('phpdebugbar-height'), 10) || 300;
             this.setHeight(currentHeight);
         }
 
@@ -871,7 +887,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             }
             // bar height
             const height = localStorage.getItem('phpdebugbar-height');
-            this.setHeight(parseInt(height) || this.body.offsetHeight);
+            this.setHeight(Number.parseInt(height) || this.body.offsetHeight);
 
             // bar visibility
             const open = localStorage.getItem('phpdebugbar-open');
@@ -1425,7 +1441,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * Handles a Fetch API Response or an XMLHttpRequest
          *
          * @param {Response|XMLHttpRequest} response
-         * @return {Bool}
+         * @return {boolean}
          */
         handle(response) {
             if (this.loadFromId(response)) {
@@ -1452,6 +1468,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             } else if (response instanceof XMLHttpRequest) {
                 return response.getResponseHeader(header);
             }
+            return null;
         }
 
         setAutoShow(autoshow) {
@@ -1463,7 +1480,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * Checks if the HEADER-id exists and loads the dataset using the open handler
          *
          * @param {Response|XMLHttpRequest} response
-         * @return {Bool}
+         * @return {boolean}
          */
         loadFromId(response) {
             const id = this.extractIdFromHeaders(response);
@@ -1488,7 +1505,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * Checks if the HEADER exists and loads the dataset
          *
          * @param {Response|XMLHttpRequest} response
-         * @return {Bool}
+         * @return {boolean}
          */
         loadFromData(response) {
             const raw = this.extractDataFromHeaders(response);

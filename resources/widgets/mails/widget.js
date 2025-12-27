@@ -8,7 +8,9 @@
      *  - data
      */
     class MailsWidget extends PhpDebugBar.Widget {
-        get className() { return csscls('mails'); }
+        get className() {
+            return csscls('mails');
+        }
 
         render() {
             this.list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer(li, mail) {
