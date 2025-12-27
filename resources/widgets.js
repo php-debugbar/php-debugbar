@@ -1,3 +1,4 @@
+/* global phpdebugbar_hljs */
 (function () {
     /**
      * @namespace
@@ -94,7 +95,7 @@
         codeElement.classList.remove('hljs');
 
         // Show line numbers in a list
-        if (!isNaN(Number.parseFloat(firstLineNumber))) {
+        if (!Number.isNaN(Number.parseFloat(firstLineNumber))) {
             const lineCount = code.split('\n').length;
             const lineNumbers = document.createElement('ul');
             pre.prepend(lineNumbers);
@@ -1129,7 +1130,7 @@
             if (!datasets) {
                 return;
             }
-            for (const [key, data] of Object.entries(datasets)) {
+            for (const [_, data] of Object.entries(datasets)) {
                 if (!data.__meta) {
                     continue;
                 }

@@ -576,7 +576,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             }
 
             // filename is a number, path could be like /action/{id}
-            if (uri.length && !isNaN(filename)) {
+            if (uri.length && !Number.isNaN(filename)) {
                 filename = `${uri.pop()}/${filename}`;
             }
 
@@ -1441,7 +1441,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * Handles a Fetch API Response or an XMLHttpRequest
          *
          * @param {Response|XMLHttpRequest} response
-         * @return {Bool}
+         * @return {boolean}
          */
         handle(response) {
             if (this.loadFromId(response)) {
@@ -1468,6 +1468,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             } else if (response instanceof XMLHttpRequest) {
                 return response.getResponseHeader(header);
             }
+            return null;
         }
 
         setAutoShow(autoshow) {
@@ -1479,7 +1480,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * Checks if the HEADER-id exists and loads the dataset using the open handler
          *
          * @param {Response|XMLHttpRequest} response
-         * @return {Bool}
+         * @return {boolean}
          */
         loadFromId(response) {
             const id = this.extractIdFromHeaders(response);
@@ -1504,7 +1505,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * Checks if the HEADER exists and loads the dataset
          *
          * @param {Response|XMLHttpRequest} response
-         * @return {Bool}
+         * @return {boolean}
          */
         loadFromData(response) {
             const raw = this.extractDataFromHeaders(response);
