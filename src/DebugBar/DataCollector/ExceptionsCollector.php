@@ -20,11 +20,17 @@ use Throwable;
  */
 class ExceptionsCollector extends DataCollector implements Renderable
 {
-    /** @var array<Throwable|array> */
+    protected string $name = 'exceptions';
+    protected string $icon = 'bug';
     protected array $exceptions = [];
-    /** @var array<string, array> */
     protected array $existingWarnings = [];
     protected bool $chainExceptions = false;
+
+    public function __construct(string $name = 'exceptions', string $icon = 'bug')
+    {
+        $this->name = $name;
+        $this->icon = $icon;
+    }
 
     /**
      * Adds an exception to be profiled in the debug bar. Same as addThrowable
@@ -219,20 +225,22 @@ class ExceptionsCollector extends DataCollector implements Renderable
 
     public function getName(): string
     {
-        return 'exceptions';
+        return $this->name;
     }
 
     public function getWidgets(): array
     {
+        $name = $this->getName();
+
         return [
-            'exceptions' => [
-                'icon' => 'bug',
+            "$name" => [
+                'icon' => $this->icon,
                 'widget' => 'PhpDebugBar.Widgets.ExceptionsWidget',
-                'map' => 'exceptions.exceptions',
+                'map' => "$name.exceptions",
                 'default' => '[]',
             ],
-            'exceptions:badge' => [
-                'map' => 'exceptions.count',
+            "$name:badge" => [
+                'map' => "$name.count",
                 'default' => 'null',
             ],
         ];
