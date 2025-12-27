@@ -118,6 +118,7 @@ trait HasXdebugLinks
             'espresso' => 'x-espresso://open?filepath=%f&lines=%l',
             'netbeans' => 'netbeans://open/?f=%f:%l',
             'cursor' => 'cursor://file/%f:%l',
+            'cursor-remote' => 'cursor://vscode-remote/%f:%l',
             'windsurf' => 'windsurf://file/%f:%l',
             'zed' => 'zed://file/%f:%l',
             'antigravity' => 'antigravity://file/%f:%l',
