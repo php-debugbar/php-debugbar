@@ -37,6 +37,9 @@ jobs:
       run: composer update --prefer-dist --no-progress
 
     - name: Build all files
+      run: npm run lint
+
+    - name: Build all files
       run: npm run build
 
     - name: Check for changes
