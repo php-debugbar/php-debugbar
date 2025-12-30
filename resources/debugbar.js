@@ -626,6 +626,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.firstTabName = null;
             this.activePanelName = null;
             this.activeDatasetId = null;
+            this.pendingDataSetId = null;
             this.datesetTitleFormater = new DatasetTitleFormater(this);
             const bodyStyles = window.getComputedStyle(document.body);
             this.bodyMarginBottomHeight = Number.parseInt(bodyStyles.marginBottom);
@@ -1169,6 +1170,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.restorebtn.style.display = 'none';
             localStorage.setItem('phpdebugbar-open', '1');
             const tab = localStorage.getItem('phpdebugbar-tab');
+            if (this.pendingDataSetId) {
+                this.dataChangeHandler(this.datasets[this.pendingDataSetId]);
+                this.pendingDataSetId = null;
+            }
             if (this.isTab(tab)) {
                 this.showTab(tab);
             } else {
@@ -1333,7 +1338,12 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         showDataSet(id) {
             this.activeDatasetId = id;
-            this.dataChangeHandler(this.datasets[id]);
+            if (this.isClosed()) {
+                this.pendingDataSetId = id;
+            } else {
+                this.dataChangeHandler(this.datasets[id]);
+                this.pendingDataSetId = null;
+            }
 
             if (this.datasetsSelect.value !== id) {
                 this.datasetsSelect.value = id;

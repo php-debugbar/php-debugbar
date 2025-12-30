@@ -1058,9 +1058,9 @@ class JavascriptRenderer
         if ($renderStackedData && $this->debugBar->hasStackedData()) {
             foreach ($this->debugBar->getStackedData() as $id => $data) {
                 if ($this->areDatasetsDeferred()) {
-                    $js .= $this->getLoadDatasetCode($id, '(stacked)');
+                    $js .= $this->getLoadDatasetCode($id, '(stacked)', false);
                 } else {
-                    $js .= $this->getAddDatasetCode($id, $data, '(stacked)');
+                    $js .= $this->getAddDatasetCode($id, $data, '(stacked)', false);
 
                 }
             }
@@ -1224,14 +1224,15 @@ class JavascriptRenderer
      *
      *
      */
-    protected function getAddDatasetCode(string $requestId, array $data, ?string $suffix = null): string
+    protected function getAddDatasetCode(string $requestId, array $data, ?string $suffix = null, bool $show = true): string
     {
         $js = sprintf(
-            "%s.addDataSet(%s, \"%s\"%s);\n",
+            "%s.addDataSet(%s, %s, %s, %s);\n",
             $this->variableName,
             json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_INVALID_UTF8_IGNORE),
-            $requestId,
-            $suffix ? ", " . json_encode($suffix) : '',
+            json_encode($requestId),
+            json_encode($suffix ?: ''),
+            json_encode($show),
         );
         return $js;
     }
@@ -1240,15 +1241,15 @@ class JavascriptRenderer
      * Returns the js code needed to load a dataset with the OpenHandler
      *
      *
-     * @return string
      */
-    protected function getLoadDatasetCode(string $requestId, ?string $suffix = null)
+    protected function getLoadDatasetCode(string $requestId, ?string $suffix = null, bool $show = true): string
     {
         $js = sprintf(
-            "%s.loadDataSet(\"%s\"%s);\n",
-            $this->variableName,
-            $requestId,
-            $suffix ? ", " . json_encode($suffix) : '',
+            "%s.loadDataSet(%s, %s, %s);\n",
+            json_encode($this->variableName),
+            json_encode($requestId),
+            json_encode($suffix ?: ''),
+            json_encode($show),
         );
         return $js;
     }
