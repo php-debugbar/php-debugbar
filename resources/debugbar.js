@@ -185,7 +185,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             }
 
             // If value for attributes is already the same, skip
-            if (this.has(attr) && equal(this.get(attr), value)) {
+            if (attr === 'data' && this.has(attr) && equal(this.get(attr), value)) {
+                console.log('equal', attr, this.get(attr), value)
                 return;
             }
 
