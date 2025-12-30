@@ -38,63 +38,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
     };
 
     /**
-     * Copyright (c) 2017 Evgeny Poberezkin
-     * https://github.com/epoberezkin/fast-deep-equal
-     */
-    /* eslint-disable no-self-compare    */
-    const equal = PhpDebugBar.utils.equal = function (a, b) {
-        if (a === b)
-            return true;
-
-        if (a && b && typeof a == 'object' && typeof b == 'object') {
-            if (a.constructor !== b.constructor)
-                return false;
-
-            let length, i;
-            if (Array.isArray(a)) {
-                length = a.length;
-                if (length !== b.length)
-                    return false;
-                for (i = length; i-- !== 0;) {
-                    if (!equal(a[i], b[i]))
-                        return false;
-                }
-                return true;
-            }
-
-            if (a.constructor === RegExp)
-                return a.source === b.source && a.flags === b.flags;
-            if (a.valueOf !== Object.prototype.valueOf)
-                return a.valueOf() === b.valueOf();
-            if (a.toString !== Object.prototype.toString)
-                return a.toString() === b.toString();
-
-            const keys = Object.keys(a);
-            length = keys.length;
-            if (length !== Object.keys(b).length)
-                return false;
-
-            for (i = length; i-- !== 0;) {
-                if (!Object.prototype.hasOwnProperty.call(b, keys[i]))
-                    return false;
-            }
-
-            for (i = length; i-- !== 0;) {
-                const key = keys[i];
-
-                if (!equal(a[key], b[key]))
-                    return false;
-            }
-
-            return true;
-        }
-
-        // true if both NaN, false otherwise
-        return a !== a && b !== b;
-    };
-    /* eslint-enable no-self-compare */
-
-    /**
      * Returns a prefixed CSS class name (or selector).
      *
      * If `cls` contains spaces, each class is prefixed.
@@ -177,23 +120,20 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * @param {*} [value] Attribute value (optional if attr is an object)
          */
         set(attr, value) {
-            if (typeof attr !== 'string') {
-                for (const k in attr) {
-                    this.set(k, attr[k]);
-                }
-                return;
-            }
+            const attrs = typeof attr === 'string' ? { [attr]: value } : attr;
 
-            // If value for attributes is already the same, skip
-            if (attr === 'data' && this.has(attr) && equal(this.get(attr), value)) {
-                console.log('equal', attr, this.get(attr), value)
-                return;
-            }
-
-            this._attributes[attr] = value;
-            if (this._boundAttributes[attr]) {
-                for (const callback of this._boundAttributes[attr]) {
-                    callback.call(this, value);
+            const callbacks = [];
+            for (const attr in attrs) {
+                value = attrs[attr];
+                this._attributes[attr] = value;
+                if (this._boundAttributes[attr]) {
+                    for (const callback of this._boundAttributes[attr]) {
+                        // Make sure to run the callback only once per attribute change
+                        if (!callbacks.includes(callback)) {
+                            callback.call(this, value);
+                            callbacks.push(callback);
+                        }
+                    }
                 }
             }
         }
