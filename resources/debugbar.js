@@ -173,9 +173,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 return;
             }
 
-            // If data is already the same, skip
-            if (this._attributes[attr] && equal(this._attributes[attr], value)) {
-                console.log('equal', this._attributes[attr], value);
+            // If value for attributes is already the same, skip
+            if (this.has(attr) && equal(this.get(attr), value)) {
                 return;
             }
 
