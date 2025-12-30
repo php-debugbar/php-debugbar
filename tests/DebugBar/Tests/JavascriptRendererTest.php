@@ -125,12 +125,39 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertStringContainsString('HeaderTest', $html);
     }
 
+    public function testRenderHeadWithCsp(): void
+    {
+        $this->r->setCspNonce('mynonce');
+
+        $this->r->addAssets('foo.css', 'foo.js', '/bar', '/foobar');
+        $this->r->addInlineAssets(
+            ['css' => 'CssTest'],
+            ['js' => 'JsTest'],
+            ['head' => '<script type="application/javascript">console.log(1)</script><style>body{margin:0}</style>']
+        );
+
+        $html = $this->r->renderHead();
+        $this->assertStringContainsString('<style type="text/css" nonce="mynonce">CssTest</style>', $html);
+        $this->assertStringContainsString('<script type="text/javascript" nonce="mynonce">JsTest</script>', $html);
+        $this->assertStringContainsString(
+            '<script nonce="mynonce" type="application/javascript">console.log(1)</script>',
+            $html
+        );
+        $this->assertStringContainsString('<style nonce="mynonce">body{margin:0}</style>', $html);
+    }
+
     public function testRenderFullInitialization(): void
     {
         $this->debugbar->addCollector(new \DebugBar\DataCollector\MessagesCollector());
         $this->r->addControl('time', ['icon' => 'time', 'map' => 'time', 'default' => '"0s"']);
         $expected = str_replace("\r\n", "\n", rtrim(file_get_contents(__DIR__ . '/full_init.html')));
         $this->assertStringStartsWith($expected, $this->r->render());
+    }
+
+    public function testRenderFullWithCsp(): void
+    {
+        $this->r->setCspNonce('mynonce');
+        $this->assertStringStartsWith('<script type="text/javascript" nonce="mynonce">', $this->r->render());
     }
 
     public function testRenderConstructorOnly(): void

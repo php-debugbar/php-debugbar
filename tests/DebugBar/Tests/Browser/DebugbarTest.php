@@ -33,7 +33,7 @@ class DebugbarTest extends AbstractBrowserTestCase
             });
 
         $this->assertEquals('hello', $messages[0]);
-        $this->assertCount(7, $messages);
+        $this->assertCount(9, $messages);
 
         // Close it again
         $client->click($this->getTabLink($crawler, 'messages'));
