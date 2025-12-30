@@ -13,6 +13,7 @@ $debugbarRenderer = $debugbar->getJavascriptRenderer()
                              ->setAjaxHandlerEnableTab(true)
                              ->setHideEmptyTabs(true)
                              ->setUseDistFiles(false)
+                             ->setCspNonce('demo')
                              ->setTheme($_GET['theme'] ?? 'auto');
 
 //
@@ -37,7 +38,7 @@ function render_demo_page(?Closure $callback = null)
 <html>
     <head>
         <?php echo $debugbarRenderer->renderHead() ?>
-        <script type="text/javascript">
+        <script type="text/javascript" nonce="demo">
             document.addEventListener('DOMContentLoaded', function() {
                 document.querySelectorAll('.ajax').forEach(function(el) {
                     el.addEventListener('click', function(event) {
