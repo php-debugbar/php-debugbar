@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+// Adds the Content-Security-Policy to the HTTP header.
+header("Content-Security-Policy: default-src 'self' 'nonce-demo'; img-src data:");
+
 /** @var \DebugBar\DebugBar $debugbar */
 
 include 'bootstrap.php';
@@ -21,6 +24,8 @@ $debugbar['messages']->addMessage(['toto' => ['titi', 'tata']]);
 $debugbar['messages']->addMessage('oups', 'error');
 $debugbar['messages']->addMessage('welcome!', 'success');
 $debugbar['messages']->addMessage('panic!', 'critical');
+$debugbar["messages"]->addMessage("<!--<script>");
+$debugbar["messages"]->addMessage("<script>alert('Whoops')</script>");
 
 require __DIR__ . '/collectors/counter.php';
 require __DIR__ . '/collectors/templates.php';

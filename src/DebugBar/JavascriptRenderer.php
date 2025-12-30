@@ -968,7 +968,7 @@ class JavascriptRenderer
         }
 
         foreach ($inlineCss as $content) {
-            $html .= sprintf('<style type="text/css">%s</style>' . "\n", $content);
+            $html .= sprintf('<style type="text/css"%s>%s</style>' . "\n", $nonce, $content);
         }
 
         foreach ($jsFiles as $file) {
@@ -980,6 +980,14 @@ class JavascriptRenderer
         }
 
         foreach ($inlineHead as $content) {
+            if ($nonce !== '') {
+                $content =  preg_replace(
+                    '/<(script|style)(?![^>]*nonce=)/i',
+                    '<$1' . $nonce,
+                    $content
+                );
+            }
+
             $html .= $content . "\n";
         }
 
@@ -1077,7 +1085,11 @@ class JavascriptRenderer
         $nonce = $this->getNonceAttribute();
 
         if ($nonce != '') {
-            $js = preg_replace("/<script>/", "<script nonce='{$this->cspNonce}'>", $js);
+            $js =  preg_replace(
+                '/<(script)(?![^>]*nonce=)/i',
+                '<$1' . $nonce,
+                $js
+            );
         }
 
         return "<script type=\"text/javascript\"{$nonce}>\n$js\n</script>\n";
@@ -1258,7 +1270,7 @@ class JavascriptRenderer
      * If a nonce it set, create the correct attribute
      *
      */
-    protected function getNonceAttribute(): string
+    protected function getNonceAttribute(): ?string
     {
         if ($nonce = $this->getCspNonce()) {
             return ' nonce="' . $nonce . '"';

@@ -120,17 +120,20 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * @param {*} [value] Attribute value (optional if attr is an object)
          */
         set(attr, value) {
-            if (typeof attr !== 'string') {
-                for (const k in attr) {
-                    this.set(k, attr[k]);
-                }
-                return;
-            }
+            const attrs = typeof attr === 'string' ? { [attr]: value } : attr;
 
-            this._attributes[attr] = value;
-            if (this._boundAttributes[attr]) {
-                for (const callback of this._boundAttributes[attr]) {
-                    callback.call(this, value);
+            const callbacks = [];
+            for (const attr in attrs) {
+                value = attrs[attr];
+                this._attributes[attr] = value;
+                if (this._boundAttributes[attr]) {
+                    for (const callback of this._boundAttributes[attr]) {
+                        // Make sure to run the callback only once per attribute change
+                        if (!callbacks.includes(callback)) {
+                            callback.call(this, value);
+                            callbacks.push(callback);
+                        }
+                    }
                 }
             }
         }
