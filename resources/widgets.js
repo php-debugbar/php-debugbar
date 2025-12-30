@@ -18,15 +18,12 @@
     };
 
     const sfDump = PhpDebugBar.Widgets.sfDump = function (el) {
-        if (typeof window.Sfdump !== 'function')
+        if (typeof window.Sfdump !== 'function') {
             return;
+        }
 
         el.querySelectorAll('pre.sf-dump[id]').forEach((pre) => {
-            try {
-                window.Sfdump(pre.id, { maxDepth: 0 });
-            } catch (e) {
-                console.error('Sfdump failed for', pre.id, e);
-            }
+            window.Sfdump(pre.id, { maxDepth: 0 });
         });
     };
 
