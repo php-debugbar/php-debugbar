@@ -17,6 +17,16 @@
         return text.replace(/\n/g, '<br>').replace(/\s/g, '&nbsp;');
     };
 
+    const sfDump = PhpDebugBar.Widgets.sfDump = function (el) {
+        if (typeof window.Sfdump !== 'function') {
+            return;
+        }
+
+        el.querySelectorAll('pre.sf-dump[id]').forEach((pre) => {
+            window.Sfdump(pre.id, { maxDepth: 0 });
+        });
+    };
+
     /**
      * Returns a string representation of value, using JSON.stringify
      * if it's an object.
@@ -534,18 +544,7 @@
                     val.innerHTML = value.message_html;
                     li.append(val);
 
-                    // get the id for sfDump
-                    const pre = val.querySelector('pre.sf-dump[id]');
-                    const sfDumpId = pre ? pre.id : null;
-
-                    // Run sfDump if needed
-                    if (sfDumpId && typeof window.Sfdump === 'function') {
-                        try {
-                            window.Sfdump(sfDumpId, { maxDepth: 0 });
-                        } catch (e) {
-                            console.error('Sfdump failed:', e);
-                        }
-                    }
+                    sfDump(val);
                 } else {
                     let m = value.message;
                     if (m.length > 100) {
@@ -969,12 +968,13 @@
                         samp.classList.remove('sf-dump-expanded');
                         samp.classList.add('sf-dump-compact');
 
-                        const note = samp.parentElement.querySelector('>.sf-dump-note');
+                        const note = samp.parentElement.querySelector(':scope > .sf-dump-note');
                         if (note) {
                             note.innerHTML = `${note.innerHTML.replace(/^array:/, '<span class="sf-dump-key">Stack Trace:</span> ')} files`;
                         }
                     }
                     li.append(trace);
+                    sfDump(trace);
                 } else if (e.stack_trace) {
                     e.stack_trace.split('\n').forEach((trace) => {
                         const traceLine = document.createElement('div');
