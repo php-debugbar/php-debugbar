@@ -17,15 +17,7 @@ $debugbar->sendDataInHeaders();
 On the client side, an instance of `PhpDebugBar.AjaxHandler` will
 parse the headers and add the dataset to the debugbar.
 
-The AjaxHandler automatically binds to jQuery's *ajaxComplete* event
-so if you are using jQuery, you have nothing to configure.
-
-If you're not using jQuery, you can call `AjaxHandler.handle(xhr)`.
-If you are using the `JavascriptRenderer` initialization, the instance
-of `AjaxHandler` is stored in the `ajaxHandler` property of the `DebugBar` object.
-```js
-debugbar.ajaxHandler.handle(xhr);
-```
+The AjaxHandler automatically binds to `fetch()` and `XMLHttpRequest` events, which will detect AJAX requests and add the data to the debugbar.
 
 If you are sending a lot of data through headers, it may cause problems
 with your browser. Instead you can use a storage handler (see Storage chapter)
