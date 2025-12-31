@@ -29,7 +29,7 @@ jobs:
           - php: 8.4
             symfony: ^7.3
 
-    name: PHP${{ matrix.php }} Symfony${{ matrix.symfony }}
+    name: Unit PHP${{ matrix.php }} Symfony${{ matrix.symfony }}
 
     steps:
     - name: Checkout code
