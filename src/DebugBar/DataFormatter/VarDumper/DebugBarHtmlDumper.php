@@ -12,8 +12,6 @@ use Symfony\Component\VarDumper\Dumper\HtmlDumper;
  */
 class DebugBarHtmlDumper extends HtmlDumper
 {
-    // Remove the script
-    protected string $dumpSuffix = '</pre>';
     /**
      * Resets an HTML header.
      */
