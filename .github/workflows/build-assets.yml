@@ -4,16 +4,23 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'resources/**'
   pull_request:
     branches:
       - "*"
+    paths:
+      - 'resources/**'
+
+permissions:
+  contents: write
 
 jobs:
-  check-minified:
-    runs-on: ubuntu-latest
+  build-assets:
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
 
-    name: Check Minified Files
+    name: Build Minified Files
 
     steps:
     - name: Checkout code
@@ -22,7 +29,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '24'
         cache: 'npm'
 
     - name: Install dependencies
@@ -37,17 +44,12 @@ jobs:
       run: composer update --prefer-dist --no-progress
 
     - name: Build all files
-      run: npm run lint
+      run: npm run lint:fix
 
     - name: Build all files
       run: npm run build
 
-    - name: Check for changes
-      run: |
-        if [ -n "$(git status --porcelain)" ]; then
-          echo "Error: Minified files are out of date!"
-          echo "Please run 'npm run build' and commit the changes."
-          git status
-          git diff
-          exit 1
-        fi
+    - name: Commit Compiled Files
+      uses: stefanzweifel/git-auto-commit-action@v7
+      with:
+        commit_message: Update Assets

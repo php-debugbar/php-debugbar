@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DebugBar\Tests;
 
+use DebugBar\DataCollector\TemplateCollector;
 use DebugBar\JavascriptRenderer;
 
 class JavascriptRendererTest extends DebugBarTestCase
@@ -17,6 +18,13 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->r->setBasePath('/bpath');
         $this->r->setBaseUrl('/burl');
         $this->r->setUseDistFiles(false);
+    }
+
+    public function testConstructWithOldPackage(): void
+    {
+        $oldBasePath = '/some/dir/vendor/maximebf/debugbar/resources';
+        $this->r = new JavascriptRenderer($this->debugbar, null, $oldBasePath);
+        $this->assertEquals('/vendor/maximebf/debugbar/resources', $this->r->getBaseUrl());
     }
 
     public function testOptions(): void
@@ -41,6 +49,12 @@ class JavascriptRendererTest extends DebugBarTestCase
             'ajax_handler_auto_show' => false,
             'open_handler_classname' => 'OpenFoo',
             'open_handler_url' => 'open.php',
+            'use_dist_files' => true,
+            'theme' => 'auto',
+            'hide_empty_tabs' => true,
+            'ajax_handler_enable_tab' => true,
+            'defer_datasets' => true,
+            'csp_nonce' => 'mynonce',
         ]);
 
         $this->assertEquals('/foo', $this->r->getBasePath());
@@ -60,6 +74,12 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertFalse($this->r->isAjaxHandlerAutoShow());
         $this->assertEquals('OpenFoo', $this->r->getOpenHandlerClass());
         $this->assertEquals('open.php', $this->r->getOpenHandlerUrl());
+        $this->assertTrue($this->r->getuseDistFiles());
+        $this->assertEquals('auto', $this->r->getTheme());
+        $this->assertTrue($this->r->areEmptyTabsHidden());
+        $this->assertTrue($this->r->isAjaxHandlerTabEnabled());
+        $this->assertTrue($this->r->areDatasetsDeferred());
+        $this->assertEquals('mynonce', $this->r->getCspNonce());
     }
 
     public function testAddAssets(): void
@@ -102,6 +122,26 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertNotContains('/bpath/vendor/highlightjs/highlight.pack.js', $js);
     }
 
+    public function testIncludeSpecificVendors(): void
+    {
+        $this->r->setIncludeVendors('js');
+        $js = $this->r->getAssets('js');
+        $this->assertContains('/bpath/debugbar.js', $js);
+        $this->assertContains('/bpath/vendor/highlightjs/highlight.pack.js', $js);
+
+        $this->r->setIncludeVendors('css');
+        $js = $this->r->getAssets('js');
+        $this->assertContains('/bpath/debugbar.js', $js);
+        $this->assertNotContains('/bpath/vendor/highlightjs/highlight.pack.js', $js);
+    }
+
+    public function testIncludeCollectorAssets(): void
+    {
+        $this->debugbar->addCollector(new TemplateCollector());
+        $js = $this->r->getAssets('js');
+        $this->assertContains('/bpath/widgets/templates/widget.js', $js);
+    }
+
     public function testGetDistAssets(): void
     {
         $this->r->setUseDistFiles(true);
@@ -111,6 +151,28 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertNotContains('/bpath/vendor/highlightjs/highlight.pack.js', $assets['js']);
     }
 
+    public function testGetDistIncludedAssets(): void
+    {
+        $this->r->setUseDistFiles(true);
+        $assets = $this->r->getDistIncludedAssets();
+        $this->assertContains('/bpath/icons.css', $assets['css']);
+        $this->assertContains('/bpath/widgets/templates/widget.js', $assets['js']);
+        $this->assertContains('/bpath/vendor/highlightjs/highlight.pack.js', $assets['js']);
+    }
+
+
+    public function testDumpAssets(): void
+    {
+        ob_start();
+        $this->r->dumpAssets(
+            [__DIR__ . '/../../../resources/debugbar.css'],
+            ['TEST_INLINE_DUMP1', 'TEST_INLINE_DUMP1']
+        );
+        $assets = ob_get_clean();
+
+        $this->assertStringContainsString("div.phpdebugbar", $assets);
+        $this->assertStringContainsString("TEST_INLINE_DUMP1\nTEST_INLINE_DUMP1", $assets);
+    }
     public function testRenderHead(): void
     {
         $this->r->addInlineAssets(['Css' => 'CssTest'], ['Js' => 'JsTest'], ['Head' => 'HeaderTest']);

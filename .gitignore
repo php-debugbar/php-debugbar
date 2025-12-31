@@ -12,3 +12,4 @@ composer.lock
 /node_modules
 .DS_Store
 .php-cs-fixer.cache
+clover.xml

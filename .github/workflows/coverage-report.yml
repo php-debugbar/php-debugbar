@@ -7,12 +7,10 @@ on:
   pull_request:
     branches:
       - "*"
-  schedule:
-    - cron: '0 0 * * *'
 
 jobs:
-  php-tests:
-    runs-on: ubuntu-latest
+  coverage-report:
+    runs-on: ubuntu-24.04
 
     name: PHP Code Coverage
 
@@ -23,7 +21,8 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.4
+          php-version: 8.2
+          tools: composer:v2
           extensions: mbstring
           coverage: pcov
 
