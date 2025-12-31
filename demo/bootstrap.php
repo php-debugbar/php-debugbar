@@ -13,6 +13,7 @@ $debugbarRenderer = $debugbar->getJavascriptRenderer()
                              ->setAjaxHandlerEnableTab(true)
                              ->setHideEmptyTabs(true)
                              ->setUseDistFiles(false)
+                             ->setIncludeVendors(true)
                              ->setCspNonce('demo')
                              ->setTheme($_GET['theme'] ?? 'auto');
 

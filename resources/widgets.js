@@ -49,32 +49,21 @@
      * Highlights a block of code
      *
      * @param  {string} code
-     * @param  {string} lang
+     * @param  {string|null} lang
      * @return {string}
      */
     const highlight = PhpDebugBar.Widgets.highlight = function (code, lang) {
-        if (typeof code === 'string') {
-            if (typeof phpdebugbar_hljs === 'undefined') {
-                return htmlize(code);
-            }
-            const hljs = phpdebugbar_hljs.default || phpdebugbar_hljs;
-            if (lang && hljs.getLanguage(lang)) {
-                return hljs.highlight(code, { language: lang }).value;
-            }
-            return hljs.highlightAuto(code).value;
+        if (typeof phpdebugbar_hljs === 'undefined') {
+            return htmlize(code);
         }
 
-        if (typeof phpdebugbar_hljs === 'object') {
-            const hljs = phpdebugbar_hljs.default || phpdebugbar_hljs;
-            if (code.nodeType === Node.ELEMENT_NODE) {
-                hljs.highlightElement(code);
-            } else if (code.length) {
-                for (const element of code) {
-                    hljs.highlightElement(element);
-                }
-            }
+        const hljs = phpdebugbar_hljs.default;
+
+        if (lang && hljs.getLanguage(lang)) {
+            return hljs.highlight(code, { language: lang }).value;
         }
-        return code;
+
+        return hljs.highlightAuto(code).value;
     };
 
     /**
@@ -94,15 +83,8 @@
         // code line was empty: that creates problems with the horizontal scrollbar being
         // incorrectly positioned - most noticeable when line numbers are shown.
         const codeElement = document.createElement('code');
-        codeElement.textContent = `${code}\n`;
+        codeElement.innerHTML = highlight(`${code}\n`, lang);
         pre.append(codeElement);
-
-        // Format the code
-        if (lang) {
-            codeElement.classList.add(`language-${lang}`);
-        }
-        highlight(codeElement);
-        codeElement.classList.remove('hljs');
 
         // Show line numbers in a list
         if (!Number.isNaN(Number.parseFloat(firstLineNumber))) {
@@ -952,7 +934,7 @@
                             if (pre.style.display !== 'none') {
                                 pre.style.display = 'none';
                             } else {
-                                pre.style.display = '';
+                                pre.style.display = 'block';
                             }
                         });
                     }
@@ -995,7 +977,7 @@
                     if (firstChild) {
                         const file = firstChild.querySelector(`.${csscls('file')}`);
                         if (file) {
-                            file.style.display = '';
+                            file.style.display = 'block';
                         }
                     }
                 }
