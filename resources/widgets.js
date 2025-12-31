@@ -928,7 +928,9 @@
                     pre.classList.add(csscls('file'));
                     li.append(pre);
 
-                    if (!e.stack_trace_html) {
+                    if (e.stack_trace_html) {
+                        pre.style.display = 'block';
+                    } else {
                         // This click event makes the var-dumper hard to use.
                         li.addEventListener('click', () => {
                             if (pre.style.display !== 'none') {
