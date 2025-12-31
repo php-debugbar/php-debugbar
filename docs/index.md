@@ -14,7 +14,12 @@ No more `var_dump()` in your code!
 
 > **Note: Debug Bar is for development use only. Never install this on websites that are publicly accessible.**
 
-![Screenshot](screenshot.png)
+## V3 Beta
+Currently v3 is in beta. You can install it with `composer require php-debugbar/php-debugbar:^3.0@beta`.
+See the [Upgrade guide](https://github.com/php-debugbar/php-debugbar/blob/master/UPGRADE.md) for more information and breaking changes.
+
+
+<img src="screenshot.png" alt="Screenshot" style="max-width: 774px"/>
 
 **Features:**
 

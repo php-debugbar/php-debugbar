@@ -9,22 +9,16 @@ $renderer = $debugbar->getJavascriptRenderer();
 ## Assets
 
 The debug bar relies on some css and javascript files which needs to be included
-into your webpage. They are located in the *src/DebugBar/Resources* folder.
+into your webpage. They are located in the *resources* folder.
 Additionally, asset providers may provide inline assets that have to be embedded
 directly in the HTML.  This can be done in four ways:
 
  - Using `JavascriptRenderer::renderHead()` which will returns a string with
    the needed script and link tags
- - Using [Assetic](https://github.com/kriswallsmith/assetic) and
-   `JavascriptRenderer::getAsseticCollection()`
  - Dumping the assets yourself using `JavascriptRenderer::dumpCssAssets()`,
    `JavascriptRenderer::dumpJsAssets()`, and `JavascriptRenderer::dumpHeadAssets()`.
  - Retrieving filenames and inline content of assets using `JavascriptRenderer::getAssets()`
    and doing something with it
-
-I would recommend using the second method as Assetic is a very powerful asset
-manager but the other methods are provided to quickly integrate the debug bar
-into any projects.
 
 You can define the base url of your assets using `setBaseUrl()`. This is needed
 in 99% of cases.
@@ -39,11 +33,6 @@ Using `renderHead()`:
     </head>
     ...
 </html>
-```
-
-Using Assetic:
-```php
-list($cssCollection, $jsCollection, $inlineHeadCollection) = $renderer->getAsseticCollection();
 ```
 
 Dumping the assets:
@@ -61,22 +50,10 @@ Note that you can only use the debug bar assets and manage the dependencies by y
 using `$renderer->setIncludeVendors(false)`. Instead of false, *css* or *js* may be used
 to only include css or js assets of vendors.
 
-## Managing jQuery conflicts
-
-When the debug bar script is included, it will be bound to the current jQuery object.
-The default action is to call `jQuery.noConflict(true)` after this is done.
-
-This has two implications:
-
- - jQuery won't be available anymore if you didn't include your own version
-   before including the debug bar's vendors
- - your own version will be restored.
-
-If you use `JavascriptRenderer::setIncludeVendors()` to disable the inclusion of js
-vendors (ie. jquery), `jQuery.noConflict(true)` won't be called.
-
-You can manage whether `jQuery.noConflict(true)` should be called or not using
-`JavascriptRenderer::setEnableJqueryNoConflict()`.
+### Minified dist files
+By default, the debug bar uses the minified files from the dist folder. These are generated automatically and include alle vendor and widget files.
+If you want to use the non-minified files, you can set `$renderer->useDistFiles(false)`.
+When using dist files, any additional scripts or inline scripts/styles will still be included.
 
 ## The javascript object
 

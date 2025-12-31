@@ -23,8 +23,7 @@ data from a data collector. Some common widgets are provided in
 the *widgets.js* file.
 
 The `PhpDebugBar` namespace is used for all objects and the only
-dependencies are *jQuery* and *FontAwesome* (css). *FontAwesome* is
-optional but is used to add nice icons!
+dependencies are *highlight.js*. This is included by default, but can be ignored if you are not using the dist files.
 
 The main class is `PhpDebugBar.DebugBar`. It provides the infrastructure
 to manage tabs, indicators and datasets.
@@ -105,8 +104,8 @@ The Widget class defines a `set(attr, value)` function which can be used
 to set the value of attributes.
 
 Using `bindAttr(attr, callback)`, you can trigger a callback every time
-the value of the attribute is changed. `callback` can also be a `jQuery`
-object and in that case it will use the `text()` function to fill the element.
+the value of the attribute is changed. `callback` can also be a `HTMLElement`
+object and in that case it will use the `textContent` property to fill the element.
 
 Widgets should define a `render()` function which initializes the widget
 elements.
