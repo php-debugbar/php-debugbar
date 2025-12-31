@@ -160,7 +160,6 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertContains('/bpath/vendor/highlightjs/highlight.pack.js', $assets['js']);
     }
 
-
     public function testDumpAssets(): void
     {
         ob_start();
