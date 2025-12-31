@@ -392,36 +392,23 @@ class JavascriptRenderer
         return $this->initialization;
     }
 
-    /**
-     * Sets the default theme
-     *
-     *
-     * @return $this
-     */
     public function setTheme(?string $theme = 'auto'): static
     {
         $this->theme = $theme;
         return $this;
     }
 
-    /**
-     * Sets whether to hide empty tabs or not
-     *
-     * @param boolean $hide
-     *
-     * @return $this
-     */
+    public function getTheme(): string
+    {
+        return $this->theme;
+    }
+
     public function setHideEmptyTabs(bool $hide = true): static
     {
         $this->hideEmptyTabs = $hide;
         return $this;
     }
 
-    /**
-     * Checks if empty tabs are hidden or not
-     *
-     * @return boolean
-     */
     public function areEmptyTabsHidden(): bool
     {
         return $this->hideEmptyTabs;

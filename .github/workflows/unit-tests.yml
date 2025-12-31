@@ -1,0 +1,40 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      COMPOSER_NO_INTERACTION: 1
+
+    strategy:
+      matrix:
+        php: [8.5, 8.4, 8.3, 8.2]
+
+    name: PHP${{ matrix.php }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        coverage: none
+        tools: composer:v2
+        extensions: pdo_sqlite
+
+    - name: Install dependencies
+      run: composer update --prefer-dist --no-progress
+
+    - name: Execute Unit Tests
+      run: vendor/bin/phpunit --testsuite=Unit
