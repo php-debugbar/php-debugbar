@@ -1245,7 +1245,7 @@ class JavascriptRenderer
     {
         $js = sprintf(
             "%s.loadDataSet(%s, %s, %s);\n",
-            json_encode($this->variableName),
+            $this->variableName,
             json_encode($requestId),
             json_encode($suffix ?: ''),
             json_encode($show),
