@@ -13,3 +13,6 @@ composer.lock
 .DS_Store
 .php-cs-fixer.cache
 clover.xml
+/docs/overrides/__pycache__/
+/docs/assets/dist/
+/site
