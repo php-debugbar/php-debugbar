@@ -1244,8 +1244,8 @@ class JavascriptRenderer
     protected function getLoadDatasetCode(string $requestId, ?string $suffix = null, bool $show = true): string
     {
         $js = sprintf(
-            "%s.loadDataSet(%s, %s, %s);\n",
-            json_encode($this->variableName),
+            "%s.loadDataSet(%s, %s, null, %s);\n",
+            $this->variableName,
             json_encode($requestId),
             json_encode($suffix ?: ''),
             json_encode($show),
