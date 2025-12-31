@@ -8,4 +8,4 @@ $templateCollector = new \DebugBar\DataCollector\TemplateCollector();
 $debugbar->addCollector($templateCollector);
 
 $templateCollector->addTemplate('index.php', ['foo' => 'bar'], 'php', __FILE__);
-$templateCollector->addTemplate('index.php', ['foo' => 'quz'], 'php', __FILE__);
+$templateCollector->addTemplate('docs.php', ['demo' => 'true'], 'php', __FILE__);
