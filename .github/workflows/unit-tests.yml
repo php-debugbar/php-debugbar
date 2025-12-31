@@ -18,8 +18,9 @@ jobs:
     strategy:
       matrix:
         php: [8.5, 8.4, 8.3, 8.2]
+        symfony: [^5.4, ^6.4, ^7.3, ^8.4]
 
-    name: PHP${{ matrix.php }}
+    name: PHP${{ matrix.php }} Symfony${{ matrix.symfony }}
 
     steps:
     - name: Checkout code
@@ -34,7 +35,9 @@ jobs:
         extensions: pdo_sqlite
 
     - name: Install dependencies
-      run: composer update --prefer-dist --no-progress
+      run: |
+        composer require "symfony/var-dumper:${{ matrix.symfony }}" --no-interaction --no-update
+        composer update --prefer-dist --no-progress
 
     - name: Execute Unit Tests
       run: vendor/bin/phpunit --testsuite=Unit
