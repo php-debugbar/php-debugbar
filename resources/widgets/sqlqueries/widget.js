@@ -203,27 +203,6 @@
                         event.stopPropagation();
                     });
                     li.append(copyBtn);
-
-                    if (typeof phpdebugbar_sqlformatter !== 'undefined') {
-                        const formatBtn = document.createElement('span');
-                        formatBtn.setAttribute('title', 'Format SQL');
-                        formatBtn.classList.add(csscls('format-sql'));
-                        formatBtn.style.cursor = 'pointer';
-                        formatBtn.innerHTML = '&#8203;';
-                        formatBtn.addEventListener('click', function (event) {
-                            const revert = formatBtn.classList.contains(csscls('format-sql-revert'));
-                            const code = this.parentElement.querySelector('code');
-                            if (revert) {
-                                code.innerHTML = PhpDebugBar.Widgets.highlight(stmt.sql, 'sql');
-                                formatBtn.classList.remove(csscls('format-sql-revert'));
-                            } else {
-                                code.innerHTML = PhpDebugBar.Widgets.highlight(phpdebugbar_sqlformatter.default.format(stmt.sql), 'sql');
-                                formatBtn.classList.add(csscls('format-sql-revert'));
-                            }
-                            event.stopPropagation();
-                        });
-                        li.append(formatBtn);
-                    }
                 }
                 if (typeof (stmt.xdebug_link) !== 'undefined' && stmt.xdebug_link) {
                     const header = document.createElement('span');
@@ -286,6 +265,14 @@
                             return '';
                         }
                         table.hidden = !table.hidden;
+                        const code = li.querySelector('code');
+                        if (code && typeof phpdebugbar_sqlformatter !== 'undefined' ) {
+                            let sql = stmt.sql;
+                            if (!table.hidden) {
+                                sql = phpdebugbar_sqlformatter.default.format(stmt.sql);
+                            }
+                            code.innerHTML = PhpDebugBar.Widgets.highlight(sql, 'sql');
+                        }
                     });
                 }
             } });

@@ -33,8 +33,6 @@ const icons = [
     'server-cog',
     'tags',
     'x',
-    'arrows-maximize',
-    'arrows-minimize',
 
     // UI control icons
     'chevron-down',
