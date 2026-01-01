@@ -792,7 +792,7 @@
                         if (measure.params && Object.keys(measure.params).length > 0) {
                             const table = document.createElement('table');
                             table.classList.add(csscls('params'));
-                            table.style.display = 'none';
+                            table.hidden = true;
                             table.innerHTML = '<tr><th colspan="2">Params</th></tr>';
 
                             for (const key in measure.params) {
@@ -810,11 +810,7 @@
                                     return '';
                                 }
                                 const table = this.querySelector('table');
-                                if (table.style.display !== 'none') {
-                                    table.style.display = 'none';
-                                } else {
-                                    table.style.display = '';
-                                }
+                                table.hidden = !table.hidden;
                             });
 
                             li.addEventListener('click', (event) => {
@@ -929,15 +925,11 @@
                     li.append(pre);
 
                     if (e.stack_trace_html) {
-                        pre.style.display = 'block';
+                        pre.hidden = false;
                     } else {
                         // This click event makes the var-dumper hard to use.
                         li.addEventListener('click', () => {
-                            if (pre.style.display !== 'none') {
-                                pre.style.display = 'none';
-                            } else {
-                                pre.style.display = 'block';
-                            }
+                            pre.hidden = !pre.hidden;
                         });
                     }
                 }
@@ -979,7 +971,7 @@
                     if (firstChild) {
                         const file = firstChild.querySelector(`.${csscls('file')}`);
                         if (file) {
-                            file.style.display = 'block';
+                            file.hidden = false;
                         }
                     }
                 }
@@ -1260,7 +1252,7 @@
             const search = widget.get('search');
             const method = widget.get('method');
             if ((search && !meta.uri.includes(search)) || (method && meta.method !== method)) {
-                tr.style.display = 'none';
+                tr.hidden = true;
             }
         }
     }

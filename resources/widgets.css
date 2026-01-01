@@ -284,7 +284,6 @@ ul.phpdebugbar-widgets-timeline {
     }
 
     ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params {
-      display: none;
       width: 70%;
       margin: 10px;
       border: 1px solid var(--debugbar-border);
@@ -322,7 +321,6 @@ div.phpdebugbar-widgets-exceptions li.phpdebugbar-widgets-list-item {
   }
 
   div.phpdebugbar-widgets-exceptions li.phpdebugbar-widgets-list-item pre.phpdebugbar-widgets-file {
-    display: none;
     margin: 10px;
     padding: 5px;
     border: 1px solid var(--debugbar-border);
@@ -334,7 +332,6 @@ div.phpdebugbar-widgets-exceptions li.phpdebugbar-widgets-list-item {
   }
 
 ul.phpdebugbar-widgets-timeline table.phpdebugbar-widgets-params {
-    display: table;
     border: 0;
     width: 99%;
 }
