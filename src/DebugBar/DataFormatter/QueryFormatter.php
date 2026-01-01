@@ -21,7 +21,6 @@ class QueryFormatter extends DataFormatter
     /**
      * Check bindings for illegal (non UTF-8) strings, like Binary data.
      *
-     * @return array
      */
     public function checkBindings(array $bindings): array
     {
