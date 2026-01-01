@@ -266,7 +266,7 @@
                         }
                         table.hidden = !table.hidden;
                         const code = li.querySelector('code');
-                        if (code && typeof phpdebugbar_sqlformatter !== 'undefined' ) {
+                        if (code && typeof phpdebugbar_sqlformatter !== 'undefined') {
                             let sql = stmt.sql;
                             if (!table.hidden) {
                                 sql = phpdebugbar_sqlformatter.default.format(stmt.sql);
