@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DebugBar\Tests;
 
-use DebugBar\DataCollector\PDO\TracedStatement;
 use DebugBar\DataFormatter\QueryFormatter;
 
 /**
@@ -50,7 +49,8 @@ class QueryFormatterTest extends DebugBarTestCase
         $pdo = new \PDO('sqlite::memory:');
         $formatter = new QueryFormatter();
 
-        $sql = 'select * from users where id = :id and name = :name'; ;
+        $sql = 'select * from users where id = :id and name = :name';
+        ;
         $params = [
             ':id' => 1,
             ':name' => 'Barry',
@@ -70,7 +70,8 @@ class QueryFormatterTest extends DebugBarTestCase
 
         $formatter = new QueryFormatter();
 
-        $sql = 'select * from users where id = :id and name = :name'; ;
+        $sql = 'select * from users where id = :id and name = :name';
+        ;
         $params = [
             ':id' => 1,
             ':name' => 'Barry',
@@ -79,7 +80,6 @@ class QueryFormatterTest extends DebugBarTestCase
         $expected = "select * from users where id = 1 and name = 'Barry'";
         $result = $formatter->formatSqlWithBindings($sql, $params, $pdo);
         $this->assertEquals($expected, $result);
-
 
     }
 

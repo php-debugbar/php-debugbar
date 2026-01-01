@@ -83,7 +83,7 @@ class QueryFormatter extends DataFormatter
             if ($binding === null) {
                 $binding = 'NULL';
             } elseif (! is_int($binding) && ! is_float($binding)) {
-                $binding = $this->quoteBinding($binding, $pdo   );
+                $binding = $this->quoteBinding($binding, $pdo);
             }
 
             // This regex matches placeholders only, not the question marks,

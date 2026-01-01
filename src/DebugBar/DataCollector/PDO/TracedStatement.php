@@ -84,7 +84,6 @@ class TracedStatement
         return $this->sql;
     }
 
-
     /**
      * Returns the number of rows affected/returned
      *
