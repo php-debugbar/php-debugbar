@@ -52,15 +52,6 @@
             select(code);
         }
 
-        onFormatSql(el, sql, revert = false) {
-            const code = el.parentElement.querySelector('code');
-            if (revert) {
-                code.innerHTML = PhpDebugBar.Widgets.highlight(sql, 'sql');
-            } else {
-                code.innerHTML = PhpDebugBar.Widgets.highlight(phpdebugbar_sqlformatter.default.format(sql), 'sql');
-            }
-        }
-
         renderList(caption, icon, data) {
             const ul = document.createElement('ul');
             ul.classList.add(csscls('table-list'));
@@ -221,19 +212,18 @@
                         formatBtn.innerHTML = '&#8203;';
                         formatBtn.addEventListener('click', function (event) {
                             const revert = formatBtn.classList.contains(csscls('format-sql-revert'));
-                            self.onFormatSql(this, stmt.sql, revert);
-
+                            const code = this.parentElement.querySelector('code');
                             if (revert) {
+                                code.innerHTML = PhpDebugBar.Widgets.highlight(stmt.sql, 'sql');
                                 formatBtn.classList.remove(csscls('format-sql-revert'));
                             } else {
+                                code.innerHTML = PhpDebugBar.Widgets.highlight(phpdebugbar_sqlformatter.default.format(stmt.sql), 'sql');
                                 formatBtn.classList.add(csscls('format-sql-revert'));
                             }
-
                             event.stopPropagation();
                         });
                         li.append(formatBtn);
                     }
-
                 }
                 if (typeof (stmt.xdebug_link) !== 'undefined' && stmt.xdebug_link) {
                     const header = document.createElement('span');

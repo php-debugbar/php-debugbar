@@ -85,7 +85,8 @@ export default antfu(
             globals: {
                 ...globals.browser,
                 PhpDebugBar: 'writable',
-                hljs: 'readonly'
+                phpdebugbar_hljs: 'readonly',
+                phpdebugbar_sqlformatter: 'readonly'
             }
         }
     }
