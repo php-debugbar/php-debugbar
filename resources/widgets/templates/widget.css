@@ -71,7 +71,6 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before {
   margin-left: 4px;
 }
 div.phpdebugbar-widgets-templates table.phpdebugbar-widgets-params {
-  display: none;
   width: 70%;
   margin: 10px;
   border: 1px solid var(--debugbar-border);

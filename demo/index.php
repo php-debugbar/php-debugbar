@@ -3,19 +3,21 @@
 declare(strict_types=1);
 
 // Adds the Content-Security-Policy to the HTTP header.
+use DebugBar\DataCollector\MessagesCollector;
+use DebugBar\DataCollector\TimeDataCollector;
+
 header("Content-Security-Policy: default-src 'self' 'nonce-demo'; img-src data:");
 
-/** @var \DebugBar\DebugBar $debugbar */
+/** @var \DebugBar\DebugBar|array{messages: MessagesCollector,time: TimeDataCollector} $debugbar */
 
 include 'bootstrap.php';
 
 $debugbar['messages']->addMessage('hello');
-
 $debugbar['time']->startMeasure('op1', 'sleep 500');
 usleep(300);
 $debugbar['time']->startMeasure('op2', 'sleep 400');
 usleep(200);
-$debugbar['time']->stopMeasure('op1');
+$debugbar['time']->stopMeasure('op1', ['foo' => 'bar']);
 usleep(200);
 $debugbar['time']->stopMeasure('op2');
 

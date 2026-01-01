@@ -98,17 +98,14 @@
                             table.append(row);
                         }
                     }
+                    table.hidden = true;
                     li.append(table);
                     li.style.cursor = 'pointer';
                     li.addEventListener('click', () => {
                         if (window.getSelection().type === 'Range') {
                             return '';
                         }
-                        if (table.style.display !== 'none') {
-                            table.style.display = 'none';
-                        } else {
-                            table.style.display = '';
-                        }
+                        table.hidden = !table.hidden;
                     });
                 }
             } });

@@ -87,14 +87,11 @@
                     const code = document.createElement('code');
                     code.textContent = mail.headers;
                     headers.append(code);
+                    headers.hidden = true;
                     li.append(headers);
 
                     li.addEventListener('click', () => {
-                        if (headers.style.display !== 'none') {
-                            headers.style.display = 'none';
-                        } else {
-                            headers.style.display = '';
-                        }
+                        headers.hidden = !headers.hidden;
                     });
                 }
             } });
