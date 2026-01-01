@@ -15,14 +15,13 @@ class QueryFormatter extends DataFormatter
     public function formatSql(string $sql): string
     {
         $sql = preg_replace("/\?(?=(?:[^'\\\']*'[^'\\']*')*[^'\\\']*$)(?:\?)/", '?', $sql);
-        $sql = trim(preg_replace("/\s*\n\s*/", "\n", $sql));
-
-        return $sql;
+        return trim(preg_replace("/\s*\n\s*/", "\n", $sql));
     }
 
     /**
      * Check bindings for illegal (non UTF-8) strings, like Binary data.
      *
+     * @return string[]
      */
     public function checkBindings(array $bindings): array
     {
@@ -66,5 +65,67 @@ class QueryFormatter extends DataFormatter
         $parts['line'] = ':' . $source->line;
 
         return implode($parts);
+    }
+
+    /**
+     * Returns the SQL string with any parameters used embedded
+     *
+     * @return string
+     */
+    public function formatSqlWithBindings(string $sql, array $bindings, ?\PDO $pdo = null)
+    {
+        foreach ($this->checkBindings($bindings) as $key => $binding) {
+
+            if (is_string($key) && str_starts_with($key, ':')) {
+                $key = substr($key, 1);
+            }
+
+            if ($binding === null) {
+                $binding = 'NULL';
+            } elseif (! is_int($binding) && ! is_float($binding)) {
+                $binding = $this->quoteBinding($binding, $pdo   );
+            }
+
+            // This regex matches placeholders only, not the question marks,
+            // nested in quotes, while we iterate through the bindings
+            // and substitute placeholders by suitable values.
+            $regex = is_numeric($key)
+                ? "/(?<!\?)\?(?=(?:[^'\\\\']*'[^'\\\\']*')*[^'\\\\']*$)(?!\?)/"
+                : "/:{$key}(?![A-Za-z0-9_])(?=(?:[^'\\\\']*'[^'\\\\']*')*[^'\\\\']*$)/";
+            $sql = preg_replace($regex, addcslashes((string) $binding, '$'), $sql, is_numeric($key) ? 1 : -1);
+        }
+
+        return $sql;
+    }
+
+    protected function quoteBinding(string $binding, ?\PDO $pdo = null): string
+    {
+        try {
+            if ($pdo instanceof \PDO) {
+                return $pdo->quote($binding);
+            }
+        } catch (\PDOException $e) {
+
+        }
+
+        $charMap = [
+            "\\"   => "\\\\",
+            "\x00" => "\\0",
+            "\n"   => "\\n",
+            "\r"   => "\\r",
+            "'"    => "\\'",
+            '"'    => '\\"',
+            "\x1a" => "\\Z",
+        ];
+
+        return "'" . strtr($binding, $charMap) . "'";
+    }
+
+    protected function emulateQuote(string $value): string
+    {
+        $search = ["\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a"];
+        $replace = ["\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z"];
+
+        return "'" . str_replace($search, $replace, $value) . "'";
     }
 }

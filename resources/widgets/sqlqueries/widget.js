@@ -17,7 +17,7 @@
             const connection = el.getAttribute('rel');
             const items = this.list.el.querySelectorAll(`li[connection="${connection}"]`);
             for (const item of items) {
-                item.style.display = item.style.display === 'none' ? '' : 'none';
+                item.hidden = !item.hidden;
             }
         }
 
@@ -91,13 +91,11 @@
                     const valueSpan = document.createElement('span');
                     valueSpan.classList.add('phpdebugbar-text-muted');
                     valueSpan.textContent = value;
-                    li.append(valueSpan.innerHTML);
+                    li.append(valueSpan);
                 }
 
                 ul.append(li);
             }
-
-            caption += icon ? ` <i class="phpdebugbar-fa phpdebugbar-fa-${icon} phpdebugbar-text-muted"></i>` : '';
 
             const tr = document.createElement('tr');
             const nameTd = document.createElement('td');
@@ -189,7 +187,7 @@
                         self.toolbar.append(filterLink);
 
                         if (filters.length > 1) {
-                            self.toolbar.style.display = '';
+                            self.toolbar.hidden = false;
                             self.list.el.style.marginBottom = '20px';
                         }
                     }
@@ -245,6 +243,7 @@
                 }
                 const table = document.createElement('table');
                 table.classList.add(csscls('params'));
+                table.hidden = true;
 
                 if (stmt.params && Object.keys(stmt.params).length > 0) {
                     table.append(self.renderList('Params', 'thumb-tack', stmt.params));
@@ -265,11 +264,7 @@
                         if (window.getSelection().type === 'Range') {
                             return '';
                         }
-                        if (table.style.display !== 'none') {
-                            table.style.display = 'none';
-                        } else {
-                            table.style.display = '';
-                        }
+                        table.hidden = !table.hidden;
                     });
                 }
             } });
@@ -281,7 +276,7 @@
                     return false;
                 }
                 filters = [];
-                this.toolbar.style.display = 'none';
+                this.toolbar.hidden = true;
                 const toolbarFilters = this.toolbar.querySelectorAll(`.${csscls('filter')}`);
                 for (const filter of toolbarFilters) {
                     filter.remove();
@@ -345,7 +340,7 @@
                         const selector = `.${self.className} .${csscls('list-item')}:not(.${csscls('sql-duplicate')})`;
                         const items = document.querySelectorAll(selector);
                         for (const item of items) {
-                            item.style.display = item.style.display === 'none' ? '' : 'none';
+                            item.hidden = !item.hidden;
                         }
                     });
                     t.append(toggleLink);
