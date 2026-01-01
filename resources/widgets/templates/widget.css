@@ -70,22 +70,6 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before {
   mask-image: var(--debugbar-icon-external-link);
   margin-left: 4px;
 }
-div.phpdebugbar-widgets-templates table.phpdebugbar-widgets-params {
-  width: 70%;
-  margin: 10px;
-  border: 1px solid var(--debugbar-border);
-  font-family: var(--debugbar-font-mono);
-  border-collapse: collapse;
-}
-div.phpdebugbar-widgets-templates table.phpdebugbar-widgets-params td {
-  border: 1px solid var(--debugbar-border);
-  padding: 0 5px;
-}
-div.phpdebugbar-widgets-templates table.phpdebugbar-widgets-params .phpdebugbar-widgets-name {
-  width: 20%;
-  font-weight: bold;
-  vertical-align: top;
-}
 div.phpdebugbar[data-theme='dark'] div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-callgraph > pre * {
   background-color: inherit !important;
 }
