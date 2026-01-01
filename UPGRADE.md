@@ -23,4 +23,4 @@ This makes it easier to updates these collectors for specific versions.
 
 ### Other changes
  - Storage now uses json instead of serialize, so old data cannot be read.
- - PDO now quotes using the PDO connection when available. The quation char is now always `'`. Methods have moved to the QueryFormatter instead of TracedStatement.
+ - PDO now quotes using the PDO connection when available. The quotation char is now always `'`. Methods have moved to the QueryFormatter instead of TracedStatement.
