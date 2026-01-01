@@ -85,53 +85,6 @@ class TracedStatement
     }
 
     /**
-     * Returns the SQL string with any parameters used embedded
-     *
-     */
-    public function getSqlWithParams(string $quotationChar = '<>'): string
-    {
-        if (($l = strlen($quotationChar)) > 1) {
-            $quoteLeft = substr($quotationChar, 0, $l / 2);
-            $quoteRight = substr($quotationChar, $l / 2);
-        } else {
-            $quoteLeft = $quoteRight = $quotationChar;
-        }
-
-        $sql = $this->sql;
-
-        $cleanBackRefCharMap = ['%' => '%%', '$' => '$%', '\\' => '\\%'];
-
-        foreach ($this->parameters as $k => $v) {
-
-            if (null === $v) {
-                $v = 'NULL';
-            } elseif (is_string($v)) {
-                $backRefSafeV = strtr($v, $cleanBackRefCharMap);
-                $v = "$quoteLeft$backRefSafeV$quoteRight";
-            }
-
-            if (is_numeric($k)) {
-                $marker = "\?";
-            } else {
-                $marker = (preg_match("/^:/", $k)) ? $k : ":" . $k;
-            }
-
-            $matchRule = "/({$marker}(?!\w))(?=(?:[^$quotationChar]|[$quotationChar][^$quotationChar]*[$quotationChar])*$)/";
-            $count = mb_substr_count($sql, (string) $k);
-            if ($count < 1) {
-                $count = mb_substr_count($sql, $matchRule);
-            }
-            for ($i = 0; $i <= $count; $i++) {
-                $sql = preg_replace($matchRule, (string) $v, $sql, 1);
-            }
-        }
-
-        $sql = strtr($sql, array_flip($cleanBackRefCharMap));
-
-        return $sql;
-    }
-
-    /**
      * Returns the number of rows affected/returned
      *
      */
@@ -146,11 +99,7 @@ class TracedStatement
      */
     public function getParameters(): array
     {
-        $params = [];
-        foreach ($this->parameters as $name => $param) {
-            $params[$name] = htmlentities($param ?: "", ENT_QUOTES, 'UTF-8', false);
-        }
-        return $params;
+        return $this->parameters;
     }
 
     /**

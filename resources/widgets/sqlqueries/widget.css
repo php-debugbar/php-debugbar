@@ -90,7 +90,6 @@ div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link:hover {
   color: var(--debugbar-hover);
 }
 div.phpdebugbar-widgets-sqlqueries table.phpdebugbar-widgets-params {
-  display: none;
   width: 70%;
   margin: 10px;
   border: 1px solid var(--debugbar-border);
@@ -134,7 +133,6 @@ div.phpdebugbar[data-theme='dark'] div.phpdebugbar-widgets-sqlqueries li.phpdebu
 }
 
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-toolbar {
-  display:none;
   position: fixed;
   bottom: 0;
   width: calc(100% - 30px);

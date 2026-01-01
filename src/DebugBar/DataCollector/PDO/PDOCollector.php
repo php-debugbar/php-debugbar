@@ -8,6 +8,7 @@ use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
 use DebugBar\DataCollector\TimeDataCollector;
+use DebugBar\DataFormatter\QueryFormatter;
 
 /**
  * Collects data about SQL statements executed with PDO
@@ -19,9 +20,9 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
 
     protected ?TimeDataCollector $timeCollector;
 
-    protected bool $renderSqlWithParams = false;
+    protected ?QueryFormatter $queryFormatter = null;
 
-    protected string $sqlQuotationChar = '<>';
+    protected bool $renderSqlWithParams = false;
 
     protected bool $durationBackground = false;
 
@@ -35,13 +36,19 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         }
     }
 
+    public function getQueryFormatter(): QueryFormatter
+    {
+        if ($this->queryFormatter === null) {
+            $this->queryFormatter = new QueryFormatter();
+        }
+        return $this->queryFormatter;
+    }
     /**
      * Renders the SQL of traced statements with params embeded
      */
-    public function setRenderSqlWithParams(bool $enabled = true, string $quotationChar = '<>'): void
+    public function setRenderSqlWithParams(bool $enabled = true): void
     {
         $this->renderSqlWithParams = $enabled;
-        $this->sqlQuotationChar = $quotationChar;
     }
 
     /**
@@ -65,11 +72,6 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
     public function isSqlRenderedWithParams(): bool
     {
         return $this->renderSqlWithParams;
-    }
-
-    public function getSqlQuotationChar(): string
-    {
-        return $this->sqlQuotationChar;
     }
 
     /**
@@ -142,8 +144,17 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         }
         $stmts = [];
         foreach ($pdo->getExecutedStatements() as $stmt) {
+
+            $sql = $stmt->getSql();
+            $params = $stmt->getParameters();
+            if ($this->renderSqlWithParams) {
+                $sql = $this->getQueryFormatter()->formatSqlWithBindings($sql, $params, $pdo);
+            } else {
+                $sql = $this->getQueryFormatter()->formatSql($sql);
+            }
+
             $stmts[] = [
-                'sql' => $this->renderSqlWithParams ? $stmt->getSqlWithParams($this->sqlQuotationChar) : $stmt->getSql(),
+                'sql' => $sql,
                 'type' => $stmt->getQueryType(),
                 'row_count' => $stmt->getRowCount(),
                 'stmt_id' => $stmt->getPreparedId(),

@@ -133,7 +133,7 @@ class DebugbarTest extends AbstractBrowserTestCase
         $client->takeScreenshot(__DIR__ . '/../../../screenshots/ajax.png');
     }
 
-    public function testMonologCollector(): void
+    public function testPdoCollector(): void
     {
         $client = static::createPantherClient();
         $size = new WebDriverDimension(1920, 800);
@@ -151,13 +151,34 @@ class DebugbarTest extends AbstractBrowserTestCase
 
         $crawler = $client->waitForVisibility('.phpdebugbar-panel[data-collector=database]');
 
-        $statements = $crawler->filter('.phpdebugbar-panel[data-collector=database] .phpdebugbar-widgets-sql')
+        $client->waitForElementToContain('.phpdebugbar-widgets-sqlqueries .phpdebugbar-widgets-status', '8 statements were executed, 2 of which were duplicates, 6 unique.');
+
+        $statements = $crawler->filter('.phpdebugbar-panel[data-collector=database] li:not([hidden]) .phpdebugbar-widgets-sql')
             ->each(function ($node) {
                 return $node->getText();
             });
 
-        $this->assertEquals('insert into users (name) values (?)', $statements[1]);
-        $this->assertCount(7, $statements);
+        $this->assertEquals("insert into users (name) values ('foo')", $statements[1]);
+        $this->assertCount(8, $statements);
+
+        $crawler->selectLink('Show only duplicated')->click();
+
+        $statements = $crawler->filter('.phpdebugbar-panel[data-collector=database] li:not([hidden]) .phpdebugbar-widgets-sql')
+            ->each(function ($node) {
+                return $node->getText();
+            });
+
+        $this->assertEquals("select * from users where name='foo'", $statements[1]);
+        $this->assertCount(2, $statements);
+
+        $crawler->selectLink('Show All')->click();
+
+        $statements = $crawler->filter('.phpdebugbar-panel[data-collector=database] li:not([hidden]) .phpdebugbar-widgets-sql')
+            ->each(function ($node) {
+                return $node->getText();
+            });
+
+        $this->assertCount(8, $statements);
 
         $client->takeScreenshot(__DIR__ . '/../../../screenshots/pdo.png');
 
