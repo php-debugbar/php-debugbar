@@ -16,6 +16,7 @@ div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-duration,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-row-count,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-format-sql,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id {
   float: right;
   margin-left: 8px;
@@ -26,6 +27,7 @@ div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugb
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-memory,
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-row-count,
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-copy-clipboard,
+div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-format-sql,
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-status span.phpdebugbar-widgets-stmt-id {
   color: var(--debugbar-text);
 }
@@ -35,6 +37,7 @@ div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-memory:before,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-row-count:before,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:before,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard-check:before,
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-format-sql:before,
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-stmt-id:before,
 div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link:before {
   content: "";
@@ -78,6 +81,14 @@ div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard:befor
 div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-copy-clipboard-check:before {
   -webkit-mask-image: var(--debugbar-icon-circle-check);
   mask-image: var(--debugbar-icon-circle-check);
+}
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-format-sql:before {
+  -webkit-mask-image: var(--debugbar-icon-arrows-maximize);
+  mask-image: var(--debugbar-icon-arrows-maximize);
+}
+div.phpdebugbar-widgets-sqlqueries span.phpdebugbar-widgets-format-sql-revert:before {
+  -webkit-mask-image: var(--debugbar-icon-arrows-minimize);
+  mask-image: var(--debugbar-icon-arrows-minimize);
 }
 div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link:before {
   -webkit-mask-image: var(--debugbar-icon-external-link);

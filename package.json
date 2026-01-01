@@ -9,8 +9,9 @@
   },
   "type": "module",
   "scripts": {
-    "build": "npm run build:hljs && npm run build:icons && npm run build:minify",
+    "build": "npm run build:hljs && npm run build:sqlformatter && npm run build:icons && npm run build:minify",
     "build:hljs": "esbuild build/build-hljs.js --bundle --minify --format=iife --global-name=phpdebugbar_hljs --outfile=resources/vendor/highlightjs/highlight.pack.js",
+    "build:sqlformatter": "esbuild build/build-sqlformatter.js --bundle --minify --format=iife --global-name=phpdebugbar_sqlformatter --outfile=resources/vendor/sql-formatter/sql-formatter.min.js",
     "build:icons": "node build/build-icons.js",
     "build:minify": "php build/build-assets.php && node build/build-minify.js",
     "lint": "eslint resources/**/*.js",
@@ -32,6 +33,7 @@
   "dependencies": {
     "@tabler/icons": "^3.36.0",
     "highlight.js": "^11.11.1",
-    "jquery": "^4.0.0-rc.1"
+    "jquery": "^4.0.0-rc.1",
+    "sql-formatter": "^15.6.12"
   }
 }

@@ -52,6 +52,15 @@
             select(code);
         }
 
+        onFormatSql(el, sql, revert = false) {
+            const code = el.parentElement.querySelector('code');
+            if (revert) {
+                code.innerHTML = PhpDebugBar.Widgets.highlight(sql, 'sql');
+            } else {
+                code.innerHTML = PhpDebugBar.Widgets.highlight(phpdebugbar_sqlformatter.default.format(sql), 'sql');
+            }
+        }
+
         renderList(caption, icon, data) {
             const ul = document.createElement('ul');
             ul.classList.add(csscls('table-list'));
@@ -203,6 +212,28 @@
                         event.stopPropagation();
                     });
                     li.append(copyBtn);
+
+                    if (typeof phpdebugbar_sqlformatter !== 'undefined') {
+                        const formatBtn = document.createElement('span');
+                        formatBtn.setAttribute('title', 'Format SQL');
+                        formatBtn.classList.add(csscls('format-sql'));
+                        formatBtn.style.cursor = 'pointer';
+                        formatBtn.innerHTML = '&#8203;';
+                        formatBtn.addEventListener('click', function (event) {
+                            const revert = formatBtn.classList.contains(csscls('format-sql-revert'));
+                            self.onFormatSql(this, stmt.sql, revert);
+
+                            if (revert) {
+                                formatBtn.classList.remove(csscls('format-sql-revert'));
+                            } else {
+                                formatBtn.classList.add(csscls('format-sql-revert'));
+                            }
+
+                            event.stopPropagation();
+                        });
+                        li.append(formatBtn);
+                    }
+
                 }
                 if (typeof (stmt.xdebug_link) !== 'undefined' && stmt.xdebug_link) {
                     const header = document.createElement('span');
