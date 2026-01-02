@@ -108,6 +108,168 @@
             table.append(tbody);
         }
 
+        itemRenderer(li, stmt) {
+            if (stmt.slow) {
+                li.classList.add(csscls('sql-slow'));
+            }
+            if (stmt.width_percent) {
+                const bgMeasure = document.createElement('div');
+                bgMeasure.classList.add(csscls('bg-measure'));
+
+                const valueDiv = document.createElement('div');
+                valueDiv.classList.add(csscls('value'));
+                valueDiv.style.left = `${stmt.start_percent}%`;
+                valueDiv.style.width = `${Math.max(stmt.width_percent, 0.01)}%`;
+                bgMeasure.append(valueDiv);
+                li.append(bgMeasure);
+            }
+            if (stmt.duration_str) {
+                const duration = document.createElement('span');
+                duration.setAttribute('title', 'Duration');
+                duration.classList.add(csscls('duration'));
+                duration.textContent = stmt.duration_str;
+                li.append(duration);
+            }
+            if (stmt.memory_str) {
+                const memory = document.createElement('span');
+                memory.setAttribute('title', 'Memory usage');
+                memory.classList.add(csscls('memory'));
+                memory.textContent = stmt.memory_str;
+                li.append(memory);
+            }
+            if (typeof (stmt.row_count) !== 'undefined') {
+                const rowCount = document.createElement('span');
+                rowCount.setAttribute('title', 'Row count');
+                rowCount.classList.add(csscls('row-count'));
+                rowCount.textContent = stmt.row_count;
+                li.append(rowCount);
+            }
+            if (typeof (stmt.stmt_id) !== 'undefined' && stmt.stmt_id) {
+                const stmtId = document.createElement('span');
+                stmtId.setAttribute('title', 'Prepared statement ID');
+                stmtId.classList.add(csscls('stmt-id'));
+                stmtId.textContent = stmt.stmt_id;
+                li.append(stmtId);
+            }
+            if (stmt.connection) {
+                const database = document.createElement('span');
+                database.setAttribute('title', 'Connection');
+                database.classList.add(csscls('database'));
+                database.textContent = stmt.connection;
+                li.append(database);
+                li.setAttribute('connection', stmt.connection);
+
+                if (!this.filters.includes(stmt.connection)) {
+                    this.filters.push(stmt.connection);
+
+                    const filterLink = document.createElement('a');
+                    filterLink.classList.add(csscls('filter'));
+                    filterLink.textContent = stmt.connection;
+                    filterLink.setAttribute('rel', stmt.connection);
+                    filterLink.addEventListener('click', () => {
+                        this.onFilterClick(filterLink);
+                    });
+                    this.toolbar.append(filterLink);
+
+                    if (this.filters.length > 1) {
+                        this.toolbar.hidden = false;
+                        this.list.el.style.marginBottom = '20px';
+                    }
+                }
+            }
+            if ((!stmt.type || stmt.type === 'query')) {
+                const copyBtn = document.createElement('span');
+                copyBtn.setAttribute('title', 'Copy to clipboard');
+                copyBtn.classList.add(csscls('copy-clipboard'));
+                copyBtn.style.cursor = 'pointer';
+                copyBtn.innerHTML = '&#8203;';
+                copyBtn.addEventListener('click', (event) => {
+                    this.onCopyToClipboard(copyBtn);
+                    event.stopPropagation();
+                });
+                li.append(copyBtn);
+            }
+            if (typeof (stmt.xdebug_link) !== 'undefined' && stmt.xdebug_link) {
+                const header = document.createElement('span');
+                header.setAttribute('title', 'Filename');
+                header.classList.add(csscls('filename'));
+                header.textContent = stmt.xdebug_link.filename + (stmt.xdebug_link.line ? `#${stmt.xdebug_link.line}` : '');
+
+                const link = document.createElement('a');
+                link.setAttribute('href', stmt.xdebug_link.url);
+                link.classList.add(csscls('editor-link'));
+                link.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    if (stmt.xdebug_link.ajax) {
+                        fetch(stmt.xdebug_link.url);
+                        event.preventDefault();
+                    }
+                });
+                header.append(link);
+                li.append(header);
+            } else if (typeof (stmt.filename) !== 'undefined' && stmt.filename) {
+                const header = document.createElement('span');
+                header.setAttribute('title', 'Filename');
+                header.classList.add(csscls('filename'));
+                header.textContent = stmt.filename;
+                li.append(header);
+            }
+            if (stmt.type === 'transaction') {
+                const strong = document.createElement('strong');
+                strong.classList.add(csscls('sql'), csscls('name'));
+                strong.textContent = stmt.sql;
+                li.append(strong);
+            } else {
+                const code = document.createElement('code');
+                code.classList.add(csscls('sql'));
+                code.innerHTML = PhpDebugBar.Widgets.highlight(stmt.sql, 'sql');
+                li.append(code);
+            }
+            if (typeof (stmt.is_success) !== 'undefined' && !stmt.is_success) {
+                li.classList.add(csscls('error'));
+                const errorSpan = document.createElement('span');
+                errorSpan.classList.add(csscls('error'));
+                errorSpan.textContent = `[${stmt.error_code}] ${stmt.error_message}`;
+                li.append(errorSpan);
+            }
+            const table = document.createElement('table');
+            table.classList.add(csscls('params'));
+            table.hidden = true;
+
+            if (stmt.params && Object.keys(stmt.params).length > 0) {
+                this.renderList(table, 'Params', stmt.params);
+            }
+            if (stmt.backtrace && Object.keys(stmt.backtrace).length > 0) {
+                const values = [];
+                for (const trace of stmt.backtrace.values()) {
+                    let text = trace.name || trace.file;
+                    if (trace.line) {
+                        text = `${text}:${trace.line}`;
+                    }
+                    values.push(text);
+                }
+                this.renderList(table, 'Backtrace', values);
+            }
+            if (table.querySelectorAll('tr').length) {
+                li.append(table);
+                li.style.cursor = 'pointer';
+                li.addEventListener('click', () => {
+                    if (window.getSelection().type === 'Range') {
+                        return '';
+                    }
+                    table.hidden = !table.hidden;
+                    const code = li.querySelector('code');
+                    if (code && typeof phpdebugbar_sqlformatter !== 'undefined') {
+                        let sql = stmt.sql;
+                        if (!table.hidden) {
+                            sql = phpdebugbar_sqlformatter.default.format(stmt.sql);
+                        }
+                        code.innerHTML = PhpDebugBar.Widgets.highlight(sql, 'sql');
+                    }
+                });
+            }
+        }
+
         render() {
             this.status = document.createElement('div');
             this.status.classList.add(csscls('status'));
@@ -117,172 +279,13 @@
             this.toolbar.classList.add(csscls('toolbar'));
             this.el.append(this.toolbar);
 
-            let filters = [];
+            this.filters = [];
             let sortState = 'none'; // 'none', 'asc', 'desc'
             let originalData = null;
-            const self = this;
 
-            this.list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer(li, stmt) {
-                if (stmt.slow) {
-                    li.classList.add(csscls('sql-slow'));
-                }
-                if (stmt.width_percent) {
-                    const bgMeasure = document.createElement('div');
-                    bgMeasure.classList.add(csscls('bg-measure'));
-
-                    const valueDiv = document.createElement('div');
-                    valueDiv.classList.add(csscls('value'));
-                    valueDiv.style.left = `${stmt.start_percent}%`;
-                    valueDiv.style.width = `${Math.max(stmt.width_percent, 0.01)}%`;
-                    bgMeasure.append(valueDiv);
-                    li.append(bgMeasure);
-                }
-                if (stmt.duration_str) {
-                    const duration = document.createElement('span');
-                    duration.setAttribute('title', 'Duration');
-                    duration.classList.add(csscls('duration'));
-                    duration.textContent = stmt.duration_str;
-                    li.append(duration);
-                }
-                if (stmt.memory_str) {
-                    const memory = document.createElement('span');
-                    memory.setAttribute('title', 'Memory usage');
-                    memory.classList.add(csscls('memory'));
-                    memory.textContent = stmt.memory_str;
-                    li.append(memory);
-                }
-                if (typeof (stmt.row_count) !== 'undefined') {
-                    const rowCount = document.createElement('span');
-                    rowCount.setAttribute('title', 'Row count');
-                    rowCount.classList.add(csscls('row-count'));
-                    rowCount.textContent = stmt.row_count;
-                    li.append(rowCount);
-                }
-                if (typeof (stmt.stmt_id) !== 'undefined' && stmt.stmt_id) {
-                    const stmtId = document.createElement('span');
-                    stmtId.setAttribute('title', 'Prepared statement ID');
-                    stmtId.classList.add(csscls('stmt-id'));
-                    stmtId.textContent = stmt.stmt_id;
-                    li.append(stmtId);
-                }
-                if (stmt.connection) {
-                    const database = document.createElement('span');
-                    database.setAttribute('title', 'Connection');
-                    database.classList.add(csscls('database'));
-                    database.textContent = stmt.connection;
-                    li.append(database);
-                    li.setAttribute('connection', stmt.connection);
-
-                    if (!filters.includes(stmt.connection)) {
-                        filters.push(stmt.connection);
-
-                        const filterLink = document.createElement('a');
-                        filterLink.classList.add(csscls('filter'));
-                        filterLink.textContent = stmt.connection;
-                        filterLink.setAttribute('rel', stmt.connection);
-                        filterLink.addEventListener('click', function () {
-                            self.onFilterClick(this);
-                        });
-                        self.toolbar.append(filterLink);
-
-                        if (filters.length > 1) {
-                            self.toolbar.hidden = false;
-                            self.list.el.style.marginBottom = '20px';
-                        }
-                    }
-                }
-                if ((!stmt.type || stmt.type === 'query')) {
-                    const copyBtn = document.createElement('span');
-                    copyBtn.setAttribute('title', 'Copy to clipboard');
-                    copyBtn.classList.add(csscls('copy-clipboard'));
-                    copyBtn.style.cursor = 'pointer';
-                    copyBtn.innerHTML = '&#8203;';
-                    copyBtn.addEventListener('click', function (event) {
-                        self.onCopyToClipboard(this);
-                        event.stopPropagation();
-                    });
-                    li.append(copyBtn);
-                }
-                if (typeof (stmt.xdebug_link) !== 'undefined' && stmt.xdebug_link) {
-                    const header = document.createElement('span');
-                    header.setAttribute('title', 'Filename');
-                    header.classList.add(csscls('filename'));
-                    header.textContent = stmt.xdebug_link.filename + (stmt.xdebug_link.line ? `#${stmt.xdebug_link.line}` : '');
-
-                    const link = document.createElement('a');
-                    link.setAttribute('href', stmt.xdebug_link.url);
-                    link.classList.add(csscls('editor-link'));
-                    link.addEventListener('click', (event) => {
-                        event.stopPropagation();
-                        if (stmt.xdebug_link.ajax) {
-                            fetch(stmt.xdebug_link.url);
-                            event.preventDefault();
-                        }
-                    });
-                    header.append(link);
-                    li.append(header);
-                } else if (typeof (stmt.filename) !== 'undefined' && stmt.filename) {
-                    const header = document.createElement('span');
-                    header.setAttribute('title', 'Filename');
-                    header.classList.add(csscls('filename'));
-                    header.textContent = stmt.filename;
-                    li.append(header);
-                }
-                if (stmt.type === 'transaction') {
-                    const strong = document.createElement('strong');
-                    strong.classList.add(csscls('sql'), csscls('name'));
-                    strong.textContent = stmt.sql;
-                    li.append(strong);
-                } else {
-                    const code = document.createElement('code');
-                    code.classList.add(csscls('sql'));
-                    code.innerHTML = PhpDebugBar.Widgets.highlight(stmt.sql, 'sql');
-                    li.append(code);
-                }
-                if (typeof (stmt.is_success) !== 'undefined' && !stmt.is_success) {
-                    li.classList.add(csscls('error'));
-                    const errorSpan = document.createElement('span');
-                    errorSpan.classList.add(csscls('error'));
-                    errorSpan.textContent = `[${stmt.error_code}] ${stmt.error_message}`;
-                    li.append(errorSpan);
-                }
-                const table = document.createElement('table');
-                table.classList.add(csscls('params'));
-                table.hidden = true;
-
-                if (stmt.params && Object.keys(stmt.params).length > 0) {
-                    self.renderList(table, 'Params', stmt.params);
-                }
-                if (stmt.backtrace && Object.keys(stmt.backtrace).length > 0) {
-                    const values = [];
-                    for (const trace of stmt.backtrace.values()) {
-                        let text = trace.name || trace.file;
-                        if (trace.line) {
-                            text = `${text}:${trace.line}`;
-                        }
-                        values.push(text);
-                    }
-                    self.renderList(table, 'Backtrace', values);
-                }
-                if (table.querySelectorAll('tr').length) {
-                    li.append(table);
-                    li.style.cursor = 'pointer';
-                    li.addEventListener('click', () => {
-                        if (window.getSelection().type === 'Range') {
-                            return '';
-                        }
-                        table.hidden = !table.hidden;
-                        const code = li.querySelector('code');
-                        if (code && typeof phpdebugbar_sqlformatter !== 'undefined') {
-                            let sql = stmt.sql;
-                            if (!table.hidden) {
-                                sql = phpdebugbar_sqlformatter.default.format(stmt.sql);
-                            }
-                            code.innerHTML = PhpDebugBar.Widgets.highlight(sql, 'sql');
-                        }
-                    });
-                }
-            } });
+            this.list = new PhpDebugBar.Widgets.ListWidget({
+                itemRenderer: (li, stmt) => this.itemRenderer(li, stmt)
+            });
             this.el.append(this.list.el);
 
             this.bindAttr('data', function (data) {
@@ -290,7 +293,7 @@
                 if (data.length <= 0 || !data.statements) {
                     return false;
                 }
-                filters = [];
+                this.filters = [];
                 this.toolbar.hidden = true;
                 const toolbarFilters = this.toolbar.querySelectorAll(`.${csscls('filter')}`);
                 for (const filter of toolbarFilters) {
