@@ -232,7 +232,7 @@ class QueryFormatterTest extends DebugBarTestCase
     /**
      * Big query generate regex error
      */
-    public function testBigQuery()
+    public function testBigQuery(): void
     {
         $params = [
             ':id_segmento' => 1,
