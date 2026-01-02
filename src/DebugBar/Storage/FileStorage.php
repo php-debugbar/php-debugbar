@@ -19,6 +19,8 @@ namespace DebugBar\Storage;
 class FileStorage implements StorageInterface
 {
     protected string $dirname;
+    protected int $gc_lifetime = 24;     // Hours to keep collected data;
+    protected int $gc_probability = 5;   // Probability of GC being run on a save request. (5/100)
 
     /**
      * @param string $dirname Directories where to store files
@@ -34,6 +36,11 @@ class FileStorage implements StorageInterface
             mkdir($this->dirname, 0o777, true);
         }
         file_put_contents($this->makeFilename($id), json_encode($data));
+
+        // Randomly check if we should collect old files
+        if (rand(1, 100) <= $this->gc_probability) {
+            $this->garbageCollect();
+        }
     }
 
     /**
@@ -128,5 +135,20 @@ class FileStorage implements StorageInterface
     public function makeFilename(string $id): string
     {
         return $this->dirname . basename($id) . ".json";
+    }
+
+    /**
+     * Delete files older than a certain age (gc_lifetime)
+     */
+    protected function garbageCollect(): void
+    {
+        $mTime = time() - ($this->gc_lifetime * 3600);
+
+        /** @var \DirectoryIterator $file */
+        foreach (new \DirectoryIterator($this->dirname) as $file) {
+            if (substr($file->getFilename(), 0, 1) !== '.' && $file->getMTime() < $mTime) {
+                unlink($file->getPathname());
+            }
+        }
     }
 }
