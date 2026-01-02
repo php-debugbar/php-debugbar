@@ -348,11 +348,11 @@
                     const toggleLink = document.createElement('a');
                     toggleLink.classList.add(csscls('duplicates'));
                     toggleLink.textContent = duplicatedText;
-                    toggleLink.addEventListener('click', function () {
-                        this.classList.toggle('shown-duplicated');
-                        this.textContent = this.classList.contains('shown-duplicated') ? 'Show All' : duplicatedText;
+                    toggleLink.addEventListener('click', () => {
+                        toggleLink.classList.toggle('shown-duplicated');
+                        toggleLink.textContent = toggleLink.classList.contains('shown-duplicated') ? 'Show All' : duplicatedText;
 
-                        const selector = `.${self.className} .${csscls('list-item')}:not(.${csscls('sql-duplicate')})`;
+                        const selector = `.${this.className} .${csscls('list-item')}:not(.${csscls('sql-duplicate')})`;
                         const items = document.querySelectorAll(selector);
                         for (const item of items) {
                             item.hidden = !item.hidden;
