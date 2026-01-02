@@ -21,9 +21,13 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
     /** @var array<string, array<string>> */
     private array $blacklist = [
         '_GET' => [],
-        '_POST' => [],
+        '_POST' => [
+            'password',
+        ],
         '_COOKIE' => [],
-        '_SESSION' => [],
+        '_SESSION' => [
+            'PHPDEBUGBAR_STACK_DATA'
+        ],
     ];
 
     public function collect(): array
@@ -81,14 +85,24 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
         $blacklisted = $this->blacklist[$superGlobalName];
 
         $values = $superGlobal;
-
-        foreach ($blacklisted as $key) {
-            if (isset($superGlobal[$key])) {
+        foreach ($values as $key => $value) {
+            if (in_array($key, $blacklisted) || $this->stringContains($key, ['password', 'key', 'secret'])) {
                 $values[$key] = str_repeat('*', is_string($superGlobal[$key]) ? strlen($superGlobal[$key]) : 3);
             }
         }
 
         return $values;
+    }
+
+    private function stringContains(string $haystack, array $needles)
+    {
+        $haystack = strtolower($haystack);
+        foreach($needles as $needle) {
+            if (str_contains($haystack, $needle)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function getName(): string
