@@ -391,7 +391,7 @@
                                 originalData = null;
                             }
                         }
-                        self.list.set('data', data.statements);
+                        this.list.set('data', data.statements);
                     });
 
                     duration.append(sortIcon);
