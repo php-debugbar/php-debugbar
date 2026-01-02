@@ -118,6 +118,15 @@ $requestDataCollector->useHtmlVarDumper();
 $debugbar->addCollector($requestDataCollector);
 ```
 
+By default, any keys with 'password', 'key', or 'secret' in their name are hidden.
+You can hide more sensitive data by calling `hideSuperglobalKeys()`:
+
+```php
+$requestDataCollector = new DebugBar\DataCollector\RequestDataCollector();
+$requestDataCollector->hideSuperglobalKeys('_POST', 'pass');
+$debugbar->addCollector($requestDataCollector);
+```
+
 ## Config
 
 Used to display any key/value pairs array.  You can call the `useHtmlVarDumper()` function to use
