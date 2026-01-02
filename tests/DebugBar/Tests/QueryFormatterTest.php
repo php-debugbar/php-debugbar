@@ -238,7 +238,7 @@ class QueryFormatterTest extends DebugBarTestCase
             ':id_segmento' => 1,
             ':id_part'     => 1,
             ':inativo'     => 1,
-            ':ativo'       => 1
+            ':ativo'       => 1,
         ];
         $query = 'select sum(qtd) as total from (
                     select count(*) as qtd from (
