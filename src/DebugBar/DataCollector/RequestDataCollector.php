@@ -26,7 +26,7 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
         ],
         '_COOKIE' => [],
         '_SESSION' => [
-            'PHPDEBUGBAR_STACK_DATA'
+            'PHPDEBUGBAR_STACK_DATA',
         ],
     ];
 
@@ -94,10 +94,10 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
         return $values;
     }
 
-    private function stringContains(string $haystack, array $needles)
+    private function stringContains(string $haystack, array $needles): bool
     {
         $haystack = strtolower($haystack);
-        foreach($needles as $needle) {
+        foreach ($needles as $needle) {
             if (str_contains($haystack, $needle)) {
                 return true;
             }
