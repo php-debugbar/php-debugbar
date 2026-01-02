@@ -37,6 +37,7 @@ require __DIR__ . '/collectors/symfony_mailer.php';
 
 $debugbar['time']->startMeasure('render');
 
+dump($debugbar);
 render_demo_page(function () {
     ?>
 <h2>AJAX</h2>
