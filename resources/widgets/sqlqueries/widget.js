@@ -52,63 +52,60 @@
             select(code);
         }
 
-        renderList(caption, icon, data) {
-            const ul = document.createElement('ul');
-            ul.classList.add(csscls('table-list'));
+        renderList(table, caption, data) {
+            const thead = document.createElement('thead');
+
+            const tr = document.createElement('tr');
+            const nameTh = document.createElement('th');
+            nameTh.colSpan = 2;
+            nameTh.classList.add(csscls('name'));
+            nameTh.innerHTML = caption;
+            tr.append(nameTh);
+            thead.append(tr);
+
+            table.append(thead);
+
+            const tbody = document.createElement('tbody');
 
             for (const key in data) {
                 const value = typeof data[key] === 'function' ? `${data[key].name} {}` : data[key];
-                const li = document.createElement('li');
-                li.classList.add(csscls('table-list-item'));
+                const tr = document.createElement('tr');
 
                 if (typeof value === 'object' && value !== null) {
-                    const keySpan = document.createElement('span');
-                    keySpan.classList.add('phpdebugbar-text-muted');
-                    keySpan.textContent = value.index || key;
-                    keySpan.append('.');
-                    li.append(keySpan);
-                    li.append('\u00A0');
+                    const keyTd = document.createElement('td');
+                    keyTd.classList.add('phpdebugbar-text-muted');
+                    keyTd.textContent = value.index || key;
+                    tr.append(keyTd);
 
+                    const valueTd = document.createElement('td');
                     if (value.namespace) {
-                        li.append(`${value.namespace}::`);
+                        valueTd.append(`${value.namespace}::`);
                     }
 
-                    li.append(value.name || value.file);
+                    valueTd.append(value.name || value.file);
 
                     if (value.line) {
                         const lineSpan = document.createElement('span');
                         lineSpan.classList.add('phpdebugbar-text-muted');
                         lineSpan.textContent = `:${value.line}`;
-                        li.append(lineSpan);
+                        valueTd.append(lineSpan);
                     }
                 } else {
-                    const keySpan = document.createElement('span');
-                    keySpan.classList.add('phpdebugbar-text-muted');
-                    keySpan.textContent = `${key}:`;
-                    li.append(keySpan);
-                    li.append('\u00A0');
+                    const keyTd = document.createElement('td');
+                    keyTd.classList.add('phpdebugbar-text-muted');
+                    keyTd.textContent = key;
+                    tr.append(keyTd);
 
-                    const valueSpan = document.createElement('span');
-                    valueSpan.classList.add('phpdebugbar-text-muted');
-                    valueSpan.textContent = value;
-                    li.append(valueSpan);
+                    const valueTd = document.createElement('td');
+                    valueTd.classList.add('phpdebugbar-text-muted');
+                    valueTd.textContent = value;
+                    tr.append(valueTd);
                 }
 
-                ul.append(li);
+                tbody.append(tr);
             }
 
-            const tr = document.createElement('tr');
-            const nameTd = document.createElement('td');
-            nameTd.classList.add(csscls('name'));
-            nameTd.innerHTML = caption;
-            tr.append(nameTd);
-
-            const valueTd = document.createElement('td');
-            valueTd.classList.add(csscls('value'));
-            valueTd.append(ul);
-            tr.append(valueTd);
-
-            return tr;
+            table.append(tbody);
         }
 
         render() {
@@ -204,6 +201,7 @@
                     });
                     li.append(copyBtn);
                 }
+                console.log(stmt.xdebug_link);
                 if (typeof (stmt.xdebug_link) !== 'undefined' && stmt.xdebug_link) {
                     const header = document.createElement('span');
                     header.setAttribute('title', 'Filename');
@@ -221,6 +219,12 @@
                         }
                     });
                     header.append(link);
+                    li.append(header);
+                } else if (typeof (stmt.filename) !== 'undefined' && stmt.filename) {
+                    const header = document.createElement('span');
+                    header.setAttribute('title', 'Filename');
+                    header.classList.add(csscls('filename'));
+                    header.textContent = stmt.filename;
                     li.append(header);
                 }
                 if (stmt.type === 'transaction') {
@@ -246,16 +250,18 @@
                 table.hidden = true;
 
                 if (stmt.params && Object.keys(stmt.params).length > 0) {
-                    table.append(self.renderList('Params', 'thumb-tack', stmt.params));
-                }
-                if (stmt.bindings && Object.keys(stmt.bindings).length > 0) {
-                    table.append(self.renderList('Bindings', 'thumb-tack', stmt.bindings));
-                }
-                if (stmt.hints && Object.keys(stmt.hints).length > 0) {
-                    table.append(self.renderList('Hints', 'question-circle', stmt.hints));
+                    self.renderList(table, 'Params', stmt.params);
                 }
                 if (stmt.backtrace && Object.keys(stmt.backtrace).length > 0) {
-                    table.append(self.renderList('Backtrace', 'list-ul', stmt.backtrace));
+                    const values = [];
+                    for (const trace of stmt.backtrace.values()) {
+                        let text = trace.name || trace.file;
+                        if (trace.line) {
+                            text = `${text}:${trace.line}`;
+                        }
+                        values.push(text);
+                    }
+                    self.renderList(table, 'Backtrace', values);
                 }
                 if (table.querySelectorAll('tr').length) {
                     li.append(table);
@@ -302,9 +308,6 @@
                     let stmt = data.statements[i].sql;
                     if (data.statements[i].params && Object.keys(data.statements[i].params).length > 0) {
                         stmt += JSON.stringify(data.statements[i].params);
-                    }
-                    if (data.statements[i].bindings && Object.keys(data.statements[i].bindings).length > 0) {
-                        stmt += JSON.stringify(data.statements[i].bindings);
                     }
                     if (data.statements[i].connection) {
                         stmt += `@${data.statements[i].connection}`;

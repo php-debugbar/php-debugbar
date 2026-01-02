@@ -22,11 +22,13 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
 
     protected ?QueryFormatter $queryFormatter = null;
 
-    protected bool $renderSqlWithParams = false;
+    protected bool $renderSqlWithParams = true;
 
-    protected bool $durationBackground = false;
+    protected bool $durationBackground = true;
 
     protected ?float $slowThreshold = null;
+
+    protected ?int $backtraceLimit = null;
 
     public function __construct(?\PDO $pdo = null, ?TimeDataCollector $timeCollector = null)
     {
@@ -43,6 +45,18 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         }
         return $this->queryFormatter;
     }
+
+    /**
+     * Set the backtrace limit to check for PDO statements. Set to null to disable.
+     */
+    public function enableBacktrace(?int $backtraceLimit = 10): void
+    {
+        $this->backtraceLimit = $backtraceLimit;
+        foreach ($this->connections as $pdo) {
+            $pdo->enableBacktrace($backtraceLimit);
+        }
+    }
+
     /**
      * Renders the SQL of traced statements with params embeded
      */
@@ -85,6 +99,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         if (!($pdo instanceof TraceablePDO)) {
             $pdo = new TraceablePDO($pdo);
         }
+        $pdo->enableBacktrace($this->backtraceLimit);
         $this->connections[$name] = $pdo;
     }
 
@@ -153,12 +168,12 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
                 $sql = $this->getQueryFormatter()->formatSql($sql);
             }
 
+            $backtrace = $stmt->getBacktrace();
+            $source = $backtrace ? (object) reset($backtrace) : null;
             $stmts[] = [
                 'sql' => $sql,
                 'type' => $stmt->getQueryType(),
                 'row_count' => $stmt->getRowCount(),
-                'stmt_id' => $stmt->getPreparedId(),
-                'prepared_stmt' => $stmt->getSql(),
                 'params' => (object) $stmt->getParameters(),
                 'duration' => $stmt->getDuration(),
                 'duration_str' => $this->getDataFormatter()->formatDuration($stmt->getDuration()),
@@ -169,6 +184,9 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
                 'is_success' => $stmt->isSuccess(),
                 'error_code' => $stmt->getErrorCode(),
                 'error_message' => $stmt->getErrorMessage(),
+                'backtrace' => $backtrace,
+                'filename' => $source ? $this->getQueryFormatter()->formatSource($source, true) : null,
+                'xdebug_link' => $source ? $this->getXdebugLink($source->file ?: '', $source->line) : null,
                 'slow' => $this->slowThreshold && $this->slowThreshold <= $stmt->getDuration(),
             ];
             if ($timeCollector !== null) {

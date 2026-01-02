@@ -56,12 +56,19 @@ class QueryFormatter extends DataFormatter
 
         $parts = [];
 
-        if (!$short && $source->namespace) {
+        if (!$short && isset($source->namespace) && $source->namespace) {
             $parts['namespace'] = $source->namespace . '::';
         }
 
-        $parts['name'] = $short ? basename($source->name) : $source->name;
-        $parts['line'] = ':' . $source->line;
+        if (isset($source->name) && $source->name) {
+            $parts['name'] = $short ? basename($source->name) : $source->name;
+        } elseif (isset($source->file) && $source->file) {
+            $parts['name'] = basename($source->file);
+        } else {
+            return '';
+        }
+
+        $parts['line'] = ':' . ($source->line ?? 1);
 
         return implode($parts);
     }
