@@ -201,7 +201,6 @@
                     });
                     li.append(copyBtn);
                 }
-                console.log(stmt.xdebug_link);
                 if (typeof (stmt.xdebug_link) !== 'undefined' && stmt.xdebug_link) {
                     const header = document.createElement('span');
                     header.setAttribute('title', 'Filename');

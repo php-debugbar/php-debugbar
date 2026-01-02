@@ -3,10 +3,11 @@
 declare(strict_types=1);
 
 use DebugBar\DataCollector\PDO\PDOCollector;
+use DebugBar\DataCollector\PDO\TraceablePDO;
 
 /** @var \DebugBar\DebugBar $debugbar */
 
-$pdo = new PDO('sqlite::memory:');
+$pdo = new TraceablePDO(new PDO('sqlite::memory:'));
 
 $pdoCollector = new PDOCollector($pdo);
 $pdoCollector->enableBacktrace();
