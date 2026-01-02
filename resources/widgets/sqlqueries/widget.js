@@ -118,6 +118,8 @@
             this.el.append(this.toolbar);
 
             let filters = [];
+            let sortState = 'none'; // 'none', 'asc', 'desc'
+            let originalData = null;
             const self = this;
 
             this.list = new PhpDebugBar.Widgets.ListWidget({ itemRenderer(li, stmt) {
@@ -360,6 +362,36 @@
                     duration.setAttribute('title', 'Accumulated duration');
                     duration.classList.add(csscls('duration'));
                     duration.textContent = data.accumulated_duration_str;
+
+                    const sortIcon = document.createElement('span');
+                    sortIcon.classList.add(csscls('sort-icon'));
+                    sortIcon.style.cursor = 'pointer';
+                    sortIcon.style.marginLeft = '5px';
+                    sortIcon.textContent = 'Sort ⇅';
+                    sortIcon.setAttribute('title', 'Sort by duration');
+
+                    sortIcon.addEventListener('click', () => {
+                        if (sortState === 'none') {
+                            sortState = 'desc';
+                            sortIcon.textContent = '↓';
+                            originalData = [...data.statements];
+                            data.statements.sort((a, b) => (b.duration || 0) - (a.duration || 0));
+                        } else if (sortState === 'desc') {
+                            sortState = 'asc';
+                            sortIcon.textContent = '↑';
+                            data.statements.sort((a, b) => (a.duration || 0) - (b.duration || 0));
+                        } else {
+                            sortState = 'none';
+                            sortIcon.textContent = '⇅';
+                            if (originalData) {
+                                data.statements = originalData;
+                                originalData = null;
+                            }
+                        }
+                        self.list.set('data', data.statements);
+                    });
+
+                    duration.append(sortIcon);
                     this.status.append(duration);
                 }
                 if (data.memory_usage_str) {
