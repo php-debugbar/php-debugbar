@@ -613,7 +613,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
         initialize(options = {}) {
             this.options = Object.assign({
-                bodyMarginBottom: true,
+                bodyBottomInset: true,
                 theme: 'auto',
                 openBtnPosition: 'bottomLeft',
                 hideEmptyTabs: false
@@ -628,7 +628,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.pendingDataSetId = null;
             this.datesetTitleFormater = new DatasetTitleFormater(this);
             const bodyStyles = window.getComputedStyle(document.body);
-            this.bodyMarginBottomHeight = Number.parseInt(bodyStyles.marginBottom);
+            this.bodyPaddingBottomHeight = Number.parseInt(bodyStyles.paddingBottom);
             try {
                 this.isIframe = window.self !== window.top && window.top.phpdebugbar;
             } catch (_error) {
@@ -1196,14 +1196,14 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * that the debug bar never hides any content
          */
         recomputeBottomOffset() {
-            if (this.options.bodyMarginBottom) {
+            if (this.options.bodyBottomInset) {
                 if (this.isClosed()) {
-                    document.body.style.marginBottom = this.bodyMarginBottomHeight ? `${this.bodyMarginBottomHeight}px` : '';
+                    document.body.style.paddingBottom = this.bodyPaddingBottomHeight ? `${this.bodyPaddingBottomHeight}px` : '';
                     return;
                 }
 
-                const offset = this.el.offsetHeight + (this.bodyMarginBottomHeight || 0);
-                document.body.style.marginBottom = `${offset}px`;
+                const offset = this.el.offsetHeight + (this.bodyPaddingBottomHeight || 0);
+                document.body.style.paddingBottom = `${offset}px`;
             }
         }
 
