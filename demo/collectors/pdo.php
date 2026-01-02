@@ -24,8 +24,8 @@ $stmt->execute(['foo']);
 $stmt->execute(['foo']);
 $foo = $stmt->fetch();
 
-$stmt = $pdo->prepare('select * from users where name=?');
-$stmt->execute(['<script>alert();</script>']);
+$stmt = $pdo->prepare('select * from users where name=:name');
+$stmt->execute(['name' => '<script>alert();</script>']);
 $foo = $stmt->fetch();
 
 $pdo->exec('delete from users');

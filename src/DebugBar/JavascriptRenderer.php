@@ -45,6 +45,7 @@ class JavascriptRenderer
 
     protected array $jsVendors = [
         'highlightjs' => 'vendor/highlightjs/highlight.pack.js',
+        'sql-formatter' => 'vendor/sql-formatter/sql-formatter.min.js',
     ];
 
     protected bool|array $includeVendors = true;
@@ -78,6 +79,7 @@ class JavascriptRenderer
         'widgets/templates/widget.js',
         'highlight.css',
         'vendor/highlightjs/highlight.pack.js',
+        'vendor/sql-formatter/sql-formatter.min.js',
     ];
 
     protected array $additionalAssets = [];
