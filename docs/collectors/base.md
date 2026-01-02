@@ -93,6 +93,19 @@ $debugBar->addCollector($pdoCollector);
 $debugBar->addCollector($timeDataCollector);
 ```
 
+You can enable backtrace to show where the query is generated from, with the amount of frames to show as optional argument.
+```php
+$pdoCollector = new DebugBar\DataCollector\PDO\PDOCollector($pdo);
+$pdoCollector->enableBacktrace(15);
+```
+
+By default, the PDO Collector replaces bindings in the queries. This can be disabled:
+
+```php
+$pdoCollector = new DebugBar\DataCollector\PDO\PDOCollector($pdo);
+$pdoCollector->setRenderSqlWithParams(false);
+```
+
 ## RequestData
 
 Collects the data of PHP's global variables.  You can call the `useHtmlVarDumper()` function to use

@@ -33,6 +33,8 @@ class TracedStatement
 
     protected ?string $preparedId;
 
+    protected ?array $backtrace = null;
+
     public function __construct(string $sql, array $params = [], ?string $preparedId = null)
     {
         $this->sql = $sql;
@@ -61,6 +63,17 @@ class TracedStatement
         $this->rowCount = $rowCount;
     }
 
+    public function checkBacktrace(int $limit = 15): void
+    {
+        $offset = 3;    // Internal calls
+        $stack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $limit + $offset);
+        $stack = array_filter($stack, function ($frame) {
+            return isset($frame['file']) && !str_contains($frame['file'], '/DebugBar/DataCollector/PDO/');
+        });
+
+        $this->backtrace = array_slice($stack, 0, $limit);
+    }
+
     /**
      * Check parameters for illegal (non UTF-8) strings, like Binary data.
      *
@@ -73,6 +86,11 @@ class TracedStatement
             }
         }
         return $params;
+    }
+
+    public function getBacktrace(): ?array
+    {
+        return $this->backtrace;
     }
 
     /**

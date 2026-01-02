@@ -2,18 +2,21 @@
 
 declare(strict_types=1);
 
-use DebugBar\DataCollector\PDO\TraceablePDO;
 use DebugBar\DataCollector\PDO\PDOCollector;
+use DebugBar\DataCollector\PDO\TraceablePDO;
 
 /** @var \DebugBar\DebugBar $debugbar */
 
 $pdo = new TraceablePDO(new PDO('sqlite::memory:'));
+
 $pdoCollector = new PDOCollector($pdo);
-$debugbar->addCollector($pdoCollector);
+$pdoCollector->enableBacktrace();
 $pdoCollector->setDurationBackground(true);
 $pdoCollector->setRenderSqlWithParams();
 
-$pdo->exec('create table users (name varchar)');
+$debugbar->addCollector($pdoCollector);
+
+$pdo->exec('create table users (id integer, name varchar, email varchar)');
 $stmt = $pdo->prepare('insert into users (name) values (?)');
 $stmt->execute(['foo']);
 $stmt->execute(['bar']);
@@ -24,8 +27,8 @@ $stmt->execute(['foo']);
 $stmt->execute(['foo']);
 $foo = $stmt->fetch();
 
-$stmt = $pdo->prepare('select * from users where name=:name');
-$stmt->execute(['name' => '<script>alert();</script>']);
+$stmt = $pdo->prepare('select * from users where name=:name and email=:email');
+$stmt->execute(['name' => 'Barry', ':email' => '<script>alert();</script>']);
 $foo = $stmt->fetch();
 
 $pdo->exec('delete from users');
