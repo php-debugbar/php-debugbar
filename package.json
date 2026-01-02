@@ -31,9 +31,8 @@
     "globals": "^16.5.0"
   },
   "dependencies": {
+    "@sqltools/formatter": "^1.2.5",
     "@tabler/icons": "^3.36.0",
-    "highlight.js": "^11.11.1",
-    "jquery": "^4.0.0-rc.1",
-    "sql-formatter": "^15.6.12"
+    "highlight.js": "^11.11.1"
   }
 }

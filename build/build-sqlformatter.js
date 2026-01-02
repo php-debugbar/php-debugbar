@@ -1,4 +1,4 @@
 // Build sql-formatter bundle
-import { format } from 'sql-formatter';
+import sqlFormatter  from '@sqltools/formatter';
 
-export default { format };
+export default sqlFormatter;
