@@ -907,7 +907,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                     } else {
                         this.showTab();
                     }
-                } else {
+                } else if (visible === '0') {
                     this.minimize();
                 }
             }
