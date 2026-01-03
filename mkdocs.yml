@@ -9,6 +9,7 @@ nav:
   - DebugBar: index.md
   - Documentation:
       - Getting started: docs/index.md
+      - docs/release-notes.md
       - docs/data-collectors.md
       - docs/rendering.md
       - docs/ajax-and-stack.md

@@ -9,7 +9,7 @@ No more `var_dump()` in your code!
 
 ## V3 Beta
 Currently v3 is in beta. You can install it with `composer require php-debugbar/php-debugbar:^3.0@beta`.
-See the [Upgrade guide](UPGRADE.md) for more information and breaking changes.
+See the [Release Notes](https://php-debugbar.com/docs/release-notes/) for more information and breaking changes.
 
 ![Screenshot](https://raw.github.com/php-debugbar/php-debugbar/master/docs/screenshot.png)
 
