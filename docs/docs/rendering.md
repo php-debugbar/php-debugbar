@@ -20,8 +20,7 @@ directly in the HTML.  This can be done in four ways:
  - Retrieving filenames and inline content of assets using `JavascriptRenderer::getAssets()`
    and doing something with it
 
-You can define the base url of your assets using `setBaseUrl()`. This is needed
-in 99% of cases.
+You can define the base url of your assets using `setBaseUrl()`, or set the Asset Handler with `setAssetHandlerUrl()` (see below).
 
 Using `renderHead()`:
 ```php
@@ -46,6 +45,25 @@ Retrieving the assets:
 list($cssFiles, $jsFiles, $inlineCss, $inlineJs, $inlineHead) = $renderer->getAssets();
 ```
 
+### Asset Handler
+
+The AssetHandler can be used to serve assets from a different location than the default.
+
+```php
+$renderer->->setAssetHandlerUrl('assets.php');
+```
+
+You can then implement an endpoint with the AssetHandler in your application to serve the assets from a different location.
+
+```php
+$openHandler = new DebugBar\AssetHandler($debugbar);
+$openHandler->handle($_GET);
+```
+
+Make sure you add the same collectors to the DebugBar instance you use in the AssetHandler, as in your main application.
+Otherwise not all assets will be available. The minified files usually include all assets.
+
+### Vendor assets
 Note that you can only use the debug bar assets and manage the dependencies by yourself
 using `$renderer->setIncludeVendors(false)`. Instead of false, *css* or *js* may be used
 to only include css or js assets of vendors.

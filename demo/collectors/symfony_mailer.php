@@ -12,9 +12,10 @@ use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport\AbstractTransport;
 use Symfony\Component\Mime\Email;
 
-$mailCollector = new SymfonyMailCollector();
+/** @var SymfonyMailCollector $mailCollector */
+$mailCollector = $debugbar['symfonymailer_mails'];
+
 $mailCollector->showMessageBody();
-$debugbar->addCollector($mailCollector);
 $logger = new MessagesCollector('mails');
 $debugbar['messages']->aggregate($logger);
 

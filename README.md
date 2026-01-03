@@ -123,13 +123,13 @@ Learn more about DebugBar in the [docs](http://php-debugbar.com/docs/).
 
 ## Demo
 
-To run the demo, clone this repository and start the Built-In PHP webserver from the root:
+To run the demo, clone this repository and start the Built-In PHP webserver from the demo folder:
 
 ```
-php -S localhost:8000
+composer run demo
 ```
 
-Then visit http://localhost:8000/demo/
+Then visit http://localhost:8000/
 
 ## Testing
 

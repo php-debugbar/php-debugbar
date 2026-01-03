@@ -39,6 +39,10 @@ $debugbar['time']->startMeasure('render');
 
 render_demo_page(function () {
     ?>
+<h2>Index</h2>
+<ul>
+    <li><a href="index.php">Index page</a></li>
+</ul>
 <h2>AJAX</h2>
 <ul>
     <li><a href="ajax.php" class="ajax">load ajax content</a></li>

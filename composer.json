@@ -53,7 +53,7 @@
         "analyse": "@php vendor/bin/phpstan analyse --memory-limit=1G",
         "demo": [
             "Composer\\Config::disableProcessTimeout",
-            "@php -S localhost:8000"
+            "@php -t demo -S localhost:8000"
         ],
         "unit-test": "@php vendor/bin/phpunit --testsuite=Unit",
         "browser-test": "@php vendor/bin/phpunit --testsuite=Browser",
