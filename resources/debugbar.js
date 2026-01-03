@@ -776,7 +776,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.el.append(this.body);
             this.recomputeBottomOffset();
 
-
             this.resizeHandleBottom = document.createElement('div');
             this.resizeHandleBottom.classList.add(csscls('resize-handle'));
             this.resizeHandleBottom.classList.add(csscls('resize-handle-bottom'));
