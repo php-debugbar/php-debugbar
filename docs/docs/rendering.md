@@ -13,8 +13,8 @@ into your webpage. They are located in the *resources* folder.
 Additionally, asset providers may provide inline assets that have to be embedded
 directly in the HTML.  This can be done in four ways:
 
- - Using `JavascriptRenderer::renderHead()` which will returns a string with
-   the needed script and link tags
+ - Using `JavascriptRenderer::renderHead()` using `setBaseUrl()` to point to the asset folder directly
+ - Using `JavascriptRenderer::renderHead()` using `setAssetHandlerUrl()` to point to the AssetHandler
  - Dumping the assets yourself using `JavascriptRenderer::dumpCssAssets()`,
    `JavascriptRenderer::dumpJsAssets()`, and `JavascriptRenderer::dumpHeadAssets()`.
  - Retrieving filenames and inline content of assets using `JavascriptRenderer::getAssets()`
