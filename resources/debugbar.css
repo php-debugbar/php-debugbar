@@ -7,8 +7,8 @@
 
 div.phpdebugbar,
 div.phpdebugbar-openhandler {
-  --debugbar-background: #fff;
-  --debugbar-background-alt: #fafafa;
+  --debugbar-background: #F7F7F7;
+  --debugbar-background-alt: #EFEFEF;
   --debugbar-text: #222;
   --debugbar-text-muted: #888;
   --debugbar-border: #eee;
@@ -24,7 +24,7 @@ div.phpdebugbar-openhandler {
   --debugbar-badge: #ccc;
   --debugbar-badge-text: #555;
 
-  --debugbar-badge-active: #555;
+  --debugbar-badge-active: #477e96;
   --debugbar-badge-active-text: #fff;
 
   --debugbar-link: #888;
@@ -56,7 +56,7 @@ div.phpdebugbar-openhandler[data-theme='dark'] {
   --debugbar-badge: #444;
   --debugbar-badge-text: #cccccc;
 
-  --debugbar-badge-active: #cccccc;
+  --debugbar-badge-active: #4F8FB3;
   --debugbar-badge-active-text: #1e1e1e;
 
   --debugbar-accent: #4F8FB3;
