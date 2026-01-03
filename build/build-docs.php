@@ -1,10 +1,17 @@
 <?php
 
+use DebugBar\Bridge\Symfony\SymfonyMailCollector;
+use DebugBar\DataCollector\PDO\PDOCollector;
+use DebugBar\DataCollector\TemplateCollector;
 use DebugBar\StandardDebugBar;
 
 include __DIR__ . '/../vendor/autoload.php';
 
 $debugbar = new StandardDebugBar();
+$debugbar->addCollector(new PdoCollector());
+$debugbar->addCollector(new TemplateCollector());
+$debugbar->addCollector(new SymfonyMailCollector());
+
 $debugbarRenderer = $debugbar->getJavascriptRenderer()
     ->setBaseUrl('../resources')
     ->setAjaxHandlerEnableTab(true)
