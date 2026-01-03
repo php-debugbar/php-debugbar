@@ -221,7 +221,6 @@ a.phpdebugbar-restore-btn {
 }
 
 div.phpdebugbar-resize-handle {
-  display: none;
   height: 4px;
   margin-top: -4px;
   width: 100%;

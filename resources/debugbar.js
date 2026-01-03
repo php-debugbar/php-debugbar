@@ -467,6 +467,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 } else {
                     self.storeSetting('toolbarPosition', 'bottom');
                 }
+                self.get('debugbar').recomputeBottomOffset();
             });
             fields['Toolbar Position'] = positionSelect;
 
@@ -617,7 +618,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
         }
 
         options = {
-            bodyMarginBottom: true,
+            bodyBottomInset: true,
             theme: 'auto',
             openBtnPosition: 'bottomLeft',
             hideEmptyTabs: false
@@ -636,6 +637,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.datesetTitleFormater = new DatasetTitleFormater(this);
             const bodyStyles = window.getComputedStyle(document.body);
             this.bodyPaddingBottomHeight = Number.parseInt(bodyStyles.paddingBottom);
+            this.bodyPaddingTopHeight = Number.parseInt(bodyStyles.paddingTop);
+
             try {
                 this.isIframe = window.self !== window.top && window.top.phpdebugbar;
             } catch (_error) {
@@ -1231,14 +1234,18 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             if (this.options.bodyBottomInset) {
                 if (this.isClosed()) {
                     document.body.style.paddingBottom = this.bodyPaddingBottomHeight ? `${this.bodyPaddingBottomHeight}px` : '';
+                    document.body.style.paddingTop = this.bodyPaddingTopHeight ? `${this.bodyPaddingTopHeight}px` : '';
                     return;
                 }
 
-                const offset = this.el.offsetHeight + (this.bodyPaddingBottomHeight || 0);
                 if (this.options.toolbarPosition === 'top') {
-                    document.body.style.paddingBottom = `${offset}px`;
+                    const offset = this.el.offsetHeight + (this.bodyPaddingTopHeight || 0);
+                    document.body.style.paddingTop = `${offset}px`;
+                    document.body.style.paddingBottom = this.bodyPaddingBottomHeight ? `${this.bodyPaddingBottomHeight}px` : '';
                 } else {
+                    const offset = this.el.offsetHeight + (this.bodyPaddingBottomHeight || 0);
                     document.body.style.paddingBottom = `${offset}px`;
+                    document.body.style.paddingTop = this.bodyPaddingTopHeight ? `${this.bodyPaddingTopHeight}px` : '';
                 }
             }
         }

@@ -171,7 +171,7 @@ div.phpdebugbar-widgets-messages {
     font-style: italic;
   }
   div.phpdebugbar-widgets-messages div.phpdebugbar-widgets-toolbar {
-    position: fixed;
+    position: sticky;
     bottom: 0;
     width: 100%;
     background: var(--debugbar-header);
