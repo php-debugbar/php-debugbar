@@ -762,7 +762,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
             this.body = document.createElement('div');
             this.body.classList.add(csscls('body'));
-            this.body.hidden = true;
             this.el.append(this.body);
             this.recomputeBottomOffset();
 
