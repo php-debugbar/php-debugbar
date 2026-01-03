@@ -477,6 +477,9 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.hideEmptyTabs.checked = debugbar.options.hideEmptyTabs;
             this.hideEmptyTabs.addEventListener('click', function () {
                 self.storeSetting('hideEmptyTabs', this.checked);
+                // Reset button size
+                self.get('debugbar').respCSSSize = 0;
+                self.get('debugbar').resize();
             });
 
             const hideEmptyTabsLabel = document.createElement('label');
