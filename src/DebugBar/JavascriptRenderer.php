@@ -116,7 +116,6 @@ class JavascriptRenderer
 
     protected ?string $assetHandlerUrl = null;
 
-
     protected ?string $cspNonce = null;
 
     public function __construct(DebugBar $debugBar, ?string $baseUrl = null, ?string $basePath = null)
@@ -950,7 +949,7 @@ class JavascriptRenderer
 
         if ($targetFilename !== null) {
             file_put_contents($targetFilename, $dumpedContent);
-        }elseif ($echo) {
+        } elseif ($echo) {
             echo $dumpedContent;
         }
 
@@ -974,8 +973,8 @@ class JavascriptRenderer
 
         if ($this->assetHandlerUrl !== null) {
             $url = $this->assetHandlerUrl;
-            $cssFiles = [$url  . (str_contains($url, '?') ? '&' : '?'). 'type=css&mtime=' . $this->getModifiedTimes($this->getAssets('css', self::RELATIVE_PATH))];
-            $jsFiles = [$url  . (str_contains($url, '?') ? '&' : '?'). 'type=js&hash=' . $this->getModifiedTimes($this->getAssets('js', self::RELATIVE_PATH))];
+            $cssFiles = [$url . (str_contains($url, '?') ? '&' : '?') . 'type=css&mtime=' . $this->getModifiedTimes($this->getAssets('css', self::RELATIVE_PATH))];
+            $jsFiles = [$url . (str_contains($url, '?') ? '&' : '?') . 'type=js&hash=' . $this->getModifiedTimes($this->getAssets('js', self::RELATIVE_PATH))];
         }
         $html = '';
 

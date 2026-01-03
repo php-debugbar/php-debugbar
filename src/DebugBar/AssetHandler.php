@@ -18,10 +18,7 @@ namespace DebugBar;
  */
 class AssetHandler
 {
-    public function __construct(protected readonly DebugBar $debugBar)
-    {
-
-    }
+    public function __construct(protected readonly DebugBar $debugBar) {}
 
     /**
      * Handles the current request
