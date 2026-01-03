@@ -1,3 +1,11 @@
+div.phpdebugbar-widgets-sqlqueries {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
 div.phpdebugbar-widgets-sqlqueries .phpdebugbar-widgets-status {
   font-family: var(--debugbar-font-mono);
   padding: 6px 6px;
@@ -5,6 +13,14 @@ div.phpdebugbar-widgets-sqlqueries .phpdebugbar-widgets-status {
   font-weight: bold;
   color: var(--debugbar-text);
   background-color: var(--debugbar-background-alt);
+  flex-shrink: 0;
+  order: 1;
+}
+
+div.phpdebugbar-widgets-sqlqueries ul.phpdebugbar-widgets-list {
+  flex: 1;
+  overflow-y: auto;
+  order: 2;
 }
 
 div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item.phpdebugbar-widgets-error {
@@ -118,11 +134,11 @@ div.phpdebugbar[data-theme='dark'] div.phpdebugbar-widgets-sqlqueries li.phpdebu
 }
 
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-toolbar {
-  position: fixed;
-  bottom: 0;
-  width: calc(100% - 30px);
-  margin-bottom: 5px;
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
   z-index: 1;
+  order: 3;
 }
 
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-toolbar a.phpdebugbar-widgets-filter {

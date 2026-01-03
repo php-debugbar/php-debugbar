@@ -462,8 +462,14 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             positionSelect.value = debugbar.options.openBtnPosition;
             positionSelect.addEventListener('change', function () {
                 self.storeSetting('openBtnPosition', this.value);
+                if (this.value === 'topLeft' || this.value === 'topRight') {
+                    self.storeSetting('toolbarPosition', 'top');
+                } else {
+                    self.storeSetting('toolbarPosition', 'bottom');
+                }
+                self.get('debugbar').recomputeBottomOffset();
             });
-            fields['Open Button Position'] = positionSelect;
+            fields['Toolbar Position'] = positionSelect;
 
             // Hide Empty Tabs
             this.hideEmptyTabs = document.createElement('input');
@@ -615,6 +621,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.options = Object.assign({
                 bodyBottomInset: true,
                 theme: 'auto',
+                toolbarPosition: 'bottom',
                 openBtnPosition: 'bottomLeft',
                 hideEmptyTabs: false
             }, options);
@@ -629,6 +636,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.datesetTitleFormater = new DatasetTitleFormater(this);
             const bodyStyles = window.getComputedStyle(document.body);
             this.bodyPaddingBottomHeight = Number.parseInt(bodyStyles.paddingBottom);
+            this.bodyPaddingTopHeight = Number.parseInt(bodyStyles.paddingTop);
+
             try {
                 this.isIframe = window.self !== window.top && window.top.phpdebugbar;
             } catch (_error) {
@@ -739,6 +748,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
             this.resizeHandle = document.createElement('div');
             this.resizeHandle.classList.add(csscls('resize-handle'));
+            this.resizeHandle.classList.add(csscls('resize-handle-top'));
             this.el.append(this.resizeHandle);
 
             this.header = document.createElement('div');
@@ -765,14 +775,24 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.el.append(this.body);
             this.recomputeBottomOffset();
 
+            this.resizeHandleBottom = document.createElement('div');
+            this.resizeHandleBottom.classList.add(csscls('resize-handle'));
+            this.resizeHandleBottom.classList.add(csscls('resize-handle-bottom'));
+            this.el.append(this.resizeHandleBottom);
+
             // dragging of resize handle
             let pos_y, orig_h;
             const mousemove = (e) => {
                 const h = orig_h + (pos_y - e.pageY);
                 self.setHeight(h);
             };
+            const mousemoveBottom = (e) => {
+                const h = orig_h - (pos_y - e.pageY);
+                self.setHeight(h);
+            };
             const mouseup = () => {
                 document.removeEventListener('mousemove', mousemove);
+                document.removeEventListener('mousemove', mousemoveBottom);
                 document.removeEventListener('mouseup', mouseup);
                 self.dragCapture.style.display = 'none';
             };
@@ -780,6 +800,14 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 orig_h = self.body.offsetHeight;
                 pos_y = e.pageY;
                 document.addEventListener('mousemove', mousemove);
+                document.addEventListener('mouseup', mouseup);
+                self.dragCapture.style.display = '';
+                e.preventDefault();
+            });
+            this.resizeHandleBottom.addEventListener('mousedown', (e) => {
+                orig_h = self.body.offsetHeight;
+                pos_y = e.pageY;
+                document.addEventListener('mousemove', mousemoveBottom);
                 document.addEventListener('mouseup', mouseup);
                 self.dragCapture.style.display = '';
                 e.preventDefault();
@@ -1087,6 +1115,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             }
 
             this.resizeHandle.hidden = false;
+            this.resizeHandleBottom.hidden = false;
             this.body.hidden = false;
 
             this.recomputeBottomOffset();
@@ -1130,6 +1159,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             }
             this.body.hidden = true;
             this.resizeHandle.hidden = true;
+            this.resizeHandleBottom.hidden = true;
+
             this.recomputeBottomOffset();
             localStorage.setItem('phpdebugbar-visible', '0');
             this.el.classList.add(csscls('minimized'));
@@ -1152,6 +1183,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         close() {
             this.resizeHandle.hidden = true;
+            this.resizeHandleBottom.hidden = true;
             this.header.hidden = true;
             this.body.hidden = true;
             this.restorebtn.hidden = false;
@@ -1176,6 +1208,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         restore() {
             this.resizeHandle.hidden = false;
+            this.resizeHandleBottom.hidden = false;
             this.header.hidden = false;
             this.restorebtn.hidden = true;
             localStorage.setItem('phpdebugbar-open', '1');
@@ -1201,11 +1234,19 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             if (this.options.bodyBottomInset) {
                 if (this.isClosed()) {
                     document.body.style.paddingBottom = this.bodyPaddingBottomHeight ? `${this.bodyPaddingBottomHeight}px` : '';
+                    document.body.style.paddingTop = this.bodyPaddingTopHeight ? `${this.bodyPaddingTopHeight}px` : '';
                     return;
                 }
 
-                const offset = this.el.offsetHeight + (this.bodyPaddingBottomHeight || 0);
-                document.body.style.paddingBottom = `${offset}px`;
+                if (this.options.toolbarPosition === 'top') {
+                    const offset = this.el.offsetHeight + (this.bodyPaddingTopHeight || 0);
+                    document.body.style.paddingTop = `${offset}px`;
+                    document.body.style.paddingBottom = this.bodyPaddingBottomHeight ? `${this.bodyPaddingBottomHeight}px` : '';
+                } else {
+                    const offset = this.el.offsetHeight + (this.bodyPaddingBottomHeight || 0);
+                    document.body.style.paddingBottom = `${offset}px`;
+                    document.body.style.paddingTop = this.bodyPaddingTopHeight ? `${this.bodyPaddingTopHeight}px` : '';
+                }
             }
         }
 
@@ -1414,6 +1455,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.datasetTab.el.setAttribute('data-collector', '__datasets');
             this.openbtn.after(this.datasetTab.tab);
             this.datasetTab.tab.hidden = true;
+            this.datasetTab.el.hidden = true;
             this.datasetTab.tab.addEventListener('click', () => {
                 if (!this.isMinimized() && this.activePanelName === '__datasets') {
                     this.minimize();
