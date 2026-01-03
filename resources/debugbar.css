@@ -236,6 +236,12 @@ div.phpdebugbar-minimized{
   border-top: 1px solid var(--debugbar-header-border);
 }
 
+div.phpdebugbar-minimized[data-toolbarPosition="top"]{
+  border-top: 0;
+  border-bottom: 1px solid var(--debugbar-header-border);
+}
+
+
 div.phpdebugbar[data-toolbarPosition="top"] {
   bottom: auto;
   top: 0;
@@ -243,6 +249,7 @@ div.phpdebugbar[data-toolbarPosition="top"] {
 
 div.phpdebugbar[data-toolbarPosition="top"] div.phpdebugbar-resize-handle-top {
   height:0;
+  display: none;
 }
 div.phpdebugbar[data-toolbarPosition="bottom"] div.phpdebugbar-resize-handle-bottom {
   height:0;
