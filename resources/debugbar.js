@@ -617,15 +617,14 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             return `phpdebugbar ${csscls('minimized')}`;
         }
 
-        options = {
-            bodyBottomInset: true,
-            theme: 'auto',
-            openBtnPosition: 'bottomLeft',
-            hideEmptyTabs: false
-        };
-
         initialize(options = {}) {
-            this.options = Object.assign({}, this.options, options);
+            this.options = Object.assign({
+                bodyBottomInset: true,
+                theme: 'auto',
+                toolbarPosition: 'bottom',
+                openBtnPosition: 'bottomLeft',
+                hideEmptyTabs: false
+            }, options);
             this.defaultOptions = { ...this.options };
             this.controls = {};
             this.dataMap = {};
