@@ -20,7 +20,7 @@ directly in the HTML.  This can be done in four ways:
  - Retrieving filenames and inline content of assets using `JavascriptRenderer::getAssets()`
    and doing something with it
 
-You can define the base url of your assets using `setBaseUrl()`, or set the Asset Handler with `setAssetHandlerUrl()` (see below).
+You can define the base url of your assets using `setBaseUrl()`, or set the [AssetHandler](#asset-handler) with `setAssetHandlerUrl()` (see below).
 
 Using `renderHead()`:
 ```php
@@ -50,7 +50,7 @@ list($cssFiles, $jsFiles, $inlineCss, $inlineJs, $inlineHead) = $renderer->getAs
 The AssetHandler can be used to serve assets from a different location than the default.
 
 ```php
-$renderer->->setAssetHandlerUrl('assets.php');
+$renderer->setAssetHandlerUrl('assets.php');
 ```
 
 You can then implement an endpoint with the AssetHandler in your application to serve the assets from a different location.
