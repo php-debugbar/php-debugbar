@@ -251,9 +251,12 @@ div.phpdebugbar[data-toolbarPosition="top"] div.phpdebugbar-resize-handle-top {
   height:0;
   display: none;
 }
+div.phpdebugbar[data-toolbarPosition="top"] div.phpdebugbar-resize-handle-bottom {
+  margin-top: 0;
+}
 div.phpdebugbar[data-toolbarPosition="bottom"] div.phpdebugbar-resize-handle-bottom {
   height:0;
-  margin-top: 4px;
+  margin-top: 0;
 }
 
 
