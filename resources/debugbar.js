@@ -638,7 +638,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.registerMediaListener();
 
             // Attach settings
-            this.settings = new PhpDebugBar.DebugBar.Tab({ icon: 'adjustments-horizontal', title: 'Settings', widget: new Settings({
+            this.settingsControl = new PhpDebugBar.DebugBar.Tab({ icon: 'adjustments-horizontal', title: 'Settings', widget: new Settings({
                 debugbar: this
             }) });
         }
@@ -841,23 +841,23 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 self.showDataSet(this.value);
             });
 
-            this.controls.__settings = this.settings;
-            this.settings.tab.classList.add(csscls('tab-settings'));
-            this.settings.tab.setAttribute('data-collector', '__settings');
-            this.settings.el.setAttribute('data-collector', '__settings');
-            this.settings.el.hidden = true;
+            this.controls.__settings = this.settingsControl;
+            this.settingsControl.tab.classList.add(csscls('tab-settings'));
+            this.settingsControl.tab.setAttribute('data-collector', '__settings');
+            this.settingsControl.el.setAttribute('data-collector', '__settings');
+            this.settingsControl.el.hidden = true;
 
-            this.maximizebtn.after(this.settings.tab);
-            this.settings.tab.hidden = false;
-            this.settings.tab.addEventListener('click', () => {
+            this.maximizebtn.after(this.settingsControl.tab);
+            this.settingsControl.tab.hidden = false;
+            this.settingsControl.tab.addEventListener('click', () => {
                 if (!this.isMinimized() && this.activePanelName === '__settings') {
                     this.minimize();
                 } else {
                     this.showTab('__settings');
-                    this.settings.get('widget').render();
+                    this.settingsControl.get('widget').render();
                 }
             });
-            this.body.append(this.settings.el);
+            this.body.append(this.settingsControl.el);
         }
 
         /**
@@ -906,6 +906,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                     } else {
                         this.showTab();
                     }
+                } else if (visible === '0') {
+                    this.minimize();
                 }
             }
         }
