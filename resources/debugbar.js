@@ -1455,6 +1455,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.datasetTab.el.setAttribute('data-collector', '__datasets');
             this.openbtn.after(this.datasetTab.tab);
             this.datasetTab.tab.hidden = true;
+            this.datasetTab.el.hidden = true;
             this.datasetTab.tab.addEventListener('click', () => {
                 if (!this.isMinimized() && this.activePanelName === '__datasets') {
                     this.minimize();
