@@ -33,6 +33,8 @@ class TracedStatement
 
     protected ?string $preparedId;
 
+    protected ?array $backtrace = null;
+
     public function __construct(string $sql, array $params = [], ?string $preparedId = null)
     {
         $this->sql = $sql;
@@ -61,6 +63,17 @@ class TracedStatement
         $this->rowCount = $rowCount;
     }
 
+    public function checkBacktrace(int $limit = 15): void
+    {
+        $offset = 3;    // Internal calls
+        $stack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $limit + $offset);
+        $stack = array_filter($stack, function ($frame) {
+            return isset($frame['file']) && !str_contains($frame['file'], '/DebugBar/DataCollector/PDO/');
+        });
+
+        $this->backtrace = array_slice($stack, 0, $limit);
+    }
+
     /**
      * Check parameters for illegal (non UTF-8) strings, like Binary data.
      *
@@ -75,6 +88,11 @@ class TracedStatement
         return $params;
     }
 
+    public function getBacktrace(): ?array
+    {
+        return $this->backtrace;
+    }
+
     /**
      * Returns the SQL string used for the query, without filled parameters
      *
@@ -82,53 +100,6 @@ class TracedStatement
     public function getSql(): string
     {
         return $this->sql;
-    }
-
-    /**
-     * Returns the SQL string with any parameters used embedded
-     *
-     */
-    public function getSqlWithParams(string $quotationChar = '<>'): string
-    {
-        if (($l = strlen($quotationChar)) > 1) {
-            $quoteLeft = substr($quotationChar, 0, $l / 2);
-            $quoteRight = substr($quotationChar, $l / 2);
-        } else {
-            $quoteLeft = $quoteRight = $quotationChar;
-        }
-
-        $sql = $this->sql;
-
-        $cleanBackRefCharMap = ['%' => '%%', '$' => '$%', '\\' => '\\%'];
-
-        foreach ($this->parameters as $k => $v) {
-
-            if (null === $v) {
-                $v = 'NULL';
-            } elseif (is_string($v)) {
-                $backRefSafeV = strtr($v, $cleanBackRefCharMap);
-                $v = "$quoteLeft$backRefSafeV$quoteRight";
-            }
-
-            if (is_numeric($k)) {
-                $marker = "\?";
-            } else {
-                $marker = (preg_match("/^:/", $k)) ? $k : ":" . $k;
-            }
-
-            $matchRule = "/({$marker}(?!\w))(?=(?:[^$quotationChar]|[$quotationChar][^$quotationChar]*[$quotationChar])*$)/";
-            $count = mb_substr_count($sql, (string) $k);
-            if ($count < 1) {
-                $count = mb_substr_count($sql, $matchRule);
-            }
-            for ($i = 0; $i <= $count; $i++) {
-                $sql = preg_replace($matchRule, (string) $v, $sql, 1);
-            }
-        }
-
-        $sql = strtr($sql, array_flip($cleanBackRefCharMap));
-
-        return $sql;
     }
 
     /**
@@ -146,11 +117,7 @@ class TracedStatement
      */
     public function getParameters(): array
     {
-        $params = [];
-        foreach ($this->parameters as $name => $param) {
-            $params[$name] = htmlentities($param ?: "", ENT_QUOTES, 'UTF-8', false);
-        }
-        return $params;
+        return $this->parameters;
     }
 
     /**

@@ -421,14 +421,6 @@ a.phpdebugbar-restore-btn:after {
   mask-size: 20px 20px;
 }
 
-a.phpdebugbar-maximize-btn { display: none}
-
-a.phpdebugbar-minimize-btn { display: block}
-
-div.phpdebugbar-minimized a.phpdebugbar-maximize-btn { display: block}
-
-div.phpdebugbar-minimized a.phpdebugbar-minimize-btn { display: none}
-
 a.phpdebugbar-minimize-btn:after {
   -webkit-mask-image: var(--debugbar-icon-chevron-down);
   mask-image: var(--debugbar-icon-chevron-down);
@@ -493,7 +485,6 @@ a.phpdebugbar-open-btn:after {
 
 .phpdebugbar select.phpdebugbar-datasets-switcher {
   float: right;
-  display: none;
   max-width: 200px;
   height: 22px;
   padding: 4px 0;
@@ -517,7 +508,6 @@ a.phpdebugbar-open-btn:after {
 
 div.phpdebugbar-body {
   border-top: 1px solid var(--debugbar-header-border);
-  display: none;
   position: relative;
   height: 300px;
 }
@@ -525,7 +515,6 @@ div.phpdebugbar-body {
 /* -------------------------------------- */
 
 div.phpdebugbar-panel {
-  display: none;
   height: 100%;
   overflow: auto;
   width: 100%;

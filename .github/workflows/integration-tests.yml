@@ -1,4 +1,4 @@
-name: Screenshots
+name: Integration
 
 on:
   push:
@@ -7,21 +7,29 @@ on:
   pull_request:
     branches:
       - "*"
-  schedule:
-    - cron: '0 0 * * *'
 
 jobs:
-  php-tests:
-    runs-on: ubuntu-latest
+  integration-tests:
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
       COMPOSER_NO_INTERACTION: 1
 
     strategy:
       matrix:
-        php: [8.4]
+        php: [8.5, 8.4, 8.3, 8.2]
+        symfony: ['*']
+        include:
+          - php: 8.2
+            symfony: ^5.4
+          - php: 8.2
+            symfony: ^6.4
+          - php: 8.2
+            symfony: ^7.3
+          - php: 8.4
+            symfony: ^7.3
 
-    name: PHP${{ matrix.php }}
+    name: Integration PHP${{ matrix.php }} Symfony${{ matrix.symfony }}
 
     steps:
       - name: Checkout code
@@ -32,7 +40,12 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           coverage: none
+          tools: composer:v2
           extensions: pdo_sqlite
+
+      - name: Require specific Symfony version
+        if: matrix.symfony != '*'
+        run: composer require "symfony/var-dumper:${{ matrix.symfony }}" --no-interaction --no-update
 
       - name: Install dependencies
         run: |
@@ -40,9 +53,3 @@ jobs:
 
       - name: Execute Unit Tests
         run: vendor/bin/phpunit --testsuite=Browser
-
-      - name: Upload screenshots
-        uses: actions/upload-artifact@v4
-        with:
-          name: debugbar-screenshots
-          path: tests/screenshots

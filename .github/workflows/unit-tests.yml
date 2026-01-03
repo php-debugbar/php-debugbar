@@ -1,0 +1,54 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      COMPOSER_NO_INTERACTION: 1
+
+    strategy:
+      matrix:
+        php: [8.5, 8.4, 8.3, 8.2]
+        symfony: ['*']
+        include:
+          - php: 8.2
+            symfony: ^5.4
+          - php: 8.2
+            symfony: ^6.4
+          - php: 8.2
+            symfony: ^7.3
+          - php: 8.4
+            symfony: ^7.3
+
+    name: Unit PHP${{ matrix.php }} Symfony${{ matrix.symfony }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        coverage: none
+        tools: composer:v2
+        extensions: pdo_sqlite
+
+    - name: Require specific Symfony version
+      if: matrix.symfony != '*'
+      run: composer require "symfony/var-dumper:${{ matrix.symfony }}" --no-interaction --no-update
+
+    - name: Install dependencies
+      run: composer update --prefer-dist --no-progress
+
+    - name: Execute Unit Tests
+      run: vendor/bin/phpunit --testsuite=Unit

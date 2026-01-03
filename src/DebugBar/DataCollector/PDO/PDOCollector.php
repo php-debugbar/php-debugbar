@@ -8,6 +8,7 @@ use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
 use DebugBar\DataCollector\TimeDataCollector;
+use DebugBar\DataFormatter\QueryFormatter;
 
 /**
  * Collects data about SQL statements executed with PDO
@@ -19,13 +20,15 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
 
     protected ?TimeDataCollector $timeCollector;
 
-    protected bool $renderSqlWithParams = false;
+    protected ?QueryFormatter $queryFormatter = null;
 
-    protected string $sqlQuotationChar = '<>';
+    protected bool $renderSqlWithParams = true;
 
-    protected bool $durationBackground = false;
+    protected bool $durationBackground = true;
 
     protected ?float $slowThreshold = null;
+
+    protected ?int $backtraceLimit = null;
 
     public function __construct(?\PDO $pdo = null, ?TimeDataCollector $timeCollector = null)
     {
@@ -35,13 +38,31 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         }
     }
 
+    public function getQueryFormatter(): QueryFormatter
+    {
+        if ($this->queryFormatter === null) {
+            $this->queryFormatter = new QueryFormatter();
+        }
+        return $this->queryFormatter;
+    }
+
+    /**
+     * Set the backtrace limit to check for PDO statements. Set to null to disable.
+     */
+    public function enableBacktrace(?int $backtraceLimit = 10): void
+    {
+        $this->backtraceLimit = $backtraceLimit;
+        foreach ($this->connections as $pdo) {
+            $pdo->enableBacktrace($backtraceLimit);
+        }
+    }
+
     /**
      * Renders the SQL of traced statements with params embeded
      */
-    public function setRenderSqlWithParams(bool $enabled = true, string $quotationChar = '<>'): void
+    public function setRenderSqlWithParams(bool $enabled = true): void
     {
         $this->renderSqlWithParams = $enabled;
-        $this->sqlQuotationChar = $quotationChar;
     }
 
     /**
@@ -67,11 +88,6 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         return $this->renderSqlWithParams;
     }
 
-    public function getSqlQuotationChar(): string
-    {
-        return $this->sqlQuotationChar;
-    }
-
     /**
      * Adds a new PDO instance to be collector
      */
@@ -83,6 +99,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         if (!($pdo instanceof TraceablePDO)) {
             $pdo = new TraceablePDO($pdo);
         }
+        $pdo->enableBacktrace($this->backtraceLimit);
         $this->connections[$name] = $pdo;
     }
 
@@ -142,12 +159,21 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         }
         $stmts = [];
         foreach ($pdo->getExecutedStatements() as $stmt) {
+
+            $sql = $stmt->getSql();
+            $params = $stmt->getParameters();
+            if ($this->renderSqlWithParams) {
+                $sql = $this->getQueryFormatter()->formatSqlWithBindings($sql, $params, $pdo);
+            } else {
+                $sql = $this->getQueryFormatter()->formatSql($sql);
+            }
+
+            $backtrace = $stmt->getBacktrace();
+            $source = $backtrace ? (object) reset($backtrace) : null;
             $stmts[] = [
-                'sql' => $this->renderSqlWithParams ? $stmt->getSqlWithParams($this->sqlQuotationChar) : $stmt->getSql(),
+                'sql' => $sql,
                 'type' => $stmt->getQueryType(),
                 'row_count' => $stmt->getRowCount(),
-                'stmt_id' => $stmt->getPreparedId(),
-                'prepared_stmt' => $stmt->getSql(),
                 'params' => (object) $stmt->getParameters(),
                 'duration' => $stmt->getDuration(),
                 'duration_str' => $this->getDataFormatter()->formatDuration($stmt->getDuration()),
@@ -158,6 +184,9 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
                 'is_success' => $stmt->isSuccess(),
                 'error_code' => $stmt->getErrorCode(),
                 'error_message' => $stmt->getErrorMessage(),
+                'backtrace' => $backtrace,
+                'filename' => $source ? $this->getQueryFormatter()->formatSource($source, true) : null,
+                'xdebug_link' => $source ? $this->getXdebugLink($source->file ?: '', $source->line) : null,
                 'slow' => $this->slowThreshold && $this->slowThreshold <= $stmt->getDuration(),
             ];
             if ($timeCollector !== null) {

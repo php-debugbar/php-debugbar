@@ -45,6 +45,7 @@ class JavascriptRenderer
 
     protected array $jsVendors = [
         'highlightjs' => 'vendor/highlightjs/highlight.pack.js',
+        'sql-formatter' => 'vendor/sql-formatter/sql-formatter.min.js',
     ];
 
     protected bool|array $includeVendors = true;
@@ -78,6 +79,7 @@ class JavascriptRenderer
         'widgets/templates/widget.js',
         'highlight.css',
         'vendor/highlightjs/highlight.pack.js',
+        'vendor/sql-formatter/sql-formatter.min.js',
     ];
 
     protected array $additionalAssets = [];
@@ -111,6 +113,8 @@ class JavascriptRenderer
     protected string $openHandlerClass = 'PhpDebugBar.OpenHandler';
 
     protected ?string $openHandlerUrl = null;
+
+    protected ?string $assetHandlerUrl = null;
 
     protected ?string $cspNonce = null;
 
@@ -392,36 +396,23 @@ class JavascriptRenderer
         return $this->initialization;
     }
 
-    /**
-     * Sets the default theme
-     *
-     *
-     * @return $this
-     */
     public function setTheme(?string $theme = 'auto'): static
     {
         $this->theme = $theme;
         return $this;
     }
 
-    /**
-     * Sets whether to hide empty tabs or not
-     *
-     * @param boolean $hide
-     *
-     * @return $this
-     */
+    public function getTheme(): string
+    {
+        return $this->theme;
+    }
+
     public function setHideEmptyTabs(bool $hide = true): static
     {
         $this->hideEmptyTabs = $hide;
         return $this;
     }
 
-    /**
-     * Checks if empty tabs are hidden or not
-     *
-     * @return boolean
-     */
     public function areEmptyTabsHidden(): bool
     {
         return $this->hideEmptyTabs;
@@ -653,6 +644,25 @@ class JavascriptRenderer
     public function getOpenHandlerUrl(): ?string
     {
         return $this->openHandlerUrl;
+    }
+
+    /**
+     * Sets the url of the asset handler
+     *
+     */
+    public function setAssetHandlerUrl(?string $url): static
+    {
+        $this->assetHandlerUrl = $url;
+        return $this;
+    }
+
+    /**
+     * Returns the url for the asset handler
+     *
+     */
+    public function getAssetHandlerUrl(): ?string
+    {
+        return $this->assetHandlerUrl;
     }
 
     /**
@@ -893,18 +903,18 @@ class JavascriptRenderer
      * Write all CSS assets to standard output or in a file
      *
      */
-    public function dumpCssAssets(?string $targetFilename = null): void
+    public function dumpCssAssets(?string $targetFilename = null, bool $echo = true): string
     {
-        $this->dumpAssets($this->getAssets('css'), $this->getAssets('inline_css'), $targetFilename);
+        return $this->dumpAssets($this->getAssets('css'), $this->getAssets('inline_css'), $targetFilename, $echo);
     }
 
     /**
      * Write all JS assets to standard output or in a file
      *
      */
-    public function dumpJsAssets(?string $targetFilename = null): void
+    public function dumpJsAssets(?string $targetFilename = null, bool $echo = true): string
     {
-        $this->dumpAssets($this->getAssets('js'), $this->getAssets('inline_js'), $targetFilename);
+        return $this->dumpAssets($this->getAssets('js'), $this->getAssets('inline_js'), $targetFilename, $echo);
     }
 
     /**
@@ -912,9 +922,9 @@ class JavascriptRenderer
      * already returned by dumpCssAssets or dumpJsAssets)
      *
      */
-    public function dumpHeadAssets(?string $targetFilename = null): void
+    public function dumpHeadAssets(?string $targetFilename = null, bool $echo = true): string
     {
-        $this->dumpAssets(null, $this->getAssets('inline_head'), $targetFilename);
+        return $this->dumpAssets(null, $this->getAssets('inline_head'), $targetFilename, $echo);
     }
 
     /**
@@ -923,7 +933,7 @@ class JavascriptRenderer
      * @param array|null $files   Filenames containing assets
      * @param array|null $content Inline content to dump
      */
-    public function dumpAssets(?array $files = null, ?array $content = null, ?string $targetFilename = null): void
+    public function dumpAssets(?array $files = null, ?array $content = null, ?string $targetFilename = null, bool $echo = true): string
     {
         $dumpedContent = '';
         if ($files) {
@@ -939,9 +949,11 @@ class JavascriptRenderer
 
         if ($targetFilename !== null) {
             file_put_contents($targetFilename, $dumpedContent);
-        } else {
+        } elseif ($echo) {
             echo $dumpedContent;
         }
+
+        return $dumpedContent;
     }
 
     /**
@@ -959,6 +971,11 @@ class JavascriptRenderer
             'inline_head' => $inlineHead,
         ] = $this->getAssets(null, self::RELATIVE_URL);
 
+        if ($this->assetHandlerUrl !== null) {
+            $url = $this->assetHandlerUrl;
+            $cssFiles = [$url . (str_contains($url, '?') ? '&' : '?') . 'type=css&mtime=' . $this->getModifiedTimes($this->getAssets('css', self::RELATIVE_PATH))];
+            $jsFiles = [$url . (str_contains($url, '?') ? '&' : '?') . 'type=js&hash=' . $this->getModifiedTimes($this->getAssets('js', self::RELATIVE_PATH))];
+        }
         $html = '';
 
         $nonce = $this->getNonceAttribute();
@@ -968,7 +985,7 @@ class JavascriptRenderer
         }
 
         foreach ($inlineCss as $content) {
-            $html .= sprintf('<style type="text/css">%s</style>' . "\n", $content);
+            $html .= sprintf('<style type="text/css"%s>%s</style>' . "\n", $nonce, $content);
         }
 
         foreach ($jsFiles as $file) {
@@ -980,10 +997,27 @@ class JavascriptRenderer
         }
 
         foreach ($inlineHead as $content) {
+            if ($nonce !== '') {
+                $content =  preg_replace(
+                    '/<(script|style)(?![^>]*nonce=)/i',
+                    '<$1' . $nonce,
+                    $content
+                );
+            }
+
             $html .= $content . "\n";
         }
 
         return $html;
+    }
+
+    protected function getModifiedTimes(array $files): int
+    {
+        $modifiedTime = 0;
+        foreach ($files as $file) {
+            $modifiedTime = max($modifiedTime, filemtime($file));
+        }
+        return $modifiedTime;
     }
 
     /**
@@ -1058,9 +1092,9 @@ class JavascriptRenderer
         if ($renderStackedData && $this->debugBar->hasStackedData()) {
             foreach ($this->debugBar->getStackedData() as $id => $data) {
                 if ($this->areDatasetsDeferred()) {
-                    $js .= $this->getLoadDatasetCode($id, '(stacked)');
+                    $js .= $this->getLoadDatasetCode($id, '(stacked)', false);
                 } else {
-                    $js .= $this->getAddDatasetCode($id, $data, '(stacked)');
+                    $js .= $this->getAddDatasetCode($id, $data, '(stacked)', false);
 
                 }
             }
@@ -1077,7 +1111,11 @@ class JavascriptRenderer
         $nonce = $this->getNonceAttribute();
 
         if ($nonce != '') {
-            $js = preg_replace("/<script>/", "<script nonce='{$this->cspNonce}'>", $js);
+            $js =  preg_replace(
+                '/<(script)(?![^>]*nonce=)/i',
+                '<$1' . $nonce,
+                $js
+            );
         }
 
         return "<script type=\"text/javascript\"{$nonce}>\n$js\n</script>\n";
@@ -1224,14 +1262,15 @@ class JavascriptRenderer
      *
      *
      */
-    protected function getAddDatasetCode(string $requestId, array $data, ?string $suffix = null): string
+    protected function getAddDatasetCode(string $requestId, array $data, ?string $suffix = null, bool $show = true): string
     {
         $js = sprintf(
-            "%s.addDataSet(%s, \"%s\"%s);\n",
+            "%s.addDataSet(%s, %s, %s, %s);\n",
             $this->variableName,
             json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_INVALID_UTF8_IGNORE),
-            $requestId,
-            $suffix ? ", " . json_encode($suffix) : '',
+            json_encode($requestId),
+            json_encode($suffix ?: ''),
+            json_encode($show),
         );
         return $js;
     }
@@ -1240,15 +1279,15 @@ class JavascriptRenderer
      * Returns the js code needed to load a dataset with the OpenHandler
      *
      *
-     * @return string
      */
-    protected function getLoadDatasetCode(string $requestId, ?string $suffix = null)
+    protected function getLoadDatasetCode(string $requestId, ?string $suffix = null, bool $show = true): string
     {
         $js = sprintf(
-            "%s.loadDataSet(\"%s\"%s);\n",
+            "%s.loadDataSet(%s, %s, null, %s);\n",
             $this->variableName,
-            $requestId,
-            $suffix ? ", " . json_encode($suffix) : '',
+            json_encode($requestId),
+            json_encode($suffix ?: ''),
+            json_encode($show),
         );
         return $js;
     }
@@ -1257,7 +1296,7 @@ class JavascriptRenderer
      * If a nonce it set, create the correct attribute
      *
      */
-    protected function getNonceAttribute(): string
+    protected function getNonceAttribute(): ?string
     {
         if ($nonce = $this->getCspNonce()) {
             return ' nonce="' . $nonce . '"';

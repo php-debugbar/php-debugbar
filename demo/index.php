@@ -2,17 +2,22 @@
 
 declare(strict_types=1);
 
-/** @var \DebugBar\DebugBar $debugbar */
+// Adds the Content-Security-Policy to the HTTP header.
+use DebugBar\DataCollector\MessagesCollector;
+use DebugBar\DataCollector\TimeDataCollector;
+
+header("Content-Security-Policy: default-src 'self' 'nonce-demo'; img-src data:");
+
+/** @var \DebugBar\DebugBar|array{messages: MessagesCollector,time: TimeDataCollector} $debugbar */
 
 include 'bootstrap.php';
 
 $debugbar['messages']->addMessage('hello');
-
 $debugbar['time']->startMeasure('op1', 'sleep 500');
 usleep(300);
 $debugbar['time']->startMeasure('op2', 'sleep 400');
 usleep(200);
-$debugbar['time']->stopMeasure('op1');
+$debugbar['time']->stopMeasure('op1', ['foo' => 'bar']);
 usleep(200);
 $debugbar['time']->stopMeasure('op2');
 
@@ -21,6 +26,8 @@ $debugbar['messages']->addMessage(['toto' => ['titi', 'tata']]);
 $debugbar['messages']->addMessage('oups', 'error');
 $debugbar['messages']->addMessage('welcome!', 'success');
 $debugbar['messages']->addMessage('panic!', 'critical');
+$debugbar["messages"]->addMessage("<!--<script>");
+$debugbar["messages"]->addMessage("<script>alert('Whoops')</script>");
 
 require __DIR__ . '/collectors/counter.php';
 require __DIR__ . '/collectors/templates.php';
@@ -32,6 +39,10 @@ $debugbar['time']->startMeasure('render');
 
 render_demo_page(function () {
     ?>
+<h2>Index</h2>
+<ul>
+    <li><a href="index.php">Index page</a></li>
+</ul>
 <h2>AJAX</h2>
 <ul>
     <li><a href="ajax.php" class="ajax">load ajax content</a></li>

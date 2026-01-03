@@ -17,10 +17,20 @@ class TraceablePDO extends PDO
     /** @var TracedStatement[] */
     protected array $executedStatements = [];
 
+    protected ?int $backtraceLimit = null;
+
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
         $this->pdo->setAttribute(PDO::ATTR_STATEMENT_CLASS, [TraceablePDOStatement::class, [$this]]);
+    }
+
+    /**
+     * Set the backtrace limit to check for PDO statements. Set to null to disable.
+     */
+    public function enableBacktrace(?int $backtraceLimit = 10): void
+    {
+        $this->backtraceLimit = $backtraceLimit;
     }
 
     /**
@@ -260,6 +270,9 @@ class TraceablePDO extends PDO
      */
     public function addExecutedStatement(TracedStatement $stmt): void
     {
+        if ($this->backtraceLimit) {
+            $stmt->checkBacktrace($this->backtraceLimit);
+        }
         $this->executedStatements[] = $stmt;
     }
 

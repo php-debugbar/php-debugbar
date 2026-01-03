@@ -5,14 +5,23 @@ include __DIR__ . '/../vendor/autoload.php';
 // for stack data
 session_start();
 
+use DebugBar\Bridge\Symfony\SymfonyMailCollector;
+use DebugBar\DataCollector\PDO\PDOCollector;
+use DebugBar\DataCollector\TemplateCollector;
 use DebugBar\StandardDebugBar;
 
 $debugbar = new StandardDebugBar();
+$debugbar->addCollector(new PdoCollector());
+$debugbar->addCollector(new TemplateCollector());
+$debugbar->addCollector(new SymfonyMailCollector());
+
 $debugbarRenderer = $debugbar->getJavascriptRenderer()
-                             ->setBaseUrl('../resources')
+                             ->setAssetHandlerUrl('assets.php')
                              ->setAjaxHandlerEnableTab(true)
                              ->setHideEmptyTabs(true)
                              ->setUseDistFiles(false)
+                             ->setIncludeVendors(true)
+                             ->setCspNonce('demo')
                              ->setTheme($_GET['theme'] ?? 'auto');
 
 //
@@ -36,8 +45,7 @@ function render_demo_page(?Closure $callback = null)
     ?>
 <html>
     <head>
-        <?php echo $debugbarRenderer->renderHead() ?>
-        <script type="text/javascript">
+        <script type="text/javascript" nonce="demo">
             document.addEventListener('DOMContentLoaded', function() {
                 document.querySelectorAll('.ajax').forEach(function(el) {
                     el.addEventListener('click', function(event) {
@@ -59,7 +67,8 @@ function render_demo_page(?Closure $callback = null)
             $callback();
         } ?>
         <?php
-            echo $debugbarRenderer->render();
+            echo $debugbarRenderer->renderHead();
+    echo $debugbarRenderer->render();
     ?>
     </body>
 </html>

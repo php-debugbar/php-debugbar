@@ -17,6 +17,16 @@
         return text.replace(/\n/g, '<br>').replace(/\s/g, '&nbsp;');
     };
 
+    const sfDump = PhpDebugBar.Widgets.sfDump = function (el) {
+        if (typeof window.Sfdump !== 'function') {
+            return;
+        }
+
+        el.querySelectorAll('pre.sf-dump[id]').forEach((pre) => {
+            window.Sfdump(pre.id, { maxDepth: 0 });
+        });
+    };
+
     /**
      * Returns a string representation of value, using JSON.stringify
      * if it's an object.
@@ -39,32 +49,21 @@
      * Highlights a block of code
      *
      * @param  {string} code
-     * @param  {string} lang
+     * @param  {string|null} lang
      * @return {string}
      */
     const highlight = PhpDebugBar.Widgets.highlight = function (code, lang) {
-        if (typeof code === 'string') {
-            if (typeof phpdebugbar_hljs === 'undefined') {
-                return htmlize(code);
-            }
-            const hljs = phpdebugbar_hljs.default || phpdebugbar_hljs;
-            if (lang && hljs.getLanguage(lang)) {
-                return hljs.highlight(code, { language: lang }).value;
-            }
-            return hljs.highlightAuto(code).value;
+        if (typeof phpdebugbar_hljs === 'undefined') {
+            return htmlize(code);
         }
 
-        if (typeof phpdebugbar_hljs === 'object') {
-            const hljs = phpdebugbar_hljs.default || phpdebugbar_hljs;
-            if (code.nodeType === Node.ELEMENT_NODE) {
-                hljs.highlightElement(code);
-            } else if (code.length) {
-                for (const element of code) {
-                    hljs.highlightElement(element);
-                }
-            }
+        const hljs = phpdebugbar_hljs.default;
+
+        if (lang && hljs.getLanguage(lang)) {
+            return hljs.highlight(code, { language: lang }).value;
         }
-        return code;
+
+        return hljs.highlightAuto(code).value;
     };
 
     /**
@@ -84,15 +83,8 @@
         // code line was empty: that creates problems with the horizontal scrollbar being
         // incorrectly positioned - most noticeable when line numbers are shown.
         const codeElement = document.createElement('code');
-        codeElement.textContent = `${code}\n`;
+        codeElement.innerHTML = highlight(`${code}\n`, lang);
         pre.append(codeElement);
-
-        // Format the code
-        if (lang) {
-            codeElement.classList.add(`language-${lang}`);
-        }
-        highlight(codeElement);
-        codeElement.classList.remove('hljs');
 
         // Show line numbers in a list
         if (!Number.isNaN(Number.parseFloat(firstLineNumber))) {
@@ -534,18 +526,7 @@
                     val.innerHTML = value.message_html;
                     li.append(val);
 
-                    // get the id for sfDump
-                    const pre = val.querySelector('pre.sf-dump[id]');
-                    const sfDumpId = pre ? pre.id : null;
-
-                    // Run sfDump if needed
-                    if (sfDumpId && typeof window.Sfdump === 'function') {
-                        try {
-                            window.Sfdump(sfDumpId, { maxDepth: 0 });
-                        } catch (e) {
-                            console.error('Sfdump failed:', e);
-                        }
-                    }
+                    sfDump(val);
                 } else {
                     let m = value.message;
                     if (m.length > 100) {
@@ -811,7 +792,7 @@
                         if (measure.params && Object.keys(measure.params).length > 0) {
                             const table = document.createElement('table');
                             table.classList.add(csscls('params'));
-                            table.style.display = 'none';
+                            table.hidden = true;
                             table.innerHTML = '<tr><th colspan="2">Params</th></tr>';
 
                             for (const key in measure.params) {
@@ -829,11 +810,7 @@
                                     return '';
                                 }
                                 const table = this.querySelector('table');
-                                if (table.style.display !== 'none') {
-                                    table.style.display = 'none';
-                                } else {
-                                    table.style.display = '';
-                                }
+                                table.hidden = !table.hidden;
                             });
 
                             li.addEventListener('click', (event) => {
@@ -947,14 +924,12 @@
                     pre.classList.add(csscls('file'));
                     li.append(pre);
 
-                    if (!e.stack_trace_html) {
+                    if (e.stack_trace_html) {
+                        pre.hidden = false;
+                    } else {
                         // This click event makes the var-dumper hard to use.
                         li.addEventListener('click', () => {
-                            if (pre.style.display !== 'none') {
-                                pre.style.display = 'none';
-                            } else {
-                                pre.style.display = '';
-                            }
+                            pre.hidden = !pre.hidden;
                         });
                     }
                 }
@@ -969,12 +944,13 @@
                         samp.classList.remove('sf-dump-expanded');
                         samp.classList.add('sf-dump-compact');
 
-                        const note = samp.parentElement.querySelector('>.sf-dump-note');
+                        const note = samp.parentElement.querySelector(':scope > .sf-dump-note');
                         if (note) {
                             note.innerHTML = `${note.innerHTML.replace(/^array:/, '<span class="sf-dump-key">Stack Trace:</span> ')} files`;
                         }
                     }
                     li.append(trace);
+                    sfDump(trace);
                 } else if (e.stack_trace) {
                     e.stack_trace.split('\n').forEach((trace) => {
                         const traceLine = document.createElement('div');
@@ -995,7 +971,7 @@
                     if (firstChild) {
                         const file = firstChild.querySelector(`.${csscls('file')}`);
                         if (file) {
-                            file.style.display = '';
+                            file.hidden = false;
                         }
                     }
                 }
@@ -1276,7 +1252,7 @@
             const search = widget.get('search');
             const method = widget.get('method');
             if ((search && !meta.uri.includes(search)) || (method && meta.method !== method)) {
-                tr.style.display = 'none';
+                tr.hidden = true;
             }
         }
     }

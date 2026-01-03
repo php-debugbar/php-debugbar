@@ -89,26 +89,26 @@
                 if (tpl.params && Object.keys(tpl.params).length > 0) {
                     const table = document.createElement('table');
                     table.classList.add(csscls('params'));
-                    table.innerHTML = '<tr><th colspan="2">Params</th></tr>';
+                    const thead = document.createElement('thead');
+                    thead.innerHTML = '<tr><th colspan="2">Params</th></tr>';
+                    const tbody = document.createElement('tbody');
+                    table.append(thead, tbody);
 
                     for (const key in tpl.params) {
                         if (typeof tpl.params[key] !== 'function') {
                             const row = document.createElement('tr');
                             row.innerHTML = `<td class="${csscls('name')}">${key}</td><td class="${csscls('value')}"><pre><code>${tpl.params[key]}</code></pre></td>`;
-                            table.append(row);
+                            tbody.append(row);
                         }
                     }
+                    table.hidden = true;
                     li.append(table);
                     li.style.cursor = 'pointer';
                     li.addEventListener('click', () => {
                         if (window.getSelection().type === 'Range') {
                             return '';
                         }
-                        if (table.style.display !== 'none') {
-                            table.style.display = 'none';
-                        } else {
-                            table.style.display = '';
-                        }
+                        table.hidden = !table.hidden;
                     });
                 }
             } });

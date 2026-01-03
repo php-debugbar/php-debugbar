@@ -89,22 +89,6 @@ div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link {
 div.phpdebugbar-widgets-sqlqueries a.phpdebugbar-widgets-editor-link:hover {
   color: var(--debugbar-hover);
 }
-div.phpdebugbar-widgets-sqlqueries table.phpdebugbar-widgets-params {
-  display: none;
-  width: 70%;
-  margin: 10px;
-  border: 1px solid var(--debugbar-border);
-  font-family: var(--debugbar-font-mono);
-  border-collapse: collapse;
-}
-  div.phpdebugbar-widgets-sqlqueries table.phpdebugbar-widgets-params td {
-    border: 1px solid var(--debugbar-border);
-    text-align: center;
-  }
-  div.phpdebugbar-widgets-sqlqueries table.phpdebugbar-widgets-params .phpdebugbar-widgets-name {
-    width: 20%;
-    font-weight: bold;
-  }
 
 div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-error {
   display: block;
@@ -134,7 +118,6 @@ div.phpdebugbar[data-theme='dark'] div.phpdebugbar-widgets-sqlqueries li.phpdebu
 }
 
 div.phpdebugbar-widgets-sqlqueries div.phpdebugbar-widgets-toolbar {
-  display:none;
   position: fixed;
   bottom: 0;
   width: calc(100% - 30px);

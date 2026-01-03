@@ -4,22 +4,23 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '**.php'
   pull_request:
     branches:
       - "*"
-  schedule:
-  - cron: '0 0 * * *'
+    paths:
+      - '**.php'
+
+permissions:
+  contents: write
 
 jobs:
-  php-tests:
-    runs-on: ubuntu-latest
+  cs-fix:
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
       COMPOSER_NO_INTERACTION: 1
-
-    strategy:
-      matrix:
-        php: [8.5, 8.4, 8.3, 8.2]
 
     name: PHP${{ matrix.php }}
 
@@ -30,18 +31,17 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: ${{ matrix.php }}
+        php-version: 8.2
         coverage: none
-        extensions: pdo_sqlite
+        tools: composer:v2
 
     - name: Install dependencies
       run: composer update --prefer-dist --no-progress
 
-    - name: Execute Unit Tests
-      run: vendor/bin/phpunit --testsuite=Unit
+    - name: Fix Code Style
+      run: vendor/bin/php-cs-fixer fix -v --diff
 
-    - name: Analyse with PHPStan
-      run: composer analyse
-
-    - name: Analyse Code Style
-      run: composer check-style
+    - name: Commit changes
+      uses: stefanzweifel/git-auto-commit-action@v7
+      with:
+        commit_message: Fix CS

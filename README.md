@@ -1,6 +1,6 @@
 # PHP Debug Bar
 
-[![Latest Stable Version](https://img.shields.io/packagist/v/php-debugbar/php-debugbar?label=Stable)](https://packagist.org/packages/php-debugbar/php-debugbar) [![Total Downloads](https://img.shields.io/packagist/dt/maximebf/debugbar?label=Downloads)](https://packagist.org/packages/php-debugbar/php-debugbar) [![License](https://img.shields.io/badge/Licence-MIT-4d9283)](https://packagist.org/packages/php-debugbar/php-debugbar) [![Tests](https://github.com/maximebf/php-debugbar/actions/workflows/run-tests.yml/badge.svg)](https://github.com/php-debugbar/php-debugbar/actions/workflows/run-tests.yml)
+[![Latest Stable Version](https://img.shields.io/packagist/v/php-debugbar/php-debugbar?label=Stable)](https://packagist.org/packages/php-debugbar/php-debugbar) [![Total Downloads](https://img.shields.io/packagist/dt/maximebf/debugbar?label=Downloads)](https://packagist.org/packages/php-debugbar/php-debugbar) [![License](https://img.shields.io/badge/Licence-MIT-4d9283)](https://packagist.org/packages/php-debugbar/php-debugbar) [![Tests](https://github.com/php-debugbar/php-debugbar/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/php-debugbar/php-debugbar/actions/workflows/run-tests.yml)
 
 Displays a debug bar in the browser with information from php.
 No more `var_dump()` in your code!
@@ -123,13 +123,13 @@ Learn more about DebugBar in the [docs](http://php-debugbar.com/docs/).
 
 ## Demo
 
-To run the demo, clone this repository and start the Built-In PHP webserver from the root:
+To run the demo, clone this repository and start the Built-In PHP webserver from the demo folder:
 
 ```
-php -S localhost:8000
+composer run demo
 ```
 
-Then visit http://localhost:8000/demo/
+Then visit http://localhost:8000/
 
 ## Testing
 

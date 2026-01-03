@@ -1,4 +1,4 @@
-name: Integration
+name: Screenshots
 
 on:
   push:
@@ -7,19 +7,17 @@ on:
   pull_request:
     branches:
       - "*"
-  schedule:
-    - cron: '0 0 * * *'
 
 jobs:
-  php-tests:
-    runs-on: ubuntu-latest
+  screenshots:
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
       COMPOSER_NO_INTERACTION: 1
 
     strategy:
       matrix:
-        php: [8.5, 8.4, 8.3, 8.2]
+        php: [8.4]
 
     name: PHP${{ matrix.php }}
 
@@ -32,6 +30,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           coverage: none
+          tools: composer:v2
           extensions: pdo_sqlite
 
       - name: Install dependencies
@@ -40,3 +39,9 @@ jobs:
 
       - name: Execute Unit Tests
         run: vendor/bin/phpunit --testsuite=Browser
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: debugbar-screenshots
+          path: tests/screenshots

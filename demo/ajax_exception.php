@@ -2,9 +2,14 @@
 
 include 'bootstrap.php';
 
-try {
+function doSomething()
+{
     throw new Exception('Something failed!');
+}
+try {
+    doSomething();
 } catch (Exception $e) {
+    $debugbar['exceptions']->addException($e);
     $debugbar['exceptions']->addException($e);
 }
 

@@ -120,17 +120,20 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * @param {*} [value] Attribute value (optional if attr is an object)
          */
         set(attr, value) {
-            if (typeof attr !== 'string') {
-                for (const k in attr) {
-                    this.set(k, attr[k]);
-                }
-                return;
-            }
+            const attrs = typeof attr === 'string' ? { [attr]: value } : attr;
 
-            this._attributes[attr] = value;
-            if (this._boundAttributes[attr]) {
-                for (const callback of this._boundAttributes[attr]) {
-                    callback.call(this, value);
+            const callbacks = [];
+            for (const attr in attrs) {
+                value = attrs[attr];
+                this._attributes[attr] = value;
+                if (this._boundAttributes[attr]) {
+                    for (const callback of this._boundAttributes[attr]) {
+                        // Make sure to run the callback only once per attribute change
+                        if (!callbacks.includes(callback)) {
+                            callback.call(this, value);
+                            callbacks.push(callback);
+                        }
+                    }
                 }
             }
         }
@@ -374,8 +377,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             return csscls('settings');
         }
 
-        settings = {};
-
         initialize(options) {
             this.set(options);
 
@@ -459,7 +460,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 + '<option value="topLeft">Top Left</option>'
                 + '<option value="topRight">Top Right</option>';
             positionSelect.value = debugbar.options.openBtnPosition;
-            console.log(debugbar.options);
             positionSelect.addEventListener('change', function () {
                 self.storeSetting('openBtnPosition', this.value);
                 if (this.value === 'topLeft' || this.value === 'topRight') {
@@ -616,15 +616,15 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             return `phpdebugbar ${csscls('minimized')}`;
         }
 
-        initialize(options = {}) {
-            this.options = Object.assign({}, {
-                bodyMarginBottom: true,
-                theme: 'auto',
-                toolbarPosition: 'bottom',
-                openBtnPosition: 'bottomLeft',
-                hideEmptyTabs: false
-            }, options);
+        options = {
+            bodyMarginBottom: true,
+            theme: 'auto',
+            openBtnPosition: 'bottomLeft',
+            hideEmptyTabs: false
+        };
 
+        initialize(options = {}) {
+            this.options = Object.assign({}, this.options, options);
             this.defaultOptions = { ...this.options };
             this.controls = {};
             this.dataMap = {};
@@ -632,9 +632,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.firstTabName = null;
             this.activePanelName = null;
             this.activeDatasetId = null;
+            this.pendingDataSetId = null;
             this.datesetTitleFormater = new DatasetTitleFormater(this);
             const bodyStyles = window.getComputedStyle(document.body);
-            this.bodyMarginBottomHeight = Number.parseInt(bodyStyles.marginBottom);
+            this.bodyPaddingBottomHeight = Number.parseInt(bodyStyles.paddingBottom);
             try {
                 this.isIframe = window.self !== window.top && window.top.phpdebugbar;
             } catch (_error) {
@@ -733,7 +734,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         render() {
             if (this.isIframe) {
-                this.el.style.display = 'none';
+                this.el.hidden = true;
             }
 
             const self = this;
@@ -838,7 +839,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             // restore button
             this.restorebtn = document.createElement('a');
             this.restorebtn.classList.add(csscls('restore-btn'));
-            this.restorebtn.style.display = 'none';
+            this.restorebtn.hidden = true;
             this.el.append(this.restorebtn);
             this.restorebtn.addEventListener('click', () => {
                 self.restore();
@@ -847,7 +848,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             // open button
             this.openbtn = document.createElement('a');
             this.openbtn.classList.add(csscls('open-btn'));
-            this.openbtn.style.display = 'none';
+            this.openbtn.hidden = true;
             this.headerRight.append(this.openbtn);
             this.openbtn.addEventListener('click', () => {
                 self.openHandler.show((id, dataset) => {
@@ -860,6 +861,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.datasetsSelect = document.createElement('select');
             this.datasetsSelect.classList.add(csscls('datasets-switcher'));
             this.datasetsSelect.setAttribute('name', 'datasets-switcher');
+            this.datasetsSelect.hidden = true;
+
             this.headerRight.append(this.datasetsSelect);
             this.datasetsSelect.addEventListener('change', function () {
                 self.showDataSet(this.value);
@@ -869,8 +872,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.settings.tab.classList.add(csscls('tab-settings'));
             this.settings.tab.setAttribute('data-collector', '__settings');
             this.settings.el.setAttribute('data-collector', '__settings');
+            this.settings.el.hidden = true;
+
             this.maximizebtn.after(this.settings.tab);
-            this.settings.tab.style.display = '';
+            this.settings.tab.hidden = false;
             this.settings.tab.addEventListener('click', () => {
                 if (!this.isMinimized() && this.activePanelName === '__settings') {
                     this.minimize();
@@ -1106,9 +1111,9 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 throw new Error(`Unknown tab '${name}'`);
             }
 
-            this.resizeHandle.style.display = 'block';
-            this.resizeHandleBottom.style.display = 'block';
-            this.body.style.display = 'block';
+            this.resizeHandle.hidden = false;
+            this.resizeHandleBottom.hidden = false;
+            this.body.hidden = false;
 
             this.recomputeBottomOffset();
 
@@ -1117,13 +1122,18 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             for (const el of headerActives) {
                 el.classList.remove(activeClass);
             }
-            const bodyActives = this.body.querySelectorAll(`:scope > .${activeClass}`);
+
+            const panelClass = csscls('panel');
+            const bodyActives = this.body.querySelectorAll(`:scope > .${panelClass}`);
             for (const el of bodyActives) {
                 el.classList.remove(activeClass);
+                el.hidden = true;
             }
 
             this.controls[name].tab.classList.add(activeClass);
+            this.controls[name].tab.hidden = false;
             this.controls[name].el.classList.add(activeClass);
+            this.controls[name].el.hidden = false;
             this.activePanelName = name;
 
             this.el.classList.remove(csscls('minimized'));
@@ -1144,9 +1154,9 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             for (const el of headerActives) {
                 el.classList.remove(activeClass);
             }
-            this.body.style.display = 'none';
-            this.resizeHandle.style.display = 'none';
-            this.resizeHandleBottom.style.display = 'none';
+            this.body.hidden = true;
+            this.resizeHandle.hidden = true;
+            this.resizeHandleBottom.hidden = true;
 
             this.recomputeBottomOffset();
             localStorage.setItem('phpdebugbar-visible', '0');
@@ -1169,11 +1179,11 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * @this {DebugBar}
          */
         close() {
-            this.resizeHandle.style.display = 'none';
-            this.resizeHandleBottom.style.display = 'none';
-            this.header.style.display = 'none';
-            this.body.style.display = 'none';
-            this.restorebtn.style.display = '';
+            this.resizeHandle.hidden = true;
+            this.resizeHandleBottom.hidden = true;
+            this.header.hidden = true;
+            this.body.hidden = true;
+            this.restorebtn.hidden = false;
             localStorage.setItem('phpdebugbar-open', '0');
             this.el.classList.add(csscls('closed'));
             this.recomputeBottomOffset();
@@ -1194,12 +1204,16 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * @this {DebugBar}
          */
         restore() {
-            this.resizeHandle.style.display = 'block';
-            this.resizeHandleBottom.style.display = 'block';
-            this.header.style.display = 'block';
-            this.restorebtn.style.display = 'none';
+            this.resizeHandle.hidden = false;
+            this.resizeHandleBottom.hidden = false;
+            this.header.hidden = false;
+            this.restorebtn.hidden = true;
             localStorage.setItem('phpdebugbar-open', '1');
             const tab = localStorage.getItem('phpdebugbar-tab');
+            if (this.pendingDataSetId) {
+                this.dataChangeHandler(this.datasets[this.pendingDataSetId]);
+                this.pendingDataSetId = null;
+            }
             if (this.isTab(tab)) {
                 this.showTab(tab);
             } else {
@@ -1214,18 +1228,17 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * that the debug bar never hides any content
          */
         recomputeBottomOffset() {
-            if (this.options.bodyMarginBottom) {
+            if (this.options.bodyBottomInset) {
                 if (this.isClosed()) {
-                    document.body.style.marginBottom = this.bodyMarginBottomHeight ? `${this.bodyMarginBottomHeight}px` : '';
+                    document.body.style.paddingBottom = this.bodyPaddingBottomHeight ? `${this.bodyPaddingBottomHeight}px` : '';
                     return;
                 }
 
-                const offset = this.el.offsetHeight + (this.bodyMarginBottomHeight || 0);
-
+                const offset = this.el.offsetHeight + (this.bodyPaddingBottomHeight || 0);
                 if (this.options.toolbarPosition === 'top') {
-                    document.body.style.marginTop = `${offset}px`;
+                    document.body.style.paddingBottom = `${offset}px`;
                 } else {
-                    document.body.style.marginBottom = `${offset}px`;
+                    document.body.style.paddingBottom = `${offset}px`;
                 }
             }
         }
@@ -1312,7 +1325,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 this.datasetTab.set('data', this.datasets);
                 const datasetSize = Object.keys(this.datasets).length;
                 this.datasetTab.set('badge', datasetSize > 1 ? datasetSize : null);
-                this.datasetTab.tab.style.display = '';
+                this.datasetTab.tab.hidden = false;
             }
 
             const option = document.createElement('option');
@@ -1320,7 +1333,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             option.textContent = label;
             this.datasetsSelect.append(option);
             if (this.datasetsSelect.children.length > 1) {
-                this.datasetsSelect.style.display = 'block';
+                this.datasetsSelect.hidden = false;
             }
 
             if (show === undefined || show) {
@@ -1369,7 +1382,12 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         showDataSet(id) {
             this.activeDatasetId = id;
-            this.dataChangeHandler(this.datasets[id]);
+            if (this.isClosed()) {
+                this.pendingDataSetId = id;
+            } else {
+                this.dataChangeHandler(this.datasets[id]);
+                this.pendingDataSetId = null;
+            }
 
             if (this.datasetsSelect.value !== id) {
                 this.datasetsSelect.value = id;
@@ -1408,11 +1426,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
         setOpenHandler(handler) {
             this.openHandler = handler;
             this.openHandler.el.setAttribute('data-theme', this.el.getAttribute('data-theme'));
-            if (handler !== null) {
-                this.openbtn.style.display = '';
-            } else {
-                this.openbtn.style.display = 'none';
-            }
+            this.openbtn.hidden = handler == null;
         }
 
         /**
@@ -1433,7 +1447,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.datasetTab.tab.setAttribute('data-collector', '__datasets');
             this.datasetTab.el.setAttribute('data-collector', '__datasets');
             this.openbtn.after(this.datasetTab.tab);
-            this.datasetTab.tab.style.display = 'none';
+            this.datasetTab.tab.hidden = true;
             this.datasetTab.tab.addEventListener('click', () => {
                 if (!this.isMinimized() && this.activePanelName === '__datasets') {
                     this.minimize();

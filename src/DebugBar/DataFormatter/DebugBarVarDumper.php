@@ -85,6 +85,7 @@ class DebugBarVarDumper
     {
         if (!$this->dumper) {
             $this->dumper = new DebugBarHtmlDumper();
+            $this->dumper->setDumpBoundaries('<pre class=sf-dump id=%s data-indent-pad="%s">', '</pre>');
             $dumperOptions = $this->getDumperOptions();
             if (isset($dumperOptions['styles'])) {
                 $this->dumper->setStyles($dumperOptions['styles']);
