@@ -9,12 +9,15 @@ use DebugBar\DataCollector\PDO\TraceablePDO;
 
 $pdo = new TraceablePDO(new PDO('sqlite::memory:'));
 $pdoRead = new PDO('sqlite::memory:');
-$pdoCollector = new PDOCollector($pdo);
+
+/** @var PDOCollector $pdoCollector */
+$pdoCollector = $debugbar['pdo'];
+
+$pdoCollector->addConnection($pdo, 'write');
 $pdoCollector->enableBacktrace();
 $pdoCollector->setDurationBackground(true);
 $pdoCollector->setRenderSqlWithParams();
 $pdoCollector->addConnection($pdoRead, 'read');
-$debugbar->addCollector($pdoCollector);
 
 $pdo->exec('create table users (id integer, name varchar, email varchar)');
 $pdoRead->exec('create table users (id integer, name varchar, email varchar)');

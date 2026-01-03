@@ -114,6 +114,9 @@ class JavascriptRenderer
 
     protected ?string $openHandlerUrl = null;
 
+    protected ?string $assetHandlerUrl = null;
+
+
     protected ?string $cspNonce = null;
 
     public function __construct(DebugBar $debugBar, ?string $baseUrl = null, ?string $basePath = null)
@@ -645,6 +648,25 @@ class JavascriptRenderer
     }
 
     /**
+     * Sets the url of the asset handler
+     *
+     */
+    public function setAssetHandlerUrl(?string $url): static
+    {
+        $this->assetHandlerUrl = $url;
+        return $this;
+    }
+
+    /**
+     * Returns the url for the asset handler
+     *
+     */
+    public function getAssetHandlerUrl(): ?string
+    {
+        return $this->assetHandlerUrl;
+    }
+
+    /**
      * Sets the CSP Nonce (or remove it by setting to null)
      *
      *
@@ -882,18 +904,18 @@ class JavascriptRenderer
      * Write all CSS assets to standard output or in a file
      *
      */
-    public function dumpCssAssets(?string $targetFilename = null): void
+    public function dumpCssAssets(?string $targetFilename = null, bool $echo = true): string
     {
-        $this->dumpAssets($this->getAssets('css'), $this->getAssets('inline_css'), $targetFilename);
+        return $this->dumpAssets($this->getAssets('css'), $this->getAssets('inline_css'), $targetFilename, $echo);
     }
 
     /**
      * Write all JS assets to standard output or in a file
      *
      */
-    public function dumpJsAssets(?string $targetFilename = null): void
+    public function dumpJsAssets(?string $targetFilename = null, bool $echo = true): string
     {
-        $this->dumpAssets($this->getAssets('js'), $this->getAssets('inline_js'), $targetFilename);
+        return $this->dumpAssets($this->getAssets('js'), $this->getAssets('inline_js'), $targetFilename, $echo);
     }
 
     /**
@@ -901,9 +923,9 @@ class JavascriptRenderer
      * already returned by dumpCssAssets or dumpJsAssets)
      *
      */
-    public function dumpHeadAssets(?string $targetFilename = null): void
+    public function dumpHeadAssets(?string $targetFilename = null, bool $echo = true): string
     {
-        $this->dumpAssets(null, $this->getAssets('inline_head'), $targetFilename);
+        return $this->dumpAssets(null, $this->getAssets('inline_head'), $targetFilename, $echo);
     }
 
     /**
@@ -912,7 +934,7 @@ class JavascriptRenderer
      * @param array|null $files   Filenames containing assets
      * @param array|null $content Inline content to dump
      */
-    public function dumpAssets(?array $files = null, ?array $content = null, ?string $targetFilename = null): void
+    public function dumpAssets(?array $files = null, ?array $content = null, ?string $targetFilename = null, bool $echo = true): string
     {
         $dumpedContent = '';
         if ($files) {
@@ -928,9 +950,11 @@ class JavascriptRenderer
 
         if ($targetFilename !== null) {
             file_put_contents($targetFilename, $dumpedContent);
-        } else {
+        }elseif ($echo) {
             echo $dumpedContent;
         }
+
+        return $dumpedContent;
     }
 
     /**
@@ -948,6 +972,11 @@ class JavascriptRenderer
             'inline_head' => $inlineHead,
         ] = $this->getAssets(null, self::RELATIVE_URL);
 
+        if ($this->assetHandlerUrl !== null) {
+            $url = $this->assetHandlerUrl;
+            $cssFiles = [$url  . (str_contains($url, '?') ? '&' : '?'). 'type=css&mtime=' . $this->getModifiedTimes($this->getAssets('css', self::RELATIVE_PATH))];
+            $jsFiles = [$url  . (str_contains($url, '?') ? '&' : '?'). 'type=js&hash=' . $this->getModifiedTimes($this->getAssets('js', self::RELATIVE_PATH))];
+        }
         $html = '';
 
         $nonce = $this->getNonceAttribute();
@@ -981,6 +1010,15 @@ class JavascriptRenderer
         }
 
         return $html;
+    }
+
+    protected function getModifiedTimes(array $files): int
+    {
+        $modifiedTime = 0;
+        foreach ($files as $file) {
+            $modifiedTime = max($modifiedTime, filemtime($file));
+        }
+        return $modifiedTime;
     }
 
     /**
