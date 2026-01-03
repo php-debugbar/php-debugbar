@@ -173,7 +173,6 @@
 
                     if (this.filters.length > 1) {
                         this.toolbar.hidden = false;
-                        this.list.el.style.marginBottom = '20px';
                     }
                 }
             }

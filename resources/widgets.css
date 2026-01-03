@@ -111,9 +111,14 @@ ul.phpdebugbar-widgets-list {
 div.phpdebugbar-widgets-messages {
   position: relative;
   height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
   div.phpdebugbar-widgets-messages ul.phpdebugbar-widgets-list {
     padding-bottom: 45px;
+    flex: 1;
+    overflow-y: auto;
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value:before {
     margin-right: 8px;
@@ -171,8 +176,8 @@ div.phpdebugbar-widgets-messages {
     font-style: italic;
   }
   div.phpdebugbar-widgets-messages div.phpdebugbar-widgets-toolbar {
-    position: sticky;
-    bottom: 0;
+    position: relative;
+    flex-shrink: 0;
     width: 100%;
     background: var(--debugbar-header);
     color: var(--debugbar-text);
