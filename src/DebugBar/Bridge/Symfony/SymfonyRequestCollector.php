@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DebugBar\Bridge\Symfony;
 
-use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\RequestDataCollector;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,13 +17,19 @@ use Symfony\Component\HttpFoundation\Response;
 class SymfonyRequestCollector extends RequestDataCollector
 {
     protected Request $request;
-    protected Response $response;
+    protected ?Response $response;
 
     public function __construct(
         Request $request,
-        Response $response
+        ?Response $response = null
     ) {
         $this->request = $request;
+        $this->response = $response;
+        parent::__construct();
+    }
+
+    public function setResponse(Response $response): void
+    {
         $this->response = $response;
     }
 
@@ -34,7 +39,7 @@ class SymfonyRequestCollector extends RequestDataCollector
     public function collect(): array
     {
         $request = $this->request;
-        $response = $this->response;
+        $response = $this->response ?: new Response();
 
         // attributes are serialized and as they can be anything, they need to be converted to strings.
         $attributes = [];
@@ -115,19 +120,14 @@ class SymfonyRequestCollector extends RequestDataCollector
             'status' => $statusCode . ' ' . $data['status_text'],
         ];
 
+        $data = $this->hideMaskedValues($data);
         foreach ($data as $key => $var) {
-            if (is_array($var)) {
-                foreach ($var as $k => $v) {
-                    if (is_string($k) && $this->isMaskedKey($k)) {
-                        $var[$k] = '***';
-                    }
+            if (!is_string($data[$key])) {
+                if ($this->isHtmlVarDumperUsed()) {
+                    $data[$key] = $this->getVarDumper()->renderVar($var);
+                } else {
+                    $data[$key] = $this->getDataFormatter()->formatVar($var);
                 }
-            }
-
-            if ($this->isMaskedKey($key)) {
-                $data[$key] = '***';
-            } elseif (!is_string($data[$key])) {
-                $data[$key] = DataCollector::getDefaultVarDumper()->renderVar($var);
             }
         }
 
