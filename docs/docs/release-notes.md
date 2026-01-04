@@ -13,6 +13,7 @@ Debugbar 3.x brings a lot of new features and improvements:
  - Backtrace support for QueryCollector
  - Static analysis with phpstan/eslint
  - Improved performance and a lot of tweaks..
+ - Added Symfony HttpFoundation Request collector
 
 ### Removed/moved bridge Collectors
  - Version 3.x removes bridge collectors for Propel, CacheCache and Slim.

@@ -73,7 +73,7 @@ By default, the debug bar uses the minified files from the dist folder. These ar
 If you want to use the non-minified files, you can set `$renderer->useDistFiles(false)`.
 When using dist files, any additional scripts or inline scripts/styles will still be included.
 
-## The javascript object
+## The Javascript object
 
 The renderer will generate all the needed code for your debug bar. This means
 initializing the DebugBar js object, adding tabs and indicators, defining a data map, etc...
