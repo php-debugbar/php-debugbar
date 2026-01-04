@@ -18,31 +18,35 @@ namespace DebugBar\DataCollector;
  */
 class RequestDataCollector extends DataCollector implements Renderable, AssetProvider
 {
+    public function __construct()
+    {
+        $this->addMaskedKeys([
+            'PHP_AUTH_PW',
+            'php-auth-pw'
+        ]);
+    }
+
     protected bool $showUriIndicator = true;
 
     public function collect(): array
     {
-        $globals = [
+        $data = [
             '$_GET' => $_GET,
             '$_POST' => $_POST,
             '$_COOKIE' => $_COOKIE,
             '$_SESSION' => $_SESSION ?? [],
         ];
 
-        $data = [];
-
         if ($requestUri = $_SERVER['REQUEST_URI'] ?? null) {
-            $data['uri'] = parse_url($requestUri, PHP_URL_PATH);
+            $data = ['uri' => $requestUri] + $data;
         }
 
-        foreach ($globals as $name => $global) {
+        $data = $this->hideMaskedValues($data);
 
-            foreach ($global as $key => $value) {
-                if ($this->isMaskedKey($key)) {
-                    $global[$key] = '***';
-                }
+        foreach ($data as $name => $global) {
+            if (is_string($global)) {
+                continue;
             }
-
             if ($this->isHtmlVarDumperUsed()) {
                 $data[$name] = $this->getVarDumper()->renderVar($global);
             } else {
