@@ -22,7 +22,7 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
     {
         $this->addMaskedKeys([
             'PHP_AUTH_PW',
-            'php-auth-pw'
+            'php-auth-pw',
         ]);
     }
 

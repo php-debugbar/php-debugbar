@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace DebugBar\Tests\DataCollector;
 
 use DebugBar\Bridge\Symfony\SymfonyRequestCollector;
-use DebugBar\DataCollector\RequestDataCollector;
 use DebugBar\Tests\DebugBarTestCase;
-use DebugBar\DataCollector\ConfigCollector;
 use Symfony\Component\HttpFoundation\Request;
 
 class SymfonyRequestCollectorTest extends DebugBarTestCase
@@ -34,9 +32,9 @@ class SymfonyRequestCollectorTest extends DebugBarTestCase
             'auth' => [
                 'user' => 'barry',
                 'password' => 'secret',
-            ]
+            ],
         ], [], [], [
-            'PHP_AUTH_PW' => 'secret'
+            'PHP_AUTH_PW' => 'secret',
         ]);
 
         $collector = new SymfonyRequestCollector($symfonyRequest);
@@ -66,6 +64,5 @@ class SymfonyRequestCollectorTest extends DebugBarTestCase
         $this->assertStringNotContainsString('my-masked-string', $data['data']['request_request']);
         $this->assertStringContainsString('"foo" => "bar"', $data['data']['request_request']);
     }
-
 
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DebugBar\Bridge\Symfony;
 
-use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\RequestDataCollector;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
