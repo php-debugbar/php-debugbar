@@ -862,12 +862,15 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             });
 
             // select box for data sets
+            this.datasetsSelectSpan = document.createElement('span');
+            this.datasetsSelectSpan.classList.add(csscls('datasets-switcher'));
+            this.datasetsSelectSpan.setAttribute('name', 'datasets-switcher');
             this.datasetsSelect = document.createElement('select');
-            this.datasetsSelect.classList.add(csscls('datasets-switcher'));
-            this.datasetsSelect.setAttribute('name', 'datasets-switcher');
             this.datasetsSelect.hidden = true;
 
-            this.headerRight.append(this.datasetsSelect);
+            this.datasetsSelectSpan.append(this.datasetsSelect);
+
+            this.headerRight.append(this.datasetsSelectSpan);
             this.datasetsSelect.addEventListener('change', function () {
                 self.showDataSet(this.value);
             });

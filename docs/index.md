@@ -46,6 +46,7 @@ Includes collectors for:
 - [PDO](http://php.net/manual/en/book.pdo.php)
 - [Monolog](https://github.com/Seldaek/monolog)
 - [Symfony Mailer](https://symfony.com/doc/current/mailer.html)
+- [Symfony HttpFoundation](https://symfony.com/doc/current/components/http_foundation.html)
 
 Checkout the [demo](https://github.com/php-debugbar/php-debugbar/tree/master/demo) for
 examples and [phpdebugbar.com](http://php-debugbar.com) for a live example.

@@ -25,19 +25,20 @@
         "maximebf/debugbar": "self.version"
     },
     "require-dev": {
+        "dbrekelmans/bdi": "^1.4",
+        "friendsofphp/php-cs-fixer": "^3.92",
+        "monolog/monolog": "^3.9",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-phpunit": "^2.0",
         "phpunit/phpunit": "^10",
-        "twig/twig": "^3.11.2",
+        "predis/predis": "^3.3",
         "symfony/browser-kit": "^6.4|7.0",
         "symfony/dom-crawler": "^6.4|^7",
-        "symfony/panther": "^1|^2.1",
-        "dbrekelmans/bdi": "^1.4",
-        "phpstan/phpstan": "^2.1",
-        "monolog/monolog": "^3.9",
-        "symfony/mailer": "^5.4|^6.4|^7.3|^8.0",
         "symfony/event-dispatcher": "^5.4|^6.4|^7.3|^8.0",
-        "phpstan/phpstan-phpunit": "^2.0",
-        "predis/predis": "^3.3",
-        "friendsofphp/php-cs-fixer": "^3.92"
+        "symfony/http-foundation": "^5.4|^6.4|^7.3|^8.0",
+        "symfony/mailer": "^5.4|^6.4|^7.3|^8.0",
+        "symfony/panther": "^1|^2.1",
+        "twig/twig": "^3.11.2"
     },
     "autoload": {
         "psr-4": {
@@ -68,5 +69,8 @@
         "branch-alias": {
             "dev-master": "3.0-dev"
         }
+    },
+    "config": {
+        "sort-packages": true
     }
 }

@@ -15,6 +15,7 @@ namespace DebugBar;
 
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\Renderable;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Renders the debug bar using the client side javascript implementation
@@ -1018,6 +1019,26 @@ class JavascriptRenderer
             $modifiedTime = max($modifiedTime, filemtime($file));
         }
         return $modifiedTime;
+    }
+
+    public function injectInSymfonyResponse(Response $response, bool $withHead = true): void
+    {
+        $content = $response->getContent();
+        if ($content === false) {
+            return;
+        }
+
+        $widget = "<!-- Laravel Debugbar Widget -->\n" . ($withHead ? $this->renderHead() : '') . $this->render();
+
+        // Try to put the widget at the end, directly before the </body>
+        $pos = strripos($response->getContent(), '</body>');
+        if (false !== $pos) {
+            $content = substr($content, 0, $pos) . $widget . substr($content, $pos);
+        } else {
+            $content = $content . $widget;
+        }
+
+        $response->setContent($content);
     }
 
     /**

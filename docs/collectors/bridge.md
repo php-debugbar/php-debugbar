@@ -1,7 +1,29 @@
 # Bridge collectors
 
-DebugBar comes with some "bridge" collectors. This collectors provides a way to integrate
-other projects with the DebugBar.
+DebugBar comes with some "bridge" collectors. These collectors provides a way to integrate other projects with the DebugBar.
+
+## Symfony HttpFoundation Request / Response
+
+https://symfony.com/doc/current/components/http_foundation.html
+
+This extends the [existing RequestDataCollector](base.md#requestdata) for the Symfony HttpFoundation Request and Response.
+
+```php
+use Symfony\Component\Mailer\Event\SentMessageEvent;
+
+$debugbar->addCollector(new DebugBar\Bridge\Symfony\SymfonyRequestCollector($request, $response));
+```
+
+### Inject the debugbar into the Symfony HttpFoundation Response
+
+To inject the debugbar into the Symfony HttpFoundation Response, you can use the JavascriptRenderer:
+
+```php
+// Inject Debugbar
+$debugbar->getJavascriptRenderer()->injectInSymfonyResponse($response);
+```
+
+This will call renderHead() and render() just before the closing </body> tag. You can disable the header by setting false as second parameter.
 
 ## Doctrine
 

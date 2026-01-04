@@ -31,6 +31,7 @@ const icons = [
     'logs',
     'search',
     'server-cog',
+    'share-3',
     'tags',
     'x',
 

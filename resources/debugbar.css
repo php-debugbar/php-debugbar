@@ -307,7 +307,7 @@ div.phpdebugbar-header-left > * {
 div.phpdebugbar-header-right > * {
   float: right;
 }
-div.phpdebugbar-header-right > select {
+div.phpdebugbar-header-right select {
   padding: 0;
   line-height: 1em;
   background-color: var(--debugbar-header);
@@ -492,8 +492,11 @@ a.phpdebugbar-open-btn:after {
     text-align: left;
   }
 
-.phpdebugbar select.phpdebugbar-datasets-switcher {
+.phpdebugbar .phpdebugbar-datasets-switcher {
   float: right;
+}
+
+.phpdebugbar .phpdebugbar-datasets-switcher select {
   max-width: 200px;
   height: 22px;
   padding: 4px 0;

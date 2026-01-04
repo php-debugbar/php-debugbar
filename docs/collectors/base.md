@@ -118,13 +118,22 @@ $requestDataCollector->useHtmlVarDumper();
 $debugbar->addCollector($requestDataCollector);
 ```
 
+### Masking sensitive data
 By default, any keys with 'password', 'key', or 'secret' in their name are hidden.
 You can hide more sensitive data by calling `hideSuperglobalKeys()`:
 
 ```php
 $requestDataCollector = new DebugBar\DataCollector\RequestDataCollector();
-$requestDataCollector->hideSuperglobalKeys('_POST', 'pass');
+$requestDataCollector->addMaskedKeys('pass');
 $debugbar->addCollector($requestDataCollector);
+```
+
+### Hiding the current URI indicator
+The Request tab also adds a current URI indicator. You can disable this:
+
+```php
+$requestDataCollector = new DebugBar\DataCollector\RequestDataCollector();
+$requestDataCollector->setShowUriIndicator(false);
 ```
 
 ## Config

@@ -25,6 +25,7 @@ abstract class DataCollector implements DataCollectorInterface
 {
     use HasDataFormatter;
     use HasXdebugLinks;
+    use HidesMaskedValues;
 
     public static ?DataFormatterInterface $defaultDataFormatter = null;
     public static ?DebugBarVarDumper $defaultVarDumper = null;
