@@ -11,7 +11,7 @@ trait HidesMaskedValues
     /** @var array|string[]  */
     public static array $SENSITIVE_KEYS = ['password', 'secret', 'token'];
 
-    protected function addMaskedKeys(array $keys): void
+    public function addMaskedKeys(array $keys): void
     {
         foreach ($keys as $key) {
             $this->maskedKeys[] = strtolower($key);
