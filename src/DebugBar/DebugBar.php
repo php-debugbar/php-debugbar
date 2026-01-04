@@ -104,13 +104,6 @@ class DebugBar implements ArrayAccess
         return isset($this->collectors[$name]);
     }
 
-    /**
-     * Returns a data collector
-     *
-     *
-     *
-     * @throws DebugBarException
-     */
     public function getCollector(string $name): DataCollectorInterface
     {
         if (!isset($this->collectors[$name])) {
@@ -119,6 +112,14 @@ class DebugBar implements ArrayAccess
         return $this->collectors[$name];
     }
 
+    public function removeCollector(string $name): void
+    {
+        if (!isset($this->collectors[$name])) {
+            throw new DebugBarException("'$name' is not a registered collector");
+        }
+
+        unset($this->collectors[$name]);
+    }
     /**
      * Returns an array of all data collectors
      *
@@ -559,6 +560,8 @@ class DebugBar implements ArrayAccess
 
     public function offsetUnset(mixed $offset): void
     {
-        throw new DebugBarException("DebugBar[] is read-only");
+        if ($this->hasCollector($offset)) {
+            $this->removeCollector($offset);
+        }
     }
 }

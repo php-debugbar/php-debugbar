@@ -18,91 +18,58 @@ namespace DebugBar\DataCollector;
  */
 class RequestDataCollector extends DataCollector implements Renderable, AssetProvider
 {
-    /** @var array<string, array<string>> */
-    private array $blacklist = [
-        '_GET' => [],
-        '_POST' => [
-            'password',
-        ],
-        '_COOKIE' => [],
-        '_SESSION' => [
-            'PHPDEBUGBAR_STACK_DATA',
-        ],
-    ];
+    protected bool $showUriIndicator = true;
 
     public function collect(): array
     {
-        $vars = array_keys($this->blacklist);
+        $globals = [
+            '$_GET' => $_GET,
+            '$_POST' => $_POST,
+            '$_COOKIE' => $_COOKIE,
+            '$_SESSION' => $_SESSION ?? [],
+        ];
+
         $data = [];
 
-        foreach ($vars as $var) {
-            if (! isset($GLOBALS[$var])) {
-                continue;
+        if ($requestUri = $_SERVER['REQUEST_URI'] ?? null) {
+            $data['uri'] = parse_url($requestUri, PHP_URL_PATH);
+        }
+
+        foreach ($globals as $name => $global) {
+
+            foreach ($global as $key => $value) {
+                if ($this->isMaskedKey($key)) {
+                    $global[$key] = '***';
+                }
             }
 
-            $key = "$" . $var;
-            $value = $this->masked($GLOBALS[$var], $var);
-
             if ($this->isHtmlVarDumperUsed()) {
-                $data[$key] = $this->getVarDumper()->renderVar($value);
+                $data[$name] = $this->getVarDumper()->renderVar($global);
             } else {
-                $data[$key] = $this->getDataFormatter()->formatVar($value);
+                $data[$name] = $this->getDataFormatter()->formatVar($global);
             }
         }
 
-        return $data;
+        return [
+            'data' => $data,
+            'tooltip' => null,
+            'badge' => null,
+        ];
+    }
+
+    public function setShowUriIndicator(bool $showUriIndicator = true): void
+    {
+        $this->showUriIndicator = $showUriIndicator;
     }
 
     /**
      * Hide a sensitive value within one of the superglobal arrays.
+     *
+     * @deprecated use addMaskedKeys($keys)
      */
     public function hideSuperglobalKeys(string $superGlobalName, string|array $keys): void
     {
-        if (!is_array($keys)) {
-            $keys = [$keys];
-        }
-
-        if (!isset($this->blacklist[$superGlobalName])) {
-            $this->blacklist[$superGlobalName] = [];
-        }
-
-        foreach ($keys as $key) {
-            $this->blacklist[$superGlobalName][] = $key;
-        }
-    }
-
-    /**
-     * Checks all values within the given superGlobal array.
-     *
-     * Blacklisted values will be replaced by a equal length string containing
-     * only '*' characters for string values.
-     * Non-string values will be replaced with a fixed asterisk count.
-     *
-     * @param array|\ArrayAccess<mixed, mixed> $superGlobal
-     */
-    private function masked(array|\ArrayAccess $superGlobal, string $superGlobalName): array
-    {
-        $blacklisted = $this->blacklist[$superGlobalName];
-
-        $values = $superGlobal;
-        foreach ($values as $key => $value) {
-            if (in_array($key, $blacklisted) || $this->stringContains($key, ['password', 'key', 'secret'])) {
-                $values[$key] = str_repeat('*', is_string($superGlobal[$key]) ? strlen($superGlobal[$key]) : 3);
-            }
-        }
-
-        return $values;
-    }
-
-    private function stringContains(string $haystack, array $needles): bool
-    {
-        $haystack = strtolower($haystack);
-        foreach ($needles as $needle) {
-            if (str_contains($haystack, $needle)) {
-                return true;
-            }
-        }
-        return false;
+        $this->addMaskedKeys($keys);
     }
 
     public function getName(): string
@@ -120,13 +87,33 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
         $widget = $this->isHtmlVarDumperUsed()
             ? "PhpDebugBar.Widgets.HtmlVariableListWidget"
             : "PhpDebugBar.Widgets.VariableListWidget";
-        return [
+
+        $widgets = [
             "request" => [
                 "icon" => "arrows-left-right",
                 "widget" => $widget,
-                "map" => "request",
+                "map" => "request.data",
                 "default" => "{}",
             ],
+            'request:badge' => [
+                "map" => "request.badge",
+                "default" => "null",
+            ],
         ];
+
+        if ($this->showUriIndicator) {
+            $widgets['request_uri'] = [
+                "icon" => "share-3",
+                "map" => "request.data.uri",
+                "link" => "request",
+                "default" => "",
+            ];
+            $widgets['request_uri:tooltip'] = [
+                "map" => "request.tooltip",
+                "default" => "{}",
+            ];
+        }
+
+        return $widgets;
     }
 }

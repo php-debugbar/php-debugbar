@@ -53,6 +53,10 @@ render_demo_page(function () {
 <ul>
     <li><a href="iframes/index.php">load through iframes</a></li>
 </ul>
+<h2>Symfony</h2>
+<ul>
+    <li><a href="symfony.php">Symfony demo</a></li>
+</ul>
 <h2>Stack</h2>
 <ul>
     <li><a href="stack.php">perform a redirect</a></li>
