@@ -4,18 +4,12 @@ declare(strict_types=1);
 
 namespace DebugBar\DataCollector;
 
-use DebugBar\DataFormatter\SimpleFormatter;
-
 class HttpCollector extends DataCollector implements Renderable, AssetProvider
 {
     protected string $name;
     protected array $requests = [];
     protected ?TimeDataCollector $timeCollector;
 
-    /**
-     *
-     * @param string[] $excludePaths Paths to exclude from collection
-     */
     public function __construct(string $name = 'http', ?TimeDataCollector $timeCollector = null)
     {
         $this->name = $name;
