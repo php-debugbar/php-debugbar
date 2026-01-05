@@ -48,7 +48,7 @@ class DebugBarVarDumperTest extends DebugBarTestCase
         // Test basic get/merge/reset functionality for cloner
         $d = new DebugBarVarDumper();
         $options = $d->getClonerOptions();
-        $this->assertEmpty($options);
+        $this->assertEquals(['max_string' => 10000, 'max_items' => 1000], $options);
 
         $d->mergeClonerOptions([
             'max_items' => 5,
@@ -71,6 +71,8 @@ class DebugBarVarDumperTest extends DebugBarTestCase
         $options = $d->getClonerOptions();
         $this->assertEquals([
             'min_depth' => 2,
+            'max_string' => 10000,
+            'max_items' => 1000
         ], $options);
 
         // Test basic get/merge/reset functionality for dumper
