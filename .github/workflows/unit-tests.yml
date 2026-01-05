@@ -10,26 +10,34 @@ on:
 
 jobs:
   unit-tests:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     env:
       COMPOSER_NO_INTERACTION: 1
 
     strategy:
       matrix:
+        os: [ubuntu-24.04]
         php: [8.5, 8.4, 8.3, 8.2]
         symfony: ['*']
         include:
           - php: 8.2
             symfony: ^5.4
+            os: ubuntu-latest
           - php: 8.2
             symfony: ^6.4
+            os: ubuntu-latest
           - php: 8.2
             symfony: ^7.3
+            os: ubuntu-latest
           - php: 8.4
             symfony: ^7.3
+            os: ubuntu-latest
+          - php: 8.4
+            symfony: ^7.3
+            os: windows-latest
 
-    name: Unit PHP${{ matrix.php }} Symfony${{ matrix.symfony }}
+    name: Unit PHP${{ matrix.php }} Symfony${{ matrix.symfony }} ${{ matrix.os }}
 
     steps:
     - name: Checkout code
@@ -41,7 +49,7 @@ jobs:
         php-version: ${{ matrix.php }}
         coverage: none
         tools: composer:v2
-        extensions: pdo_sqlite
+        extensions: pdo_sqlite, zip
 
     - name: Require specific Symfony version
       if: matrix.symfony != '*'
