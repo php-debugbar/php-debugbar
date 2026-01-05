@@ -124,7 +124,7 @@ div.phpdebugbar-widgets-messages {
     margin-right: 8px;
     font-family: system-ui, sans-serif;
     font-size: 1rem;
-    line-height: 0.7;
+    line-height: 1;
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-success {
     color: green;
