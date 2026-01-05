@@ -10,13 +10,9 @@ class MonologTest extends AbstractBrowserTestCase
 {
     public function testMonologCollector(): void
     {
-        if (!file_exists(__DIR__ . '/../../../../demo/bridge/monolog/vendor/autoload.php')) {
-            $this->markTestSkipped('Monolog is not installed');
-        }
-
         $client = static::createPantherClient();
 
-        $client->request('GET', '/demo/bridge/monolog');
+        $client->request('GET', '/');
 
         // Wait for Debugbar to load
         $crawler = $client->waitFor('.phpdebugbar-body');
