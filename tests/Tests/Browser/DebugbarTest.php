@@ -39,7 +39,7 @@ class DebugbarTest extends AbstractBrowserTestCase
         $client->click($this->getTabLink($crawler, 'messages'));
         $client->waitForInvisibility('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-list');
 
-        $client->takeScreenshot(__DIR__ . '/../../../screenshots/minimized.png');
+        $client->takeScreenshot(__DIR__ . '/../../screenshots/minimized.png');
     }
 
     public function testDebugbarLightMode(): void
@@ -58,7 +58,7 @@ class DebugbarTest extends AbstractBrowserTestCase
             $client->click($this->getTabLink($crawler, 'messages'));
         }
 
-        $client->takeScreenshot(__DIR__ . '/../../../screenshots/light.png');
+        $client->takeScreenshot(__DIR__ . '/../../screenshots/light.png');
     }
 
     public function testDebugbarDarkMode(): void
@@ -77,7 +77,7 @@ class DebugbarTest extends AbstractBrowserTestCase
             $client->click($this->getTabLink($crawler, 'messages'));
         }
 
-        $client->takeScreenshot(__DIR__ . '/../../../screenshots/dark.png');
+        $client->takeScreenshot(__DIR__ . '/../../screenshots/dark.png');
     }
 
     public function testDebugbarAjax(): void
@@ -130,7 +130,7 @@ class DebugbarTest extends AbstractBrowserTestCase
         $this->assertStringContainsString('GET /demo/ajax.php (ajax)', $requests[1]);
         $this->assertStringContainsString('GET /demo/ajax_exception.php (ajax)', $requests[2]);
 
-        $client->takeScreenshot(__DIR__ . '/../../../screenshots/ajax.png');
+        $client->takeScreenshot(__DIR__ . '/../../screenshots/ajax.png');
     }
 
     public function testPdoCollector(): void
@@ -180,7 +180,7 @@ class DebugbarTest extends AbstractBrowserTestCase
 
         $this->assertCount(8, $statements);
 
-        $client->takeScreenshot(__DIR__ . '/../../../screenshots/pdo.png');
+        $client->takeScreenshot(__DIR__ . '/../../screenshots/pdo.png');
 
     }
 

@@ -10,7 +10,7 @@ class MonologTest extends AbstractBrowserTestCase
 {
     public function testMonologCollector(): void
     {
-        if (!file_exists(__DIR__ . '/../../../../../demo/bridge/monolog/vendor/autoload.php')) {
+        if (!file_exists(__DIR__ . '/../../../../demo/bridge/monolog/vendor/autoload.php')) {
             $this->markTestSkipped('Monolog is not installed');
         }
 

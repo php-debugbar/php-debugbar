@@ -164,7 +164,7 @@ class JavascriptRendererTest extends DebugBarTestCase
     {
         ob_start();
         $this->r->dumpAssets(
-            [__DIR__ . '/../../../resources/debugbar.css'],
+            [__DIR__ . '/../../resources/debugbar.css'],
             ['TEST_INLINE_DUMP1', 'TEST_INLINE_DUMP1']
         );
         $assets = ob_get_clean();
