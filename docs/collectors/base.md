@@ -135,6 +135,33 @@ The Request tab also adds a current URI indicator. You can disable this:
 $requestDataCollector = new DebugBar\DataCollector\RequestDataCollector();
 $requestDataCollector->setShowUriIndicator(false);
 ```
+## Http Requests
+
+You can log incoming/outgoing requests with the `HttpCollector`. You have to collect the data yourself.
+
+The details will be rendered in the details tab upon clicking on the request.
+
+You can optionally add a TimeDataCollector to the DebugBar to see the time in your Timeline.
+
+```php
+$httpCollector = new DebugBar\DataCollector\HttpCollector('http', $timeDataCollector);
+$debugbar->addCollector($httpCollector);
+
+$httpCollector->addRequest(
+    'GET',
+    'https://packagist.org/packages/php-debugbar/php-debugbar/stats.json',
+    200,
+    0.684,
+    [
+        'response' => $data,
+        'headers' => [
+            'Data' => 'Mon, 05 Jan 2026 21:07:36 GMT',
+            'Content-Type' => 'application/json',
+        ],
+    ]
+);
+
+````
 
 ## Config
 
