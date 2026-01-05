@@ -1,6 +1,7 @@
 <?php
 
 use DebugBar\Bridge\Symfony\SymfonyMailCollector;
+use DebugBar\DataCollector\HttpCollector;
 use DebugBar\DataCollector\PDO\PDOCollector;
 use DebugBar\DataCollector\TemplateCollector;
 use DebugBar\StandardDebugBar;
@@ -9,7 +10,8 @@ include __DIR__ . '/../vendor/autoload.php';
 
 $debugbar = new StandardDebugBar();
 $debugbar->addCollector(new PdoCollector());
-$debugbar->addCollector(new TemplateCollector());
+$debugbar->addCollector(new TemplateCollector(timeCollector: $debugbar['time']));
+$debugbar->addCollector(new HttpCollector(timeCollector: $debugbar['time']));
 $debugbar->addCollector(new SymfonyMailCollector());
 
 $debugbarRenderer = $debugbar->getJavascriptRenderer()
@@ -25,6 +27,7 @@ $debugbar['messages']->addMessage(['demo' => ['is_demo' => true]]);
 $debugbar['messages']->addMessage('This does not actually run on the server', 'error');
 
 require __DIR__ . '/../demo/collectors/pdo.php';
+require __DIR__ . '/../demo/collectors/http.php';
 require __DIR__ . '/../demo/collectors/symfony_mailer.php';
 require __DIR__ . '/../demo/collectors/templates.php';
 require __DIR__ . '/../demo/collectors/counter.php';

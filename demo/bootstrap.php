@@ -13,8 +13,8 @@ use DebugBar\StandardDebugBar;
 
 $debugbar = new StandardDebugBar();
 $debugbar->addCollector(new PdoCollector());
-$debugbar->addCollector(new TemplateCollector());
-$debugbar->addCollector(new HttpCollector());
+$debugbar->addCollector(new TemplateCollector(timeCollector: $debugbar['time']));
+$debugbar->addCollector(new HttpCollector(timeCollector: $debugbar['time']));
 $debugbar->addCollector(new SymfonyMailCollector());
 
 $debugbarRenderer = $debugbar->getJavascriptRenderer()
