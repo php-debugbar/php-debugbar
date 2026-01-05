@@ -6,6 +6,7 @@ include __DIR__ . '/../vendor/autoload.php';
 session_start();
 
 use DebugBar\Bridge\Symfony\SymfonyMailCollector;
+use DebugBar\DataCollector\HttpCollector;
 use DebugBar\DataCollector\PDO\PDOCollector;
 use DebugBar\DataCollector\TemplateCollector;
 use DebugBar\StandardDebugBar;
@@ -13,6 +14,7 @@ use DebugBar\StandardDebugBar;
 $debugbar = new StandardDebugBar();
 $debugbar->addCollector(new PdoCollector());
 $debugbar->addCollector(new TemplateCollector());
+$debugbar->addCollector(new HttpCollector());
 $debugbar->addCollector(new SymfonyMailCollector());
 
 $debugbarRenderer = $debugbar->getJavascriptRenderer()
