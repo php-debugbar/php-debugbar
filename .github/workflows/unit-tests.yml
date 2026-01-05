@@ -37,7 +37,7 @@ jobs:
             symfony: ^7.3
             os: windows-latest
 
-    name: Unit PHP${{ matrix.php }} Symfony${{ matrix.symfony }} {{ matrix.os }}
+    name: Unit PHP${{ matrix.php }} Symfony${{ matrix.symfony }} ${{ matrix.os }}
 
     steps:
     - name: Checkout code
