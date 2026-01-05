@@ -49,7 +49,7 @@ jobs:
         php-version: ${{ matrix.php }}
         coverage: none
         tools: composer:v2
-        extensions: pdo_sqlite
+        extensions: pdo_sqlite, zip
 
     - name: Require specific Symfony version
       if: matrix.symfony != '*'
