@@ -122,7 +122,9 @@ div.phpdebugbar-widgets-messages {
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value:before {
     margin-right: 8px;
-    font-size: 11px;
+    font-family: system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1;
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-success {
     color: green;
@@ -135,7 +137,6 @@ div.phpdebugbar-widgets-messages {
     color: #cbcf38;
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-debug:before {
-    content: "🐛";
     color: #78d79a;
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-warning:before,
