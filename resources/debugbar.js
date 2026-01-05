@@ -1430,7 +1430,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
             // Run symfony dumps upon reloading
             if (typeof window.Sfdump == 'function') {
-                this.el.querySelectorAll('pre.sf-dump[id]').forEach((pre) => {
+                this.body.querySelectorAll('pre.sf-dump[id]').forEach((pre) => {
                     window.Sfdump(pre.id, { maxDepth: 0 });
                 });
             }
