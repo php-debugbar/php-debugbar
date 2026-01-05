@@ -29,6 +29,7 @@ const icons = [
     'leaf',
     'list',
     'logs',
+    'mobiledata',
     'search',
     'server-cog',
     'share-3',
