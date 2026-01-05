@@ -144,7 +144,7 @@ The details will be rendered in the details tab upon clicking on the request.
 You can optionally add a TimeDataCollector to the DebugBar to see the time in your Timeline.
 
 ```php
-$httpCollector = new DebugBar\DataCollector\HttpCollector('http', $timeDataCollector);
+$httpCollector = new DebugBar\DataCollector\HttpCollector(timeCollector: $timeCollector);
 $debugbar->addCollector($httpCollector);
 
 $httpCollector->addRequest(
