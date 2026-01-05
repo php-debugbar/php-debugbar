@@ -1,4 +1,4 @@
 // Build sql-formatter bundle
 import sqlFormatter  from '@sqltools/formatter';
 
-export default sqlFormatter;
+globalThis.phpdebugbar_sqlformatter = sqlFormatter.default;

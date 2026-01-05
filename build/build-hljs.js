@@ -23,4 +23,4 @@ hljs.registerLanguage('yaml', yaml);
 // Configure to use custom CSS class prefix
 hljs.configure({ classPrefix: 'phpdebugbar-hljs-' });
 
-export default hljs;
+globalThis.phpdebugbar_hljs = hljs.default;
