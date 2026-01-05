@@ -72,7 +72,7 @@ class DebugBarVarDumperTest extends DebugBarTestCase
         $this->assertEquals([
             'min_depth' => 2,
             'max_string' => 10000,
-            'max_items' => 1000
+            'max_items' => 1000,
         ], $options);
 
         // Test basic get/merge/reset functionality for dumper
