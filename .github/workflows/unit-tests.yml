@@ -25,16 +25,16 @@ jobs:
             symfony: ^5.4
             os: ubuntu-latest
           - php: 8.2
-            symfony: ^6.4
+            symfony: ^6
             os: ubuntu-latest
           - php: 8.2
-            symfony: ^7.3
+            symfony: ^7
             os: ubuntu-latest
           - php: 8.4
-            symfony: ^7.3
+            symfony: ^7
             os: ubuntu-latest
           - php: 8.4
-            symfony: ^7.3
+            symfony: ^7
             os: windows-latest
 
     name: Unit PHP${{ matrix.php }} Symfony${{ matrix.symfony }} ${{ matrix.os }}
