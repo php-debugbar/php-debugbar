@@ -16,7 +16,10 @@ use Symfony\Component\VarDumper\Cloner\VarCloner;
  */
 class DebugBarVarDumper
 {
-    protected static array $defaultClonerOptions = [];
+    protected static array $defaultClonerOptions = [
+        'max_string' => 10_000,
+        'max_items' => 1000,
+    ];
 
     protected static array $defaultDumperOptions = [
         'expanded_depth' => 0,
