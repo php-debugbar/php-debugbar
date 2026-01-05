@@ -65,6 +65,8 @@ class JavascriptRenderer
      * These files are included in the dist files. When using source, they are added by collectors if needed.
      */
     protected array $distIncludedAssets = [
+        'vendor/highlightjs/highlight.pack.js',
+        'vendor/sql-formatter/sql-formatter.min.js',
         'debugbar.js',
         'icons.css',
         'debugbar.css',
@@ -79,8 +81,6 @@ class JavascriptRenderer
         'widgets/templates/widget.css',
         'widgets/templates/widget.js',
         'highlight.css',
-        'vendor/highlightjs/highlight.pack.js',
-        'vendor/sql-formatter/sql-formatter.min.js',
     ];
 
     protected array $additionalAssets = [];

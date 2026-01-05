@@ -1,3 +1,5 @@
+/* global phpdebugbar_hljs */
+/* global phpdebugbar_sqlformatter */
 (function () {
     const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
 
@@ -260,8 +262,9 @@
                     const code = li.querySelector('code');
                     if (code && typeof phpdebugbar_sqlformatter !== 'undefined') {
                         let sql = stmt.sql;
+                        const formatter = phpdebugbar_sqlformatter.default;
                         if (!table.hidden) {
-                            sql = phpdebugbar_sqlformatter.default.format(stmt.sql);
+                            sql = formatter.format(stmt.sql);
                         }
                         code.innerHTML = PhpDebugBar.Widgets.highlight(sql, 'sql');
                     }

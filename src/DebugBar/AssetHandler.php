@@ -36,10 +36,10 @@ class AssetHandler
         $type = $request['type'] ?? null;
 
         if ($type === 'css') {
-            $content = $renderer->dumpCssAssets(null, false);
+            $content = $renderer->dumpAssets(files: $renderer->getAssets('css'), echo: false);
             $contentType = 'text/css';
         } elseif ($type === 'js') {
-            $content = $renderer->dumpJsAssets(null, false);
+            $content = $renderer->dumpAssets(files: $renderer->getAssets('js'), echo: false);
             $contentType = 'text/javascript';
         } else {
             throw new DebugBarException("Invalid type '{$type}'");
