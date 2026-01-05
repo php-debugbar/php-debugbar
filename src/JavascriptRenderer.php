@@ -124,7 +124,7 @@ class JavascriptRenderer
         $this->debugBar = $debugBar;
 
         if ($basePath === null) {
-            $basePath = __DIR__ . '/../../resources';
+            $basePath = __DIR__ . '/../resources';
         }
         $this->basePath = $basePath;
 

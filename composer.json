@@ -42,12 +42,12 @@
     },
     "autoload": {
         "psr-4": {
-            "DebugBar\\": "src/DebugBar/"
+            "DebugBar\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "DebugBar\\Tests\\": "tests/DebugBar/Tests"
+            "DebugBar\\Tests\\": "tests/Tests"
         }
     },
     "scripts": {

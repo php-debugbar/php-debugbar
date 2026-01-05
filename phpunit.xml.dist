@@ -2,17 +2,17 @@
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
-    bootstrap="tests/bootstrap.php"
+    bootstrap="vendor/autoload.php"
     colors="true"
     cacheDirectory=".phpunit.cache"
 >
   <testsuites>
     <testsuite name="Unit">
-      <directory>./tests/DebugBar/Tests</directory>
-      <exclude>./tests/DebugBar/Tests/Browser</exclude>
+      <directory>./tests/Tests</directory>
+      <exclude>./tests/Tests/Browser</exclude>
     </testsuite>
     <testsuite name="Browser">
-      <directory>./tests/DebugBar/Tests/Browser</directory>
+      <directory>./tests/Tests/Browser</directory>
     </testsuite>
   </testsuites>
   <php>
@@ -21,7 +21,7 @@
   </php>
   <source>
     <include>
-      <directory>./src/DebugBar/</directory>
+      <directory>./src/</directory>
     </include>
   </source>
 </phpunit>
