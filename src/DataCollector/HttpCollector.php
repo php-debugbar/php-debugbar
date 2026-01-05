@@ -19,7 +19,7 @@ class HttpCollector extends DataCollector implements Renderable, AssetProvider
 
     public function getName(): string
     {
-        return 'http';
+        return $this->name;
     }
 
     public function getWidgets(): array
