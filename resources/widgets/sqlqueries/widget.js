@@ -1,4 +1,3 @@
-/* global phpdebugbar_hljs */
 /* global phpdebugbar_sqlformatter */
 (function () {
     const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
