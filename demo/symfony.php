@@ -27,8 +27,10 @@ $debugbar->setHttpDriver($httpDriver);
 $ajax = $request->query->get('ajax');
 if ($ajax) {
     $debugbar['messages']->addMessage('hello from ajax');
-
+    $debugbar['exceptions']->addException(new \RuntimeException('error from AJAX'));
     $response = new \Symfony\Component\HttpFoundation\JsonResponse('Hello from Symfony Ajax');
+
+    $response->setstatusCode(500);
 } else {
     $response = new \Symfony\Component\HttpFoundation\Response(<<<HTML
         <html>
@@ -66,6 +68,7 @@ if ($ajax) {
 }
 
 $httpDriver->setResponse($response);
+
 $debugbar->addCollector(new DebugBar\Bridge\Symfony\SymfonyRequestCollector($request, $response));
 
 require __DIR__ . '/collectors/symfony_mailer.php';

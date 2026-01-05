@@ -134,7 +134,7 @@ class SymfonyRequestCollector extends RequestDataCollector
         return [
             'data' => $data,
             'tooltip' => $tooltip,
-            'badge' => $statusCode >= 300 ? $data['status_code'] : null,
+            'badge' => $statusCode >= 300 ? $statusCode : null,
         ];
     }
 
