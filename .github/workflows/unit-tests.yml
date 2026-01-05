@@ -10,13 +10,14 @@ on:
 
 jobs:
   unit-tests:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     env:
       COMPOSER_NO_INTERACTION: 1
 
     strategy:
       matrix:
+        os: [ubuntu-24.04]
         php: [8.5, 8.4, 8.3, 8.2]
         symfony: ['*']
         include:
@@ -28,8 +29,11 @@ jobs:
             symfony: ^7.3
           - php: 8.4
             symfony: ^7.3
+          - os: windows-latest
+            php: 8.4
+            symfony: '7.3'
 
-    name: Unit PHP${{ matrix.php }} Symfony${{ matrix.symfony }}
+    name: Unit PHP${{ matrix.php }} Symfony${{ matrix.symfony }} {{ matrix.os }}
 
     steps:
     - name: Checkout code
