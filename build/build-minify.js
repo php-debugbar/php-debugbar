@@ -21,9 +21,6 @@ async function minifyJS() {
             entryPoints: [path.join(distDir, 'debugbar.js')],
             outfile: path.join(distDir, 'debugbar.min.js'),
             minify: true,
-            minifyIdentifiers: false,
-            keepNames: true,
-            treeShaking: false,
             target: 'es2015',
             format: 'iife',
             bundle: false

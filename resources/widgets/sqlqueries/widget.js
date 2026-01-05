@@ -261,9 +261,8 @@
                     const code = li.querySelector('code');
                     if (code && typeof phpdebugbar_sqlformatter !== 'undefined') {
                         let sql = stmt.sql;
-                        const formatter = phpdebugbar_sqlformatter.default;
                         if (!table.hidden) {
-                            sql = formatter.format(stmt.sql);
+                            sql = phpdebugbar_sqlformatter.format(stmt.sql);
                         }
                         code.innerHTML = PhpDebugBar.Widgets.highlight(sql, 'sql');
                     }

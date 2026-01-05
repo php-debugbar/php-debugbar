@@ -47,8 +47,7 @@
             return htmlize(code);
         }
 
-        const hljs = phpdebugbar_hljs.default;
-
+        const hljs = phpdebugbar_hljs;
         if (lang && hljs.getLanguage(lang)) {
             return hljs.highlight(code, { language: lang }).value;
         }
