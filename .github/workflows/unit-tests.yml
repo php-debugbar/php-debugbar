@@ -25,7 +25,7 @@ jobs:
             symfony: ^5.4
             os: ubuntu-latest
           - php: 8.2
-            symfony: ^6.4
+            symfony: ^6
             os: ubuntu-latest
           - php: 8.2
             symfony: ^7

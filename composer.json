@@ -19,7 +19,7 @@
     "require": {
         "php": "^8.2",
         "psr/log": "^1|^2|^3",
-        "symfony/var-dumper": "^5.4|^6.4|^7|^8"
+        "symfony/var-dumper": "^5.4|^6|^7|^8"
     },
     "replace": {
         "maximebf/debugbar": "self.version"
