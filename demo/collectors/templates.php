@@ -6,8 +6,6 @@ declare(strict_types=1);
 
 use DebugBar\DataCollector\TemplateCollector;
 
-$templateCollector = new TemplateCollector();
-
 /** @var TemplateCollector $templateCollector */
 $templateCollector = $debugbar['templates'];
 

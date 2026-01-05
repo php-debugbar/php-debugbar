@@ -32,6 +32,7 @@ $debugbar["messages"]->addMessage("<script>alert('Whoops')</script>");
 require __DIR__ . '/collectors/counter.php';
 require __DIR__ . '/collectors/templates.php';
 require __DIR__ . '/collectors/pdo.php';
+require __DIR__ . '/collectors/http.php';
 require __DIR__ . '/collectors/monolog.php';
 require __DIR__ . '/collectors/symfony_mailer.php';
 

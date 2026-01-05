@@ -80,6 +80,7 @@ class JavascriptRenderer
         'widgets/sqlqueries/widget.js',
         'widgets/templates/widget.css',
         'widgets/templates/widget.js',
+        'widgets/http/widget.js',
         'highlight.css',
     ];
 
