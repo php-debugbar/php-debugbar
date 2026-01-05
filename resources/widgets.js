@@ -17,16 +17,6 @@
         return text.replace(/\n/g, '<br>').replace(/\s/g, '&nbsp;');
     };
 
-    const sfDump = PhpDebugBar.Widgets.sfDump = function (el) {
-        if (typeof window.Sfdump !== 'function') {
-            return;
-        }
-
-        el.querySelectorAll('pre.sf-dump[id]').forEach((pre) => {
-            window.Sfdump(pre.id, { maxDepth: 0 });
-        });
-    };
-
     /**
      * Returns a string representation of value, using JSON.stringify
      * if it's an object.
@@ -525,8 +515,6 @@
                     val.classList.add(csscls('value'));
                     val.innerHTML = value.message_html;
                     li.append(val);
-
-                    sfDump(val);
                 } else {
                     let m = value.message;
                     if (m.length > 100) {
@@ -806,7 +794,7 @@
 
                             li.style.cursor = 'pointer';
                             li.addEventListener('click', function () {
-                                if (window.getSelection().type === 'Range') {
+                                if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
                                     return '';
                                 }
                                 const table = this.querySelector('table');
@@ -922,16 +910,16 @@
                     const startLine = (e.line - 3) <= 0 ? 1 : e.line - 3;
                     const pre = createCodeBlock(e.surrounding_lines.join(''), 'php', startLine, e.line);
                     pre.classList.add(csscls('file'));
+                    pre.hidden = true;
                     li.append(pre);
 
-                    if (e.stack_trace_html) {
-                        pre.hidden = false;
-                    } else {
-                        // This click event makes the var-dumper hard to use.
-                        li.addEventListener('click', () => {
-                            pre.hidden = !pre.hidden;
-                        });
-                    }
+                    // This click event makes the var-dumper hard to use.
+                    li.addEventListener('click', (event) => {
+                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
+                            return;
+                        }
+                        pre.hidden = !pre.hidden;
+                    });
                 }
 
                 if (e.stack_trace_html) {
@@ -950,7 +938,6 @@
                         }
                     }
                     li.append(trace);
-                    sfDump(trace);
                 } else if (e.stack_trace) {
                     e.stack_trace.split('\n').forEach((trace) => {
                         const traceLine = document.createElement('div');

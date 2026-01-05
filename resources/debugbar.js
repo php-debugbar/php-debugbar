@@ -1427,6 +1427,14 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                     this.getControl(key).set('data', d);
                 }
             }
+
+            // Run symfony dumps upon reloading
+            if (typeof window.Sfdump == 'function') {
+                this.body.querySelectorAll('pre.sf-dump[id]').forEach((pre) => {
+                    window.Sfdump(pre.id, { maxDepth: 0 });
+                });
+            }
+
             this.resize();
         }
 

@@ -95,7 +95,7 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
 
     public function collect(): array
     {
-        if ($this->group === true || count($this->templates) > $this->group) {
+        if ($this->group === true || ($this->group !== false && count($this->templates) > $this->group)) {
             $templates = [];
             foreach ($this->templates as $template) {
                 $hash = $template['hash'];
