@@ -16,7 +16,7 @@
     </testsuite>
   </testsuites>
   <php>
-    <server name="PANTHER_WEB_SERVER_DIR" value="./"/>
+    <server name="PANTHER_WEB_SERVER_DIR" value="./demo/"/>
     <server name="PANTHER_DEVTOOLS" value="0"/>
   </php>
   <source>

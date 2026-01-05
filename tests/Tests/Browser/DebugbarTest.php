@@ -15,7 +15,7 @@ class DebugbarTest extends AbstractBrowserTestCase
         $size = new WebDriverDimension(1920, 800);
         $client->manage()->window()->setSize($size);
 
-        $crawler = $client->request('GET', '/demo/');
+        $crawler = $client->request('GET', '/');
 
         // Wait for Debugbar to load
         $crawler = $client->waitFor('.phpdebugbar-body');
@@ -48,7 +48,7 @@ class DebugbarTest extends AbstractBrowserTestCase
         $size = new WebDriverDimension(1920, 800);
         $client->manage()->window()->setSize($size);
 
-        $crawler = $client->request('GET', '/demo/?theme=light');
+        $crawler = $client->request('GET', '/?theme=light');
 
         // Wait for Debugbar to load
         $crawler = $client->waitFor('.phpdebugbar-body');
@@ -67,7 +67,7 @@ class DebugbarTest extends AbstractBrowserTestCase
         $size = new WebDriverDimension(1920, 800);
         $client->manage()->window()->setSize($size);
 
-        $crawler = $client->request('GET', '/demo/?theme=dark');
+        $crawler = $client->request('GET', '/?theme=dark');
 
         // Wait for Debugbar to load
         $crawler = $client->waitFor('.phpdebugbar-body');
@@ -86,7 +86,7 @@ class DebugbarTest extends AbstractBrowserTestCase
         $size = new WebDriverDimension(1920, 800);
         $client->manage()->window()->setSize($size);
 
-        $crawler = $client->request('GET', '/demo/');
+        $crawler = $client->request('GET', '/');
 
         // Wait for Debugbar to load
         $crawler = $client->waitFor('.phpdebugbar-body');
@@ -126,9 +126,9 @@ class DebugbarTest extends AbstractBrowserTestCase
             ->each(function (WebDriverElement $node) {
                 return $node->getText();
             });
-        $this->assertStringContainsString('GET /demo/', $requests[0]);
-        $this->assertStringContainsString('GET /demo/ajax.php (ajax)', $requests[1]);
-        $this->assertStringContainsString('GET /demo/ajax_exception.php (ajax)', $requests[2]);
+        $this->assertStringContainsString('GET /', $requests[0]);
+        $this->assertStringContainsString('GET /ajax.php (ajax)', $requests[1]);
+        $this->assertStringContainsString('GET /ajax_exception.php (ajax)', $requests[2]);
 
         $client->takeScreenshot(__DIR__ . '/../../screenshots/ajax.png');
     }
@@ -139,7 +139,7 @@ class DebugbarTest extends AbstractBrowserTestCase
         $size = new WebDriverDimension(1920, 800);
         $client->manage()->window()->setSize($size);
 
-        $client->request('GET', '/demo/');
+        $client->request('GET', '/');
 
         // Wait for Debugbar to load
         $crawler = $client->waitFor('.phpdebugbar-body');
