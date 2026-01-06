@@ -48,10 +48,10 @@ theme:
     - search.highlight
     - meta
 extra_css:
-  - assets/dist/debugbar.min.css
+  - assets/dist/debugbar.min.css?v=1767703416
   - assets/extra.css
 extra_javascript:
-  - assets/dist/debugbar.min.js
+  - assets/dist/debugbar.min.js?v=1767703416
 markdown_extensions:
   - admonition
   - abbr
