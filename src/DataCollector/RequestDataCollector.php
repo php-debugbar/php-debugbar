@@ -73,7 +73,7 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
      */
     public function hideSuperglobalKeys(string $superGlobalName, string|array $keys): void
     {
-        $this->addMaskedKeys($keys);
+        $this->addMaskedKeys((array) $keys);
     }
 
     public function getName(): string

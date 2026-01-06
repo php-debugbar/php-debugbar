@@ -21,7 +21,7 @@ interface HttpDriverInterface
 {
     /**
      * Sets HTTP headers
-     *
+     * @param array<string, string> $headers
      */
     public function setHeaders(array $headers): void;
 

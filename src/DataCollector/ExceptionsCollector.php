@@ -200,7 +200,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
         if ($filePath && file_exists($filePath)) {
             $lines = file($filePath);
             $start = $e->getLine() - 4;
-            $lines = array_slice($lines, $start < 0 ? 0 : $start, 7);
+            $lines = $lines ? array_slice($lines, $start < 0 ? 0 : $start, 7) : [];
         } else {
             $lines = ['Cannot open the file (' . $this->normalizeFilePath($filePath) . ') in which the exception occurred'];
         }

@@ -139,7 +139,7 @@ class TraceablePDO extends PDO
      *
      * @param string $name [optional]
      *
-     * @return string If a sequence name was not specified for the name parameter, PDO::lastInsertId
+     * @return false|string If a sequence name was not specified for the name parameter, PDO::lastInsertId
      *                returns a string representing the row ID of the last row that was inserted into the database.
      */
     #[\ReturnTypeWillChange]
@@ -314,9 +314,9 @@ class TraceablePDO extends PDO
      */
     public function getPeakMemoryUsage(): int
     {
-        return array_reduce($this->executedStatements, function ($v, $s) {
+        return array_reduce($this->executedStatements, function (mixed $v, mixed $s) {
             $m = $s->getEndMemory();
-            return $m > $v ? $m : $v;
+            return max($m, $v);
         }, 0);
     }
 

@@ -23,6 +23,7 @@ class AssetHandler
     /**
      * Handles the current request
      *
+     * @param null|array{type: 'css'|'js'} $request
      * @throws DebugBarException
      */
     public function handle(?array $request = null, bool $echo = true, bool $sendHeader = true): string
@@ -35,11 +36,13 @@ class AssetHandler
 
         $type = $request['type'] ?? null;
 
-        if ($type === 'css') {
-            $content = $renderer->dumpAssets(files: $renderer->getAssets('css'), echo: false);
+        if (!is_string($type)) {
+            throw new DebugBarException("Missing type parameter in request");
+        } elseif ($type === 'css') {
+            $content = $renderer->dumpAssets(files: $renderer->getAssets()['css'], echo: false);
             $contentType = 'text/css';
         } elseif ($type === 'js') {
-            $content = $renderer->dumpAssets(files: $renderer->getAssets('js'), echo: false);
+            $content = $renderer->dumpAssets(files: $renderer->getAssets()['js'], echo: false);
             $contentType = 'text/javascript';
         } else {
             throw new DebugBarException("Invalid type '{$type}'");

@@ -38,12 +38,14 @@ class JavascriptRenderer
 
     protected ?string $baseUrl;
 
-    protected ?string $basePath;
+    protected string $basePath;
 
+    /** @var array<string, string>  */
     protected array $cssVendors = [
 
     ];
 
+    /** @var array<string, string>  */
     protected array $jsVendors = [
         'highlightjs' => 'vendor/highlightjs/highlight.pack.js',
         'sql-formatter' => 'vendor/sql-formatter/sql-formatter.min.js',
@@ -51,18 +53,24 @@ class JavascriptRenderer
 
     protected bool|array $includeVendors = true;
 
+    /** @var string[]  */
     protected array $cssFiles = ['debugbar.css', 'icons.css', 'widgets.css', 'openhandler.css', 'highlight.css'];
 
+    /** @var string[]  */
     protected array $jsFiles = ['debugbar.js', 'widgets.js', 'openhandler.js'];
 
     protected bool $useDistFiles = true;
 
+    /** @var string[]  */
     protected array $distCssFiles = ['../dist/debugbar.min.css'];
 
+    /** @var string[]  */
     protected array $distJsFiles = ['../dist/debugbar.min.js'];
 
-    /*
+    /**
      * These files are included in the dist files. When using source, they are added by collectors if needed.
+     *
+     * @var array<int, string>
      */
     protected array $distIncludedAssets = [
         'vendor/highlightjs/highlight.pack.js',
@@ -84,6 +92,16 @@ class JavascriptRenderer
         'highlight.css',
     ];
 
+    /** @var list<array{
+     *   base_path?: string|null,
+     *   base_url?: string|null,
+     *   css?: string|array<int|string, string>,
+     *   js?: string|array<int|string, string>,
+     *   inline_css?: array<int|string, string>,
+     *   inline_js?: array<int|string, string>,
+     *   inline_head?: array<int|string, string>
+     * }>
+     */
     protected array $additionalAssets = [];
 
     protected string $javascriptClass = 'PhpDebugBar.DebugBar';
@@ -96,6 +114,20 @@ class JavascriptRenderer
 
     protected int $initialization;
 
+    /**
+     * @var array<string, null|array{
+     *    icon?: string,
+     *    tooltip?: string,
+     *    tab?: string,
+     *    widget?: class-string,
+     *    title?: string,
+     *    map?: string,
+     *    default?: string,
+     *    indicator?: string,
+     *    position?: 'left'|'right',
+     *    order?: int
+     *  }>
+     */
     protected array $controls = [];
 
     protected array $ignoredCollectors = [];
@@ -130,8 +162,9 @@ class JavascriptRenderer
         $this->basePath = $basePath;
 
         if ($baseUrl === null) {
-            if ($basePath && str_contains($basePath, '/vendor/')) {
-                $baseUrl = strstr($basePath, '/vendor/');
+            $pos = strpos($basePath, '/vendor/');
+            if ($pos !== false) {
+                $baseUrl = substr($basePath, $pos);
             } else {
                 $baseUrl = '/vendor/php-debugbar/php-debugbar/resources';
             }
@@ -143,25 +176,38 @@ class JavascriptRenderer
     }
 
     /**
-     * Sets options from an array
-     *
-     * Options:
-     *  - base_path
-     *  - base_url
-     *  - include_vendors
-     *  - javascript_class
-     *  - variable_name
-     *  - initialization
-     *  - use_dist_files
-     *  - controls
-     *  - disable_controls
-     *  - ignore_collectors
-     *  - ajax_handler_classname
-     *  - ajax_handler_auto_show
-     *  - open_handler_classname
-     *  - open_handler_url
-     *
-     * @param array $options [description]
+     * @param array{
+     *   base_path?: string,
+     *   base_url?: string|null,
+     *   include_vendors?: bool|array|string,
+     *   javascript_class?: string,
+     *   variable_name?: string,
+     *   initialization?: int,
+     *   use_dist_files?: bool,
+     *   theme?: string|null,
+     *   hide_empty_tabs?: bool,
+     *   controls?: array<string, array{
+     *     icon?: string,
+     *     tooltip?: string,
+     *     tab?: string,
+     *     widget?: class-string,
+     *     title?: string,
+     *     map?: string,
+     *     default?: string,
+     *     indicator?: string,
+     *     position?: string,
+     *     order?: int
+     *   }>,
+     *   disable_controls?: string[],
+     *   ignore_collectors?: string|string[],
+     *   ajax_handler_classname?: string,
+     *   ajax_handler_auto_show?: bool,
+     *   ajax_handler_enable_tab?: bool,
+     *   defer_datasets?: bool,
+     *   open_handler_classname?: string,
+     *   open_handler_url?: string,
+     *   csp_nonce?: string|null
+     * } $options
      */
     public function setOptions(array $options): static
     {
@@ -404,7 +450,7 @@ class JavascriptRenderer
         return $this;
     }
 
-    public function getTheme(): string
+    public function getTheme(): ?string
     {
         return $this->theme;
     }
@@ -415,7 +461,7 @@ class JavascriptRenderer
         return $this;
     }
 
-    public function areEmptyTabsHidden(): bool
+    public function areEmptyTabsHidden(): ?bool
     {
         return $this->hideEmptyTabs;
     }
@@ -433,6 +479,20 @@ class JavascriptRenderer
      *
      * "icon" or "widget" are at least needed
      *
+     * @param array{
+     *   icon?: string,
+     *   tooltip?: string,
+     *   widget?: class-string,
+     *   tab?: string,
+     *   title?: string,
+     *   map?: string,
+     *   default?: string,
+     *   indicator?: string,
+     *   position?: 'left'|'right',
+     *   order?: int
+     * } $options
+     *
+     * @phpstan-assert (array{icon: string}|array{widget: class-string}) $options
      */
     public function addControl(string $name, array $options): static
     {
@@ -691,8 +751,8 @@ class JavascriptRenderer
     /**
      * Add assets stored in files to render in the head
      *
-     * @param array|string $cssFiles An array of filenames
-     * @param array|string $jsFiles  An array of filenames
+     * @param string[]|string $cssFiles An array of filenames
+     * @param string[]|string $jsFiles  An array of filenames
      * @param ?string      $basePath Base path of those files
      * @param ?string      $baseUrl  Base url of those files
      *
@@ -703,8 +763,8 @@ class JavascriptRenderer
         $this->additionalAssets[] = [
             'base_path' => $basePath,
             'base_url' => $baseUrl,
-            'css' => (array) $cssFiles,
-            'js' => (array) $jsFiles,
+            'css' => is_string($cssFiles) ? [$cssFiles] : $cssFiles,
+            'js' => is_string($jsFiles) ? [$jsFiles] : $jsFiles,
         ];
         return $this;
     }
@@ -720,9 +780,9 @@ class JavascriptRenderer
      * added.  Inline assets from all collectors are merged together into the same array, so these
      * content IDs effectively deduplicate the inline assets.
      *
-     * @param array|string $inlineCss  An array map of content ID to inline CSS content (not including <style> tag)
-     * @param array|string $inlineJs   An array map of content ID to inline JS content (not including <script> tag)
-     * @param array|string $inlineHead An array map of content ID to arbitrary inline HTML content (typically
+     * @param string[]|string $inlineCss  An array map of content ID to inline CSS content (not including <style> tag)
+     * @param string[]|string $inlineJs   An array map of content ID to inline JS content (not including <script> tag)
+     * @param string[]|string $inlineHead An array map of content ID to arbitrary inline HTML content (typically
      *                                 <style>/<script> tags); it must be embedded within the <head> element
      *
      * @return $this
@@ -730,9 +790,9 @@ class JavascriptRenderer
     public function addInlineAssets(array|string $inlineCss, array|string $inlineJs, array|string $inlineHead)
     {
         $this->additionalAssets[] = [
-            'inline_css' => (array) $inlineCss,
-            'inline_js' => (array) $inlineJs,
-            'inline_head' => (array) $inlineHead,
+            'inline_css' => is_string($inlineCss) ? [$inlineCss] : $inlineCss,
+            'inline_js' => is_string($inlineJs) ? [$inlineJs] : $inlineJs,
+            'inline_head' => is_string($inlineHead) ? [$inlineHead] : $inlineHead,
         ];
         return $this;
     }
@@ -740,12 +800,11 @@ class JavascriptRenderer
     /**
      * Returns the list of asset files
      *
-     * @param string|null $type       'css', 'js', 'inline_css', 'inline_js', 'inline_head', or null for all
      * @param string|null $relativeTo The type of path to which filenames must be relative (path, url or null)
      *
-     * @return ($type is null ? array{css: string[], js: string[], inline_css: string[], inline_js: string[], inline_head: string[]} : string[])
+     * @return array{css: string[], js: string[], inline_css: string[], inline_js: string[], inline_head: string[]}
      */
-    public function getAssets(?string $type = null, ?string $relativeTo = self::RELATIVE_PATH): array
+    public function getAssets(?string $relativeTo = self::RELATIVE_PATH): array
     {
         $cssFiles = $this->cssFiles;
         $jsFiles = $this->jsFiles;
@@ -764,20 +823,18 @@ class JavascriptRenderer
         }
 
         if ($this->useDistFiles) {
-            $cssFiles = array_merge($this->distCssFiles, $cssFiles);
-            $cssFiles = array_filter($cssFiles, function ($file) {
+            $cssFiles = array_filter(array_merge($this->distCssFiles, $cssFiles), function ($file) {
                 return !in_array($file, $this->distIncludedAssets);
             });
-            $jsFiles = array_merge($this->distJsFiles, $jsFiles);
-            $jsFiles = array_filter($jsFiles, function ($file) {
+            $jsFiles = array_filter(array_merge($this->distJsFiles, $jsFiles), function ($file) {
                 return !in_array($file, $this->distIncludedAssets);
             });
         }
 
         if ($relativeTo) {
             $root = $this->getRelativeRoot($relativeTo, $this->basePath, $this->baseUrl);
-            $cssFiles = $this->makeUriRelativeTo($cssFiles, $root);
-            $jsFiles = $this->makeUriRelativeTo($jsFiles, $root);
+            $cssFiles = $this->makeUrisRelativeTo($cssFiles, $root);
+            $jsFiles = $this->makeUrisRelativeTo($jsFiles, $root);
         }
 
         $additionalAssets = $this->additionalAssets;
@@ -797,10 +854,10 @@ class JavascriptRenderer
                 $this->makeUriRelativeTo($baseUrl, $this->baseUrl),
             );
             if (isset($assets['css']) && !($this->useDistFiles && $basePath === '' && in_array($assets['css'], $this->distIncludedAssets))) {
-                $cssFiles = array_merge($cssFiles, $this->makeUriRelativeTo((array) $assets['css'], $root));
+                $cssFiles = array_merge($cssFiles, $this->makeUrisRelativeTo(is_string($assets['css']) ? [$assets['css']] : $assets['css'], $root));
             }
             if (isset($assets['js']) && !($this->useDistFiles && $basePath === '' && in_array($assets['js'], $this->distIncludedAssets))) {
-                $jsFiles = array_merge($jsFiles, $this->makeUriRelativeTo((array) $assets['js'], $root));
+                $jsFiles = array_merge($jsFiles, $this->makeUrisRelativeTo(is_string($assets['js']) ? [$assets['js']] : $assets['js'], $root));
             }
 
             if (isset($assets['inline_css'])) {
@@ -818,21 +875,19 @@ class JavascriptRenderer
         $cssFiles = array_unique($cssFiles);
         $jsFiles = array_unique($jsFiles);
 
-        $files = [
+        return [
             'css' => $cssFiles,
             'js' => $jsFiles,
             'inline_css' => $inlineCss,
             'inline_js' => $inlineJs,
             'inline_head' => $inlineHead,
         ];
-
-        return $type ? $files[$type] : $files;
     }
 
     /**
-     * @return ($type is null ? array{css: string[], js: string[]} : string[])
+     * @return array{css: string[], js: string[]}
      */
-    public function getDistIncludedAssets(?string $type = null, ?string $relativeTo = self::RELATIVE_PATH): array
+    public function getDistIncludedAssets(?string $relativeTo = self::RELATIVE_PATH): array
     {
         $cssFiles = [];
         $jsFiles = [];
@@ -847,16 +902,14 @@ class JavascriptRenderer
 
         if ($relativeTo) {
             $root = $this->getRelativeRoot($relativeTo, $this->basePath, $this->baseUrl);
-            $cssFiles = $this->makeUriRelativeTo($cssFiles, $root);
-            $jsFiles = $this->makeUriRelativeTo($jsFiles, $root);
+            $cssFiles = $this->makeUrisRelativeTo($cssFiles, $root);
+            $jsFiles = $this->makeUrisRelativeTo($jsFiles, $root);
         }
 
-        $files = [
+        return [
             'css' => $cssFiles,
             'js' => $jsFiles,
         ];
-
-        return $type ? $files[$type] : $files;
     }
 
     /**
@@ -864,40 +917,45 @@ class JavascriptRenderer
      *
      *
      */
-    protected function getRelativeRoot(string $relativeTo, string $basePath, string $baseUrl): ?string
+    protected function getRelativeRoot(?string $relativeTo, string $basePath, ?string $baseUrl): ?string
     {
         if ($relativeTo === self::RELATIVE_PATH) {
             return $basePath;
         }
-        if ($relativeTo === self::RELATIVE_URL) {
+        if ($baseUrl && $relativeTo === self::RELATIVE_URL) {
             return $baseUrl;
         }
         return null;
     }
 
     /**
-     * Makes a URI relative to another
-     *
+     * @param string[] $uris
+     * @return string[]
      */
-    protected function makeUriRelativeTo(string|array|null $uri, string $root): string|array
+    protected function makeUrisRelativeTo(array $uris, ?string $root): array
     {
-        if (!$root) {
-            return $uri;
-        }
-
-        if (is_array($uri)) {
-            $uris = [];
-            foreach ($uri as $u) {
-                $uris[] = $this->makeUriRelativeTo($u, $root);
-            }
+        if ($root == null) {
             return $uris;
         }
 
-        $uri ??= '';
+        $relativeUris = [];
+        foreach ($uris as $u) {
+            $relativeUris[] = $this->makeUriRelativeTo($u, $root);
+        }
 
-        if (substr($uri, 0, 1) === '/' || preg_match('/^([a-zA-Z]+:\/\/|[a-zA-Z]:\/|[a-zA-Z]:\\\)/', $uri)) {
+        return $relativeUris;
+    }
+
+    protected function makeUriRelativeTo(string $uri, ?string $root): string
+    {
+        if ($root === null) {
             return $uri;
         }
+
+        if (str_starts_with($uri,'/') || preg_match('/^([a-zA-Z]+:\/\/|[a-zA-Z]:\/|[a-zA-Z]:\\\)/', $uri)) {
+            return $uri;
+        }
+
         return rtrim($root, '/') . "/$uri";
     }
 
@@ -907,7 +965,8 @@ class JavascriptRenderer
      */
     public function dumpCssAssets(?string $targetFilename = null, bool $echo = true): string
     {
-        return $this->dumpAssets($this->getAssets('css'), $this->getAssets('inline_css'), $targetFilename, $echo);
+        $assets = $this->getAssets();
+        return $this->dumpAssets($assets['css'], $assets['inline_css'], $targetFilename, $echo);
     }
 
     /**
@@ -916,7 +975,8 @@ class JavascriptRenderer
      */
     public function dumpJsAssets(?string $targetFilename = null, bool $echo = true): string
     {
-        return $this->dumpAssets($this->getAssets('js'), $this->getAssets('inline_js'), $targetFilename, $echo);
+        $assets = $this->getAssets();
+        return $this->dumpAssets($assets['js'], $assets['inline_js'], $targetFilename, $echo);
     }
 
     /**
@@ -926,14 +986,14 @@ class JavascriptRenderer
      */
     public function dumpHeadAssets(?string $targetFilename = null, bool $echo = true): string
     {
-        return $this->dumpAssets(null, $this->getAssets('inline_head'), $targetFilename, $echo);
+        return $this->dumpAssets(null, $this->getAssets()['inline_head'], $targetFilename, $echo);
     }
 
     /**
      * Write assets to standard output or in a file
      *
-     * @param array|null $files   Filenames containing assets
-     * @param array|null $content Inline content to dump
+     * @param string[]|null $files   Filenames containing assets
+     * @param string[]|null $content Inline content to dump
      */
     public function dumpAssets(?array $files = null, ?array $content = null, ?string $targetFilename = null, bool $echo = true): string
     {
@@ -971,12 +1031,13 @@ class JavascriptRenderer
             'inline_css' => $inlineCss,
             'inline_js' => $inlineJs,
             'inline_head' => $inlineHead,
-        ] = $this->getAssets(null, self::RELATIVE_URL);
+        ] = $this->getAssets(self::RELATIVE_URL);
 
         if ($this->assetHandlerUrl !== null) {
             $url = $this->assetHandlerUrl;
-            $cssFiles = [$url . (str_contains($url, '?') ? '&' : '?') . 'type=css&mtime=' . $this->getModifiedTimes($this->getAssets('css', self::RELATIVE_PATH))];
-            $jsFiles = [$url . (str_contains($url, '?') ? '&' : '?') . 'type=js&hash=' . $this->getModifiedTimes($this->getAssets('js', self::RELATIVE_PATH))];
+            $assets = $this->getAssets(self::RELATIVE_PATH);
+            $cssFiles = [$url . (str_contains($url, '?') ? '&' : '?') . 'type=css&mtime=' . $this->getModifiedTimes($assets['css'])];
+            $jsFiles = [$url . (str_contains($url, '?') ? '&' : '?') . 'type=js&hash=' . $this->getModifiedTimes($assets['js'])];
         }
         $html = '';
 
@@ -1013,11 +1074,15 @@ class JavascriptRenderer
         return $html;
     }
 
+    /**
+     * @param string[] $files
+     */
     protected function getModifiedTimes(array $files): int
     {
         $modifiedTime = 0;
         foreach ($files as $file) {
-            $modifiedTime = max($modifiedTime, filemtime($file));
+            $fileTime = filemtime($file);
+            $modifiedTime = $fileTime !== false ? max($modifiedTime, $fileTime) : $modifiedTime;
         }
         return $modifiedTime;
     }
@@ -1032,7 +1097,7 @@ class JavascriptRenderer
         $widget = "<!-- Laravel Debugbar Widget -->\n" . ($withHead ? $this->renderHead() : '') . $this->render();
 
         // Try to put the widget at the end, directly before the </body>
-        $pos = strripos($response->getContent(), '</body>');
+        $pos = strripos($content, '</body>');
         if (false !== $pos) {
             $content = substr($content, 0, $pos) . $widget . substr($content, $pos);
         } else {
@@ -1087,7 +1152,7 @@ class JavascriptRenderer
 
         $current = ($here && ob_get_level() > 0) ? ob_get_clean() : self::REPLACEABLE_TAG;
 
-        echo str_replace(self::REPLACEABLE_TAG, $render, $current, $count);
+        echo str_replace(self::REPLACEABLE_TAG, $render, $current ?: '', $count);
 
         if ($count === 0) {
             echo $render;
@@ -1228,7 +1293,7 @@ class JavascriptRenderer
         $controls = array_merge($widgets, $this->controls);
 
         // Allow widgets to be sorted by order if specified
-        uasort($controls, function (array $controlA, array $controlB) {
+        uasort($controls, function (mixed $controlA, mixed $controlB) {
             return ($controlA['order'] ?? 0) <=> ($controlB['order'] ?? 0);
         });
 
@@ -1239,21 +1304,23 @@ class JavascriptRenderer
                 if (!isset($opts['title'])) {
                     $opts['title'] = ucfirst(str_replace('_', ' ', $name));
                 }
+                $jsonOpts = json_encode($opts, JSON_FORCE_OBJECT);
                 $js .= sprintf(
                     "%s.addTab(\"%s\", new %s({%s%s}));\n",
                     $varname,
                     $name,
                     $options['tab'] ?? 'PhpDebugBar.DebugBar.Tab',
-                    substr(json_encode($opts, JSON_FORCE_OBJECT), 1, -1),
+                    substr($jsonOpts === false ? '' : $jsonOpts , 1, -1),
                     isset($options['widget']) ? sprintf(', "widget": new %s()', $options['widget']) : '',
                 );
             } elseif (isset($options['indicator']) || isset($options['icon'])) {
+                $jsonOpts = json_encode($opts, JSON_FORCE_OBJECT);
                 $js .= sprintf(
                     "%s.addIndicator(\"%s\", new %s(%s), \"%s\");\n",
                     $varname,
                     $name,
                     $options['indicator'] ?? 'PhpDebugBar.DebugBar.Indicator',
-                    json_encode($opts, JSON_FORCE_OBJECT),
+                    $jsonOpts === false ? '' : $jsonOpts,
                     $options['position'] ?? 'right',
                 );
             }

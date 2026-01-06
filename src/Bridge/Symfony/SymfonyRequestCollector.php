@@ -46,7 +46,7 @@ class SymfonyRequestCollector extends RequestDataCollector
         $route = '';
         foreach ($request->attributes->all() as $key => $value) {
             if ('_route' === $key) {
-                $route = \is_object($value) ? $value->getPath() : $value;
+                $route = (\is_object($value) && method_exists($value, 'getPath'))? $value->getPath() : $value;
                 $attributes[$key] = $route;
             } else {
                 $attributes[$key] = $value;
@@ -143,11 +143,10 @@ class SymfonyRequestCollector extends RequestDataCollector
         $cookie = sprintf('%s=%s', $name, urlencode($value ?? ''));
 
         if (0 !== $expires) {
-            $cookie .= '; expires=' . substr(
-                \DateTime::createFromFormat('U', (string) $expires, new \DateTimeZone('UTC'))->format('D, d-M-Y H:i:s T'),
-                0,
-                -5,
-            );
+            $dt = \DateTime::createFromFormat('U', (string) $expires, new \DateTimeZone('UTC'));
+            if ($dt) {
+                $cookie .= '; expires=' . substr($dt->format('D, d-M-Y H:i:s T'), 0, -5);
+            }
         }
 
         if ($domain) {

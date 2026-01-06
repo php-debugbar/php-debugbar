@@ -21,7 +21,7 @@ class OpenHandlerTest extends DebugBarTestCase
 
     public function testFind(): void
     {
-        $request = [];
+        $request = ['op' => 'find'];
         $result = $this->openHandler->handle($request, false, false);
         $this->assertJsonArrayNotEmpty($result);
     }
