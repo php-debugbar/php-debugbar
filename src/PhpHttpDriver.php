@@ -18,6 +18,9 @@ namespace DebugBar;
  */
 class PhpHttpDriver implements HttpDriverInterface
 {
+    /**
+     * {@inheritDoc}
+     */
     public function setHeaders(array $headers): void
     {
         foreach ($headers as $name => $value) {

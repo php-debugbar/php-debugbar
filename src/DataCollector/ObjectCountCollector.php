@@ -42,9 +42,9 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
         $this->collectSummary = $enable;
     }
 
-    public function countClass(mixed $class, int $count = 1, string $key = 'value'): void
+    public function countClass(string|object $class, int $count = 1, string $key = 'value'): void
     {
-        if (! is_string($class)) {
+        if (is_object($class)) {
             $class = get_class($class);
         }
 
@@ -81,8 +81,8 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
 
         foreach ($this->classList as $class => $count) {
             $reflector = class_exists($class) ? new \ReflectionClass($class) : null;
-
-            if ($reflector && $link = $this->getXdebugLink($reflector->getFileName())) {
+            $file = $reflector?->getFileName();
+            if ($file && $link = $this->getXdebugLink($file)) {
                 $collect['data'][$class]['xdebug_link'] = $link;
             }
         }

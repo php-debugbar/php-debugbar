@@ -28,6 +28,9 @@ class SymfonyHttpDriver implements HttpDriverInterface
         $this->response = $response;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function setHeaders(array $headers): void
     {
         if (!is_null($this->response)) {

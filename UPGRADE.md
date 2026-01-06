@@ -21,6 +21,10 @@ This makes it easier to updates these collectors for specific versions.
  - Removed RequireJS support
  - Removed captureVar and renderCapturedVar from DebugBarVarDumper
 
+### Breaking changes to methods
+- getAssets() removed the `$type` parameter and always returns all assets.
+- OpenHandler requires the `op` parameter to be always set.
+
 ### Other changes
  - Storage now uses json instead of serialize, so old data cannot be read.
  - PDO now quotes using the PDO connection when available. The quotation char is now always `'`. Methods have moved to the QueryFormatter instead of TracedStatement.

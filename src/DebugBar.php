@@ -35,6 +35,7 @@ class DebugBar implements ArrayAccess
 {
     public static bool $useOpenHandlerWhenSendingDataHeaders = false;
 
+    /** @var DataCollectorInterface[] */
     protected array $collectors = [];
 
     protected ?array $data = null;
@@ -299,6 +300,8 @@ class DebugBar implements ArrayAccess
      *
      * @param integer $maxHeaderLength
      *
+     * @return array<string, string>
+     *
      */
     public function getDataAsHeaders(string $headerName = 'phpdebugbar', int $maxHeaderLength = 4096, int $maxTotalHeaderLength = 250000): array
     {
@@ -392,6 +395,8 @@ class DebugBar implements ArrayAccess
      * Returns the data stacked in the session
      *
      * @param boolean $delete Whether to delete the data in the session
+     *
+     * @return array[]
      *
      */
     public function getStackedData(bool $delete = true): array

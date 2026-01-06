@@ -117,7 +117,7 @@ class JavascriptRendererTest extends DebugBarTestCase
     public function testGetAssetsExludeVendors(): void
     {
         $this->r->setIncludeVendors(false);
-        $js = $this->r->getAssets('js');
+        $js = $this->r->getAssets()['js'];
         $this->assertContains('/bpath/debugbar.js', $js);
         $this->assertNotContains('/bpath/vendor/highlightjs/highlight.pack.js', $js);
     }
@@ -125,12 +125,12 @@ class JavascriptRendererTest extends DebugBarTestCase
     public function testIncludeSpecificVendors(): void
     {
         $this->r->setIncludeVendors('js');
-        $js = $this->r->getAssets('js');
+        $js = $this->r->getAssets()['js'];
         $this->assertContains('/bpath/debugbar.js', $js);
         $this->assertContains('/bpath/vendor/highlightjs/highlight.pack.js', $js);
 
         $this->r->setIncludeVendors('css');
-        $js = $this->r->getAssets('js');
+        $js = $this->r->getAssets()['js'];
         $this->assertContains('/bpath/debugbar.js', $js);
         $this->assertNotContains('/bpath/vendor/highlightjs/highlight.pack.js', $js);
     }
@@ -138,7 +138,7 @@ class JavascriptRendererTest extends DebugBarTestCase
     public function testIncludeCollectorAssets(): void
     {
         $this->debugbar->addCollector(new TemplateCollector());
-        $js = $this->r->getAssets('js');
+        $js = $this->r->getAssets()['js'];
         $this->assertContains('/bpath/widgets/templates/widget.js', $js);
     }
 

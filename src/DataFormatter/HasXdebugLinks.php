@@ -34,6 +34,10 @@ trait HasXdebugLinks
             $file = realpath($file);
         }
 
+        if ($file === false) {
+            return '';
+        }
+
         foreach (array_keys($this->xdebugReplacements) as $path) {
             if (str_starts_with($file, $path)) {
                 $file = substr($file, strlen($path));
