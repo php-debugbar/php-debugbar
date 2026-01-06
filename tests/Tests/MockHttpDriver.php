@@ -14,9 +14,16 @@ class MockHttpDriver implements HttpDriverInterface
 
     public array $session = [];
 
+    public string $output = '';
+
     public function setHeaders(array $headers): void
     {
         $this->headers = array_merge($this->headers, $headers);
+    }
+
+    public function output(string $content): void
+    {
+        $this->output .= $content;
     }
 
     public function isSessionStarted(): bool

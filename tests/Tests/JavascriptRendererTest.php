@@ -162,12 +162,11 @@ class JavascriptRendererTest extends DebugBarTestCase
 
     public function testDumpAssets(): void
     {
-        ob_start();
         $this->r->dumpAssets(
             [__DIR__ . '/../../resources/debugbar.css'],
             ['TEST_INLINE_DUMP1', 'TEST_INLINE_DUMP1']
         );
-        $assets = ob_get_clean();
+        $assets = $this->httpDriver->output;
 
         $this->assertStringContainsString("div.phpdebugbar", $assets);
         $this->assertStringContainsString("TEST_INLINE_DUMP1\nTEST_INLINE_DUMP1", $assets);
@@ -181,7 +180,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertStringContainsString('<link rel="stylesheet" type="text/css" href="/burl/debugbar.css">', $html);
         $this->assertStringContainsString('<script type="text/javascript" src="/burl/debugbar.js"></script>', $html);
         // Check for inline assets
-        $this->assertStringContainsString('<style type="text/css">CssTest</style>', $html);
+        $this->assertStringContainsString('<style>CssTest</style>', $html);
         $this->assertStringContainsString('<script type="text/javascript">JsTest</script>', $html);
         $this->assertStringContainsString('HeaderTest', $html);
     }
@@ -198,7 +197,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         );
 
         $html = $this->r->renderHead();
-        $this->assertStringContainsString('<style type="text/css" nonce="mynonce">CssTest</style>', $html);
+        $this->assertStringContainsString('<style nonce="mynonce">CssTest</style>', $html);
         $this->assertStringContainsString('<script type="text/javascript" nonce="mynonce">JsTest</script>', $html);
         $this->assertStringContainsString(
             '<script nonce="mynonce" type="application/javascript">console.log(1)</script>',

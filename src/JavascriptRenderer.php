@@ -1049,7 +1049,7 @@ class JavascriptRenderer
         }
 
         foreach ($inlineCss as $content) {
-            $html .= sprintf('<style %s>%s</style>' . "\n", $nonce, $content);
+            $html .= sprintf('<style%s>%s</style>' . "\n", $nonce, $content);
         }
 
         foreach ($jsFiles as $file) {
@@ -1057,7 +1057,7 @@ class JavascriptRenderer
         }
 
         foreach ($inlineJs as $content) {
-            $html .= sprintf('<script type="text/javascript" %s>%s</script>' . "\n", $nonce, $content);
+            $html .= sprintf('<script type="text/javascript"%s>%s</script>' . "\n", $nonce, $content);
         }
 
         foreach ($inlineHead as $content) {

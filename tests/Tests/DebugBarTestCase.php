@@ -10,11 +10,13 @@ use PHPUnit\Framework\TestCase;
 abstract class DebugBarTestCase extends TestCase
 {
     protected DebugBar $debugbar;
+    protected MockHttpDriver $httpDriver;
 
     public function setUp(): void
     {
         $this->debugbar = new DebugBar();
-        $this->debugbar->setHttpDriver($http = new MockHttpDriver());
+        $this->httpDriver = new MockHttpDriver();
+        $this->debugbar->setHttpDriver($this->httpDriver);
     }
 
     public function assertJsonIsArray(string $json): void
