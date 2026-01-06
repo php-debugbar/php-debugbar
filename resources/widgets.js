@@ -1243,4 +1243,352 @@
         }
     }
     PhpDebugBar.Widgets.DatasetWidget = DatasetWidget;
+
+    // ------------------------------------------------------------------
+
+    /**
+     * Dataset Switcher Widget
+     *
+     * Displays a compact badge showing the current request with a dropdown
+     * to switch between different datasets
+     */
+    class DatasetSwitcherWidget extends PhpDebugBar.Widget {
+        get className() {
+            return csscls('datasets-switcher-widget');
+        }
+
+        initialize(options) {
+            this.set(options);
+
+            const self = this;
+            const debugbar = this.get('debugbar');
+
+            // Create badge
+            this.badge = document.createElement('div');
+            this.badge.classList.add(csscls('datasets-badge'));
+            this.badge.hidden = true;
+
+            this.badgeCount = document.createElement('span');
+            this.badgeCount.classList.add(csscls('datasets-badge-count'));
+            this.badge.append(this.badgeCount);
+
+            this.badgeUrl = document.createElement('span');
+            this.badgeUrl.classList.add(csscls('datasets-badge-url'));
+            this.badge.append(this.badgeUrl);
+
+            // Create dropdown panel
+            this.panel = document.createElement('div');
+            this.panel.classList.add(csscls('datasets-panel'));
+            this.panel.hidden = true;
+            // Copy theme from debugbar to panel for CSS variable inheritance
+            if (debugbar.el) {
+                this.panel.setAttribute('data-theme', debugbar.el.getAttribute('data-theme'));
+            }
+
+            // Panel toolbar with filters
+            const toolbar = document.createElement('div');
+            toolbar.classList.add(csscls('datasets-panel-toolbar'));
+
+            // Autoshow checkbox
+            const autoshowLabel = document.createElement('label');
+            autoshowLabel.classList.add(csscls('datasets-autoshow'));
+            this.autoshowCheckbox = document.createElement('input');
+            this.autoshowCheckbox.type = 'checkbox';
+            // Get initial value from localStorage or ajaxHandler or default to true
+            const storedAutoShow = localStorage.getItem('phpdebugbar-ajaxhandler-autoshow');
+            this.autoshowCheckbox.checked = storedAutoShow !== null
+                ? storedAutoShow === '1'
+                : (debugbar.ajaxHandler ? debugbar.ajaxHandler.autoShow : true);
+            this.autoshowCheckbox.addEventListener('change', function() {
+                if (debugbar.ajaxHandler) {
+                    debugbar.ajaxHandler.setAutoShow(this.checked);
+                }
+                // Update settings widget if it exists
+                if (debugbar.controls.__settings) {
+                    debugbar.controls.__settings.get('widget').set('autoshow', this.checked);
+                }
+                // Update dataset tab widget if it exists
+                if (debugbar.controls.__datasets) {
+                    debugbar.controls.__datasets.get('widget').set('autoshow', this.checked);
+                }
+            });
+            autoshowLabel.append(this.autoshowCheckbox);
+            autoshowLabel.append(document.createTextNode(' Autoshow'));
+            toolbar.append(autoshowLabel);
+
+            // Clear button
+            const clearBtn = document.createElement('a');
+            clearBtn.classList.add(csscls('datasets-clear-btn'));
+            clearBtn.textContent = 'Clear';
+            clearBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear the request history?')) {
+                    const currentId = debugbar.activeDatasetId;
+                    const currentDataset = debugbar.datasets[currentId];
+                    debugbar.datasets = {};
+                    if (currentDataset) {
+                        debugbar.addDataSet(currentDataset, currentId, currentDataset.__meta.suffix, true);
+                    }
+                    this.panel.hidden = true;
+                }
+            });
+            toolbar.append(clearBtn);
+
+            // Search input
+            this.searchInput = document.createElement('input');
+            this.searchInput.type = 'search';
+            this.searchInput.placeholder = 'Search';
+            this.searchInput.classList.add(csscls('datasets-search'));
+            this.searchInput.addEventListener('input', function() {
+                self.applySearchFilter();
+            });
+            toolbar.append(this.searchInput);
+
+            this.panel.append(toolbar);
+
+            this.list = document.createElement('div');
+            this.list.classList.add(csscls('datasets-list'));
+            this.panel.append(this.list);
+
+            this.el.append(this.badge);
+            document.body.append(this.panel);
+
+            // Position panel relative to badge
+            const positionPanel = () => {
+                const badgeRect = this.badge.getBoundingClientRect();
+                const debugbarRect = debugbar.el.getBoundingClientRect();
+
+                // Calculate available space above and below the badge
+                const spaceAbove = badgeRect.top;
+                const spaceBelow = window.innerHeight - badgeRect.bottom;
+                const showBelow = spaceBelow > spaceAbove;
+
+                this.panel.style.position = 'fixed';
+                this.panel.style.right = `${window.innerWidth - badgeRect.right}px`;
+                this.panel.style.left = 'auto';
+
+                if (showBelow) {
+                    // Show panel below badge
+                    this.panel.style.top = `${badgeRect.bottom + 4}px`;
+                    this.panel.style.bottom = 'auto';
+                    this.panel.style.maxHeight = `${spaceBelow - 8}px`;
+                } else {
+                    // Show panel above badge
+                    this.panel.style.bottom = `${window.innerHeight - badgeRect.top + 4}px`;
+                    this.panel.style.top = 'auto';
+                    this.panel.style.maxHeight = `${spaceAbove - 8}px`;
+                }
+            };
+
+            // Toggle panel on click
+            this.badge.addEventListener('click', (e) => {
+                if (e.target !== this.panel && !this.panel.contains(e.target)) {
+                    if (this.panel.hidden) {
+                        positionPanel();
+                    }
+                    this.panel.hidden = !this.panel.hidden;
+                }
+            });
+
+            // Close panel when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!this.badge.contains(e.target) && !this.panel.contains(e.target)) {
+                    this.panel.hidden = true;
+                }
+            });
+        }
+
+        render() {
+            // Bind to data changes
+            this.bindAttr('data', function() {
+                this.updateBadge();
+            });
+
+            this.bindAttr('activeId', function() {
+                this.updateBadge();
+            });
+
+            // Bind to autoshow changes from settings
+            this.bindAttr('autoshow', function() {
+                if (this.autoshowCheckbox) {
+                    this.autoshowCheckbox.checked = this.get('autoshow');
+                }
+            });
+        }
+
+        updateBadge() {
+            const debugbar = this.get('debugbar');
+            const datasets = this.get('data') || debugbar.datasets;
+            const activeId = this.get('activeId') || debugbar.activeDatasetId;
+
+            if (!datasets) {
+                this.badge.hidden = true;
+                return;
+            }
+
+            const datasetCount = Object.keys(datasets).length;
+
+            if (datasetCount >= 1) {
+                this.badge.hidden = false;
+
+                // Update the current URL display
+                const currentDataset = datasets[activeId];
+                if (currentDataset && currentDataset.__meta) {
+                    const uri = currentDataset.__meta.uri || '';
+                    const method = currentDataset.__meta.method || 'GET';
+                    this.badgeUrl.textContent = `${method} ${uri}`;
+                }
+
+                // Only show count badge if more than 1 request
+                if (datasetCount > 1) {
+                    this.badgeCount.textContent = datasetCount;
+                    this.badgeCount.hidden = false;
+                } else {
+                    this.badgeCount.hidden = true;
+                }
+
+                // Clear and rebuild the panel list
+                this.list.innerHTML = '';
+
+                // Get all datasets in reverse order (newest first)
+                const datasetIds = Object.keys(datasets).reverse();
+
+                for (const datasetId of datasetIds) {
+                    const dataset = datasets[datasetId];
+                    const item = document.createElement('div');
+                    item.classList.add(csscls('datasets-list-item'));
+
+                    // Store data attributes for filtering
+                    const uri = dataset.__meta.uri || '';
+                    const method = dataset.__meta.method || 'GET';
+                    item.setAttribute('data-url', uri);
+                    item.setAttribute('data-method', method);
+
+                    if (datasetId === activeId) {
+                        item.classList.add(csscls('active'));
+                    }
+
+                    // Request number
+                    const nb = document.createElement('span');
+                    nb.classList.add(csscls('datasets-item-nb'));
+                    nb.textContent = `#${dataset.__meta.nb}`;
+                    item.append(nb);
+
+                    // Time
+                    const time = document.createElement('span');
+                    time.classList.add(csscls('datasets-item-time'));
+                    time.textContent = dataset.__meta.datetime ? dataset.__meta.datetime.split(' ')[1] : '';
+                    item.append(time);
+
+                    // Request info
+                    const request = document.createElement('div');
+                    request.classList.add(csscls('datasets-item-request'));
+
+                    const methodSpan = document.createElement('span');
+                    methodSpan.classList.add(csscls('datasets-item-method'));
+                    methodSpan.textContent = method;
+                    request.append(methodSpan);
+
+                    const url = document.createElement('span');
+                    url.classList.add(csscls('datasets-item-url'));
+                    url.textContent = uri;
+                    request.append(url);
+
+                    item.append(request);
+
+                    // Data badges (icons with counts)
+                    const badges = document.createElement('div');
+                    badges.classList.add(csscls('datasets-item-badges'));
+
+                    for (let [key, def] of Object.entries(debugbar.dataMap)) {
+                        const d = getDictValue(dataset, def[0], def[1]);
+                        if (key.includes(':')) {
+                            const parts = key.split(':');
+                            const controlKey = parts[0];
+                            const subkey = parts[1];
+
+                            if (subkey === 'badge' && d > 0) {
+                                const control = debugbar.getControl(controlKey);
+                                if (control) {
+                                    const badge = document.createElement('span');
+                                    badge.classList.add(csscls('datasets-item-badge'));
+                                    badge.setAttribute('title', control.get('title'));
+                                    badge.dataset.tab = controlKey;
+
+                                    if (control.icon) {
+                                        const iconClone = control.icon.cloneNode(true);
+                                        iconClone.style.width = '12px';
+                                        iconClone.style.height = '12px';
+                                        badge.append(iconClone);
+                                    }
+
+                                    const count = document.createElement('span');
+                                    count.textContent = d;
+                                    badge.append(count);
+
+                                    badges.append(badge);
+
+                                    // Click badge to show that tab
+                                    badge.addEventListener('click', (e) => {
+                                        e.stopPropagation();
+                                        debugbar.showDataSet(datasetId);
+                                        debugbar.showTab(controlKey);
+                                        this.panel.hidden = true;
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    item.append(badges);
+
+                    // Status code
+                    if (dataset.__meta.status_code) {
+                        const status = document.createElement('span');
+                        status.classList.add(csscls('datasets-item-status'));
+                        status.textContent = dataset.__meta.status_code;
+
+                        const statusCode = Number.parseInt(dataset.__meta.status_code);
+                        if (statusCode >= 200 && statusCode < 300) {
+                            status.classList.add(csscls('status-success'));
+                        } else if (statusCode >= 300 && statusCode < 400) {
+                            status.classList.add(csscls('status-redirect'));
+                        } else if (statusCode >= 400) {
+                            status.classList.add(csscls('status-error'));
+                        }
+
+                        item.append(status);
+                    }
+
+                    // Click handler
+                    item.addEventListener('click', () => {
+                        debugbar.showDataSet(datasetId);
+                        this.panel.hidden = true;
+                    });
+
+                    this.list.append(item);
+                }
+
+                // Reapply search filter if there's a search value
+                this.applySearchFilter();
+            } else {
+                this.badge.hidden = true;
+            }
+        }
+
+        applySearchFilter() {
+            const searchValue = this.searchInput.value.toLowerCase();
+            const items = this.list.querySelectorAll(`.${csscls('datasets-list-item')}`);
+
+            for (const item of items) {
+                if (searchValue === '') {
+                    item.hidden = false;
+                } else {
+                    const url = item.getAttribute('data-url').toLowerCase();
+                    const method = item.getAttribute('data-method').toLowerCase();
+                    const matches = url.includes(searchValue) || method.includes(searchValue);
+                    item.hidden = !matches;
+                }
+            }
+        }
+    }
+    PhpDebugBar.Widgets.DatasetSwitcherWidget = DatasetSwitcherWidget;
 })();

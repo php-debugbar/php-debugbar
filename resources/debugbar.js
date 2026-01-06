@@ -497,6 +497,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 if (debugbar.controls.__datasets) {
                     debugbar.controls.__datasets.get('widget').set('autoshow', this.checked);
                 }
+                // Update dataset switcher widget
+                if (debugbar.datasetSwitcherWidget) {
+                    debugbar.datasetSwitcherWidget.set('autoshow', this.checked);
+                }
             });
 
             this.bindAttr('autoshow', function () {
@@ -692,6 +696,9 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             if (this.openHandler) {
                 this.openHandler.el.setAttribute('data-theme', theme);
             }
+            if (this.datasetSwitcherWidget && this.datasetSwitcherWidget.panel) {
+                this.datasetSwitcherWidget.panel.setAttribute('data-theme', theme);
+            }
         }
 
         /**
@@ -861,19 +868,11 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 });
             });
 
-            // select box for data sets
-            this.datasetsSelectSpan = document.createElement('span');
-            this.datasetsSelectSpan.classList.add(csscls('datasets-switcher'));
-            this.datasetsSelectSpan.setAttribute('name', 'datasets-switcher');
-            this.datasetsSelect = document.createElement('select');
-            this.datasetsSelect.hidden = true;
-
-            this.datasetsSelectSpan.append(this.datasetsSelect);
-
-            this.headerRight.append(this.datasetsSelectSpan);
-            this.datasetsSelect.addEventListener('change', function () {
-                self.showDataSet(this.value);
+            // Create dataset switcher widget
+            this.datasetSwitcherWidget = new PhpDebugBar.Widgets.DatasetSwitcherWidget({
+                debugbar: this
             });
+            this.headerRight.append(this.datasetSwitcherWidget.el);
 
             this.controls.__settings = this.settingsControl;
             this.settingsControl.tab.classList.add(csscls('tab-settings'));
@@ -1341,12 +1340,9 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 this.datasetTab.tab.hidden = false;
             }
 
-            const option = document.createElement('option');
-            option.value = id;
-            option.textContent = label;
-            this.datasetsSelect.append(option);
-            if (this.datasetsSelect.children.length > 1) {
-                this.datasetsSelect.hidden = false;
+            // Update dataset switcher widget
+            if (this.datasetSwitcherWidget) {
+                this.datasetSwitcherWidget.set('data', this.datasets);
             }
 
             if (show === undefined || show) {
@@ -1402,12 +1398,13 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 this.pendingDataSetId = null;
             }
 
-            if (this.datasetsSelect.value !== id) {
-                this.datasetsSelect.value = id;
-            }
-
             if (this.datasetTab) {
                 this.datasetTab.get('widget').set('id', id);
+            }
+
+            // Update dataset switcher widget to reflect current dataset
+            if (this.datasetSwitcherWidget) {
+                this.datasetSwitcherWidget.set('activeId', id);
             }
         }
 

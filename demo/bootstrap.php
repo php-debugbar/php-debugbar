@@ -19,7 +19,7 @@ $debugbar->addCollector(new SymfonyMailCollector());
 
 $debugbarRenderer = $debugbar->getJavascriptRenderer()
                              ->setAssetHandlerUrl('assets.php')
-                             ->setAjaxHandlerEnableTab(true)
+                             ->setAjaxHandlerEnableTab(false)
                              ->setHideEmptyTabs(true)
                              ->setUseDistFiles(false)
                              ->setIncludeVendors(true)

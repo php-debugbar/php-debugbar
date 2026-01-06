@@ -26,7 +26,7 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
         ]);
     }
 
-    protected bool $showUriIndicator = true;
+    protected bool $showUriIndicator = false;
 
     public function collect(): array
     {

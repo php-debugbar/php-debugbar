@@ -6,7 +6,8 @@
 }
 
 div.phpdebugbar,
-div.phpdebugbar-openhandler {
+div.phpdebugbar-openhandler,
+div.phpdebugbar-widgets-datasets-panel {
   --debugbar-background: #F7F7F7;
   --debugbar-background-alt: #EFEFEF;
   --debugbar-text: #222;
@@ -38,7 +39,8 @@ div.phpdebugbar-openhandler {
 }
 
 div.phpdebugbar[data-theme='dark'],
-div.phpdebugbar-openhandler[data-theme='dark'] {
+div.phpdebugbar-openhandler[data-theme='dark'],
+div.phpdebugbar-widgets-datasets-panel[data-theme='dark'] {
   --debugbar-background: #2a2a2a;
   --debugbar-background-alt: #333333;
   --debugbar-text: #e0e0e0;
@@ -501,6 +503,247 @@ a.phpdebugbar-open-btn:after {
   height: 22px;
   padding: 4px 0;
   border: none;
+}
+
+/* Dataset Switcher Widget */
+.phpdebugbar .phpdebugbar-widgets-datasets-switcher-widget {
+  position: relative;
+  float: right;
+  display: inline-block;
+  border-right: 1px solid var(--debugbar-header-border);
+  margin-right: 8px;
+  padding-right: 8px;
+}
+
+/* Symfony-style datasets badge */
+.phpdebugbar .phpdebugbar-widgets-datasets-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  background: var(--debugbar-header);
+  color: var(--debugbar-header-text);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 18px;
+  transition: background-color 0.15s;
+  font-family: var(--debugbar-font-sans);
+}
+
+.phpdebugbar .phpdebugbar-widgets-datasets-badge:hover {
+  background: var(--debugbar-active);
+}
+
+.phpdebugbar .phpdebugbar-widgets-datasets-badge-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--debugbar-badge);
+  color: var(--debugbar-badge-text);
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.phpdebugbar .phpdebugbar-widgets-datasets-badge-count[hidden] {
+  display: none;
+}
+
+.phpdebugbar .phpdebugbar-widgets-datasets-badge-url {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--debugbar-font-mono);
+}
+
+/* Dropdown panel */
+.phpdebugbar-widgets-datasets-panel {
+  position: fixed;
+  width: 600px;
+  background: var(--debugbar-background);
+  border: 1px solid var(--debugbar-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  z-index: 100000001;
+}
+
+.phpdebugbar-widgets-datasets-panel-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--debugbar-background-alt);
+  border-bottom: 1px solid var(--debugbar-border);
+  font-size: 12px;
+  font-family: var(--debugbar-font-sans);
+}
+
+.phpdebugbar-widgets-datasets-autoshow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  color: var(--debugbar-text);
+  white-space: nowrap;
+  font-family: var(--debugbar-font-sans);
+}
+
+.phpdebugbar-widgets-datasets-autoshow input[type="checkbox"] {
+  cursor: pointer;
+  margin: 0;
+}
+
+.phpdebugbar-widgets-datasets-clear-btn,
+.phpdebugbar-widgets-datasets-showall-btn {
+  color: var(--debugbar-link);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: var(--debugbar-font-sans);
+}
+
+.phpdebugbar-widgets-datasets-clear-btn:hover,
+.phpdebugbar-widgets-datasets-showall-btn:hover {
+  color: var(--debugbar-hover);
+  text-decoration: underline;
+}
+
+.phpdebugbar-widgets-datasets-search {
+  flex: 1;
+  padding: 3px 8px;
+  font-size: 11px;
+  min-width: 120px;
+  border: 1px solid var(--debugbar-border);
+  background: var(--debugbar-background);
+  color: var(--debugbar-text);
+  border-radius: 2px;
+  font-family: var(--debugbar-font-sans);
+}
+
+.phpdebugbar-widgets-datasets-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.phpdebugbar-widgets-datasets-list-item {
+  display: grid;
+  grid-template-columns: 45px 50px 1fr auto auto;
+  gap: 6px;
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--debugbar-border);
+  cursor: pointer;
+  transition: background-color 0.1s;
+  align-items: center;
+  font-size: 11px;
+}
+
+.phpdebugbar-widgets-datasets-list-item[hidden] {
+  display: none;
+}
+
+.phpdebugbar-widgets-datasets-list-item:hover {
+  background: var(--debugbar-background-alt);
+}
+
+.phpdebugbar-widgets-datasets-list-item.phpdebugbar-widgets-active {
+  background: var(--debugbar-active);
+  font-weight: 500;
+}
+
+.phpdebugbar-widgets-datasets-item-nb {
+  color: var(--debugbar-text-muted);
+  font-weight: 600;
+  font-family: var(--debugbar-font-mono);
+}
+
+.phpdebugbar-widgets-datasets-item-time {
+  color: var(--debugbar-text-muted);
+  font-family: var(--debugbar-font-mono);
+}
+
+.phpdebugbar-widgets-datasets-item-request {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  overflow: hidden;
+}
+
+.phpdebugbar-widgets-datasets-item-method {
+  padding: 1px 5px;
+  background: var(--debugbar-badge);
+  color: var(--debugbar-badge-text);
+  border-radius: 2px;
+  font-weight: 600;
+  font-family: var(--debugbar-font-mono);
+  flex-shrink: 0;
+}
+
+.phpdebugbar-widgets-datasets-item-url {
+  color: var(--debugbar-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--debugbar-font-mono);
+}
+
+.phpdebugbar-widgets-datasets-item-badges {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.phpdebugbar-widgets-datasets-item-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 4px;
+  background: var(--debugbar-badge);
+  color: var(--debugbar-badge-text);
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.phpdebugbar-widgets-datasets-item-badge:hover {
+  background: var(--debugbar-badge-active);
+  color: var(--debugbar-badge-active-text);
+}
+
+.phpdebugbar-widgets-datasets-item-badge i {
+  width: 12px;
+  height: 12px;
+}
+
+.phpdebugbar-widgets-datasets-item-status {
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-weight: 600;
+  font-family: var(--debugbar-font-mono);
+  flex-shrink: 0;
+}
+
+.phpdebugbar-widgets-datasets-item-status.phpdebugbar-status-success {
+  background: #28a745;
+  color: white;
+}
+
+.phpdebugbar-widgets-datasets-item-status.phpdebugbar-status-redirect {
+  background: #ffc107;
+  color: #000;
+}
+
+.phpdebugbar-widgets-datasets-item-status.phpdebugbar-status-error {
+  background: #dc3545;
+  color: white;
 }
 
 .phpdebugbar button,
