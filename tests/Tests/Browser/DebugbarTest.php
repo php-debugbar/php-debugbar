@@ -100,7 +100,7 @@ class DebugbarTest extends AbstractBrowserTestCase
 
         $crawler->selectLink('load ajax content')->click();
         $client->waitForElementToContain('.phpdebugbar-panel[data-collector=messages]', 'hello from ajax');
-        $client->waitForElementToContain('.phpdebugbar-datasets-switcher', 'ajax.php');
+        $client->waitForElementToContain('.phpdebugbar-widgets-datasets-badge', 'ajax.php');
 
         $messages = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-value')
             ->each(function (WebDriverElement $node) {
@@ -115,7 +115,7 @@ class DebugbarTest extends AbstractBrowserTestCase
 
         $client->click($this->getTabLink($crawler, 'exceptions'));
 
-        $client->waitForElementToContain('.phpdebugbar-datasets-switcher', 'ajax_exception.php');
+        $client->waitForElementToContain('.phpdebugbar-widgets-datasets-badge', 'ajax_exception.php');
         $client->waitForElementToContain('.phpdebugbar-panel[data-collector=exceptions] .phpdebugbar-widgets-message', 'Something failed!');
 
         // Open network tab
