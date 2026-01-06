@@ -217,7 +217,7 @@
         },
 
         find(filters, offset, callback) {
-            const data = Object.assign({op: 'find'}, filters, { max: this.get('items_per_page'), offset: offset || 0 });
+            const data = Object.assign({ op: 'find' }, filters, { max: this.get('items_per_page'), offset: offset || 0 });
             this.last_find_request = data;
             this.ajax(data, callback);
         },
