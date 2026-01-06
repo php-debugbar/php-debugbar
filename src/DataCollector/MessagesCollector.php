@@ -31,6 +31,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
 
     /** @var array<MessagesAggregateInterface> */
     protected array $aggregates = [];
+    protected bool $compactDumps = false;
 
     protected bool $collectFile = false;
 
@@ -42,6 +43,11 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     public function __construct(string $name = 'messages')
     {
         $this->name = $name;
+    }
+
+    public function compactDumps(bool $enabled = true): void
+    {
+        $this->compactDumps = $enabled;
     }
 
     public function collectFileTrace(bool $enabled = true): void
@@ -78,6 +84,16 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         return false;
     }
 
+    protected function compactMessageDump(?string $messageHtml): ?string
+    {
+        $pos = strpos((string) $messageHtml, 'sf-dump-expanded');
+        if ($pos !== false) {
+            $messageHtml = substr_replace($messageHtml, 'sf-dump-compact', $pos, 16);
+        }
+
+        return $messageHtml;
+    }
+
     protected function getStackTraceItem(array $stacktrace): array
     {
         foreach ($stacktrace as $trace) {
@@ -105,6 +121,9 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
             $messageText = $this->getDataFormatter()->formatVar($message);
             if ($this->isHtmlVarDumperUsed()) {
                 $messageHtml = $this->getVarDumper()->renderVar($message);
+                if ($this->compactDumps) {
+                    $messageHtml = $this->compactMessageDump($messageHtml);
+                }
             }
             $isString = false;
         }
