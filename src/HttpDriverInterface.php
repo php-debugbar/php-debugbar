@@ -26,6 +26,11 @@ interface HttpDriverInterface
     public function setHeaders(array $headers): void;
 
     /**
+     *  Write a string to the output buffer
+     */
+    public function output(string $content): void;
+
+    /**
      * Checks if the session is started
      *
      * @return boolean

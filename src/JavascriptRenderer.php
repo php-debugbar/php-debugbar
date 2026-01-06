@@ -758,7 +758,7 @@ class JavascriptRenderer
      *
      * @return $this
      */
-    public function addAssets(array|string $cssFiles, array|string $jsFiles, ?string $basePath = null, ?string $baseUrl = null): static
+    public function addAssets(array|string $cssFiles = [], array|string $jsFiles = [], ?string $basePath = null, ?string $baseUrl = null): static
     {
         $this->additionalAssets[] = [
             'base_path' => $basePath,
@@ -1012,7 +1012,7 @@ class JavascriptRenderer
         if ($targetFilename !== null) {
             file_put_contents($targetFilename, $dumpedContent);
         } elseif ($echo) {
-            echo $dumpedContent;
+            $this->debugBar->getHttpDriver()->output($dumpedContent);
         }
 
         return $dumpedContent;
@@ -1036,8 +1036,8 @@ class JavascriptRenderer
         if ($this->assetHandlerUrl !== null) {
             $url = $this->assetHandlerUrl;
             $assets = $this->getAssets(self::RELATIVE_PATH);
-            $cssFiles = [$url . (str_contains($url, '?') ? '&' : '?') . 'type=css&mtime=' . $this->getModifiedTimes($assets['css'])];
-            $jsFiles = [$url . (str_contains($url, '?') ? '&' : '?') . 'type=js&hash=' . $this->getModifiedTimes($assets['js'])];
+            $cssFiles = [$url . (str_contains($url, '?') ? '&' : '?') . 'type=css&mtime=' . $this->getFilesModifiedTime($assets['css'])];
+            $jsFiles = [$url . (str_contains($url, '?') ? '&' : '?') . 'type=js&hash=' . $this->getFilesModifiedTime($assets['js'])];
         }
         $html = '';
 
@@ -1048,7 +1048,7 @@ class JavascriptRenderer
         }
 
         foreach ($inlineCss as $content) {
-            $html .= sprintf('<style type="text/css"%s>%s</style>' . "\n", $nonce, $content);
+            $html .= sprintf('<style %s>%s</style>' . "\n", $nonce, $content);
         }
 
         foreach ($jsFiles as $file) {
@@ -1056,7 +1056,7 @@ class JavascriptRenderer
         }
 
         foreach ($inlineJs as $content) {
-            $html .= sprintf('<script type="text/javascript"%s>%s</script>' . "\n", $nonce, $content);
+            $html .= sprintf('<script type="text/javascript" %s>%s</script>' . "\n", $nonce, $content);
         }
 
         foreach ($inlineHead as $content) {
@@ -1077,7 +1077,7 @@ class JavascriptRenderer
     /**
      * @param string[] $files
      */
-    protected function getModifiedTimes(array $files): int
+    protected function getFilesModifiedTime(array $files): int
     {
         $modifiedTime = 0;
         foreach ($files as $file) {

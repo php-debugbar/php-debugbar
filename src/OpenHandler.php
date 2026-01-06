@@ -81,7 +81,7 @@ class OpenHandler
         }
 
         if ($echo) {
-            echo $response;
+            $this->debugBar->getHttpDriver()->output($response);
         }
 
         return $response;
