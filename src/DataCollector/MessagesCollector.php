@@ -78,16 +78,6 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         return false;
     }
 
-    protected function customizeMessageHtml(?string $messageHtml, mixed $message): ?string
-    {
-        $pos = strpos((string) $messageHtml, 'sf-dump-expanded');
-        if ($pos !== false) {
-            $messageHtml = substr_replace($messageHtml, 'sf-dump-compact', $pos, 16);
-        }
-
-        return $messageHtml;
-    }
-
     protected function getStackTraceItem(array $stacktrace): array
     {
         foreach ($stacktrace as $trace) {
@@ -126,7 +116,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
 
         $this->messages[] = [
             'message' => $messageText,
-            'message_html' => $this->customizeMessageHtml($messageHtml, $message),
+            'message_html' => $messageHtml,
             'is_string' => $isString,
             'label' => $label,
             'time' => microtime(true),
