@@ -970,7 +970,7 @@
      * Displays datasets in a table
      *
      */
-    class DatasetWidget extends PhpDebugBar.Widget {
+    class DatasetWidgetOld extends PhpDebugBar.Widget {
         initialize(options) {
             if (!options.itemRenderer) {
                 options.itemRenderer = this.itemRenderer;
@@ -1242,7 +1242,7 @@
             }
         }
     }
-    PhpDebugBar.Widgets.DatasetWidget = DatasetWidget;
+    PhpDebugBar.Widgets.DatasetWidgetOld = DatasetWidgetOld;
 
     // ------------------------------------------------------------------
 
@@ -1252,7 +1252,7 @@
      * Displays a compact badge showing the current request with a dropdown
      * to switch between different datasets
      */
-    class DatasetSwitcherWidget extends PhpDebugBar.Widget {
+    class DatasetWidget extends PhpDebugBar.Widget {
         get className() {
             return csscls('datasets-switcher-widget');
         }
@@ -1590,5 +1590,5 @@
             }
         }
     }
-    PhpDebugBar.Widgets.DatasetSwitcherWidget = DatasetSwitcherWidget;
+    PhpDebugBar.Widgets.DatasetWidget = DatasetWidget;
 })();

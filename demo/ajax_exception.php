@@ -12,6 +12,7 @@ try {
     $debugbar['exceptions']->addException($e);
     $debugbar['exceptions']->addException($e);
 }
+http_response_code(500);
 
 ?>
 error from AJAX
