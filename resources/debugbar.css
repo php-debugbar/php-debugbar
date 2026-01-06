@@ -510,9 +510,9 @@ a.phpdebugbar-open-btn:after {
   position: relative;
   float: right;
   display: inline-block;
-  border-right: 1px solid var(--debugbar-header-border);
-  margin-right: 8px;
-  padding-right: 8px;
+  height: 32px;
+  padding: 0 !important;
+  line-height: 0;
 }
 
 /* Symfony-style datasets badge */
@@ -521,15 +521,16 @@ a.phpdebugbar-open-btn:after {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 10px;
+  padding: 0 10px;
+  height: 32px;
   background: var(--debugbar-header);
   color: var(--debugbar-header-text);
-  border-radius: 3px;
   cursor: pointer;
   font-size: 12px;
-  line-height: 18px;
+  line-height: 32px;
   transition: background-color 0.15s;
   font-family: var(--debugbar-font-sans);
+  border-left: 1px solid var(--debugbar-header-border);
 }
 
 .phpdebugbar .phpdebugbar-widgets-datasets-badge:hover {
