@@ -28,6 +28,11 @@ class PhpHttpDriver implements HttpDriverInterface
         }
     }
 
+    public function output(string $content): void
+    {
+        echo $content;
+    }
+
     public function isSessionStarted(): bool
     {
         return isset($_SESSION);
