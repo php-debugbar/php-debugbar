@@ -16,7 +16,7 @@ $httpCollector->addRequest(
     'GET',
     'https://packagist.org/packages/php-debugbar/php-debugbar/stats.json',
     200,
-    0.684,
+    0.00684,
     [
         'response' => $data,
         'headers' => [
