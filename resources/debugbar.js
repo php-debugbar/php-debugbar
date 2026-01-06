@@ -868,6 +868,20 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 });
             });
 
+            // select box for data sets (only if AJAX handler is not used)
+            this.datasetsSelectSpan = document.createElement('span');
+            this.datasetsSelectSpan.classList.add(csscls('datasets-switcher'));
+            this.datasetsSelectSpan.setAttribute('name', 'datasets-switcher');
+            this.datasetsSelect = document.createElement('select');
+            this.datasetsSelect.hidden = true;
+
+            this.datasetsSelectSpan.append(this.datasetsSelect);
+
+            this.headerRight.append(this.datasetsSelectSpan);
+            this.datasetsSelect.addEventListener('change', function () {
+                self.showDataSet(this.value);
+            });
+
             this.controls.__settings = this.settingsControl;
             this.settingsControl.tab.classList.add(csscls('tab-settings'));
             this.settingsControl.tab.setAttribute('data-collector', '__settings');
@@ -1325,9 +1339,18 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             data.__meta.suffix = suffix;
             this.datasets[id] = data;
 
-            // Update dataset switcher widget
+            const label = this.datesetTitleFormater.format(id, this.datasets[id], suffix, nb);
+
+            // Update dataset switcher widget (if AJAX handler is enabled)
             if (this.datasetSwitcherWidget) {
                 this.datasetSwitcherWidget.set('data', this.datasets);
+            } else {
+                // Use old dropdown (if AJAX handler is not enabled)
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = label;
+                this.datasetsSelect.append(option);
+                this.datasetsSelect.hidden = false;
             }
 
             if (show === undefined || show) {
@@ -1386,6 +1409,9 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             // Update dataset switcher widget to reflect current dataset
             if (this.datasetSwitcherWidget) {
                 this.datasetSwitcherWidget.set('activeId', id);
+            } else {
+                // Update old dropdown
+                this.datasetsSelect.value = id;
             }
         }
 
@@ -1439,6 +1465,11 @@ window.PhpDebugBar = window.PhpDebugBar || {};
         }
 
         enableAjaxHandlerTab() {
+            // Hide the old dropdown
+            if (this.datasetsSelectSpan) {
+                this.datasetsSelectSpan.hidden = true;
+            }
+
             // Create dataset switcher widget in header (after open button)
             this.datasetSwitcherWidget = new PhpDebugBar.Widgets.DatasetWidget({
                 debugbar: this
