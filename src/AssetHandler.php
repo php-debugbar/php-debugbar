@@ -58,7 +58,7 @@ class AssetHandler
         }
 
         if ($echo) {
-            echo $content;
+            $this->debugBar->getHttpDriver()->output($content);
         }
 
         return $content;

@@ -38,6 +38,15 @@ class SymfonyHttpDriver implements HttpDriverInterface
         }
     }
 
+    public function output(string $content): void
+    {
+        if (!is_null($this->response)) {
+            $existingContent = $this->response->getContent();
+            $content = $existingContent ? $existingContent . $content : $content;
+            $this->response->setContent($content);
+        }
+    }
+
     public function isSessionStarted(): bool
     {
         if (!$this->session->isStarted()) {

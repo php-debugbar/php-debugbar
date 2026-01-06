@@ -33,7 +33,7 @@ require __DIR__ . '/../demo/collectors/templates.php';
 require __DIR__ . '/../demo/collectors/counter.php';
 
 
-$content = $debugbarRenderer->getAssets('inline_head');
+$content = $debugbarRenderer->getAssets()['inline_head'];
 $content[] = $debugbarRenderer->render();
 
 $generatedScripts = implode("\n", $content);
@@ -90,6 +90,27 @@ if (is_dir($distDest)) {
 copyDirectory($distSource, $distDest);
 
 echo "✓ Copied dist folder to docs/assets/dist\n";
+
+// Update mkdocs.yml with current timestamp
+$mkdocsPath = __DIR__ . '/../mkdocs.yml';
+$mkdocsContent = file_get_contents($mkdocsPath);
+$timestamp = time();
+
+$mkdocsContent = preg_replace(
+    '/debugbar\.min\.css\?v=\d+/',
+    'debugbar.min.css?v=' . $timestamp,
+    $mkdocsContent
+);
+
+$mkdocsContent = preg_replace(
+    '/debugbar\.min\.js\?v=\d+/',
+    'debugbar.min.js?v=' . $timestamp,
+    $mkdocsContent
+);
+
+file_put_contents($mkdocsPath, $mkdocsContent);
+
+echo "✓ Updated mkdocs.yml with timestamp: $timestamp\n";
 
 function copyDirectory($source, $dest) {
     mkdir($dest, 0755, true);
