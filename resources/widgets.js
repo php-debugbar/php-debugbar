@@ -1299,7 +1299,7 @@
             this.autoshowCheckbox.checked = storedAutoShow !== null
                 ? storedAutoShow === '1'
                 : (debugbar.ajaxHandler ? debugbar.ajaxHandler.autoShow : true);
-            this.autoshowCheckbox.addEventListener('change', function() {
+            this.autoshowCheckbox.addEventListener('change', function () {
                 if (debugbar.ajaxHandler) {
                     debugbar.ajaxHandler.setAutoShow(this.checked);
                 }
@@ -1321,6 +1321,7 @@
             clearBtn.classList.add(csscls('datasets-clear-btn'));
             clearBtn.textContent = 'Clear';
             clearBtn.addEventListener('click', () => {
+                // eslint-disable-next-line no-alert
                 if (confirm('Are you sure you want to clear the request history?')) {
                     const currentId = debugbar.activeDatasetId;
                     const currentDataset = debugbar.datasets[currentId];
@@ -1338,7 +1339,7 @@
             this.searchInput.type = 'search';
             this.searchInput.placeholder = 'Search';
             this.searchInput.classList.add(csscls('datasets-search'));
-            this.searchInput.addEventListener('input', function() {
+            this.searchInput.addEventListener('input', () => {
                 self.applySearchFilter();
             });
             toolbar.append(this.searchInput);
@@ -1355,7 +1356,6 @@
             // Position panel relative to badge
             const positionPanel = () => {
                 const badgeRect = this.badge.getBoundingClientRect();
-                const debugbarRect = debugbar.el.getBoundingClientRect();
 
                 // Calculate available space above and below the badge
                 const spaceAbove = badgeRect.top;
@@ -1399,16 +1399,16 @@
 
         render() {
             // Bind to data changes
-            this.bindAttr('data', function() {
+            this.bindAttr('data', function () {
                 this.updateBadge();
             });
 
-            this.bindAttr('activeId', function() {
+            this.bindAttr('activeId', function () {
                 this.updateBadge();
             });
 
             // Bind to autoshow changes from settings
-            this.bindAttr('autoshow', function() {
+            this.bindAttr('autoshow', function () {
                 if (this.autoshowCheckbox) {
                     this.autoshowCheckbox.checked = this.get('autoshow');
                 }
@@ -1499,7 +1499,7 @@
                     const badges = document.createElement('div');
                     badges.classList.add(csscls('datasets-item-badges'));
 
-                    for (let [key, def] of Object.entries(debugbar.dataMap)) {
+                    for (const [key, def] of Object.entries(debugbar.dataMap)) {
                         const d = getDictValue(dataset, def[0], def[1]);
                         if (key.includes(':')) {
                             const parts = key.split(':');

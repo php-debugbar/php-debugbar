@@ -1331,8 +1331,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             data.__meta.suffix = suffix;
             this.datasets[id] = data;
 
-            const label = this.datesetTitleFormater.format(id, this.datasets[id], suffix, nb);
-
             if (this.datasetTab) {
                 this.datasetTab.set('data', this.datasets);
                 const datasetSize = Object.keys(this.datasets).length;
