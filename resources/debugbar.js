@@ -1325,7 +1325,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             data.__meta.suffix = suffix;
             this.datasets[id] = data;
 
-
             // Update dataset switcher widget
             if (this.datasetSwitcherWidget) {
                 this.datasetSwitcherWidget.set('data', this.datasets);
@@ -1383,7 +1382,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 this.dataChangeHandler(this.datasets[id]);
                 this.pendingDataSetId = null;
             }
-
 
             // Update dataset switcher widget to reflect current dataset
             if (this.datasetSwitcherWidget) {
