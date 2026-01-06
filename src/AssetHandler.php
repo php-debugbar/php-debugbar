@@ -24,6 +24,7 @@ class AssetHandler
      * Handles the current request
      *
      * @param null|array{type: 'css'|'js'} $request
+     *
      * @throws DebugBarException
      */
     public function handle(?array $request = null, bool $echo = true, bool $sendHeader = true): string

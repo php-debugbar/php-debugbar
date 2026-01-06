@@ -753,8 +753,8 @@ class JavascriptRenderer
      *
      * @param string[]|string $cssFiles An array of filenames
      * @param string[]|string $jsFiles  An array of filenames
-     * @param ?string      $basePath Base path of those files
-     * @param ?string      $baseUrl  Base url of those files
+     * @param ?string         $basePath Base path of those files
+     * @param ?string         $baseUrl  Base url of those files
      *
      * @return $this
      */
@@ -783,7 +783,7 @@ class JavascriptRenderer
      * @param string[]|string $inlineCss  An array map of content ID to inline CSS content (not including <style> tag)
      * @param string[]|string $inlineJs   An array map of content ID to inline JS content (not including <script> tag)
      * @param string[]|string $inlineHead An array map of content ID to arbitrary inline HTML content (typically
-     *                                 <style>/<script> tags); it must be embedded within the <head> element
+     *                                    <style>/<script> tags); it must be embedded within the <head> element
      *
      * @return $this
      */
@@ -930,6 +930,7 @@ class JavascriptRenderer
 
     /**
      * @param string[] $uris
+     *
      * @return string[]
      */
     protected function makeUrisRelativeTo(array $uris, ?string $root): array
@@ -952,7 +953,7 @@ class JavascriptRenderer
             return $uri;
         }
 
-        if (str_starts_with($uri,'/') || preg_match('/^([a-zA-Z]+:\/\/|[a-zA-Z]:\/|[a-zA-Z]:\\\)/', $uri)) {
+        if (str_starts_with($uri, '/') || preg_match('/^([a-zA-Z]+:\/\/|[a-zA-Z]:\/|[a-zA-Z]:\\\)/', $uri)) {
             return $uri;
         }
 
@@ -1310,7 +1311,7 @@ class JavascriptRenderer
                     $varname,
                     $name,
                     $options['tab'] ?? 'PhpDebugBar.DebugBar.Tab',
-                    substr($jsonOpts === false ? '' : $jsonOpts , 1, -1),
+                    substr($jsonOpts === false ? '' : $jsonOpts, 1, -1),
                     isset($options['widget']) ? sprintf(', "widget": new %s()', $options['widget']) : '',
                 );
             } elseif (isset($options['indicator']) || isset($options['icon'])) {

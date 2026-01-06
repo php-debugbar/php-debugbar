@@ -46,7 +46,7 @@ class SymfonyRequestCollector extends RequestDataCollector
         $route = '';
         foreach ($request->attributes->all() as $key => $value) {
             if ('_route' === $key) {
-                $route = (\is_object($value) && method_exists($value, 'getPath'))? $value->getPath() : $value;
+                $route = (\is_object($value) && method_exists($value, 'getPath')) ? $value->getPath() : $value;
                 $attributes[$key] = $route;
             } else {
                 $attributes[$key] = $value;

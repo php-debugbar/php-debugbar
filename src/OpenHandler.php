@@ -60,11 +60,11 @@ class OpenHandler
         }
 
         try {
-        $response = match ($op) {
-            'find' => $this->find($request),
-            'get' => $this->get($request),
-            'clear' => $this->clear(),
-        };
+            $response = match ($op) {
+                'find' => $this->find($request),
+                'get' => $this->get($request),
+                'clear' => $this->clear(),
+            };
         } catch (\UnhandledMatchError $e) {
             throw new DebugBarException("Invalid operation '{$request['op']}'");
         }

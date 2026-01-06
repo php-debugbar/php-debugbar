@@ -299,6 +299,7 @@ class DebugBar implements ArrayAccess
      * Returns an array of HTTP headers containing the data
      *
      * @param integer $maxHeaderLength
+     *
      * @return array<string, string>
      *
      */
@@ -394,6 +395,7 @@ class DebugBar implements ArrayAccess
      * Returns the data stacked in the session
      *
      * @param boolean $delete Whether to delete the data in the session
+     *
      * @return array[]
      *
      */

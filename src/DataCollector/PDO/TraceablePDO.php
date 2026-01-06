@@ -140,7 +140,7 @@ class TraceablePDO extends PDO
      * @param string $name [optional]
      *
      * @return false|string If a sequence name was not specified for the name parameter, PDO::lastInsertId
-     *                returns a string representing the row ID of the last row that was inserted into the database.
+     *                      returns a string representing the row ID of the last row that was inserted into the database.
      */
     #[\ReturnTypeWillChange]
     public function lastInsertId($name = null)
