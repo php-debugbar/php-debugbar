@@ -708,6 +708,12 @@ a.phpdebugbar-open-btn:after {
   font-family: var(--debugbar-font-mono);
 }
 
+.phpdebugbar-widgets-datasets-item-suffix {
+  color: var(--debugbar-text-muted);
+  font-family: var(--debugbar-font-mono);
+  flex-shrink: 0;
+}
+
 .phpdebugbar-widgets-datasets-item-badges {
   display: inline-flex;
   gap: 4px;

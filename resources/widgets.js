@@ -1215,6 +1215,13 @@
                     url.textContent = uri;
                     request.append(url);
 
+                    if (dataset.__meta.suffix) {
+                        const suffix = document.createElement('span');
+                        suffix.classList.add(csscls('datasets-item-suffix'));
+                        suffix.textContent = ` ${dataset.__meta.suffix}`;
+                        request.append(suffix);
+                    }
+
                     item.append(request);
 
                     // Data badges (icons with counts)
