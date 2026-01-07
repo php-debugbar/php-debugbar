@@ -1368,14 +1368,14 @@
 
                 if (showBelow) {
                     // Show panel below badge
-                    this.panel.style.top = `${badgeRect.bottom + 4}px`;
+                    this.panel.style.top = `${badgeRect.bottom}px`;
                     this.panel.style.bottom = 'auto';
-                    this.panel.style.maxHeight = `${spaceBelow - 8}px`;
+                    this.panel.style.maxHeight = `${spaceBelow}px`;
                 } else {
-                    // Show panel above badge
-                    this.panel.style.bottom = `${window.innerHeight - badgeRect.top + 4}px`;
+                    // Show panel above badge (no gap)
+                    this.panel.style.bottom = `${window.innerHeight - badgeRect.top}px`;
                     this.panel.style.top = 'auto';
-                    this.panel.style.maxHeight = `${spaceAbove - 8}px`;
+                    this.panel.style.maxHeight = `${spaceAbove}px`;
                 }
             };
 
