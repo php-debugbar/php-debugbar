@@ -16,7 +16,7 @@ $debugbar->addCollector(new PdoCollector());
 $debugbar->addCollector(new TemplateCollector(timeCollector: $debugbar['time']));
 $debugbar->addCollector(new HttpCollector(timeCollector: $debugbar['time']));
 $debugbar->addCollector(new SymfonyMailCollector());
-$debugbar->useHtmlVarDumper(false);
+$debugbar->useHtmlVarDumper(true);
 $debugbarRenderer = $debugbar->getJavascriptRenderer()
                              ->setAssetHandlerUrl('assets.php')
                              ->setAjaxHandlerEnableTab(true)
