@@ -515,17 +515,15 @@
                     val.innerHTML = value.message_html;
                     li.append(val);
                 } else {
-                    let m = value.message;
-                    if (m.length > 100) {
-                        m = `${m.substr(0, 100)}...`;
-                    }
+                    const m = value.message;
 
                     val = document.createElement('span');
                     val.classList.add(csscls('value'));
                     val.textContent = m;
+                    val.classList.add(csscls('truncated'));
                     li.append(val);
 
-                    if (!value.is_string || value.message.length > 100) {
+                    if (!value.is_string || val.scrollWidth > val.clientWidth) {
                         let prettyVal = value.message;
                         if (!value.is_string) {
                             prettyVal = null;
@@ -538,9 +536,11 @@
                             if (val.classList.contains(csscls('pretty'))) {
                                 val.textContent = m;
                                 val.classList.remove(csscls('pretty'));
+                                val.classList.add(csscls('truncated'));
                             } else {
                                 prettyVal = prettyVal || createCodeBlock(value.message, 'php');
                                 val.classList.add(csscls('pretty'));
+                                val.classList.remove(csscls('truncated'));
                                 val.innerHTML = '';
                                 val.append(prettyVal);
                             }
@@ -580,6 +580,44 @@
                     label.classList.add(csscls('label'));
                     label.textContent = value.label;
                     li.prepend(label);
+                }
+                if (value.context && Object.keys(value.context).length > 0) {
+                    const contextCount = document.createElement('span');
+                    contextCount.setAttribute('title', 'Context');
+                    contextCount.classList.add(csscls('context-count'));
+                    contextCount.textContent = Object.keys(value.context).length;
+                    li.prepend(contextCount);
+
+                    const contextTable = document.createElement('table');
+                    contextTable.classList.add(csscls('params'));
+                    contextTable.hidden = true;
+                    contextTable.innerHTML = '<tr><th colspan="2">Context</th></tr>';
+
+                    for (const key in value.context) {
+                        if (typeof value.context[key] !== 'function') {
+                            const tr = document.createElement('tr');
+                            const td1 = document.createElement('td');
+                            td1.classList.add(csscls('name'));
+                            td1.textContent = key;
+                            tr.append(td1);
+
+                            const td2 = document.createElement('td');
+                            td2.classList.add(csscls('value'));
+                            td2.innerHTML = value.context[key];
+                            tr.append(td2);
+
+                            contextTable.append(tr);
+                        }
+                    }
+                    li.append(contextTable);
+
+                    li.style.cursor = 'pointer';
+                    li.addEventListener('click', (event) => {
+                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
+                            return;
+                        }
+                        contextTable.hidden = !contextTable.hidden;
+                    });
                 }
             } });
 

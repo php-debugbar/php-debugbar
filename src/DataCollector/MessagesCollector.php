@@ -112,10 +112,16 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
      *
      * A message can be anything from an object to a string
      */
-    public function addMessage(mixed $message, string $label = 'info', bool $isString = true): void
+    public function addMessage(mixed $message, string $label = 'info', array $context = []): void
     {
+        // For string messages, interpolate the context following PSR-3
+        if (is_string($message) && $context) {
+            $message = $this->interpolate($message, $context);
+        }
+
         $messageText = $message;
         $messageHtml = null;
+        $isString = true;
         if (!is_string($message)) {
             // Send both text and HTML representations; the text version is used for searches
             $messageText = $this->getDataFormatter()->formatVar($message);
@@ -128,6 +134,16 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
             $isString = false;
         }
 
+        if ($context) {
+            if ($this->isHtmlVarDumperUsed()) {
+                foreach ($context as $key => $value) {
+                    $context[$key] = $this->getVarDumper()->renderVar($value);
+                }
+            }
+        } else {
+            $context = null;
+        }
+
         $stackItem = [];
         if ($this->collectFile) {
             $stackItem = $this->getStackTraceItem(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $this->backtraceLimit));
@@ -137,6 +153,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
             'message' => $messageText,
             'message_html' => $messageHtml,
             'is_string' => $isString,
+            'context' => $context,
             'label' => $label,
             'time' => microtime(true),
             'xdebug_link' => $stackItem ? $this->getXdebugLink($stackItem['file'], $stackItem['line'] ?? null) : null,
@@ -179,11 +196,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
 
     public function log(mixed $level, mixed $message, array $context = []): void
     {
-        // For string messages, interpolate the context following PSR-3
-        if (is_string($message)) {
-            $message = $this->interpolate($message, $context);
-        }
-        $this->addMessage($message, $level);
+        $this->addMessage($message, $level, $context);
     }
 
     /**

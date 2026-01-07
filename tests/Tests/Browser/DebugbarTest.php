@@ -26,14 +26,15 @@ class DebugbarTest extends AbstractBrowserTestCase
         }
 
         $crawler = $client->waitForVisibility('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-list');
-
         $messages = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-value')
             ->each(function (WebDriverElement $node) {
                 return $node->getText();
             });
 
-        $this->assertEquals('hello', $messages[0]);
-        $this->assertCount(9, $messages);
+        $this->assertEquals('Hello World!', $messages[0]);
+
+        $items = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-list-item');
+        $this->assertCount(9, $items);
 
         // Close it again
         $client->click($this->getTabLink($crawler, 'messages'));
