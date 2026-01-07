@@ -78,7 +78,7 @@ div.phpdebugbar {
   font-family: var(--debugbar-font-sans);
   background: var(--debugbar-background);
   z-index: 100000000;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--debugbar-text);
   text-align: left;
   line-height: 1.2em;
