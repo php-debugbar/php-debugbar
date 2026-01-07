@@ -1575,7 +1575,7 @@
         }
 
         applySearchFilter() {
-            const searchValue = this.searchInput.value.toLowerCase();
+            const searchValue = this.searchInput.value.toLowerCase().trim();
             const items = this.list.querySelectorAll(`.${csscls('datasets-list-item')}`);
 
             for (const item of items) {
@@ -1584,7 +1584,12 @@
                 } else {
                     const url = item.getAttribute('data-url').toLowerCase();
                     const method = item.getAttribute('data-method').toLowerCase();
-                    const matches = url.includes(searchValue) || method.includes(searchValue);
+                    const searchText = `${method} ${url}`;
+
+                    // Split search terms by spaces and check if ALL terms match
+                    const searchTerms = searchValue.split(/\s+/).filter(term => term.length > 0);
+                    const matches = searchTerms.every(term => searchText.includes(term));
+
                     item.hidden = !matches;
                 }
             }
