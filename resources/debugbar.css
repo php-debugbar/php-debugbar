@@ -357,11 +357,21 @@ a.phpdebugbar-tab.phpdebugbar-active {
     vertical-align: middle;
   }
 
+.phpdebugbar-icon,
+i.phpdebugbar-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 /* Icon base styles */
 .phpdebugbar-icon::before,
 i.phpdebugbar-icon::before {
   content: "";
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
   width: 1.3em;
   height: 1.3em;
   background-size: contain;
@@ -699,7 +709,7 @@ a.phpdebugbar-open-btn:after {
 }
 
 .phpdebugbar-widgets-datasets-item-badges {
-  display: flex;
+  display: inline-flex;
   gap: 4px;
   align-items: center;
   flex-wrap: wrap;
