@@ -26,7 +26,7 @@ $debugbar['time']->stopMeasure('op2');
 $debugbar['messages']->addMessage('This is a demo', 'warning');
 
 // Object with extra context
-$debugbar['messages']->addMessage( ['toto' => ['titi']], 'debug', ['foo' => 'bar']);
+$debugbar['messages']->addMessage(['toto' => ['titi']], 'debug', ['foo' => 'bar']);
 
 $debugbar['messages']->addMessage('oups', 'error');
 $debugbar['messages']->addMessage('welcome!', 'success');

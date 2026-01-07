@@ -196,7 +196,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
 
     public function log(mixed $level, mixed $message, array $context = []): void
     {
-          $this->addMessage($message, $level, $context);
+        $this->addMessage($message, $level, $context);
     }
 
     /**
