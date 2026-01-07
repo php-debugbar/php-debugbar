@@ -515,7 +515,7 @@
                     val.innerHTML = value.message_html;
                     li.append(val);
                 } else {
-                    let m = value.message;
+                    const m = value.message;
 
                     val = document.createElement('span');
                     val.classList.add(csscls('value'));
@@ -612,7 +612,7 @@
                     li.append(contextTable);
 
                     li.style.cursor = 'pointer';
-                    li.addEventListener('click', function (event) {
+                    li.addEventListener('click', (event) => {
                         if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
                             return;
                         }
