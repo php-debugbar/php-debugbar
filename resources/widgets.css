@@ -100,7 +100,7 @@ ul.phpdebugbar-widgets-list {
   font-family: var(--debugbar-font-mono);
 }
   ul.phpdebugbar-widgets-list li.phpdebugbar-widgets-list-item {
-    padding: 3px;
+    padding: 7px 10px;
     border-bottom: 1px solid var(--debugbar-border);
     position: relative;
     overflow: hidden;
@@ -120,11 +120,17 @@ div.phpdebugbar-widgets-messages {
     flex: 1;
     overflow-y: auto;
   }
+  div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value {
+    display: flex;
+    align-items: center;
+  }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value:before {
     margin-right: 8px;
     font-family: system-ui, sans-serif;
-    font-size: 1rem;
+    font-size: 1.25em;
     line-height: 1;
+    display: inline-flex;  /* ensures perfect centering */
+    align-items: center;
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-success {
     color: green;
@@ -245,8 +251,9 @@ dl.phpdebugbar-widgets-kvlist {
 }
   dl.phpdebugbar-widgets-kvlist dt {
     float: left;
-    width: 150px;
-    padding: 5px;
+    width: calc(15% - 10px);
+    min-width: 150px;
+    padding: 5px 10px;
     border-top: 1px solid var(--debugbar-border);
     font-weight: bold;
     clear: both;
