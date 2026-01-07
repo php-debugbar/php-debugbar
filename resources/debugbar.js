@@ -834,6 +834,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             // minimize button
             this.minimizebtn = document.createElement('a');
             this.minimizebtn.classList.add(csscls('minimize-btn'));
+            this.minimizebtn.hidden = !this.isMinimized();
             this.headerRight.append(this.minimizebtn);
             this.minimizebtn.addEventListener('click', () => {
                 self.minimize();
@@ -842,6 +843,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             // maximize button
             this.maximizebtn = document.createElement('a');
             this.maximizebtn.classList.add(csscls('maximize-btn'));
+            this.maximizebtn.hidden = this.isMinimized();
             this.headerRight.append(this.maximizebtn);
             this.maximizebtn.addEventListener('click', () => {
                 self.restore();
@@ -1173,6 +1175,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.body.hidden = true;
             this.resizeHandle.hidden = true;
             this.resizeHandleBottom.hidden = true;
+            this.minimizebtn.hidden = true;
+            this.maximizebtn.hidden = false;
 
             this.recomputeBottomOffset();
             localStorage.setItem('phpdebugbar-visible', '0');
@@ -1224,6 +1228,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.resizeHandleBottom.hidden = false;
             this.header.hidden = false;
             this.restorebtn.hidden = true;
+            this.maximizebtn.hidden = true;
+            this.minimizebtn.hidden = false;
             localStorage.setItem('phpdebugbar-open', '1');
             const tab = localStorage.getItem('phpdebugbar-tab');
             if (this.pendingDataSetId) {

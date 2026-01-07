@@ -86,6 +86,10 @@ div.phpdebugbar {
   direction: ltr;
 }
 
+.phpdebugbar [hidden] {
+  display: none !important;
+}
+
 div.phpdebugbar[data-openBtnPosition="bottomRight"].phpdebugbar-closed,
 div.phpdebugbar[data-openBtnPosition="topRight"].phpdebugbar-closed {
   left:auto;
@@ -506,10 +510,6 @@ a.phpdebugbar-open-btn:after {
 
 .phpdebugbar .phpdebugbar-datasets-switcher {
   float: right;
-}
-
-.phpdebugbar .phpdebugbar-datasets-switcher[hidden] {
-  display: none;
 }
 
 .phpdebugbar .phpdebugbar-datasets-switcher select {
