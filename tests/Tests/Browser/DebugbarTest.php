@@ -100,7 +100,7 @@ class DebugbarTest extends AbstractBrowserTestCase
 
         $crawler->selectLink('load ajax content')->click();
         $client->waitForElementToContain('.phpdebugbar-panel[data-collector=messages]', 'hello from ajax');
-        $client->waitForElementToContain('.phpdebugbar-datasets-switcher', 'ajax.php');
+        $client->waitForElementToContain('.phpdebugbar-widgets-datasets-badge', 'ajax.php');
 
         $messages = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-value')
             ->each(function (WebDriverElement $node) {
@@ -115,20 +115,26 @@ class DebugbarTest extends AbstractBrowserTestCase
 
         $client->click($this->getTabLink($crawler, 'exceptions'));
 
-        $client->waitForElementToContain('.phpdebugbar-datasets-switcher', 'ajax_exception.php');
+        $client->waitForElementToContain('.phpdebugbar-widgets-datasets-badge', 'ajax_exception.php');
         $client->waitForElementToContain('.phpdebugbar-panel[data-collector=exceptions] .phpdebugbar-widgets-message', 'Something failed!');
 
-        // Open network tab
-        $client->click($this->getTabLink($crawler, '__datasets'));
-        $client->waitForVisibility('.phpdebugbar-panel[data-collector=__datasets] .phpdebugbar-widgets-table-row');
+        // Verify the dataset badge shows count
+        $badge = $crawler->filter('.phpdebugbar-widgets-datasets-badge');
+        $this->assertStringContainsString('3', $badge->text()); // Should show 3 requests
 
-        $requests = $crawler->filter('.phpdebugbar-panel[data-collector=__datasets] .phpdebugbar-widgets-table-row')
+        // Click on badge to open request list panel
+        $badge->click();
+        $client->waitForVisibility('.phpdebugbar-widgets-datasets-panel');
+
+        // Verify all 3 requests are in the list
+        $requests = $crawler->filter('.phpdebugbar-widgets-datasets-list-item:not([hidden])')
             ->each(function (WebDriverElement $node) {
                 return $node->getText();
             });
-        $this->assertStringContainsString('GET /', $requests[0]);
-        $this->assertStringContainsString('GET /ajax.php (ajax)', $requests[1]);
-        $this->assertStringContainsString('GET /ajax_exception.php (ajax)', $requests[2]);
+        $this->assertCount(3, $requests);
+        $this->assertStringContainsString('/', $requests[2]); // First request (bottom of list)
+        $this->assertStringContainsString('ajax.php', $requests[1]);
+        $this->assertStringContainsString('ajax_exception.php', $requests[0]); // Most recent (top of list)
 
         $client->takeScreenshot(__DIR__ . '/../../screenshots/ajax.png');
     }

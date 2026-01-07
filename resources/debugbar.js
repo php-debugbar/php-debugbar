@@ -497,6 +497,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 if (debugbar.controls.__datasets) {
                     debugbar.controls.__datasets.get('widget').set('autoshow', this.checked);
                 }
+                // Update dataset switcher widget
+                if (debugbar.datasetSwitcherWidget) {
+                    debugbar.datasetSwitcherWidget.set('autoshow', this.checked);
+                }
             });
 
             this.bindAttr('autoshow', function () {
@@ -692,6 +696,9 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             if (this.openHandler) {
                 this.openHandler.el.setAttribute('data-theme', theme);
             }
+            if (this.datasetSwitcherWidget && this.datasetSwitcherWidget.panel) {
+                this.datasetSwitcherWidget.panel.setAttribute('data-theme', theme);
+            }
         }
 
         /**
@@ -861,7 +868,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 });
             });
 
-            // select box for data sets
+            // select box for data sets (only if AJAX handler is not used)
             this.datasetsSelectSpan = document.createElement('span');
             this.datasetsSelectSpan.classList.add(csscls('datasets-switcher'));
             this.datasetsSelectSpan.setAttribute('name', 'datasets-switcher');
@@ -1334,18 +1341,15 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
             const label = this.datesetTitleFormater.format(id, this.datasets[id], suffix, nb);
 
-            if (this.datasetTab) {
-                this.datasetTab.set('data', this.datasets);
-                const datasetSize = Object.keys(this.datasets).length;
-                this.datasetTab.set('badge', datasetSize > 1 ? datasetSize : null);
-                this.datasetTab.tab.hidden = false;
-            }
-
-            const option = document.createElement('option');
-            option.value = id;
-            option.textContent = label;
-            this.datasetsSelect.append(option);
-            if (this.datasetsSelect.children.length > 1) {
+            // Update dataset switcher widget (if AJAX handler is enabled)
+            if (this.datasetSwitcherWidget) {
+                this.datasetSwitcherWidget.set('data', this.datasets);
+            } else {
+                // Use old dropdown (if AJAX handler is not enabled)
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = label;
+                this.datasetsSelect.append(option);
                 this.datasetsSelect.hidden = false;
             }
 
@@ -1402,12 +1406,12 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 this.pendingDataSetId = null;
             }
 
-            if (this.datasetsSelect.value !== id) {
+            // Update dataset switcher widget to reflect current dataset
+            if (this.datasetSwitcherWidget) {
+                this.datasetSwitcherWidget.set('activeId', id);
+            } else {
+                // Update old dropdown
                 this.datasetsSelect.value = id;
-            }
-
-            if (this.datasetTab) {
-                this.datasetTab.get('widget').set('id', id);
             }
         }
 
@@ -1461,24 +1465,16 @@ window.PhpDebugBar = window.PhpDebugBar || {};
         }
 
         enableAjaxHandlerTab() {
-            this.datasetTab = new PhpDebugBar.DebugBar.Tab({ icon: 'history', title: 'Request history', widget: new PhpDebugBar.Widgets.DatasetWidget({
+            // Hide the old dropdown
+            if (this.datasetsSelectSpan) {
+                this.datasetsSelectSpan.hidden = true;
+            }
+
+            // Create dataset switcher widget in header (after open button)
+            this.datasetSwitcherWidget = new PhpDebugBar.Widgets.DatasetWidget({
                 debugbar: this
-            }) });
-            this.datasetTab.tab.classList.add(csscls('tab-history'));
-            this.datasetTab.tab.setAttribute('data-collector', '__datasets');
-            this.datasetTab.el.setAttribute('data-collector', '__datasets');
-            this.openbtn.after(this.datasetTab.tab);
-            this.datasetTab.tab.hidden = true;
-            this.datasetTab.el.hidden = true;
-            this.datasetTab.tab.addEventListener('click', () => {
-                if (!this.isMinimized() && this.activePanelName === '__datasets') {
-                    this.minimize();
-                } else {
-                    this.showTab('__datasets');
-                }
             });
-            this.body.append(this.datasetTab.el);
-            this.controls.__datasets = this.datasetTab;
+            this.openbtn.after(this.datasetSwitcherWidget.el);
         }
     }
 

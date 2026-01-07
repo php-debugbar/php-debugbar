@@ -966,279 +966,361 @@
     }
     PhpDebugBar.Widgets.ExceptionsWidget = ExceptionsWidget;
 
+    // ------------------------------------------------------------------
+
     /**
-     * Displays datasets in a table
+     * Dataset Switcher Widget
      *
+     * Displays a compact badge showing the current request with a dropdown
+     * to switch between different datasets
      */
     class DatasetWidget extends PhpDebugBar.Widget {
-        initialize(options) {
-            if (!options.itemRenderer) {
-                options.itemRenderer = this.itemRenderer;
-            }
-            this.set(options);
-            this.set('autoshow', null);
-            this.set('id', null);
-            this.set('sort', localStorage.getItem('debugbar-history-sort') || 'asc');
-            this.el.classList.add(csscls('dataset-history'));
-
-            this.renderHead();
+        get className() {
+            return csscls('datasets-switcher-widget');
         }
 
-        renderHead() {
-            this.el.innerHTML = '';
-
-            this.actions = document.createElement('div');
-            this.actions.classList.add(csscls('dataset-actions'));
-            this.el.append(this.actions);
+        initialize(options) {
+            this.set(options);
 
             const self = this;
-            const debugbar = self.get('debugbar');
+            const debugbar = this.get('debugbar');
 
-            this.autoshow = document.createElement('input');
-            this.autoshow.type = 'checkbox';
-            this.autoshow.addEventListener('click', function () {
+            // Create badge
+            this.badge = document.createElement('div');
+            this.badge.classList.add(csscls('datasets-badge'));
+            this.badge.hidden = true;
+
+            this.badgeCount = document.createElement('span');
+            this.badgeCount.classList.add(csscls('datasets-badge-count'));
+            this.badge.append(this.badgeCount);
+
+            this.badgeUrl = document.createElement('span');
+            this.badgeUrl.classList.add(csscls('datasets-badge-url'));
+            this.badge.append(this.badgeUrl);
+
+            // Create dropdown panel
+            this.panel = document.createElement('div');
+            this.panel.classList.add(csscls('datasets-panel'));
+            this.panel.hidden = true;
+            // Copy theme from debugbar to panel for CSS variable inheritance
+            if (debugbar.el) {
+                this.panel.setAttribute('data-theme', debugbar.el.getAttribute('data-theme'));
+            }
+
+            // Panel toolbar with filters
+            const toolbar = document.createElement('div');
+            toolbar.classList.add(csscls('datasets-panel-toolbar'));
+
+            // Autoshow checkbox
+            const autoshowLabel = document.createElement('label');
+            autoshowLabel.classList.add(csscls('datasets-autoshow'));
+            this.autoshowCheckbox = document.createElement('input');
+            this.autoshowCheckbox.type = 'checkbox';
+            // Get initial value from localStorage or ajaxHandler or default to true
+            const storedAutoShow = localStorage.getItem('phpdebugbar-ajaxhandler-autoshow');
+            this.autoshowCheckbox.checked = storedAutoShow !== null
+                ? storedAutoShow === '1'
+                : (debugbar.ajaxHandler ? debugbar.ajaxHandler.autoShow : true);
+            this.autoshowCheckbox.addEventListener('change', function () {
                 if (debugbar.ajaxHandler) {
                     debugbar.ajaxHandler.setAutoShow(this.checked);
                 }
+                // Update settings widget if it exists
                 if (debugbar.controls.__settings) {
-                    debugbar.controls.__settings.get('widget').set('autoshow', this.autoShow);
+                    debugbar.controls.__settings.get('widget').set('autoshow', this.checked);
+                }
+                // Update dataset tab widget if it exists
+                if (debugbar.controls.__datasets) {
+                    debugbar.controls.__datasets.get('widget').set('autoshow', this.checked);
                 }
             });
+            autoshowLabel.append(this.autoshowCheckbox);
+            autoshowLabel.append(document.createTextNode(' Autoshow'));
+            toolbar.append(autoshowLabel);
 
-            const autoshowLabel = document.createElement('label');
-            autoshowLabel.textContent = 'Autoshow';
-            autoshowLabel.append(this.autoshow);
-            this.actions.append(autoshowLabel);
-
-            this.clearbtn = document.createElement('a');
-            this.clearbtn.textContent = 'Clear';
-            this.actions.append(this.clearbtn);
-            this.clearbtn.addEventListener('click', () => {
-                self.table.innerHTML = '';
+            // Clear button
+            const clearBtn = document.createElement('a');
+            clearBtn.classList.add(csscls('datasets-clear-btn'));
+            clearBtn.textContent = 'Clear';
+            clearBtn.addEventListener('click', () => {
+                // eslint-disable-next-line no-alert
+                if (confirm('Are you sure you want to clear the request history?')) {
+                    const currentId = debugbar.activeDatasetId;
+                    const currentDataset = debugbar.datasets[currentId];
+                    debugbar.datasets = {};
+                    if (currentDataset) {
+                        debugbar.addDataSet(currentDataset, currentId, currentDataset.__meta.suffix, true);
+                    }
+                    this.panel.hidden = true;
+                }
             });
+            toolbar.append(clearBtn);
 
-            this.showBtn = document.createElement('a');
-            this.showBtn.textContent = 'Show all';
-            this.actions.append(this.showBtn);
-            this.showBtn.addEventListener('click', () => {
-                self.searchInput.value = null;
-                self.methodInput.value = null;
-                self.set('search', null);
-                self.set('method', null);
-            });
-
-            this.methodInput = document.createElement('select');
-            this.methodInput.name = 'method';
-            this.methodInput.style.width = '100px';
-            this.methodInput.innerHTML = '<option>(method)</option><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option>';
-            this.methodInput.addEventListener('change', function () {
-                self.set('method', this.value);
-            });
-            this.actions.append(this.methodInput);
-
+            // Search input
             this.searchInput = document.createElement('input');
-            this.searchInput.type = 'text';
-            this.searchInput.name = 'search';
-            this.searchInput.setAttribute('aria-label', 'Search');
+            this.searchInput.type = 'search';
             this.searchInput.placeholder = 'Search';
-            this.searchInput.addEventListener('input', function () {
-                self.set('search', this.value);
+            this.searchInput.classList.add(csscls('datasets-search'));
+            this.searchInput.addEventListener('input', () => {
+                self.applySearchFilter();
             });
-            this.actions.append(this.searchInput);
+            toolbar.append(this.searchInput);
 
-            this.table = document.createElement('tbody');
+            this.panel.append(toolbar);
 
-            const tableWrapper = document.createElement('table');
-            const thead = document.createElement('thead');
-            const theadTr = document.createElement('tr');
+            this.list = document.createElement('div');
+            this.list.classList.add(csscls('datasets-list'));
+            this.panel.append(this.list);
 
-            const th1 = document.createElement('th');
-            th1.style.width = '30px';
-            theadTr.append(th1);
+            this.el.append(this.badge);
+            document.body.append(this.panel);
 
-            const th2 = document.createElement('th');
-            th2.textContent = 'Date ↕';
-            th2.style.width = '175px';
-            th2.addEventListener('click', () => {
-                self.set('sort', self.get('sort') === 'asc' ? 'desc' : 'asc');
-                localStorage.setItem('debugbar-history-sort', self.get('sort'));
-            });
-            theadTr.append(th2);
+            // Position panel relative to badge
+            const positionPanel = () => {
+                const badgeRect = this.badge.getBoundingClientRect();
 
-            const th3 = document.createElement('th');
-            th3.textContent = 'Method';
-            th3.style.width = '80px';
-            theadTr.append(th3);
+                // Calculate available space above and below the badge
+                const spaceAbove = badgeRect.top;
+                const spaceBelow = window.innerHeight - badgeRect.bottom;
+                const showBelow = spaceBelow > spaceAbove;
 
-            const th4 = document.createElement('th');
-            th4.textContent = 'URL';
-            theadTr.append(th4);
+                this.panel.style.position = 'fixed';
+                this.panel.style.right = `${window.innerWidth - badgeRect.right}px`;
+                this.panel.style.left = 'auto';
 
-            const th5 = document.createElement('th');
-            th5.setAttribute('width', '40%');
-            th5.textContent = 'Data';
-            theadTr.append(th5);
-
-            thead.append(theadTr);
-            tableWrapper.append(thead);
-            tableWrapper.append(this.table);
-            this.el.append(tableWrapper);
-        }
-
-        renderDatasets() {
-            this.table.innerHTML = '';
-            const self = this;
-            const datasets = this.get('data');
-            if (!datasets) {
-                return;
-            }
-            for (const [_, data] of Object.entries(datasets)) {
-                if (!data.__meta) {
-                    continue;
-                }
-
-                self.get('itemRenderer')(self, data);
-            }
-        }
-
-        render() {
-            this.bindAttr('data', function () {
-                if (this.get('autoshow') === null && this.get('debugbar').ajaxHandler) {
-                    this.set('autoshow', this.get('debugbar').ajaxHandler.autoShow);
-                }
-
-                if (!this.has('data')) {
-                    return;
-                }
-
-                // Render the latest item
-                const datasets = this.get('data');
-                const data = datasets[Object.keys(datasets)[Object.keys(datasets).length - 1]];
-                if (!data.__meta) {
-                    return;
-                }
-
-                this.get('itemRenderer')(this, data);
-            });
-            this.bindAttr(['itemRenderer', 'search', 'method', 'sort'], function () {
-                this.renderDatasets();
-            });
-            this.bindAttr('autoshow', function () {
-                const autoshow = this.get('autoshow');
-                this.autoshow.checked = autoshow;
-            });
-            this.bindAttr('id', function () {
-                const id = this.get('id');
-                const activeClass = csscls('active');
-                const actives = this.table.querySelectorAll(`.${activeClass}`);
-                for (const active of actives) {
-                    active.classList.remove(activeClass);
-                }
-                const targetRow = this.table.querySelector(`tr[data-id="${id}"]`);
-                if (targetRow) {
-                    targetRow.classList.add(activeClass);
-                }
-            });
-        }
-
-        /**
-         * Renders the content of a dataset item
-         *
-         * @param {object} value An item from the data array
-         */
-        itemRenderer(widget, data) {
-            const meta = data.__meta;
-
-            const badgesTd = document.createElement('td');
-            const tr = document.createElement('tr');
-
-            if (widget.get('sort') === 'asc') {
-                widget.table.append(tr);
-            } else {
-                widget.table.prepend(tr);
-            }
-
-            const clickHandler = function () {
-                const debugbar = widget.get('debugbar');
-                debugbar.showDataSet(meta.id, debugbar.datesetTitleFormater.format('', data, meta.suffix, meta.nb));
-
-                const activeClass = csscls('active');
-                const actives = widget.table.querySelectorAll(`.${activeClass}`);
-                for (const active of actives) {
-                    active.classList.remove(activeClass);
-                }
-                tr.classList.add(activeClass);
-
-                const tab = this.dataset.tab;
-                if (tab) {
-                    debugbar.showTab(tab);
+                if (showBelow) {
+                    // Show panel below badge
+                    this.panel.style.top = `${badgeRect.bottom}px`;
+                    this.panel.style.bottom = 'auto';
+                    this.panel.style.maxHeight = `${spaceBelow}px`;
+                } else {
+                    // Show panel above badge (no gap)
+                    this.panel.style.bottom = `${window.innerHeight - badgeRect.top}px`;
+                    this.panel.style.top = 'auto';
+                    this.panel.style.maxHeight = `${spaceAbove}px`;
                 }
             };
 
-            tr.setAttribute('data-id', meta.id);
-            tr.style.cursor = 'pointer';
-            tr.classList.add(csscls('table-row'));
-
-            const nbTd = document.createElement('td');
-            nbTd.textContent = `#${meta.nb}`;
-            nbTd.addEventListener('click', clickHandler);
-            tr.append(nbTd);
-
-            const datetimeTd = document.createElement('td');
-            datetimeTd.textContent = meta.datetime;
-            datetimeTd.addEventListener('click', clickHandler);
-            tr.append(datetimeTd);
-
-            const methodTd = document.createElement('td');
-            methodTd.textContent = meta.method;
-            methodTd.addEventListener('click', clickHandler);
-            tr.append(methodTd);
-
-            const uriTd = document.createElement('td');
-            uriTd.textContent = meta.uri + (meta.suffix ? ` ${meta.suffix}` : '');
-            uriTd.addEventListener('click', clickHandler);
-            tr.append(uriTd);
-
-            const debugbar = widget.get('debugbar');
-            for (let [key, def] of Object.entries(debugbar.dataMap)) {
-                const d = getDictValue(data, def[0], def[1]);
-                if (key.includes(':')) {
-                    const parts = key.split(':');
-                    key = parts[0];
-                    const subkey = parts[1];
-
-                    if (subkey === 'badge' && d > 0) {
-                        const control = debugbar.getControl(key);
-                        const link = document.createElement('a');
-                        link.setAttribute('title', control.get('title'));
-                        link.dataset.tab = key;
-
-                        if (control.icon) {
-                            link.append(control.icon.cloneNode(true));
-                        }
-                        if (control.badge) {
-                            const badgeClone = control.badge.cloneNode(true);
-                            badgeClone.style.display = 'inline-block';
-                            badgeClone.textContent = d;
-                            link.append(badgeClone);
-                        }
-                        badgesTd.append(link);
-                        link.addEventListener('click', clickHandler);
-                    } else if (subkey === 'tooltip') {
-                        debugbar.getControl(key).set('tooltip', d);
+            // Toggle panel on click
+            this.badge.addEventListener('click', (e) => {
+                if (e.target !== this.panel && !this.panel.contains(e.target)) {
+                    if (this.panel.hidden) {
+                        positionPanel();
                     }
+                    this.panel.hidden = !this.panel.hidden;
                 }
-            }
-            tr.append(badgesTd);
+            });
 
-            if (debugbar.activeDatasetId === meta.id) {
-                tr.classList.add(csscls('active'));
+            // Close panel when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!this.badge.contains(e.target) && !this.panel.contains(e.target)) {
+                    this.panel.hidden = true;
+                }
+            });
+        }
+
+        render() {
+            // Bind to data changes
+            this.bindAttr('data', function () {
+                this.updateBadge();
+            });
+
+            this.bindAttr('activeId', function () {
+                this.updateBadge();
+            });
+
+            // Bind to autoshow changes from settings
+            this.bindAttr('autoshow', function () {
+                if (this.autoshowCheckbox) {
+                    this.autoshowCheckbox.checked = this.get('autoshow');
+                }
+            });
+        }
+
+        updateBadge() {
+            const debugbar = this.get('debugbar');
+            const datasets = this.get('data') || debugbar.datasets;
+            const activeId = this.get('activeId') || debugbar.activeDatasetId;
+
+            if (!datasets) {
+                this.badge.hidden = true;
+                return;
             }
 
-            const search = widget.get('search');
-            const method = widget.get('method');
-            if ((search && !meta.uri.includes(search)) || (method && meta.method !== method)) {
-                tr.hidden = true;
+            const datasetCount = Object.keys(datasets).length;
+
+            if (datasetCount >= 1) {
+                this.badge.hidden = false;
+
+                // Update the current URL display
+                const currentDataset = datasets[activeId];
+                if (currentDataset && currentDataset.__meta) {
+                    const uri = currentDataset.__meta.uri || '';
+                    const method = currentDataset.__meta.method || 'GET';
+                    this.badgeUrl.textContent = `${method} ${uri}`;
+                }
+
+                // Only show count badge if more than 1 request
+                if (datasetCount > 1) {
+                    this.badgeCount.textContent = datasetCount;
+                    this.badgeCount.hidden = false;
+                } else {
+                    this.badgeCount.hidden = true;
+                }
+
+                // Clear and rebuild the panel list
+                this.list.innerHTML = '';
+
+                // Get all datasets in reverse order (newest first)
+                const datasetIds = Object.keys(datasets).reverse();
+
+                for (const datasetId of datasetIds) {
+                    const dataset = datasets[datasetId];
+                    const item = document.createElement('div');
+                    item.classList.add(csscls('datasets-list-item'));
+
+                    // Store data attributes for filtering
+                    const uri = dataset.__meta.uri || '';
+                    const method = dataset.__meta.method || 'GET';
+                    item.setAttribute('data-url', uri);
+                    item.setAttribute('data-method', method);
+
+                    if (datasetId === activeId) {
+                        item.classList.add(csscls('active'));
+                    }
+
+                    // Request number
+                    const nb = document.createElement('span');
+                    nb.classList.add(csscls('datasets-item-nb'));
+                    nb.textContent = `#${dataset.__meta.nb}`;
+                    item.append(nb);
+
+                    // Time
+                    const time = document.createElement('span');
+                    time.classList.add(csscls('datasets-item-time'));
+                    time.textContent = dataset.__meta.datetime ? dataset.__meta.datetime.split(' ')[1] : '';
+                    item.append(time);
+
+                    // Request info
+                    const request = document.createElement('div');
+                    request.classList.add(csscls('datasets-item-request'));
+
+                    const methodSpan = document.createElement('span');
+                    methodSpan.classList.add(csscls('datasets-item-method'));
+                    methodSpan.textContent = method;
+                    request.append(methodSpan);
+
+                    const url = document.createElement('span');
+                    url.classList.add(csscls('datasets-item-url'));
+                    url.textContent = uri;
+                    request.append(url);
+
+                    if (dataset.__meta.suffix) {
+                        const suffix = document.createElement('span');
+                        suffix.classList.add(csscls('datasets-item-suffix'));
+                        suffix.textContent = ` ${dataset.__meta.suffix}`;
+                        request.append(suffix);
+                    }
+
+                    item.append(request);
+
+                    // Data badges (icons with counts)
+                    const badges = document.createElement('div');
+                    badges.classList.add(csscls('datasets-item-badges'));
+
+                    for (const [key, def] of Object.entries(debugbar.dataMap)) {
+                        const d = getDictValue(dataset, def[0], def[1]);
+                        if (key.includes(':')) {
+                            const parts = key.split(':');
+                            const controlKey = parts[0];
+                            const subkey = parts[1];
+
+                            if (subkey === 'badge' && d > 0) {
+                                const control = debugbar.getControl(controlKey);
+                                if (control) {
+                                    const badge = document.createElement('span');
+                                    badge.classList.add(csscls('datasets-item-badge'));
+                                    badge.setAttribute('title', control.get('title'));
+                                    badge.dataset.tab = controlKey;
+
+                                    if (control.icon) {
+                                        const iconClone = control.icon.cloneNode(true);
+                                        iconClone.style.width = '12px';
+                                        iconClone.style.height = '12px';
+                                        badge.append(iconClone);
+                                    }
+
+                                    const count = document.createElement('span');
+                                    count.textContent = d;
+                                    badge.append(count);
+
+                                    badges.append(badge);
+
+                                    // Click badge to show that tab
+                                    badge.addEventListener('click', (e) => {
+                                        e.stopPropagation();
+                                        debugbar.showDataSet(datasetId);
+                                        debugbar.showTab(controlKey);
+                                        this.panel.hidden = true;
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    item.append(badges);
+
+                    // Status code
+                    if (dataset.__meta.status_code) {
+                        const status = document.createElement('span');
+                        status.classList.add(csscls('datasets-item-status'));
+                        status.textContent = dataset.__meta.status_code;
+
+                        const statusCode = Number.parseInt(dataset.__meta.status_code);
+                        if (statusCode >= 200 && statusCode < 300) {
+                            status.classList.add(csscls('status-success'));
+                        } else if (statusCode >= 300 && statusCode < 400) {
+                            status.classList.add(csscls('status-redirect'));
+                        } else if (statusCode >= 400) {
+                            status.classList.add(csscls('status-error'));
+                        }
+
+                        item.append(status);
+                    }
+
+                    // Click handler
+                    item.addEventListener('click', () => {
+                        debugbar.showDataSet(datasetId);
+                        this.panel.hidden = true;
+                    });
+
+                    this.list.append(item);
+                }
+
+                // Reapply search filter if there's a search value
+                this.applySearchFilter();
+            } else {
+                this.badge.hidden = true;
+            }
+        }
+
+        applySearchFilter() {
+            const searchValue = this.searchInput.value.toLowerCase().trim();
+            const items = this.list.querySelectorAll(`.${csscls('datasets-list-item')}`);
+
+            for (const item of items) {
+                if (searchValue === '') {
+                    item.hidden = false;
+                } else {
+                    const url = item.getAttribute('data-url').toLowerCase();
+                    const method = item.getAttribute('data-method').toLowerCase();
+                    const searchText = `${method} ${url}`;
+
+                    // Split search terms by spaces and check if ALL terms match
+                    const searchTerms = searchValue.split(/\s+/).filter(term => term.length > 0);
+                    const matches = searchTerms.every(term => searchText.includes(term));
+
+                    item.hidden = !matches;
+                }
             }
         }
     }
