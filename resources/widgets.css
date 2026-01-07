@@ -178,6 +178,35 @@ div.phpdebugbar-widgets-messages {
     background: none;
     font-weight: normal;
   }
+  div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-context-count {
+    float: right;
+    font-size: 12px;
+    padding: 2px 4px;
+    color: #888;
+    margin: 0 2px;
+    text-decoration: none;
+    text-shadow: none;
+    background: none;
+    font-weight: normal;
+    display: inline-flex;
+    align-items: center;
+  }
+  div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-context-count:before {
+    content: "";
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-right: 4px;
+    -webkit-mask-image: var(--debugbar-icon-table);
+    mask-image: var(--debugbar-icon-table);
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    background-color: currentColor;
+  }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-collector {
     color: #555;
     font-style: italic;

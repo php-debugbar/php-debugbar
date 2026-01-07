@@ -22,7 +22,7 @@ usleep(200);
 $debugbar['time']->stopMeasure('op2');
 
 $debugbar['messages']->addMessage('world', 'warning');
-$debugbar['messages']->addMessage(['toto' => ['titi', 'tata']]);
+$debugbar['messages']->log('debug', 'Hello with context', ['toto' => ['titi', 'tata']]);
 $debugbar['messages']->addMessage('oups', 'error');
 $debugbar['messages']->addMessage('welcome!', 'success');
 $debugbar['messages']->addMessage('panic!', 'critical');

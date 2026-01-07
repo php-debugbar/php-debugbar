@@ -581,6 +581,45 @@
                     label.textContent = value.label;
                     li.prepend(label);
                 }
+                if (value.context && Object.keys(value.context).length > 0) {
+                    const contextCount = document.createElement('span');
+                    contextCount.setAttribute('title', 'Context');
+                    contextCount.classList.add(csscls('context-count'));
+                    contextCount.textContent = Object.keys(value.context).length;
+                    li.prepend(contextCount);
+
+                    const contextTable = document.createElement('table');
+                    contextTable.classList.add(csscls('params'));
+                    contextTable.hidden = true;
+                    contextTable.innerHTML = '<tr><th colspan="2">Context</th></tr>';
+
+                    for (const key in value.context) {
+                        if (typeof value.context[key] !== 'function') {
+                            const tr = document.createElement('tr');
+                            const td1 = document.createElement('td');
+                            td1.classList.add(csscls('name'));
+                            td1.textContent = key;
+                            tr.append(td1);
+
+                            const td2 = document.createElement('td');
+                            td2.classList.add(csscls('value'));
+                            td2.innerHTML = value.context[key];
+                            tr.append(td2);
+
+                            contextTable.append(tr);
+                        }
+                    }
+                    li.append(contextTable);
+
+                    const originalClickHandler = li.onclick;
+                    li.style.cursor = 'pointer';
+                    li.addEventListener('click', function (event) {
+                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
+                            return;
+                        }
+                        contextTable.hidden = !contextTable.hidden;
+                    });
+                }
             } });
 
             this.el.append(this.list.el);
