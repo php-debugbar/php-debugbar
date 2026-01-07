@@ -22,12 +22,16 @@ usleep(200);
 $debugbar['time']->stopMeasure('op2');
 
 $debugbar['messages']->addMessage('world', 'warning');
+$debugbar['messages']->addMessage( ['toto' => ['titi', 'tata', 'toto', 'tete', 'tutu', 'lala', 'lili', 'lolo', 'lulu', 'lele']]);
 $debugbar['messages']->log('debug', 'Hello with context', ['toto' => ['titi', 'tata']]);
 $debugbar['messages']->addMessage('oups', 'error');
 $debugbar['messages']->addMessage('welcome!', 'success');
 $debugbar['messages']->addMessage('panic!', 'critical');
 $debugbar["messages"]->addMessage("<!--<script>");
-$debugbar["messages"]->addMessage("<script>alert('Whoops')</script>");
+$debugbar["messages"]->addMessage("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et nibh non est ultrices suscipit a non arcu. Sed sit amet est vel mi facilisis varius. Pellentesque vitae rutrum massa. Praesent magna diam, viverra eu nibh a, commodo aliquam mi. Morbi placerat tortor nec efficitur vestibulum. Nunc imperdiet feugiat massa, eu ornare dui tincidunt eget. Suspendisse accumsan hendrerit ex a iaculis. Nullam molestie sapien sed sapien feugiat tempor. Vivamus mollis vitae arcu vel commodo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sollicitudin purus vitae mi rutrum, sit amet molestie felis pellentesque. Vivamus in pellentesque nisl, ut lobortis metus. In hac habitasse platea dictumst.", 'info', [
+        'test' => 'a',
+    'foo' => 'bar',
+]);
 
 require __DIR__ . '/collectors/counter.php';
 require __DIR__ . '/collectors/templates.php';

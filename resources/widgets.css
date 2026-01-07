@@ -90,6 +90,11 @@ table.phpdebugbar-widgets-params {
     vertical-align: top;
   }
 
+.phpdebugbar-widgets-truncated {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* -------------------------------------- */
 

@@ -516,16 +516,14 @@
                     li.append(val);
                 } else {
                     let m = value.message;
-                    if (m.length > 100) {
-                        m = `${m.substr(0, 100)}...`;
-                    }
 
                     val = document.createElement('span');
                     val.classList.add(csscls('value'));
                     val.textContent = m;
+                    val.classList.add(csscls('truncated'));
                     li.append(val);
 
-                    if (!value.is_string || value.message.length > 100) {
+                    if (!value.is_string || val.scrollWidth > val.clientWidth) {
                         let prettyVal = value.message;
                         if (!value.is_string) {
                             prettyVal = null;
@@ -538,9 +536,11 @@
                             if (val.classList.contains(csscls('pretty'))) {
                                 val.textContent = m;
                                 val.classList.remove(csscls('pretty'));
+                                val.classList.add(csscls('truncated'));
                             } else {
                                 prettyVal = prettyVal || createCodeBlock(value.message, 'php');
                                 val.classList.add(csscls('pretty'));
+                                val.classList.remove(csscls('truncated'));
                                 val.innerHTML = '';
                                 val.append(prettyVal);
                             }
@@ -611,7 +611,6 @@
                     }
                     li.append(contextTable);
 
-                    const originalClickHandler = li.onclick;
                     li.style.cursor = 'pointer';
                     li.addEventListener('click', function (event) {
                         if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
