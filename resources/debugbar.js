@@ -78,6 +78,15 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
     const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-');
 
+    PhpDebugBar.utils.schedule = function (cb) {
+        console.log('schedule', cb);
+        if (window.requestIdleCallback) {
+            return window.requestIdleCallback(cb, { timeout: 1000 });
+        }
+
+        return setTimeout(cb, 0);
+    }
+
     // ------------------------------------------------------------------
 
     /**
@@ -277,8 +286,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
             this.bindAttr('data', function (data) {
                 if (this.has('widget')) {
-                    this.get('widget').set('data', data);
                     this.tab.setAttribute('data-empty', Object.keys(data).length === 0 || data.count === 0);
+                    PhpDebugBar.utils.schedule(() => {
+                        this.get('widget').set('data', data);
+                    })
                 }
             });
         }
@@ -1441,7 +1452,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             // Run symfony dumps upon reloading
             if (typeof window.Sfdump == 'function') {
                 this.body.querySelectorAll('pre.sf-dump[id]').forEach((pre) => {
-                    window.Sfdump(pre.id, { maxDepth: 0 });
+                    window.Sfdump(pre.id, {maxDepth: 0});
                 });
             }
 

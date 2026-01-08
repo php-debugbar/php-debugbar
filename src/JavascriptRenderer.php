@@ -1171,8 +1171,7 @@ class JavascriptRenderer
      */
     public function render(bool $initialize = true, bool $renderStackedData = true): string
     {
-        $js = 'document.addEventListener("DOMContentLoaded", () => {' . "\n";
-
+        $js = '';
         if ($initialize) {
             $js .= $this->getJsInitializationCode();
         }
@@ -1196,11 +1195,15 @@ class JavascriptRenderer
             $js .= $this->getAddDatasetCode($this->debugBar->getCurrentRequestId(), $this->debugBar->getData(), $suffix);
         }
 
-        $js .= "\n});\n";
-
         $nonce = $this->getNonceAttribute();
 
-        return "<script type=\"text/javascript\"{$nonce}>\n$js\n</script>\n";
+        return <<<HTML
+<script type="text/javascript"{$nonce}>
+document.addEventListener("DOMContentLoaded", () => {
+    $js
+});
+</script>
+HTML;
     }
 
     /**
