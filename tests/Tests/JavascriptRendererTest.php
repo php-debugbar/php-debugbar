@@ -226,28 +226,28 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->r->setJavascriptClass('Foobar');
         $this->r->setVariableName('foovar');
         $this->r->setAjaxHandlerClass(null);
-        $this->assertStringStartsWith("<script type=\"text/javascript\">\ndocument.addEventListener(\"DOMContentLoaded\", () => {\n    var foovar = new Foobar();\nfoovar.addDataSet(", $this->r->render());
+        $this->assertStringStartsWith("<script type=\"text/javascript\">document.addEventListener(\"DOMContentLoaded\", () => {\nvar foovar = new Foobar();\nfoovar.addDataSet(", $this->r->render());
     }
 
     public function testRenderConstructorWithNonce(): void
     {
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setCspNonce('mynonce');
-        $this->assertStringStartsWith("<script type=\"text/javascript\" nonce=\"mynonce\">\ndocument.addEventListener(\"DOMContentLoaded\", () => {\n    var phpdebugbar = new PhpDebugBar.DebugBar();", $this->r->render());
+        $this->assertStringStartsWith("<script type=\"text/javascript\" nonce=\"mynonce\">document.addEventListener(\"DOMContentLoaded\", () => {\nvar phpdebugbar = new PhpDebugBar.DebugBar();", $this->r->render());
     }
 
     public function testRenderConstructorWithEmptyTabsHidden(): void
     {
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setHideEmptyTabs(true);
-        $this->assertStringStartsWith("<script type=\"text/javascript\">\ndocument.addEventListener(\"DOMContentLoaded\", () => {\n    var phpdebugbar = new PhpDebugBar.DebugBar({\"hideEmptyTabs\":true});\n", $this->r->render());
+        $this->assertStringStartsWith("<script type=\"text/javascript\">document.addEventListener(\"DOMContentLoaded\", () => {\nvar phpdebugbar = new PhpDebugBar.DebugBar({\"hideEmptyTabs\":true});\n", $this->r->render());
     }
 
     public function testRenderConstructorWithTheme(): void
     {
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setTheme('dark');
-        $this->assertStringStartsWith("<script type=\"text/javascript\">\ndocument.addEventListener(\"DOMContentLoaded\", () => {\n    var phpdebugbar = new PhpDebugBar.DebugBar({\"theme\":\"dark\"});", $this->r->render());
+        $this->assertStringStartsWith("<script type=\"text/javascript\">document.addEventListener(\"DOMContentLoaded\", () => {\nvar phpdebugbar = new PhpDebugBar.DebugBar({\"theme\":\"dark\"});", $this->r->render());
     }
 
     public function testCanDisableSpecificVendors(): void

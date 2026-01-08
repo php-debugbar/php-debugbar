@@ -1,6 +1,5 @@
-<script type="text/javascript">
-document.addEventListener("DOMContentLoaded", () => {
-    var phpdebugbar = new PhpDebugBar.DebugBar();
+<script type="text/javascript">document.addEventListener("DOMContentLoaded", () => {
+var phpdebugbar = new PhpDebugBar.DebugBar();
 phpdebugbar.addTab("messages", new PhpDebugBar.DebugBar.Tab({"icon":"logs","title":"Messages", "widget": new PhpDebugBar.Widgets.MessagesWidget()}));
 phpdebugbar.addIndicator("time", new PhpDebugBar.DebugBar.Indicator({"icon":"time"}), "right");
 phpdebugbar.setDataMap({
