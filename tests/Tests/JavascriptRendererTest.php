@@ -103,7 +103,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertCount(count(array_unique($assets['js'])), $assets['js']);
 
         $html = $this->r->renderHead();
-        $this->assertStringContainsString('<script type="text/javascript" src="/foobar/foo.js" defer></script>', $html);
+        $this->assertStringContainsString('<script type="text/javascript" src="/foobar/foo.js"></script>', $html);
     }
 
     public function testGetAssets(): void
@@ -178,7 +178,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         $html = $this->r->renderHead();
         // Check for file links
         $this->assertStringContainsString('<link rel="stylesheet" type="text/css" href="/burl/debugbar.css">', $html);
-        $this->assertStringContainsString('<script type="text/javascript" src="/burl/debugbar.js" defer></script>', $html);
+        $this->assertStringContainsString('<script type="text/javascript" src="/burl/debugbar.js"></script>', $html);
         // Check for inline assets
         $this->assertStringContainsString('<style>CssTest</style>', $html);
         $this->assertStringContainsString('<script type="text/javascript">JsTest</script>', $html);
