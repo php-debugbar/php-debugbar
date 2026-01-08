@@ -1053,7 +1053,7 @@ class JavascriptRenderer
         }
 
         foreach ($jsFiles as $file) {
-            $html .= sprintf('<script type="text/javascript" src="%s"></script>' . "\n", $file);
+            $html .= sprintf('<script type="text/javascript" src="%s" defer></script>' . "\n", $file);
         }
 
         foreach ($inlineJs as $content) {
@@ -1171,11 +1171,7 @@ class JavascriptRenderer
      */
     public function render(bool $initialize = true, bool $renderStackedData = true): string
     {
-        $js = '';
-
-        if ($initialize) {
-            $js = $this->getJsInitializationCode();
-        }
+        $js = $initialize ? $this->getJsInitializationCode() : '';
 
         if ($renderStackedData && $this->debugBar->hasStackedData()) {
             foreach ($this->debugBar->getStackedData() as $id => $data) {
@@ -1198,15 +1194,19 @@ class JavascriptRenderer
 
         $nonce = $this->getNonceAttribute();
 
-        if ($nonce != '') {
-            $js =  preg_replace(
-                '/<(script)(?![^>]*nonce=)/i',
-                '<$1' . $nonce,
-                $js
-            );
-        }
+        return "<script type=\"text/javascript\"{$nonce}>
+(function () {
+    const renderDebugbar = function () {
+$js
+    };
 
-        return "<script type=\"text/javascript\"{$nonce}>\n$js\n</script>\n";
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderDebugbar, { once: true });
+    } else {
+        renderDebugbar();
+    }
+})();
+</script>";
     }
 
     /**
