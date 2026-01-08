@@ -81,10 +81,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
     PhpDebugBar.utils.sfDump = function (el) {
         if (typeof window.Sfdump == 'function') {
             el.querySelectorAll('pre.sf-dump[id]').forEach((pre) => {
-                window.Sfdump(pre.id, {maxDepth: 0});
+                window.Sfdump(pre.id, { maxDepth: 0 });
             });
         }
-    }
+    };
 
     PhpDebugBar.utils.schedule = function (cb) {
         if (window.requestIdleCallback) {
@@ -92,7 +92,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
         }
 
         return setTimeout(cb, 0);
-    }
+    };
 
     // ------------------------------------------------------------------
 
@@ -297,8 +297,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                     PhpDebugBar.utils.schedule(() => {
                         const widget = this.get('widget');
                         widget.set('data', data);
-                        PhpDebugBar.utils.sfDump(widget.el)
-                    })
+                        PhpDebugBar.utils.sfDump(widget.el);
+                    });
                 }
             });
         }
