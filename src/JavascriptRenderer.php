@@ -1194,7 +1194,19 @@ class JavascriptRenderer
 
         $nonce = $this->getNonceAttribute();
 
-        return "<script type=\"text/javascript\"{$nonce}>document.addEventListener(\"DOMContentLoaded\", () => {\n$js\n});</script>";
+        return "<script type=\"text/javascript\"{$nonce}>
+(function () {
+    const renderDebugbar = function () {
+$js
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderDebugbar, { once: true });
+    } else {
+        renderDebugbar();
+    }
+})();
+</script>";
     }
 
     /**

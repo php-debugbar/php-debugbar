@@ -1,4 +1,6 @@
-<script type="text/javascript">document.addEventListener("DOMContentLoaded", () => {
+<script type="text/javascript">
+(function () {
+    const renderDebugbar = function () {
 var phpdebugbar = new PhpDebugBar.DebugBar();
 phpdebugbar.addTab("messages", new PhpDebugBar.DebugBar.Tab({"icon":"logs","title":"Messages", "widget": new PhpDebugBar.Widgets.MessagesWidget()}));
 phpdebugbar.addIndicator("time", new PhpDebugBar.DebugBar.Indicator({"icon":"time"}), "right");
