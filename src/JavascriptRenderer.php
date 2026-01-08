@@ -1198,12 +1198,12 @@ class JavascriptRenderer
         $nonce = $this->getNonceAttribute();
 
         return <<<HTML
-<script type="text/javascript"{$nonce}>
-document.addEventListener("DOMContentLoaded", () => {
-    $js
-});
-</script>
-HTML;
+            <script type="text/javascript"{$nonce}>
+            document.addEventListener("DOMContentLoaded", () => {
+                $js
+            });
+            </script>
+            HTML;
     }
 
     /**
