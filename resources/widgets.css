@@ -138,8 +138,12 @@ div.phpdebugbar-widgets-messages {
     align-items: center;
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-success {
-    color: green;
+    color: #28a745;
   }
+  .phpdebugbar[data-theme='dark'] div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-success {
+    color: #56DB3A;
+  }
+
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-success:before {
     content: "✓";
   }
