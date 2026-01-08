@@ -18,14 +18,21 @@
             this.el.style.display = 'none';
 
             this.closebtn = document.createElement('a');
+            this.closebtn.classList.add(csscls('closebtn'));
             this.closebtn.innerHTML = '<i class="phpdebugbar-icon phpdebugbar-icon-x"></i>';
+
+            this.brand = document.createElement('span');
+            this.brand.classList.add(csscls('brand'));
+            this.brand.innerHTML = '<i class="phpdebugbar-icon phpdebugbar-icon-brand"></i>';
 
             this.table = document.createElement('tbody');
 
             const header = document.createElement('div');
             header.classList.add(csscls('header'));
             header.textContent = 'PHP DebugBar | Open';
+            header.prepend(this.brand);
             header.append(this.closebtn);
+
             this.el.append(header);
 
             const tableWrapper = document.createElement('table');

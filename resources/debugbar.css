@@ -36,6 +36,7 @@ div.phpdebugbar-widgets-datasets-panel {
 
   --debugbar-font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --debugbar-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --debugbar-icon-brand: var(--debugbar-icon-brand-php);
 }
 
 div.phpdebugbar[data-theme='dark'],
@@ -269,8 +270,8 @@ div.phpdebugbar[data-toolbarPosition="bottom"] div.phpdebugbar-resize-handle-bot
 /* -------------------------------------- */
 
 a.phpdebugbar-restore-btn:after {
-    -webkit-mask-image: var(--debugbar-icon-brand-php);
-    mask-image: var(--debugbar-icon-brand-php);
+    -webkit-mask-image: var(--debugbar-icon-brand);
+    mask-image: var(--debugbar-icon-brand);
     -webkit-mask-size: 20px 20px;
     mask-size: 20px 20px;
     background-color: var(--debugbar-icons);
@@ -372,8 +373,7 @@ i.phpdebugbar-icon {
 .phpdebugbar-icon::before,
 i.phpdebugbar-icon::before {
   content: "";
-  display: inline-flex;
-  align-items: center;
+  display: block;
   justify-content: center;
   flex-shrink: 0;
   width: 1.3em;
@@ -391,6 +391,12 @@ i.phpdebugbar-icon::before {
   mask-position: center;
   background-color: currentColor;
 }
+
+.phpdebugbar-icon-brand::before {
+  -webkit-mask-image: var(--debugbar-icon-brand);
+  mask-image: var(--debugbar-icon-brand);
+}
+
   a.phpdebugbar-tab span.phpdebugbar-badge.phpdebugbar-visible {
     display: inline;
   }
