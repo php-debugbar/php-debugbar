@@ -71,8 +71,8 @@ function render_demo_page(?Closure $callback = null)
         <!-- DebugBar Widget Start -->
         <?php
             echo $debugbarRenderer->renderHead();
-            echo $debugbarRenderer->render();
-        ?>
+    echo $debugbarRenderer->render();
+    ?>
         <!-- DebugBar Widget End -->
     </body>
 </html>
