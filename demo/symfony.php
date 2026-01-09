@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use DebugBar\DataCollector\MessagesCollector;
 use DebugBar\DataCollector\TimeDataCollector;
-use DebugBar\SymfonyHttpDriver;
+use DebugBar\Bridge\Symfony\SymfonyHttpDriver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\PhpBridgeSessionStorage;
@@ -76,8 +76,8 @@ require __DIR__ . '/collectors/symfony_mailer.php';
 // Inject Debugbar
 if ($ajax) {
     $debugbar->sendDataInHeaders();
-} else {
-    $debugbar->getJavascriptRenderer()->injectInSymfonyResponse($response);
+} elseif ($response->getContent()) {
+    $response->setContent($debugbar->getJavascriptRenderer()->injectInHtmlResponse($response->getContent()));
 }
 
 // Adds the Content-Security-Policy to the HTTP header.

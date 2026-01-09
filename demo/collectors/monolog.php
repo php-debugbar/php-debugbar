@@ -6,6 +6,6 @@ declare(strict_types=1);
 
 $logger = new Monolog\Logger('demo');
 
-$debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
+$debugbar->addCollector(new DebugBar\Bridge\Monolog\MonologCollector($logger));
 
 $logger->info('hello world');

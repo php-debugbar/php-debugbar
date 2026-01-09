@@ -1,10 +1,14 @@
 # Bridge collectors
 
-DebugBar comes with some "bridge" collectors. These collectors provides a way to integrate other projects with the DebugBar.
+DebugBar has a few "bridge" collectors. These collectors provides a way to integrate other projects with the DebugBar.
+These usually require additional composer packages.
 
 ## Symfony HttpFoundation Request / Response
-
+ 
 https://symfony.com/doc/current/components/http_foundation.html
+
+> Requires https://github.com/php-debugbar/symfony-bridge
+
 
 This extends the [existing RequestDataCollector](base.md#requestdata) for the Symfony HttpFoundation Request and Response.
 
@@ -14,16 +18,6 @@ use Symfony\Component\Mailer\Event\SentMessageEvent;
 $debugbar->addCollector(new DebugBar\Bridge\Symfony\SymfonyRequestCollector($request, $response));
 ```
 
-### Inject the debugbar into the Symfony HttpFoundation Response
-
-To inject the debugbar into the Symfony HttpFoundation Response, you can use the JavascriptRenderer:
-
-```php
-// Inject Debugbar
-$debugbar->getJavascriptRenderer()->injectInSymfonyResponse($response);
-```
-
-This will call renderHead() and render() just before the closing </body> tag. You can disable the header by setting false as second parameter.
 
 ## Doctrine
 
@@ -46,11 +40,13 @@ provided the `SQLLogger` is a ̀DebugStack`.
 
 https://github.com/Seldaek/monolog
 
+> Requires https://github.com/php-debugbar/monolog-bridge
+
 Integrates Monolog messages into a message view using `DebugBar\Bridge\MonologCollector`.
 
 ```php
 $logger = new Monolog\Logger('mylogger');
-$debugbar->addCollector(new DebugBar\Bridge\MonologCollector($logger));
+$debugbar->addCollector(new DebugBar\Bridge\Monolog\MonologCollector($logger));
 ```
 Note that multiple logger can be collected:
 
@@ -63,6 +59,8 @@ $debugbar['monolog']->addLogger($logger);
 ## Symfony Mailer
 
 https://symfony.com/doc/current/mailer.html
+
+> Requires https://github.com/php-debugbar/symfony-bridge
 
 Display log messages and sent mail using `DebugBar\Bridge\Symfony\SymfonyMailCollector`
 
