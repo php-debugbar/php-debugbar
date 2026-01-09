@@ -48,6 +48,8 @@ jobs:
         run: composer require "symfony/var-dumper:${{ matrix.symfony }}" --no-interaction --no-update
 
       - name: Install dependencies
+        env:
+          COMPOSER_ROOT_VERSION: dev-master
         run: |
           composer update --prefer-dist --no-progress
 

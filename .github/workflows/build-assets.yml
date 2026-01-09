@@ -41,6 +41,8 @@ jobs:
         php-version: 8.4
 
     - name: Install dependencies
+      env:
+        COMPOSER_ROOT_VERSION: dev-master
       run: composer update --prefer-dist --no-progress
 
     - name: Build all files

@@ -34,6 +34,8 @@ jobs:
           extensions: pdo_sqlite
 
       - name: Install dependencies
+        env:
+          COMPOSER_ROOT_VERSION: dev-master
         run: |
           composer update --prefer-dist --no-progress
 

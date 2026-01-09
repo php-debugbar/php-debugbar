@@ -29,6 +29,8 @@ jobs:
         coverage: none
 
     - name: Install dependencies
+      env:
+        COMPOSER_ROOT_VERSION: dev-master
       run: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
     - name: Analyse with PHPStan
