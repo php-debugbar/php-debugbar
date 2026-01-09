@@ -49,7 +49,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer update --prefer-dist --no-progress
+          COMPOSER_ROOT_VERSION=dev-master composer update --prefer-dist --no-progress
 
       - name: Execute Unit Tests
         run: vendor/bin/phpunit --testsuite=Browser
