@@ -41,7 +41,7 @@ jobs:
         php-version: 8.4
 
     - name: Install dependencies
-      run: COMPOSER_ROOT_VERSION=dev-master composer update --prefer-dist --no-progress
+      run: composer update --prefer-dist --no-progress
 
     - name: Build all files
       run: npm run lint:fix

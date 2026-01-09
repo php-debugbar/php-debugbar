@@ -56,7 +56,7 @@ jobs:
       run: composer require "symfony/var-dumper:${{ matrix.symfony }}" --no-interaction --no-update
 
     - name: Install dependencies
-      run: COMPOSER_ROOT_VERSION=dev-master composer update --prefer-dist --no-progress
+      run: composer update --prefer-dist --no-progress
 
     - name: Execute Unit Tests
       run: vendor/bin/phpunit --testsuite=Unit

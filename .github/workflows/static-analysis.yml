@@ -29,7 +29,7 @@ jobs:
         coverage: none
 
     - name: Install dependencies
-      run: COMPOSER_ROOT_VERSION=dev-master composer update --prefer-stable --prefer-dist --no-interaction --no-progress
+      run: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
     - name: Analyse with PHPStan
       run: vendor/bin/phpstan --no-progress --error-format=github

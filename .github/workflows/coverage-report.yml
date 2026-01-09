@@ -28,7 +28,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          COMPOSER_ROOT_VERSION=dev-master composer update --prefer-dist --no-interaction --no-suggest --with-all-dependencies
+          composer update --prefer-dist --no-interaction --no-suggest --with-all-dependencies
 
       - name: Check Code Coverage
         run: vendor/bin/phpunit --coverage-text --coverage-clover=clover.xml
