@@ -54,8 +54,7 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
 
     public function getAssets(): array
     {
-        $dumpAssets = $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : [];
-        return $dumpAssets + [
+        return [
             'css' => 'widgets/templates/widget.css',
             'js' => 'widgets/templates/widget.js',
         ];
@@ -70,7 +69,7 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
             $params = array_keys($data);
         } elseif ($this->collect_data) {
             $params = array_map(
-                fn($value) => $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->renderVar($value) : $this->getDataFormatter()->formatVar($value),
+                fn($value) => $this->getDataFormatter()->formatVar($value),
                 $data,
             );
         } else {

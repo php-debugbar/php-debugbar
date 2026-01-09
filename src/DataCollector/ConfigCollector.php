@@ -16,7 +16,7 @@ namespace DebugBar\DataCollector;
 /**
  * Collects array data
  */
-class ConfigCollector extends DataCollector implements Renderable, AssetProvider
+class ConfigCollector extends DataCollector implements Renderable
 {
     protected string $name;
 
@@ -40,9 +40,7 @@ class ConfigCollector extends DataCollector implements Renderable, AssetProvider
     {
         $data = [];
         foreach ($this->data as $k => $v) {
-            if ($this->isHtmlVarDumperUsed() && !is_string($v)) {
-                $v = $this->getVarDumper()->renderVar($v);
-            } elseif (!is_string($v)) {
+            if (!is_string($v)) {
                 $v = $this->getDataFormatter()->formatVar($v);
             }
             $data[$k] = $v;
@@ -53,11 +51,6 @@ class ConfigCollector extends DataCollector implements Renderable, AssetProvider
     public function getName(): string
     {
         return $this->name;
-    }
-
-    public function getAssets(): array
-    {
-        return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : [];
     }
 
     public function getWidgets(): array

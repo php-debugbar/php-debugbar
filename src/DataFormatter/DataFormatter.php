@@ -15,32 +15,26 @@ namespace DebugBar\DataFormatter;
 
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
+use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
 
 class DataFormatter implements DataFormatterInterface
 {
-    public VarCloner $cloner;
+    protected static array $defaultClonerOptions = [
+        'max_string' => 10_000,
+        'max_items' => 1000,
+    ];
 
-    public CliDumper $dumper;
+    protected ?array $clonerOptions = null;
 
-    public function __construct()
-    {
-        $this->cloner = new VarCloner();
-        $this->dumper = new CliDumper();
-    }
+    protected ?VarCloner $cloner = null;
+
+    private ?CliDumper $dumper = null;
 
     public function formatVar(mixed $data): string
     {
-        $output = '';
-
-        $this->dumper->dump(
-            $this->cloner->cloneVar($data),
-            function ($line, $depth) use (&$output) {
-                // A negative depth means "end of dump"
-                if ($depth >= 0) {
-                    // Adds a two spaces indentation to the line
-                    $output .= str_repeat('  ', $depth) . $line . "\n";
-                }
-            },
+        $output = $this->getDumper()->dump( // @phpstan-ignore arguments.count
+            $this->getCloner()->cloneVar($data),
+            true
         );
 
         return trim($output);
@@ -86,5 +80,94 @@ class DataFormatter implements DataFormatterInterface
         }
 
         return $parent . '@anonymous';
+    }
+
+    /**
+     * Gets the array of non-default VarCloner configuration options.
+     *
+     */
+    public function getClonerOptions(): array
+    {
+        if ($this->clonerOptions === null) {
+            $this->clonerOptions = static::$defaultClonerOptions;
+        }
+        return $this->clonerOptions;
+    }
+
+    /**
+     * Merges an array of non-default VarCloner configuration options with the existing non-default
+     * options.
+     *
+     * Configuration options are:
+     *  - casters: a map of VarDumper Caster objects to use instead of the default casters.
+     *  - additional_casters: a map of VarDumper Caster objects to use in addition to the default
+     *    casters.
+     *  - max_items: maximum number of items to clone beyond the minimum depth.
+     *  - max_string: maximum string size
+     *  - min_depth: minimum tree depth to clone before counting items against the max_items limit.
+     *
+     */
+    public function mergeClonerOptions(array $options): void
+    {
+        $this->clonerOptions = $options + $this->getClonerOptions();
+        $this->cloner = null;
+    }
+
+    /**
+     * Resets the array of non-default VarCloner configuration options without retaining any of the
+     * existing non-default options.
+     *
+     * Configuration options are:
+     *  - casters: a map of VarDumper Caster objects to use instead of the default casters.
+     *  - additional_casters: a map of VarDumper Caster objects to use in addition to the default
+     *    casters.
+     *  - max_items: maximum number of items to clone beyond the minimum depth.
+     *  - max_string: maximum string size
+     *  - min_depth: minimum tree depth to clone before counting items against the max_items limit.
+     *
+     */
+    public function resetClonerOptions(?array $options = null): void
+    {
+        $this->clonerOptions = ($options ?: []) + static::$defaultClonerOptions;
+        $this->cloner = null;
+    }
+
+    /**
+     * Gets the VarCloner instance with configuration options set.
+     *
+     * @return VarCloner
+     */
+    protected function getCloner()
+    {
+        if (!$this->cloner) {
+            $clonerOptions = $this->getClonerOptions();
+            if (isset($clonerOptions['casters'])) {
+                $this->cloner = new VarCloner($clonerOptions['casters']);
+            } else {
+                $this->cloner = new VarCloner();
+            }
+            if (isset($clonerOptions['additional_casters'])) {
+                $this->cloner->addCasters($clonerOptions['additional_casters']);
+            }
+            if (isset($clonerOptions['max_items'])) {
+                $this->cloner->setMaxItems($clonerOptions['max_items']);
+            }
+            if (isset($clonerOptions['max_string'])) {
+                $this->cloner->setMaxString($clonerOptions['max_string']);
+            }
+            if (isset($clonerOptions['min_depth'])) {
+                $this->cloner->setMinDepth($clonerOptions['min_depth']);
+            }
+        }
+        return $this->cloner;
+    }
+
+    protected function getDumper(): DataDumperInterface
+    {
+        if (!$this->dumper) {
+            $this->dumper = new CliDumper();
+        }
+
+        return $this->dumper;
     }
 }

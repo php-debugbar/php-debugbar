@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace DebugBar\Tests\DataFormatter;
 
-use DebugBar\DataFormatter\DebugBarVarDumper;
+use DebugBar\DataFormatter\HtmlDataFormatter;
 use DebugBar\Tests\DebugBarTestCase;
 
-class DebugBarVarDumperTest extends DebugBarTestCase
+class HtmlDataFormatterTest extends DebugBarTestCase
 {
     public const STYLE_STRING = 'SpecialStyleString';
 
@@ -19,9 +19,9 @@ class DebugBarVarDumperTest extends DebugBarTestCase
     public function testBasicFunctionality(): void
     {
         // Test that we can render a simple variable without dump headers
-        $d = new DebugBarVarDumper();
+        $d = new HtmlDataFormatter();
         $d->mergeDumperOptions(['styles' => $this->testStyles]);
-        $out = $d->renderVar('magic');
+        $out = $d->formatVar('magic');
 
         $this->assertStringContainsString('magic', $out);
         $this->assertStringNotContainsString(self::STYLE_STRING, $out); // make sure there's no dump header
@@ -29,7 +29,7 @@ class DebugBarVarDumperTest extends DebugBarTestCase
 
     public function testAssetProvider(): void
     {
-        $d = new DebugBarVarDumper();
+        $d = new HtmlDataFormatter();
         $d->mergeDumperOptions(['styles' => $this->testStyles]);
         $assets = $d->getAssets();
         $this->assertArrayHasKey('inline_head', $assets);
@@ -46,7 +46,7 @@ class DebugBarVarDumperTest extends DebugBarTestCase
     public function testBasicOptionOperations(): void
     {
         // Test basic get/merge/reset functionality for cloner
-        $d = new DebugBarVarDumper();
+        $d = new HtmlDataFormatter();
         $options = $d->getClonerOptions();
         $this->assertEquals(['max_string' => 10000, 'max_items' => 1000], $options);
 
@@ -109,33 +109,33 @@ class DebugBarVarDumperTest extends DebugBarTestCase
     public function testClonerOptions(): void
     {
         // Test the actual operation of the cloner options
-        $d = new DebugBarVarDumper();
+        $d = new HtmlDataFormatter();
 
         // Test that the 'casters' option can remove default casters
         $testData = function () {};
         $d->resetClonerOptions();
-        $this->assertStringContainsString('DebugBarVarDumperTest.php', $d->renderVar($testData));
+        $this->assertStringContainsString('HtmlDataFormatterTest.php', $d->formatVar($testData));
 
         $d->resetClonerOptions([
             'casters' => [],
         ]);
-        $this->assertStringNotContainsString('DebugBarVarDumperTest.php', $d->renderVar($testData));
+        $this->assertStringNotContainsString('HtmlDataFormatterTest.php', $d->formatVar($testData));
 
         // Test that the 'additional_casters' option can add new casters
         $testData = function () {};
         $d->resetClonerOptions();
-        $this->assertStringContainsString('DebugBarVarDumperTest.php', $d->renderVar($testData));
+        $this->assertStringContainsString('HtmlDataFormatterTest.php', $d->formatVar($testData));
 
         $d->resetClonerOptions([
             'casters' => [],
             'additional_casters' => ['Closure' => 'Symfony\Component\VarDumper\Caster\ReflectionCaster::castClosure'],
         ]);
-        $this->assertStringContainsString('DebugBarVarDumperTest.php', $d->renderVar($testData));
+        $this->assertStringContainsString('HtmlDataFormatterTest.php', $d->formatVar($testData));
 
         // Test 'max_items'
         $testData = [['one', 'two', 'three', 'four', 'five']];
         $d->resetClonerOptions();
-        $out = $d->renderVar($testData);
+        $out = $d->formatVar($testData);
         foreach ($testData[0] as $search) {
             $this->assertStringContainsString($search, $out);
         }
@@ -143,7 +143,7 @@ class DebugBarVarDumperTest extends DebugBarTestCase
         $d->resetClonerOptions([
             'max_items' => 3,
         ]);
-        $out = $d->renderVar($testData);
+        $out = $d->formatVar($testData);
         $this->assertStringContainsString('one', $out);
         $this->assertStringContainsString('two', $out);
         $this->assertStringContainsString('three', $out);
@@ -153,12 +153,12 @@ class DebugBarVarDumperTest extends DebugBarTestCase
         // Test 'max_string'
         $testData = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $d->resetClonerOptions();
-        $this->assertStringContainsString($testData, $d->renderVar($testData));
+        $this->assertStringContainsString($testData, $d->formatVar($testData));
 
         $d->resetClonerOptions([
             'max_string' => 10,
         ]);
-        $out = $d->renderVar($testData);
+        $out = $d->formatVar($testData);
         $this->assertStringContainsString('ABCDEFGHIJ', $out);
         $this->assertStringNotContainsString('ABCDEFGHIJK', $out);
 
@@ -166,7 +166,7 @@ class DebugBarVarDumperTest extends DebugBarTestCase
         $d->resetClonerOptions([
             'max_items' => 3,
         ]);
-        $out = $d->renderVar($testData);
+        $out = $d->formatVar($testData);
         foreach ($testData as $search) {
             $this->assertStringContainsString($search, $out);
         }
@@ -175,7 +175,7 @@ class DebugBarVarDumperTest extends DebugBarTestCase
             'min_depth' => 0,
             'max_items' => 3,
         ]);
-        $out = $d->renderVar($testData);
+        $out = $d->formatVar($testData);
         $this->assertStringContainsString('one', $out);
         $this->assertStringContainsString('two', $out);
         $this->assertStringContainsString('three', $out);
@@ -187,7 +187,7 @@ class DebugBarVarDumperTest extends DebugBarTestCase
     public function testDumperOptions(): void
     {
         // Test the actual operation of the dumper options
-        $d = new DebugBarVarDumper();
+        $d = new HtmlDataFormatter();
 
         // Test that the 'styles' option affects assets
         $d->resetDumperOptions();
@@ -197,29 +197,5 @@ class DebugBarVarDumperTest extends DebugBarTestCase
         $d->resetDumperOptions(['styles' => $this->testStyles]);
         $assets = $d->getAssets();
         $this->assertStringContainsString(self::STYLE_STRING, $assets['inline_head']['html_var_dumper']);
-    }
-
-    public function testDumperOptionsExtended(): void
-    {
-        $this->markTestSkipped('Currently not supported');
-
-        // Test the actual operation of the dumper options
-        /** @phpstan-ignore deadCode.unreachable */
-        $d = new DebugBarVarDumper();
-
-        // Test that the 'expanded_depth' option affects output
-        $d->resetDumperOptions(['expanded_depth' => 123321]);
-        $out = $d->renderVar(true);
-        $this->assertStringContainsString('123321', $out);
-
-        // Test that the 'max_string' option affects output
-        $d->resetDumperOptions(['max_string' => 321123]);
-        $out = $d->renderVar(true);
-        $this->assertStringContainsString('321123', $out);
-
-        // Test that the 'file_link_format' option affects output
-        $d->resetDumperOptions(['file_link_format' => 'fmt%ftest']);
-        $out = $d->renderVar(function () {});
-        $this->assertStringContainsString('DebugBarVarDumperTest.phptest', $out);
     }
 }

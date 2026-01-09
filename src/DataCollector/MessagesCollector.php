@@ -20,7 +20,7 @@ use DebugBar\DataFormatter\HasDataFormatter;
 /**
  * Provides a way to log messages
  */
-class MessagesCollector extends AbstractLogger implements DataCollectorInterface, MessagesAggregateInterface, Renderable, AssetProvider
+class MessagesCollector extends AbstractLogger implements DataCollectorInterface, MessagesAggregateInterface, Renderable
 {
     use HasDataFormatter;
     use HasXdebugLinks;
@@ -126,19 +126,18 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
             // Send both text and HTML representations; the text version is used for searches
             $messageText = $this->getDataFormatter()->formatVar($message);
             if ($this->isHtmlVarDumperUsed()) {
-                $messageHtml = $this->getVarDumper()->renderVar($message);
+                $messageHtml = $messageText;
                 if ($this->compactDumps) {
                     $messageHtml = $this->compactMessageDump($messageHtml);
                 }
+                $messageText = strip_tags($messageHtml);
             }
             $isString = false;
         }
 
         if ($context) {
-            if ($this->isHtmlVarDumperUsed()) {
-                foreach ($context as $key => $value) {
-                    $context[$key] = $this->getVarDumper()->renderVar($value);
-                }
+            foreach ($context as $key => $value) {
+                $context[$key] = $this->getDataFormatter()->formatVar($value);
             }
         } else {
             $context = null;
@@ -252,11 +251,6 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     public function getName(): string
     {
         return $this->name;
-    }
-
-    public function getAssets(): array
-    {
-        return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : [];
     }
 
     public function getWidgets(): array

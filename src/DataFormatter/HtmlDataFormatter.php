@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace DebugBar\DataFormatter;
 
+use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataFormatter\VarDumper\DebugBarHtmlDumper;
-use Symfony\Component\VarDumper\Cloner\Data;
-use Symfony\Component\VarDumper\Cloner\VarCloner;
+use Symfony\Component\VarDumper\Dumper\CliDumper;
 
 /**
  * Clones and renders variables in HTML format using the Symfony VarDumper component.
@@ -14,12 +14,9 @@ use Symfony\Component\VarDumper\Cloner\VarCloner;
  * Cloning is decoupled from rendering, so that dumper users can have the fastest possible cloning
  * performance, while delaying rendering until it is actually needed.
  */
-class DebugBarVarDumper
+class HtmlDataFormatter extends DataFormatter implements AssetProvider
 {
-    protected static array $defaultClonerOptions = [
-        'max_string' => 10_000,
-        'max_items' => 1000,
-    ];
+    private ?DebugBarHtmlDumper $dumper = null;
 
     protected static array $defaultDumperOptions = [
         'expanded_depth' => 0,
@@ -40,51 +37,13 @@ class DebugBarVarDumper
             'ellipsis' => 'color:#A0A000',
         ],
     ];
-
-    protected ?array $clonerOptions = null;
-
     protected ?array $dumperOptions = null;
-
-    protected ?VarCloner $cloner = null;
-
-    protected ?DebugBarHtmlDumper $dumper = null;
-
-    /**
-     * Gets the VarCloner instance with configuration options set.
-     *
-     * @return VarCloner
-     */
-    protected function getCloner()
-    {
-        if (!$this->cloner) {
-            $clonerOptions = $this->getClonerOptions();
-            if (isset($clonerOptions['casters'])) {
-                $this->cloner = new VarCloner($clonerOptions['casters']);
-            } else {
-                $this->cloner = new VarCloner();
-            }
-            if (isset($clonerOptions['additional_casters'])) {
-                $this->cloner->addCasters($clonerOptions['additional_casters']);
-            }
-            if (isset($clonerOptions['max_items'])) {
-                $this->cloner->setMaxItems($clonerOptions['max_items']);
-            }
-            if (isset($clonerOptions['max_string'])) {
-                $this->cloner->setMaxString($clonerOptions['max_string']);
-            }
-            if (isset($clonerOptions['min_depth'])) {
-                $this->cloner->setMinDepth($clonerOptions['min_depth']);
-            }
-        }
-        return $this->cloner;
-    }
 
     /**
      * Gets the DebugBarHtmlDumper instance with configuration options set.
      *
-     * @return DebugBarHtmlDumper
      */
-    protected function getDumper()
+    protected function getDumper(): DebugBarHtmlDumper
     {
         if (!$this->dumper) {
             $this->dumper = new DebugBarHtmlDumper();
@@ -93,58 +52,9 @@ class DebugBarVarDumper
             if (isset($dumperOptions['styles'])) {
                 $this->dumper->setStyles($dumperOptions['styles']);
             }
+            $this->dumper->setDumpHeader('');
         }
         return $this->dumper;
-    }
-
-    /**
-     * Gets the array of non-default VarCloner configuration options.
-     *
-     */
-    public function getClonerOptions(): array
-    {
-        if ($this->clonerOptions === null) {
-            $this->clonerOptions = self::$defaultClonerOptions;
-        }
-        return $this->clonerOptions;
-    }
-
-    /**
-     * Merges an array of non-default VarCloner configuration options with the existing non-default
-     * options.
-     *
-     * Configuration options are:
-     *  - casters: a map of VarDumper Caster objects to use instead of the default casters.
-     *  - additional_casters: a map of VarDumper Caster objects to use in addition to the default
-     *    casters.
-     *  - max_items: maximum number of items to clone beyond the minimum depth.
-     *  - max_string: maximum string size
-     *  - min_depth: minimum tree depth to clone before counting items against the max_items limit.
-     *
-     */
-    public function mergeClonerOptions(array $options): void
-    {
-        $this->clonerOptions = $options + $this->getClonerOptions();
-        $this->cloner = null;
-    }
-
-    /**
-     * Resets the array of non-default VarCloner configuration options without retaining any of the
-     * existing non-default options.
-     *
-     * Configuration options are:
-     *  - casters: a map of VarDumper Caster objects to use instead of the default casters.
-     *  - additional_casters: a map of VarDumper Caster objects to use in addition to the default
-     *    casters.
-     *  - max_items: maximum number of items to clone beyond the minimum depth.
-     *  - max_string: maximum string size
-     *  - min_depth: minimum tree depth to clone before counting items against the max_items limit.
-     *
-     */
-    public function resetClonerOptions(?array $options = null): void
-    {
-        $this->clonerOptions = ($options ?: []) + self::$defaultClonerOptions;
-        $this->cloner = null;
     }
 
     /**
@@ -154,7 +64,7 @@ class DebugBarVarDumper
     public function getDumperOptions(): array
     {
         if ($this->dumperOptions === null) {
-            $this->dumperOptions = self::$defaultDumperOptions;
+            $this->dumperOptions = static::$defaultDumperOptions;
         }
         return $this->dumperOptions;
     }
@@ -194,7 +104,7 @@ class DebugBarVarDumper
      */
     public function resetDumperOptions(?array $options = null): void
     {
-        $this->dumperOptions = ($options ?: []) + self::$defaultDumperOptions;
+        $this->dumperOptions = ($options ?: []) + static::$defaultDumperOptions;
         $this->dumper = null;
     }
 
@@ -219,16 +129,6 @@ class DebugBarVarDumper
     }
 
     /**
-     * Captures and renders the data from a variable to HTML and returns it as a string.
-     *
-     *
-     */
-    public function renderVar(mixed $data): string
-    {
-        return $this->dump($this->getCloner()->cloneVar($data));
-    }
-
-    /**
      * Returns assets required for rendering variables.
      *
      */
@@ -243,20 +143,10 @@ class DebugBarVarDumper
         ];
     }
 
-    /**
-     * Helper function to dump a Data object to HTML.
-     *
-     */
-    protected function dump(Data $data): string
+    public function formatVar(mixed $data): string
     {
         $dumper = $this->getDumper();
-        $result = '';
         $dumper->setDumpHeader(''); // we don't actually want a dump header
-        $dumper->dump($data, function (string $line, int $depth, string $indentPad) use (&$result): void {
-            if (-1 !== $depth) {
-                $result .= str_repeat($indentPad, $depth) . $line . "\n";
-            }
-        }, $this->getDisplayOptions());
-        return $result;
+        return trim($dumper->dump($this->getCloner()->cloneVar($data), true, $this->getDisplayOptions()));
     }
 }
