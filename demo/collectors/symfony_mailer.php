@@ -29,7 +29,7 @@ $dispatcher->addListener(SentMessageEvent::class, function (SentMessageEvent $ev
 $mailer = new Mailer(new class ($dispatcher, $logger) extends AbstractTransport {
     protected function doSend(\Symfony\Component\Mailer\SentMessage $message): void
     {
-        $this->getLogger()->debug('Sending message "' . $message->getOriginalMessage()->getSubject() . '"');
+        $this->getLogger()->debug('Sending message "' . $message->getOriginalMessage()->getSubject() . '"', ['messagge' => $message]);
     }
     public function __toString(): string
     {

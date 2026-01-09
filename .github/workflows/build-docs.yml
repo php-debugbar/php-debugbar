@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: composer update --prefer-dist --no-progress
 
+      - name: Run Tests for Docs
+        run: vendor/bin/phpunit --filter=testDocs
+
       - name: Run build script
         run: php build/build-docs.php
 

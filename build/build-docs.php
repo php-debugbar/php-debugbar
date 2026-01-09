@@ -8,35 +8,18 @@ use DebugBar\StandardDebugBar;
 
 include __DIR__ . '/../vendor/autoload.php';
 
-$debugbar = new StandardDebugBar();
-$debugbar->addCollector(new PdoCollector());
-$debugbar->addCollector(new TemplateCollector(timeCollector: $debugbar['time']));
-$debugbar->addCollector(new HttpCollector(timeCollector: $debugbar['time']));
-$debugbar->addCollector(new SymfonyMailCollector());
+// Rquires `php vendor/bin/phpunit --filter=testDocs`
+$generatedScripts = file_get_contents(__DIR__ . '/docs/render.html');
 
-$debugbarRenderer = $debugbar->getJavascriptRenderer()
-    ->setBaseUrl('../resources')
-    ->setAjaxHandlerEnableTab(true)
-    ->setTheme('light');
-
-$debugbarRenderer->setOpenHandlerUrl('open.php');
-
-$debugbar['messages']->addMessage('Hello world', 'success');
-$debugbar['messages']->addMessage('Warning: demo version', 'warning');
-$debugbar['messages']->addMessage(['demo' => ['is_demo' => true]]);
-$debugbar['messages']->addMessage('This does not actually run on the server', 'error');
-
-require __DIR__ . '/../demo/collectors/pdo.php';
-require __DIR__ . '/../demo/collectors/http.php';
-require __DIR__ . '/../demo/collectors/symfony_mailer.php';
-require __DIR__ . '/../demo/collectors/templates.php';
-require __DIR__ . '/../demo/collectors/counter.php';
-
-
-$content = $debugbarRenderer->getAssets()['inline_head'];
-$content[] = $debugbarRenderer->render();
-
-$generatedScripts = implode("\n", $content);
+function getBetween(string $string, string $start, string $end): ?string {
+    if (preg_match('/' . preg_quote($start, '/') . '(.*?)' . preg_quote($end, '/') . '/s', $string, $matches)) {
+        return $matches[1];
+    }
+    return null;
+}
+$generatedScripts =  getBetween($generatedScripts, '<!-- DebugBar Widget Start -->', '<!-- DebugBar Widget End -->');
+// Remove first style/script
+$generatedScripts = explode('</script>', $generatedScripts, 2)[1];
 
 // Read the main.html template
 $templatePath = __DIR__ . '/../docs/overrides/main.html';

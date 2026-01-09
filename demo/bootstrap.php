@@ -68,10 +68,12 @@ function render_demo_page(?Closure $callback = null)
         <?php if ($callback) {
             $callback();
         } ?>
+        <!-- DebugBar Widget Start -->
         <?php
             echo $debugbarRenderer->renderHead();
     echo $debugbarRenderer->render();
     ?>
+        <!-- DebugBar Widget End -->
     </body>
 </html>
 <?php

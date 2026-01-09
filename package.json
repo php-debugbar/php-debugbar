@@ -15,6 +15,7 @@
     "build:sqlformatter": "esbuild build/build-sqlformatter.js --bundle --minify --format=iife --outfile=resources/vendor/sql-formatter/sql-formatter.min.js",
     "build:icons": "node build/build-icons.js",
     "build:minify": "php build/build-assets.php && node build/build-minify.js",
+    "docs": "npm run build && php vendor/bin/phpunit --filter=testDocs && php build/build-docs.php && mkdocs build",
     "lint": "eslint resources/**/*.js",
     "lint:fix": "eslint resources/**/*.js --fix",
     "lint:report": "eslint resources/**/*.js --output-file eslint-report.txt --format unix",
