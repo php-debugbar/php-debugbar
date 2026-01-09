@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace DebugBar;
 
 use DebugBar\DataCollector\AssetProvider;
+use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
 
 /**
@@ -841,6 +842,12 @@ class JavascriptRenderer
         foreach ($this->debugBar->getCollectors() as $collector) {
             if (($collector instanceof AssetProvider) && !in_array($collector->getName(), $this->ignoredCollectors)) {
                 $additionalAssets[] = $collector->getAssets();
+            }
+            if (($collector instanceof DataCollector) && !in_array($collector->getName(), $this->ignoredCollectors)) {
+                $formatter = $collector->getDataFormatter();
+                if ($formatter instanceof AssetProvider) {
+                    $additionalAssets[] = $formatter->getAssets();
+                }
             }
         }
 

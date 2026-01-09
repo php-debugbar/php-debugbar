@@ -16,7 +16,7 @@ namespace DebugBar\DataCollector;
 /**
  * Collects info about the current request
  */
-class RequestDataCollector extends DataCollector implements Renderable, AssetProvider
+class RequestDataCollector extends DataCollector implements Renderable
 {
     public function __construct()
     {
@@ -47,11 +47,7 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
             if (is_string($global)) {
                 continue;
             }
-            if ($this->isHtmlVarDumperUsed()) {
-                $data[$name] = $this->getVarDumper()->renderVar($global);
-            } else {
-                $data[$name] = $this->getDataFormatter()->formatVar($global);
-            }
+            $data[$name] = $this->getDataFormatter()->formatVar($global);
         }
 
         return [
@@ -79,11 +75,6 @@ class RequestDataCollector extends DataCollector implements Renderable, AssetPro
     public function getName(): string
     {
         return 'request';
-    }
-
-    public function getAssets(): array
-    {
-        return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : [];
     }
 
     public function getWidgets(): array

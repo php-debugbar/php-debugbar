@@ -208,7 +208,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
         $traceHtml = null;
         $trace = $e->getTrace();
         if ($trace && $this->isHtmlVarDumperUsed()) {
-            $traceHtml = $this->getVarDumper()->renderVar($this->formatTrace($trace));
+            $traceHtml = $this->getDataFormatter()->formatVar($this->formatTrace($trace));
         }
 
         return [

@@ -214,7 +214,7 @@ class DebugBar implements ArrayAccess
     }
 
     /**
-     * Set the sinfony html avr dumper globally
+     * Set the HtmlVarDumper globally
      */
     public function useHtmlVarDumper(bool $value = true): void
     {

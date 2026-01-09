@@ -41,8 +41,7 @@ class HttpCollector extends DataCollector implements Renderable, AssetProvider
 
     public function getAssets(): array
     {
-        $dumpAssets = $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : [];
-        return $dumpAssets + [
+        return [
             'js' => 'widgets/http/widget.js',
         ];
     }
@@ -51,7 +50,7 @@ class HttpCollector extends DataCollector implements Renderable, AssetProvider
     {
         $details = $this->hideMaskedValues($details);
         foreach ($details as $key => $value) {
-            $details[$key] = $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->renderVar($value) : $this->getDataFormatter()->formatVar($value);
+            $details[$key] = $this->getDataFormatter()->formatVar($value);
         }
 
         $this->requests[] = [
