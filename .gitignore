@@ -16,3 +16,4 @@ clover.xml
 /docs/overrides/__pycache__/
 /docs/assets/dist/
 /site
+/build/docs
