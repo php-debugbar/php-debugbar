@@ -6,7 +6,6 @@ namespace DebugBar\DataFormatter;
 
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataFormatter\VarDumper\DebugBarHtmlDumper;
-use Symfony\Component\VarDumper\Dumper\CliDumper;
 
 /**
  * Clones and renders variables in HTML format using the Symfony VarDumper component.
