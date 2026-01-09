@@ -21,6 +21,12 @@
         "psr/log": "^1|^2|^3",
         "symfony/var-dumper": "^5.4|^6|^7|^8"
     },
+    "suggest": {
+        "php-debugbar/doctrine-bridge": "To integrate Doctrine with php-debugbar.",
+        "php-debugbar/monolog-bridge": "To integrate Monolog with php-debugbar.",
+        "php-debugbar/symfony-bridge": "To integrate Symfony with php-debugbar.",
+        "php-debugbar/twig-bridge": "To integrate Twig with php-debugbar."
+    },
     "replace": {
         "maximebf/debugbar": "self.version"
     },
@@ -28,6 +34,10 @@
         "dbrekelmans/bdi": "^1.4",
         "friendsofphp/php-cs-fixer": "^3.92",
         "monolog/monolog": "^3.9",
+        "php-debugbar/doctrine-bridge": "^3@dev",
+        "php-debugbar/monolog-bridge": "^1@dev",
+        "php-debugbar/symfony-bridge": "^1@dev",
+        "php-debugbar/twig-bridge": "^2@dev",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpunit/phpunit": "^10",
