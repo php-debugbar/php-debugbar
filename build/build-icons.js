@@ -54,7 +54,7 @@ const icons = [
 const svgDir = path.join(__dirname, '../node_modules/@tabler/icons/icons/outline');
 const outputFile = path.join(__dirname, '../resources/icons.css');
 const defaultStrokeWidth = 2; // Tabler default stroke width
-const brandStrokeWidth = 1; // For brands, use 1
+const brandStrokeWidth = 1.5; // For brands, use 1.5
 
 function svgToDataUri(svgContent, strokeWidth) {
     // Remove XML comments

@@ -221,10 +221,12 @@ div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-private {
 
 a.phpdebugbar-restore-btn {
   float: left;
-  padding: 5px 8px;
+  padding: 4px 4px;
   font-size: 14px;
   color: var(--debugbar-icons);
   text-decoration: none;
+  width: 24px;
+  height: 24px;
 }
 
 div.phpdebugbar-resize-handle {
@@ -407,23 +409,13 @@ i.phpdebugbar-icon::before {
 
 a.phpdebugbar-close-btn,
 a.phpdebugbar-open-btn,
-a.phpdebugbar-restore-btn,
 a.phpdebugbar-minimize-btn,
 a.phpdebugbar-maximize-btn,
 a.phpdebugbar-tab.phpdebugbar-tab-history,
 a.phpdebugbar-tab.phpdebugbar-tab-settings {
   width: 16px;
   height: 22px;
-}
-
-a.phpdebugbar-close-btn,
-a.phpdebugbar-open-btn,
-a.phpdebugbar-restore-btn,
-a.phpdebugbar-minimize-btn ,
-a.phpdebugbar-maximize-btn {
-    width: 16px;
-    height: 22px;
-    position: relative;
+  position: relative;
 }
 
 a.phpdebugbar-close-btn:after,
@@ -448,8 +440,11 @@ a.phpdebugbar-maximize-btn:after {
 }
 
 a.phpdebugbar-restore-btn:after {
-  -webkit-mask-size: 20px 20px;
-  mask-size: 20px 20px;
+  -webkit-mask-size: 24px 24px;
+  mask-size: 24px 24px;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  position: relative;
 }
 
 a.phpdebugbar-minimize-btn:after {
