@@ -40,7 +40,8 @@ class DataFormatter implements DataFormatterInterface
             | Caster::EXCLUDE_DYNAMIC;
 
         if ($deep) {
-            $maxDepth = is_object($data) ? 2 : 4;
+            // Set sensible default max depth for deep dumps if not set
+            $maxDepth = $this->clonerOptions['max_depth'] ?? (is_object($data) ? 2 : 4);
         } else {
             $maxDepth = is_object($data) ? 0 : 1;
         }
