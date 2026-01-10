@@ -6,7 +6,6 @@ namespace DebugBar\Tests\DataFormatter;
 
 use DebugBar\Tests\DebugBarTestCase;
 use DebugBar\DataFormatter\DataFormatter;
-use Symfony\Component\VarDumper\Test\VarDumperTestTrait;
 
 class DataFormatterTest extends DebugBarTestCase
 {
@@ -20,43 +19,41 @@ class DataFormatterTest extends DebugBarTestCase
     {
         $f = new DataFormatter();
         $expected = <<<EOTXT
-array:1 [
-  "foo" => "bar"
-]
-EOTXT;
+            array:1 [
+              "foo" => "bar"
+            ]
+            EOTXT;
 
         $simpleArray = ['foo' => 'bar'];
         $this->assertEquals($expected, $f->formatVar($simpleArray));
         $this->assertEquals($expected, $f->formatVar($simpleArray, false));
 
         $expected = <<<EOTXT
-array:1 [
-  "foo" => array:1 [
-    "bar" => "baz"
-  ]
-]
-EOTXT;
+            array:1 [
+              "foo" => array:1 [
+                "bar" => "baz"
+              ]
+            ]
+            EOTXT;
 
-        $deeperArray = ['foo' => ['bar' =>'baz']];
+        $deeperArray = ['foo' => ['bar' => 'baz']];
         $this->assertEquals($expected, $f->formatVar($deeperArray));
 
         $expected = <<<EOTXT
-array:1 [
-  "foo" => array:1 [ …1]
-]
-EOTXT;
+            array:1 [
+              "foo" => array:1 [ …1]
+            ]
+            EOTXT;
         $this->assertEquals($expected, $f->formatVar($deeperArray, false));
 
         $f->mergeClonerOptions(['max_depth' => 0]);
         $expected = <<<EOTXT
-array:1 [ …1]
-EOTXT;
+            array:1 [ …1]
+            EOTXT;
         $this->assertEquals($expected, $f->formatVar($deeperArray));
         $this->assertEquals($expected, $f->formatVar($deeperArray, false));
 
     }
-
-
 
     public function testFormatDuration(): void
     {

@@ -43,7 +43,7 @@ class DataFormatter implements DataFormatterInterface
             // Set sensible default max depth for deep dumps if not set
             $maxDepth = $this->clonerOptions['max_depth'] ?? (is_object($data) ? 2 : 4);
         } else {
-            $maxDepth = min($this->clonerOptions['max_depth'] ?? 1,  is_object($data) ? 0 : 1);
+            $maxDepth = min($this->clonerOptions['max_depth'] ?? 1, is_object($data) ? 0 : 1);
         }
 
         $cloner = $this->getCloner();
