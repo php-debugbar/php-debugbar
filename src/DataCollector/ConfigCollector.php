@@ -25,7 +25,7 @@ class ConfigCollector extends DataCollector implements Renderable
     public function __construct(array $data = [], string $name = 'config')
     {
         $this->name = $name;
-        $this->data = $data;
+        $this->setData($data);
     }
 
     /**
@@ -33,19 +33,18 @@ class ConfigCollector extends DataCollector implements Renderable
      */
     public function setData(array $data): void
     {
-        $this->data = $data;
+        $this->data = [];
+        foreach ($data as $k => $v) {
+            if (!is_string($v)) {
+                $v = $this->getDataFormatter()->formatVar($v);
+            }
+            $this->data[$k] = $v;
+        }
     }
 
     public function collect(): array
     {
-        $data = [];
-        foreach ($this->data as $k => $v) {
-            if (!is_string($v)) {
-                $v = $this->getDataFormatter()->formatVar($v);
-            }
-            $data[$k] = $v;
-        }
-        return $data;
+        return $this->data;
     }
 
     public function getName(): string

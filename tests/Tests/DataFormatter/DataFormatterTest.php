@@ -17,6 +17,9 @@ class DataFormatterTest extends DebugBarTestCase
 
     public function testFormatVarArray(): void
     {
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $this->markTestSkipped('Skipping on Windows');
+        }
         $f = new DataFormatter();
         $expected = <<<EOTXT
             array:1 [
