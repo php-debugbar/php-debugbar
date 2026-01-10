@@ -52,6 +52,8 @@ EOTXT;
 array:1 [ …1]
 EOTXT;
         $this->assertEquals($expected, $f->formatVar($deeperArray));
+        $this->assertEquals($expected, $f->formatVar($deeperArray, false));
+
     }
 
 
