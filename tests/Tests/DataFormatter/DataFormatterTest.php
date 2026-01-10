@@ -15,6 +15,46 @@ class DataFormatterTest extends DebugBarTestCase
         $this->assertEquals("true", $f->formatVar(true));
     }
 
+    public function testFormatVarArray(): void
+    {
+        $f = new DataFormatter();
+        $expected = <<<EOTXT
+            array:1 [
+              "foo" => "bar"
+            ]
+            EOTXT;
+
+        $simpleArray = ['foo' => 'bar'];
+        $this->assertEquals($expected, $f->formatVar($simpleArray));
+        $this->assertEquals($expected, $f->formatVar($simpleArray, false));
+
+        $expected = <<<EOTXT
+            array:1 [
+              "foo" => array:1 [
+                "bar" => "baz"
+              ]
+            ]
+            EOTXT;
+
+        $deeperArray = ['foo' => ['bar' => 'baz']];
+        $this->assertEquals($expected, $f->formatVar($deeperArray));
+
+        $expected = <<<EOTXT
+            array:1 [
+              "foo" => array:1 [ …1]
+            ]
+            EOTXT;
+        $this->assertEquals($expected, $f->formatVar($deeperArray, false));
+
+        $f->mergeClonerOptions(['max_depth' => 0]);
+        $expected = <<<EOTXT
+            array:1 [ …1]
+            EOTXT;
+        $this->assertEquals($expected, $f->formatVar($deeperArray));
+        $this->assertEquals($expected, $f->formatVar($deeperArray, false));
+
+    }
+
     public function testFormatDuration(): void
     {
         $f = new DataFormatter();
