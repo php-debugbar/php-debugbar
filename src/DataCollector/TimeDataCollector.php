@@ -120,7 +120,7 @@ class TimeDataCollector extends DataCollector implements Renderable
             'duration_str' => $this->getDataFormatter()->formatDuration($end - $start),
             'memory' => $memory ?? 0,
             'memory_str' => $this->getDataFormatter()->formatBytes($memory ?? 0),
-            'params' => $params,
+            'params' => array_map([$this->getDataFormatter(), 'formatVar'], $params),
             'collector' => $collector,
             'group' => $group,
         ];
