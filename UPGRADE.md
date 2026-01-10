@@ -24,6 +24,8 @@ This makes it easier to updates these collectors for specific versions.
 ### Breaking changes to methods
 - getAssets() removed the `$type` parameter and always returns all assets.
 - OpenHandler requires the `op` parameter to be always set.
+- useHtmlVarDumper is removed. The HtmlDataFormatter is used by default. To use plain-text, the the default formatter to DataFormatter.
+- The DataFormatterInterface has a 2nd 'deep' parameter to formatVar.
 
 ### Other changes
  - Storage now uses json instead of serialize, so old data cannot be read.

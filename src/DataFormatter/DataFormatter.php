@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace DebugBar\DataFormatter;
 
+use Symfony\Component\VarDumper\Caster\Caster;
+use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
@@ -28,16 +30,35 @@ class DataFormatter implements DataFormatterInterface
 
     protected ?VarCloner $cloner = null;
 
-    private ?CliDumper $dumper = null;
+    protected ?DataDumperInterface $dumper = null;
 
-    public function formatVar(mixed $data): string
+    public function formatVar(mixed $data, bool $deep = true): string
     {
-        $output = $this->getDumper()->dump( // @phpstan-ignore arguments.count
-            $this->getCloner()->cloneVar($data),
-            true
-        );
+        $filter
+            = Caster::EXCLUDE_PRIVATE
+            | Caster::EXCLUDE_PROTECTED
+            | Caster::EXCLUDE_DYNAMIC;
 
-        return trim($output);
+        if ($deep) {
+            $maxDepth = is_object($data) ? 2 : 4;
+        } else {
+            $maxDepth = is_object($data) ? 0 : 1;
+        }
+
+        $cloner = $this->getCloner();
+        $data = $cloner->cloneVar($data, $filter)->withMaxDepth($maxDepth);
+
+        return trim($this->dumpClonedVar($data));
+    }
+
+    protected function dumpClonedVar(Data $data): string
+    {
+        $dumper = $this->getDumper();
+        if ($dumper instanceof CliDumper) {
+            return $dumper->dump($data, true);
+        }
+        return $dumper->dump($data);
+
     }
 
     public function formatDuration(float|int $seconds): string

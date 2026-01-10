@@ -22,7 +22,7 @@ interface DataFormatterInterface
      * Transforms a PHP variable to a string representation
      *
      */
-    public function formatVar(mixed $data): string;
+    public function formatVar(mixed $data, bool $deep = true): string;
 
     /**
      * Transforms a duration in seconds in a readable string

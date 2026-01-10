@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace DebugBar\DataCollector;
 
-use DebugBar\DataFormatter\SimpleFormatter;
-
 class TemplateCollector extends DataCollector implements Renderable, AssetProvider
 {
     protected string $name;
@@ -22,7 +20,6 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
      */
     public function __construct(bool|string $collectData = true, array $excludePaths = [], int|bool $group = true, ?TimeDataCollector $timeCollector = null)
     {
-        $this->setDataFormatter(new SimpleFormatter());
         $this->collect_data = $collectData;
         $this->templates = [];
         $this->exclude_paths = $excludePaths;
@@ -69,7 +66,7 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
             $params = array_keys($data);
         } elseif ($this->collect_data) {
             $params = array_map(
-                fn($value) => $this->getDataFormatter()->formatVar($value),
+                fn($value) => $this->getDataFormatter()->formatVar($value, false),
                 $data,
             );
         } else {
