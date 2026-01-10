@@ -34,10 +34,10 @@ class DataFormatter implements DataFormatterInterface
 
     public function formatVar(mixed $data, bool $deep = true): string
     {
-        $filter =
-            Caster::EXCLUDE_PRIVATE |
-            Caster::EXCLUDE_PROTECTED |
-            Caster::EXCLUDE_DYNAMIC;
+        $filter
+            = Caster::EXCLUDE_PRIVATE
+            | Caster::EXCLUDE_PROTECTED
+            | Caster::EXCLUDE_DYNAMIC;
 
         if ($deep) {
             $maxDepth = is_object($data) ? 2 : 4;
@@ -56,9 +56,9 @@ class DataFormatter implements DataFormatterInterface
         $dumper = $this->getDumper();
         if ($dumper instanceof CliDumper) {
             return $dumper->dump($data, true);
-        } else {
-            return $dumper->dump($data);
         }
+        return $dumper->dump($data);
+
     }
 
     public function formatDuration(float|int $seconds): string
