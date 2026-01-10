@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DebugBar\Tests\DataCollector;
 
+use DebugBar\DataFormatter\DataFormatter;
 use DebugBar\Tests\DebugBarTestCase;
 use DebugBar\DataCollector\TimeDataCollector;
 
@@ -16,6 +17,7 @@ class TimeDataCollectorTest extends DebugBarTestCase
     {
         $this->s = microtime(true);
         $this->c = new TimeDataCollector($this->s);
+        $this->c->setDataFormatter(new DataFormatter());
     }
 
     public function testAddMeasure(): void
@@ -25,7 +27,7 @@ class TimeDataCollectorTest extends DebugBarTestCase
         $this->assertCount(1, $m);
         $this->assertEquals('foo', $m[0]['label']);
         $this->assertEquals(10, $m[0]['duration']);
-        $this->assertEquals(['a' => 'b'], $m[0]['params']);
+        $this->assertEquals(['a' => '"b"'], $m[0]['params']);
         $this->assertEquals('timer', $m[0]['collector']);
     }
 
@@ -38,7 +40,7 @@ class TimeDataCollectorTest extends DebugBarTestCase
         $this->assertCount(1, $m);
         $this->assertEquals('bar', $m[0]['label']);
         $this->assertEquals('baz', $m[0]['collector']);
-        $this->assertEquals(['bar' => 'baz'], $m[0]['params']);
+        $this->assertEquals(['bar' => '"baz"'], $m[0]['params']);
         $this->assertLessThan($m[0]['end'], $m[0]['start']);
     }
 
