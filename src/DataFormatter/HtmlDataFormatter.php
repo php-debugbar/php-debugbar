@@ -6,6 +6,9 @@ namespace DebugBar\DataFormatter;
 
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataFormatter\VarDumper\DebugBarHtmlDumper;
+use Symfony\Component\VarDumper\Cloner\Data;
+use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
+use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 
 /**
  * Clones and renders variables in HTML format using the Symfony VarDumper component.
@@ -15,10 +18,8 @@ use DebugBar\DataFormatter\VarDumper\DebugBarHtmlDumper;
  */
 class HtmlDataFormatter extends DataFormatter implements AssetProvider
 {
-    private ?DebugBarHtmlDumper $dumper = null;
-
     protected static array $defaultDumperOptions = [
-        'expanded_depth' => 0,
+        'expanded_depth' => 1,
         'styles' => [
             // NOTE:  'default' CSS is also specified in debugbar.css
             'default' => 'word-wrap: break-word; white-space: pre-wrap; word-break: normal',
@@ -38,11 +39,21 @@ class HtmlDataFormatter extends DataFormatter implements AssetProvider
     ];
     protected ?array $dumperOptions = null;
 
+    protected function dumpClonedVar(Data $data): string
+    {
+        $dumper = $this->getDumper();
+        if ($dumper instanceof HtmlDumper) {
+            $dumper->setDumpHeader('');
+            return $dumper->dump($data, true, $this->getDisplayOptions());
+        } else {
+            return parent::dumpClonedVar($data);
+        }
+    }
     /**
      * Gets the DebugBarHtmlDumper instance with configuration options set.
      *
      */
-    protected function getDumper(): DebugBarHtmlDumper
+    protected function getDumper(): DataDumperInterface
     {
         if (!$this->dumper) {
             $this->dumper = new DebugBarHtmlDumper();
@@ -134,18 +145,15 @@ class HtmlDataFormatter extends DataFormatter implements AssetProvider
     public function getAssets(): array
     {
         $dumper = $this->getDumper();
-        $dumper->resetDumpHeader(); // this will cause the default dump header to regenerate
-        return [
-            'inline_head' => [
-                'html_var_dumper' => $dumper->getDumpHeaderByDebugBar(),
-            ],
-        ];
-    }
+        if ($dumper instanceof DebugBarHtmlDumper) {
+            $dumper->resetDumpHeader(); // this will cause the default dump header to regenerate
+            return [
+                'inline_head' => [
+                    'html_var_dumper' => $dumper->getDumpHeaderByDebugBar(),
+                ],
+            ];
+        }
 
-    public function formatVar(mixed $data): string
-    {
-        $dumper = $this->getDumper();
-        $dumper->setDumpHeader(''); // we don't actually want a dump header
-        return trim($dumper->dump($this->getCloner()->cloneVar($data), true, $this->getDisplayOptions()));
+        return [];
     }
 }

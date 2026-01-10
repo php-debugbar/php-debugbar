@@ -80,7 +80,7 @@ class HtmlDataFormatterTest extends DebugBarTestCase
         $this->assertArrayHasKey('styles', $options);
         $this->assertArrayHasKey('const', $options['styles']);
         $this->assertArrayHasKey('expanded_depth', $options);
-        $this->assertEquals(0, $options['expanded_depth']);
+        $this->assertEquals(1, $options['expanded_depth']);
         $this->assertCount(2, $options);
 
         $d->mergeDumperOptions([
@@ -93,7 +93,7 @@ class HtmlDataFormatterTest extends DebugBarTestCase
         $this->assertEquals([
             'max_string' => 7,
             'styles' => $this->testStyles,
-            'expanded_depth' => 0,
+            'expanded_depth' => 1,
         ], $options);
 
         $d->resetDumperOptions([
@@ -102,7 +102,7 @@ class HtmlDataFormatterTest extends DebugBarTestCase
         $options = $d->getDumperOptions();
         $this->assertEquals([
             'styles' => $this->testStyles,
-            'expanded_depth' => 0,
+            'expanded_depth' => 1,
         ], $options);
     }
 

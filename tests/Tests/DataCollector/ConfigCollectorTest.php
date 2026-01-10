@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace DebugBar\Tests\DataCollector;
 
+use DebugBar\DataFormatter\DataFormatter;
+use DebugBar\DataFormatter\HtmlDataFormatter;
 use DebugBar\Tests\DebugBarTestCase;
 use DebugBar\DataCollector\ConfigCollector;
 
@@ -12,7 +14,7 @@ class ConfigCollectorTest extends DebugBarTestCase
     public function testCollect(): void
     {
         $c = new ConfigCollector(['s' => 'bar', 'a' => [], 'o' => new \stdClass()]);
-        $c->useHtmlVarDumper(false);
+        $c->setDataFormatter(new DataFormatter());
 
         $data = $c->collect();
         $this->assertArrayHasKey('s', $data);
@@ -30,8 +32,8 @@ class ConfigCollectorTest extends DebugBarTestCase
     public function testHtmlRendering(): void
     {
         $c = new ConfigCollector(['k' => ['one', 'two']]);
+        $c->setDataFormatter(new HtmlDataFormatter());
 
-        $c->useHtmlVarDumper();
         $data = $c->collect();
         $this->assertEquals(['k'], array_keys($data));
         $this->assertStringContainsString("sf-dump", $data['k']);

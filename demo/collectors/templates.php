@@ -9,5 +9,5 @@ use DebugBar\DataCollector\TemplateCollector;
 /** @var TemplateCollector $templateCollector */
 $templateCollector = $debugbar['templates'];
 
-$templateCollector->addTemplate('index.php', ['foo' => 'bar'], 'php', __FILE__);
+$templateCollector->addTemplate('index.php', ['foo' => 'bar', 'items' => [ 'a' => 1, 'b' => 2]], 'php', __FILE__);
 $templateCollector->addTemplate('docs.php', ['demo' => 'true'], 'php', __FILE__);

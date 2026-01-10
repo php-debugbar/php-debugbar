@@ -214,20 +214,6 @@ class DebugBar implements ArrayAccess
     }
 
     /**
-     * Set the HtmlVarDumper globally
-     */
-    public function useHtmlVarDumper(bool $value = true): void
-    {
-        $this->useHtmlVarDumper = $value;
-
-        foreach ($this->collectors as $collector) {
-            if (method_exists($collector, 'useHtmlVarDumper')) {
-                $collector->useHtmlVarDumper($this->useHtmlVarDumper);
-            }
-        }
-    }
-
-    /**
      * Collects the data from the collectors
      *
      */

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace DebugBar\Tests\DataCollector;
 
+use DebugBar\DataFormatter\DataFormatter;
+use DebugBar\DataFormatter\HtmlDataFormatter;
 use DebugBar\Tests\DebugBarTestCase;
 use DebugBar\DataCollector\MessagesCollector;
 
@@ -46,7 +48,8 @@ class MessagesCollectorTest extends DebugBarTestCase
         $var = ['one', 'two'];
 
         $c = new MessagesCollector();
-        $c->useHtmlVarDumper(false);
+        $c->setDataFormatter(new DataFormatter());
+
         $this->assertFalse($c->isHtmlVarDumperUsed());
         $c->addMessage($var);
         $data = $c->collect();
@@ -58,7 +61,8 @@ class MessagesCollectorTest extends DebugBarTestCase
         $this->assertNull($data['messages'][0]['message_html']);
 
         $c = new MessagesCollector();
-        $c->useHtmlVarDumper();
+        $c->setDataFormatter(new HtmlDataFormatter());
+
         $this->assertTrue($c->isHtmlVarDumperUsed());
         $c->addMessage($var);
         $data = $c->collect();

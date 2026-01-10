@@ -20,30 +20,13 @@ trait HasDataFormatter
     protected ?DataFormatterInterface $dataFormatter = null;
 
     /**
-     * Sets a flag indicating whether the Symfony HtmlDumper will be used to dump variables for
-     * rich variable rendering.
-     *
-     *
-     * @return $this
-     */
-    public function useHtmlVarDumper(bool $value = true): static
-    {
-        if ($value) {
-            $this->setDataFormatter(new HtmlDataFormatter());
-        } else {
-            $this->setDataFormatter($this->getDefaultDataFormatter());
-        }
-        return $this;
-    }
-
-    /**
      * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
      * rendering.
      *
      */
     public function isHtmlVarDumperUsed(): bool
     {
-        return $this->getDataFormatter() instanceof HtmlDataFormatter;
+        return $this->dataFormatter instanceof HtmlDataFormatter;
     }
 
     /**
@@ -62,7 +45,7 @@ trait HasDataFormatter
     public static function getDefaultDataFormatter(): DataFormatterInterface
     {
         if (DataCollector::$defaultDataFormatter === null) {
-            DataCollector::$defaultDataFormatter = new DataFormatter();
+            DataCollector::$defaultDataFormatter = new HtmlDataFormatter();
         }
         return DataCollector::$defaultDataFormatter;
     }
