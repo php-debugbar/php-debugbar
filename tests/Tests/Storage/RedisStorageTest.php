@@ -21,6 +21,9 @@ class RedisStorageTest extends DebugBarTestCase
     {
         parent::setUp();
 
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $this->markTestSkipped('Skipping on Windows');
+        }
         /** @var MockObject&\Redis $redis */
         $redis = $this->createMock(\Redis::class);
         $this->redis = $redis;
