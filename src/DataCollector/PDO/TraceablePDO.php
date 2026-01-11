@@ -91,12 +91,10 @@ class TraceablePDO extends PDO
      *
      * @link   http://php.net/manual/en/pdo.exec.php
      *
-     * @param string $statement
-     *
      * @return int|false PDO::exec returns the number of rows that were modified or deleted by the
-     *                  SQL statement you issued. If no rows were affected, PDO::exec returns 0. This function may
-     *                  return Boolean FALSE, but may also return a non-Boolean value which evaluates to FALSE.
-     *                  Please read the section on Booleans for more information
+     *                   SQL statement you issued. If no rows were affected, PDO::exec returns 0. This function may
+     *                   return Boolean FALSE, but may also return a non-Boolean value which evaluates to FALSE.
+     *                   Please read the section on Booleans for more information
      */
     #[\ReturnTypeWillChange]
     public function exec(string $statement): int|false
@@ -158,8 +156,8 @@ class TraceablePDO extends PDO
      *                               set attribute values for the PDOStatement object that this method returns.
      *
      * @return TraceablePDOStatement|false If the database server successfully prepares the statement,
-     *                                    PDO::prepare returns a PDOStatement object. If the database server cannot successfully prepare
-     *                                    the statement, PDO::prepare returns FALSE or emits PDOException (depending on error handling).
+     *                                     PDO::prepare returns a PDOStatement object. If the database server cannot successfully prepare
+     *                                     the statement, PDO::prepare returns FALSE or emits PDOException (depending on error handling).
      */
     #[\ReturnTypeWillChange]
     public function prepare(string $statement, $driver_options = []): TraceablePDOStatement|bool
@@ -194,7 +192,7 @@ class TraceablePDO extends PDO
      *                               alternate quoting styles.
      *
      * @return string|false A quoted string that is theoretically safe to pass into an SQL statement.
-     *                     Returns FALSE if the driver does not support quoting in this way.
+     *                      Returns FALSE if the driver does not support quoting in this way.
      */
     #[\ReturnTypeWillChange]
     public function quote($string, $parameter_type = PDO::PARAM_STR): string|false

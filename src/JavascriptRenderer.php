@@ -787,7 +787,7 @@ class JavascriptRenderer
      *
      * @return $this
      */
-    public function addInlineAssets(array|string $inlineCss, array|string $inlineJs, array|string $inlineHead)
+    public function addInlineAssets(array|string $inlineCss, array|string $inlineJs, array|string $inlineHead): static
     {
         $this->additionalAssets[] = [
             'inline_css' => is_string($inlineCss) ? [$inlineCss] : $inlineCss,
