@@ -57,7 +57,7 @@ class PdoStorage extends AbstractStorage
             $meta['datetime'],
             $meta['uri'],
             $meta['ip'],
-            $meta['method']
+            $meta['method'],
         ]);
 
         $this->autoPrune();

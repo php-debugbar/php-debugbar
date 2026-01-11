@@ -9,7 +9,6 @@ abstract class AbstractStorage implements StorageInterface
     protected int|false $autoPrune = 24;
     protected int $autoPruneProbability = 5;
 
-
     public function setAutoPrune(int|false $autoPrune, ?int $autoPruneProbability = null): void
     {
         $this->autoPrune = $autoPrune;

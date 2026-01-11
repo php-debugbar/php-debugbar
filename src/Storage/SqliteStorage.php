@@ -24,11 +24,8 @@ use PDO;
 class SqliteStorage extends PdoStorage
 {
     /**
-     * @param string $filepath Path to the SQLite database file
+     * @param string $filepath  Path to the SQLite database file
      * @param string $tableName Name of the table to store data
-     * @param int    $gcLimit Maximum number of entries before garbage collection
-     * @param int    $gcProbability Probability of garbage collection (0-100)
-     * @param int    $gcLifetime Lifetime of entries in seconds (default: 24 hours)
      */
     public function __construct(
         string $filepath,
