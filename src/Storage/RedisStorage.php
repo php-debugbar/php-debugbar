@@ -2,34 +2,38 @@
 
 declare(strict_types=1);
 
-/*
- * This file is part of the DebugBar package.
- *
- * (c) 2013 Maxime Bouroumeau-Fuseau
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace DebugBar\Storage;
 
-/**
- * Stores collected data into Redis
- */
 class RedisStorage extends AbstractStorage
 {
-    protected \Predis\Client|\Redis|\RedisCluster|null $redis = null;
+    protected \Predis\Client|\Redis|\RedisCluster $redis;
 
-    /** @var string */
-    protected $hash;
+    protected string $hash;
 
-    /**
-     * @param \Predis\Client|\Redis $redis Redis Client
-     */
     public function __construct(\Predis\Client|\Redis|\RedisCluster $redis, string $hash = 'phpdebugbar')
     {
         $this->redis = $redis;
         $this->hash = $hash;
+    }
+
+    public function getExpiration(): ?int
+    {
+        return $this->autoPrune ? $this->autoPruneProbability * 3600 : null;
+    }
+
+    private function entryKey(string $id): string
+    {
+        return "{$this->hash}:entry:{$id}";
+    }
+
+    private function idxKey(): string
+    {
+        return "{$this->hash}:idx:utime";
+    }
+
+    private function isPhpRedis(): bool
+    {
+        return $this->redis instanceof \Redis || $this->redis instanceof \RedisCluster;
     }
 
     /**
@@ -37,9 +41,35 @@ class RedisStorage extends AbstractStorage
      */
     public function save(string $id, array $data): void
     {
-        $this->redis->hSet("$this->hash:meta", $id, json_encode($data['__meta']));
+        $meta = $data['__meta'] ?? [];
         unset($data['__meta']);
-        $this->redis->hSet("$this->hash:data", $id, json_encode($data));
+
+        $utime = $meta['utime'] ?? microtime(true);
+
+        $entryKey = $this->entryKey($id);
+        $metaJson = json_encode($meta);
+        $dataJson = json_encode($data);
+
+        if ($this->isPhpRedis()) {
+            /** @var \Redis|\RedisCluster $r */
+            $r = $this->redis;
+            $r->multi(\Redis::PIPELINE)
+                ->hMSet($entryKey, ['meta' => $metaJson, 'data' => $dataJson]);
+            if ($expiration = $this->getExpiration()) {
+                $r->expire($entryKey, $expiration);
+            }
+            $r->zAdd($this->idxKey(), (float) $utime, $id)
+                ->exec();
+            return;
+        }
+
+        /** @var \Predis\Client $r */
+        $r = $this->redis;
+        $r->hmset($entryKey, ['meta' => $metaJson, 'data' => $dataJson]);
+        if ($expiration = $this->getExpiration()) {
+            $r->expire($entryKey, $expiration);
+        }
+        $r->zadd($this->idxKey(), [$id => (float) $utime]);
     }
 
     /**
@@ -47,10 +77,28 @@ class RedisStorage extends AbstractStorage
      */
     public function get(string $id): array
     {
-        return array_merge(
-            json_decode($this->redis->hGet("$this->hash:data", $id), true) ?: [],
-            ['__meta' => json_decode($this->redis->hGet("$this->hash:meta", $id), true)],
-        );
+        $entryKey = $this->entryKey($id);
+
+        if ($this->isPhpRedis()) {
+            /** @var \Redis|\RedisCluster $r */
+            $r = $this->redis;
+            $res = $r->hMGet($entryKey, ['meta', 'data']);
+            $metaJson = $res['meta'] ?? null;
+            $dataJson = $res['data'] ?? null;
+        } else {
+            /** @var \Predis\Client $r */
+            $r = $this->redis;
+            $res = $r->hmget($entryKey, ['meta', 'data']);
+            $metaJson = $res[0] ?? null;
+            $dataJson = $res[1] ?? null;
+        }
+
+        $data = is_string($dataJson) ? (json_decode($dataJson, true) ?: []) : [];
+        $meta = is_string($metaJson) ? json_decode($metaJson, true) : null;
+
+        $data['__meta'] = $meta;
+
+        return $data;
     }
 
     /**
@@ -58,34 +106,44 @@ class RedisStorage extends AbstractStorage
      */
     public function find(array $filters = [], int $max = 20, int $offset = 0): array
     {
-        $results = [];
-        $isPhpRedis = get_class($this->redis) === 'Redis' || get_class($this->redis) === 'RedisCluster';
-        $cursor = match (true) {
-            $isPhpRedis && version_compare(phpversion('redis'), '6.1.0', '>=') => null,
-            default => '0',
-        };
+        $need = $offset + $max;
+        $batch = max(50, $need * 2);
 
-        do {
-            if ($isPhpRedis) {
-                $data = $this->redis->hScan("$this->hash:meta", $cursor);
-            } else {
-                [$cursor, $data] = $this->redis->hScan("$this->hash:meta", $cursor);
+        $collected = [];
+        $start = 0;
+
+        while (count($collected) < $need) {
+            $ids = $this->zRevRange($this->idxKey(), $start, $start + $batch - 1);
+            if (!$ids) {
+                break;
             }
 
-            foreach ($data as $meta) {
-                if ($meta = json_decode($meta, true)) {
-                    if ($this->filter($meta, $filters)) {
-                        $results[] = $meta;
+            // Fetch meta for candidates (pipeline), filter, and lazily clean stale ids.
+            $missingIds = [];
+            $metaJsonById = $this->pipelineHGetField($ids, 'meta', $missingIds);
+
+            if ($missingIds) {
+                $this->zRemMembers($this->idxKey(), $missingIds);
+            }
+
+            foreach ($metaJsonById as $id => $metaJson) {
+                $meta = json_decode($metaJson, true);
+                if (!is_array($meta)) {
+                    continue;
+                }
+                if ($this->filter($meta, $filters)) {
+                    $collected[] = $meta;
+                    if (count($collected) >= $need) {
+                        break;
                     }
                 }
             }
-        } while ($cursor);
 
-        usort($results, static function ($a, $b) {
-            return $b['utime'] <=> $a['utime'];
-        });
+            $start += $batch;
+        }
 
-        return array_slice($results, $offset, $max);
+        // Already sorted by utime desc thanks to ZREVRANGE
+        return array_slice($collected, $offset, $max);
     }
 
     /**
@@ -94,7 +152,7 @@ class RedisStorage extends AbstractStorage
     protected function filter(array $meta, array $filters): bool
     {
         foreach ($filters as $key => $value) {
-            if (!isset($meta[$key]) || fnmatch($value, $meta[$key]) === false) {
+            if (!isset($meta[$key]) || fnmatch((string) $value, (string) $meta[$key]) === false) {
                 return false;
             }
         }
@@ -106,8 +164,41 @@ class RedisStorage extends AbstractStorage
      */
     public function clear(): void
     {
-        $this->redis->del("$this->hash:data");
-        $this->redis->del("$this->hash:meta");
+        // Always clear the index.
+        $this->redis->del($this->idxKey());
+
+        // Best-effort delete entry keys (works well on non-cluster Redis; on RedisCluster keys will expire anyway).
+        if ($this->isPhpRedis()) {
+            /** @var \Redis|\RedisCluster $r */
+            $r = $this->redis;
+
+            // RedisCluster pattern scan across nodes is non-trivial; do not attempt here.
+            if ($r instanceof \RedisCluster) {
+                return;
+            }
+
+            $it = null;
+            do {
+                $keys = $r->scan($it, "{$this->hash}:entry:*", 1000);
+                if (is_array($keys) && $keys) {
+                    $r->multi(\Redis::PIPELINE)->del(...$keys)->exec();
+                }
+            } while ($it !== 0 && $it !== null);
+
+            return;
+        }
+
+        /** @var \Predis\Client $r */
+        $r = $this->redis;
+        $cursor = '0';
+        do {
+            $resp = $r->scan($cursor, ['match' => "{$this->hash}:entry:*", 'count' => 1000]);
+            $cursor = (string) ($resp[0] ?? '0');
+            $keys = $resp[1] ?? [];
+            if ($keys) {
+                $r->del($keys);
+            }
+        } while ($cursor !== '0');
     }
 
     /**
@@ -115,36 +206,161 @@ class RedisStorage extends AbstractStorage
      */
     public function prune(int $hours = 24): void
     {
-        $cutoffTime = microtime(true) - $hours * 3600;
+        $cutoff = microtime(true) - ($hours * 3600);
 
-        $isPhpRedis = get_class($this->redis) === 'Redis' || get_class($this->redis) === 'RedisCluster';
-        $cursor = match (true) {
-            $isPhpRedis && version_compare(phpversion('redis'), '6.1.0', '>=') => null,
-            default => '0',
-        };
-
-        $idsToDelete = [];
-
-        do {
-            if ($isPhpRedis) {
-                $data = $this->redis->hScan("$this->hash:meta", $cursor);
-            } else {
-                [$cursor, $data] = $this->redis->hScan("$this->hash:meta", $cursor);
-            }
-
-            foreach ($data as $id => $metaJson) {
-                if ($meta = json_decode($metaJson, true)) {
-                    if (isset($meta['utime']) && $meta['utime'] < $cutoffTime) {
-                        $idsToDelete[] = $id;
-                    }
-                }
-            }
-        } while ($cursor);
-
-        // Delete old entries
-        foreach ($idsToDelete as $id) {
-            $this->redis->hDel("$this->hash:meta", $id);
-            $this->redis->hDel("$this->hash:data", $id);
+        // Find ids older than cutoff via index.
+        $oldIds = $this->zRangeByScore($this->idxKey(), '-inf', (string) $cutoff);
+        if (!$oldIds) {
+            return;
         }
+
+        $entryKeys = array_map(fn($id) => $this->entryKey((string) $id), $oldIds);
+
+        if ($this->isPhpRedis()) {
+            /** @var \Redis|\RedisCluster $r */
+            $r = $this->redis;
+
+            $pipe = $r->multi(\Redis::PIPELINE);
+            if ($entryKeys) {
+                $pipe->del(...$entryKeys);
+            }
+            $pipe->zRem($this->idxKey(), ...array_map('strval', $oldIds));
+            $pipe->exec();
+
+            return;
+        }
+
+        /** @var \Predis\Client $r */
+        $r = $this->redis;
+        $r->pipeline(function ($pipe) use ($entryKeys, $oldIds) {
+            if ($entryKeys) {
+                $pipe->del($entryKeys);
+            }
+            $pipe->zrem($this->idxKey(), $oldIds);
+        });
+    }
+
+    // ------------------------
+    // Redis compatibility helpers
+    // ------------------------
+
+    /**
+     * @return list<string>
+     */
+    private function zRevRange(string $key, int $start, int $stop): array
+    {
+        if ($this->isPhpRedis()) {
+            /** @var \Redis|\RedisCluster $r */
+            $r = $this->redis;
+            $ids = $r->zRevRange($key, $start, $stop);
+        } else {
+            /** @var \Predis\Client $r */
+            $r = $this->redis;
+            $ids = $r->zrevrange($key, $start, $stop);
+        }
+
+        if (!is_array($ids) || $ids === []) {
+            return [];
+        }
+
+        return array_values(array_map('strval', $ids));
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function zRangeByScore(string $key, string $min, string $max): array
+    {
+        if ($this->isPhpRedis()) {
+            /** @var \Redis|\RedisCluster $r */
+            $r = $this->redis;
+            $ids = $r->zRangeByScore($key, $min, $max);
+        } else {
+            /** @var \Predis\Client $r */
+            $r = $this->redis;
+            $ids = $r->zrangebyscore($key, $min, $max);
+        }
+
+        if (!is_array($ids) || $ids === []) {
+            return [];
+        }
+
+        return array_values(array_map('strval', $ids));
+    }
+
+    /**
+     * @param list<string> $members
+     */
+    private function zRemMembers(string $key, array $members): void
+    {
+        if (!$members) {
+            return;
+        }
+
+        if ($this->isPhpRedis()) {
+            /** @var \Redis|\RedisCluster $r */
+            $r = $this->redis;
+            $r->zRem($key, ...$members);
+            return;
+        }
+
+        /** @var \Predis\Client $r */
+        $r = $this->redis;
+        $r->zrem($key, $members);
+    }
+
+    /**
+     * Pipeline HGET field for a list of ids; returns map id => fieldValue (string).
+     *
+     * @param list<string> $ids
+     * @param list<string> $missingIds (output)
+     * @return array<string, string>
+     */
+    private function pipelineHGetField(array $ids, string $field, array &$missingIds): array
+    {
+        $missingIds = [];
+
+        if ($this->isPhpRedis()) {
+            /** @var \Redis|\RedisCluster $r */
+            $r = $this->redis;
+
+            $pipe = $r->multi(\Redis::PIPELINE);
+            foreach ($ids as $id) {
+                $pipe->hGet($this->entryKey($id), $field);
+            }
+            $vals = $pipe->exec();
+
+            $out = [];
+            foreach ($ids as $i => $id) {
+                $val = $vals[$i] ?? null;
+                if (!is_string($val) || $val === '') {
+                    $missingIds[] = $id; // entry expired or missing field
+                    continue;
+                }
+                $out[$id] = $val;
+            }
+            return $out;
+        }
+
+        /** @var \Predis\Client $r */
+        $r = $this->redis;
+
+        $vals = $r->pipeline(function ($pipe) use ($ids, $field) {
+            foreach ($ids as $id) {
+                $pipe->hget($this->entryKey($id), $field);
+            }
+        });
+
+        $out = [];
+        foreach ($ids as $i => $id) {
+            $val = $vals[$i] ?? null;
+            if (!is_string($val) || $val === '') {
+                $missingIds[] = $id;
+                continue;
+            }
+            $out[$id] = $val;
+        }
+
+        return $out;
     }
 }

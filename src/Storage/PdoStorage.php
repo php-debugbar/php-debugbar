@@ -138,7 +138,7 @@ class PdoStorage extends AbstractStorage
     {
         // Delete entries older than lifetime
         $cutoffTime = microtime(true) - $hours * 3600;
-        $stmt = $this->pdo->prepare("DELETE FROM {$this->tableName} WHERE meta_utime < ?");
+        $stmt = $this->pdo->prepare("DELETE FROM {$this->tableName} WHERE meta_utime <= ?");
         $stmt->execute([$cutoffTime]);
     }
 
