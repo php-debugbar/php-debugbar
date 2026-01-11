@@ -28,7 +28,7 @@ class DocsTest extends AbstractBrowserTestCase
 
         $crawler = $client->waitForVisibility('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-list');
         $messages = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-value')
-            ->each(function (WebDriverElement $node) {
+            ->each(function (WebDriverElement $node): string {
                 return $node->getText();
             });
 

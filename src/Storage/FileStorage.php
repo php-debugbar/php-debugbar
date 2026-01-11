@@ -78,7 +78,7 @@ class FileStorage implements StorageInterface
         }
 
         //Sort the files, newest first
-        usort($files, function ($a, $b) {
+        usort($files, function ($a, $b): int {
             return $a['time'] < $b['time'] ? 1 : -1;
         });
 

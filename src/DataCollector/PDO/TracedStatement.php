@@ -67,7 +67,7 @@ class TracedStatement
     {
         $offset = 3;    // Internal calls
         $stack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $limit + $offset);
-        $stack = array_filter($stack, function ($frame) {
+        $stack = array_filter($stack, function ($frame): bool {
             return isset($frame['file']) && !str_contains($frame['file'], '/DebugBar/DataCollector/PDO/');
         });
 

@@ -69,7 +69,7 @@ class TraceablePDO extends PDO
      * @return string|null Fetch the SQLSTATE associated with the last operation on the database handle
      */
     #[\ReturnTypeWillChange]
-    public function errorCode()
+    public function errorCode(): ?string
     {
         return $this->pdo->errorCode();
     }
@@ -113,7 +113,7 @@ class TraceablePDO extends PDO
      *               An unsuccessful call returns null.
      */
     #[\ReturnTypeWillChange]
-    public function getAttribute($attribute)
+    public function getAttribute($attribute): mixed
     {
         return $this->pdo->getAttribute($attribute);
     }
@@ -177,7 +177,7 @@ class TraceablePDO extends PDO
      *                                    failure.
      */
     #[\ReturnTypeWillChange]
-    public function query(mixed $statement, mixed $fetchMode = null, mixed ...$fetchModeArgs)
+    public function query(mixed $statement, mixed $fetchMode = null, mixed ...$fetchModeArgs): bool|TraceablePDOStatement
     {
         return $this->profileCall('query', $statement, func_get_args());
     }
@@ -235,7 +235,7 @@ class TraceablePDO extends PDO
      * @return mixed The result of the call
      */
     #[\ReturnTypeWillChange]
-    protected function profileCall($method, $sql, array $args)
+    protected function profileCall($method, $sql, array $args): mixed
     {
         $trace = new TracedStatement($sql);
         $trace->start();
@@ -294,7 +294,7 @@ class TraceablePDO extends PDO
      */
     public function getAccumulatedStatementsDuration(): float
     {
-        return array_reduce($this->executedStatements, function ($v, $s) { return $v + $s->getDuration(); }, 0.0);
+        return array_reduce($this->executedStatements, function ($v, $s): float { return $v + $s->getDuration(); }, 0.0);
     }
 
     /**
@@ -303,7 +303,7 @@ class TraceablePDO extends PDO
      */
     public function getMemoryUsage(): int
     {
-        return array_reduce($this->executedStatements, function ($v, $s) { return $v + $s->getMemoryUsage(); }, 0);
+        return array_reduce($this->executedStatements, function ($v, $s): int { return $v + $s->getMemoryUsage(); }, 0);
     }
 
     /**
@@ -312,7 +312,7 @@ class TraceablePDO extends PDO
      */
     public function getPeakMemoryUsage(): int
     {
-        return array_reduce($this->executedStatements, function (mixed $v, mixed $s) {
+        return array_reduce($this->executedStatements, function (mixed $v, mixed $s): mixed {
             $m = $s->getEndMemory();
             return max($m, $v);
         }, 0);
@@ -335,7 +335,7 @@ class TraceablePDO extends PDO
      */
     public function getFailedExecutedStatements(): array
     {
-        return array_filter($this->executedStatements, function ($s) { return !$s->isSuccess(); });
+        return array_filter($this->executedStatements, function ($s): bool { return !$s->isSuccess(); });
     }
 
     public function __get(string $name): mixed

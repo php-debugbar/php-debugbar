@@ -1,6 +1,6 @@
 parameters:
     level: 6
-    treatPhpDocTypesAsCertain: false
+#    treatPhpDocTypesAsCertain: false
     paths:
         - src
         - tests
@@ -12,9 +12,17 @@ parameters:
         disallowedShortTernary: false
         noVariableVariables: false
         strictArrayFilter: false
+    shipmonkRules:
+        enableAllRules: false
+        enforceNativeReturnTypehint:
+            enabled: true
     ignoreErrors:
         -
             identifier: missingType.iterableValue
+        -
+            identifier: cast.useless
 includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - vendor/shipmonk/phpstan-rules/rules.neon
+

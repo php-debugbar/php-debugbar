@@ -41,7 +41,7 @@ class TraceablePDOStatement extends PDOStatement
      * @return bool TRUE on success or FALSE on failure.
      */
     #[\ReturnTypeWillChange]
-    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null)
+    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null): bool
     {
         $this->boundParameters[$column] = $param;
         $args = array_merge([$column, &$param], array_slice(func_get_args(), 2));
@@ -65,7 +65,7 @@ class TraceablePDOStatement extends PDOStatement
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null): bool
+    public function bindParam(mixed $parameter, mixed &$variable, int $data_type = PDO::PARAM_STR, ?int $length = null, mixed $driver_options = null): bool
     {
         $this->boundParameters[$parameter] = $variable;
         $args = array_merge([$parameter, &$variable], array_slice(func_get_args(), 2));
@@ -86,7 +86,7 @@ class TraceablePDOStatement extends PDOStatement
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function bindValue($parameter, $value, $data_type = PDO::PARAM_STR): bool
+    public function bindValue(mixed $parameter, mixed $value, int $data_type = PDO::PARAM_STR): bool
     {
         $this->boundParameters[$parameter] = $value;
         return parent::bindValue(...func_get_args());

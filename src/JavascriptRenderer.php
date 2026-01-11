@@ -281,9 +281,8 @@ class JavascriptRenderer
     /**
      * Sets the path which assets are relative to
      *
-     * @param string $path
      */
-    public function setBasePath($path): static
+    public function setBasePath(string $path): static
     {
         $this->basePath = $path;
         return $this;
@@ -823,10 +822,10 @@ class JavascriptRenderer
         }
 
         if ($this->useDistFiles) {
-            $cssFiles = array_filter(array_merge($this->distCssFiles, $cssFiles), function ($file) {
+            $cssFiles = array_filter(array_merge($this->distCssFiles, $cssFiles), function ($file): bool {
                 return !in_array($file, $this->distIncludedAssets, true);
             });
-            $jsFiles = array_filter(array_merge($this->distJsFiles, $jsFiles), function ($file) {
+            $jsFiles = array_filter(array_merge($this->distJsFiles, $jsFiles), function ($file): bool {
                 return !in_array($file, $this->distIncludedAssets, true);
             });
         }
@@ -1295,7 +1294,7 @@ $js
         $controls = array_merge($widgets, $this->controls);
 
         // Allow widgets to be sorted by order if specified
-        uasort($controls, function (mixed $controlA, mixed $controlB) {
+        uasort($controls, function (mixed $controlA, mixed $controlB): int {
             return ($controlA['order'] ?? 0) <=> ($controlB['order'] ?? 0);
         });
 

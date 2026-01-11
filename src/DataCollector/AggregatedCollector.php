@@ -106,7 +106,7 @@ class AggregatedCollector implements DataCollectorInterface, ArrayAccess
     {
         if (is_string($this->sort)) {
             $p = $this->sort;
-            usort($data, function ($a, $b) use ($p) {
+            usort($data, function ($a, $b) use ($p): int {
                 if ($a[$p] === $b[$p]) {
                     return 0;
                 }
