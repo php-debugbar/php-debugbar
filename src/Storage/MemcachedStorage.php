@@ -58,7 +58,7 @@ class MemcachedStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function get(string $id): mixed
+    public function get(string $id): array
     {
         return $this->memcached->get($this->createKey($id));
     }

@@ -94,7 +94,7 @@ trait HasXdebugLinks
 
     public function getXdebugLinkTemplate(): string
     {
-        if (!$this->xdebugLinkTemplate && !ini_get('xdebug.file_link_format')) {
+        if (!$this->xdebugLinkTemplate && ini_get('xdebug.file_link_format')) {
             $this->xdebugLinkTemplate = ini_get('xdebug.file_link_format');
         }
 
