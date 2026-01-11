@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace DebugBar\Tests\Storage;
 
+use DebugBar\Storage\AbstractStorage;
 use DebugBar\Storage\StorageInterface;
 
-class MockStorage implements StorageInterface
+class MockStorage extends AbstractStorage implements StorageInterface
 {
     public array $data;
 
@@ -33,5 +34,10 @@ class MockStorage implements StorageInterface
     public function clear(): void
     {
         $this->data = [];
+    }
+
+    public function prune(int $hours = 24): void
+    {
+        $this->clear();
     }
 }
