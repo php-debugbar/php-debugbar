@@ -34,7 +34,7 @@ abstract class DebugBarTestCase extends TestCase
     public function assertJsonArrayNotEmpty(string $json): void
     {
         $data = json_decode($json, true);
-        $this->assertTrue(is_array($data) && !empty($data));
+        $this->assertTrue(is_array($data) && $data);
     }
 
     public function assertJsonHasProperty(string $json, string $property): void

@@ -33,7 +33,7 @@ class FileStorage implements StorageInterface
     public function save(string $id, array $data): void
     {
         if (!file_exists($this->dirname)) {
-            mkdir($this->dirname, 0o777, true);
+            mkdir($this->dirname, 0o755, true);
         }
         file_put_contents($this->makeFilename($id), json_encode($data));
 
@@ -69,7 +69,7 @@ class FileStorage implements StorageInterface
         //Loop through all .json files and remember the modified time and id.
         $files = [];
         foreach (new \DirectoryIterator($this->dirname) as $file) {
-            if ($file->getExtension() == 'json') {
+            if ($file->getExtension() === 'json') {
                 $files[] = [
                     'time' => $file->getMTime(),
                     'id' => $file->getBasename('.json'),
@@ -87,7 +87,7 @@ class FileStorage implements StorageInterface
         $i = 0;
         foreach ($files as $file) {
             //When filter is empty, skip loading the offset
-            if ($i++ < $offset && empty($filters)) {
+            if ($i++ < $offset && !$filters) {
                 $results[] = null;
                 continue;
             }

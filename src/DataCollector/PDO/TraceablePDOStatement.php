@@ -97,7 +97,7 @@ class TraceablePDOStatement extends PDOStatement
      *
      * @link   http://php.net/manual/en/pdostatement.execute.php
      *
-     * @param array $input_parameters [optional] An array of values with as many elements as there
+     * @param ?array $input_parameters [optional] An array of values with as many elements as there
      *                                are bound parameters in the SQL statement being executed. All values are treated as
      *                                PDO::PARAM_STR.
      *
@@ -105,7 +105,7 @@ class TraceablePDOStatement extends PDOStatement
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function execute($input_parameters = null): bool
+    public function execute(?array $input_parameters = null): bool
     {
         $preparedId = spl_object_hash($this);
         $boundParameters = $this->boundParameters;

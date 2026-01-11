@@ -38,9 +38,6 @@ class PhpHttpDriver implements HttpDriverInterface
         return isset($_SESSION);
     }
 
-    /**
-     * @param string $value
-     */
     public function setSessionValue(string $name, mixed $value): void
     {
         $_SESSION[$name] = $value;

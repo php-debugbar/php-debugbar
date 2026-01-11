@@ -814,20 +814,20 @@ class JavascriptRenderer
         $inlineHead = [];
 
         if ($this->includeVendors !== false) {
-            if ($this->includeVendors === true || in_array('css', $this->includeVendors)) {
+            if ($this->includeVendors === true || in_array('css', $this->includeVendors, true)) {
                 $cssFiles = array_merge($this->cssVendors, $cssFiles);
             }
-            if ($this->includeVendors === true || in_array('js', $this->includeVendors)) {
+            if ($this->includeVendors === true || in_array('js', $this->includeVendors, true)) {
                 $jsFiles = array_merge($this->jsVendors, $jsFiles);
             }
         }
 
         if ($this->useDistFiles) {
             $cssFiles = array_filter(array_merge($this->distCssFiles, $cssFiles), function ($file) {
-                return !in_array($file, $this->distIncludedAssets);
+                return !in_array($file, $this->distIncludedAssets, true);
             });
             $jsFiles = array_filter(array_merge($this->distJsFiles, $jsFiles), function ($file) {
-                return !in_array($file, $this->distIncludedAssets);
+                return !in_array($file, $this->distIncludedAssets, true);
             });
         }
 
@@ -840,10 +840,10 @@ class JavascriptRenderer
         $additionalAssets = $this->additionalAssets;
         // finds assets provided by collectors
         foreach ($this->debugBar->getCollectors() as $collector) {
-            if (($collector instanceof AssetProvider) && !in_array($collector->getName(), $this->ignoredCollectors)) {
+            if (($collector instanceof AssetProvider) && !in_array($collector->getName(), $this->ignoredCollectors, true)) {
                 $additionalAssets[] = $collector->getAssets();
             }
-            if (($collector instanceof DataCollector) && !in_array($collector->getName(), $this->ignoredCollectors)) {
+            if (($collector instanceof DataCollector) && !in_array($collector->getName(), $this->ignoredCollectors, true)) {
                 $formatter = $collector->getDataFormatter();
                 if ($formatter instanceof AssetProvider) {
                     $additionalAssets[] = $formatter->getAssets();
@@ -859,10 +859,10 @@ class JavascriptRenderer
                 $this->makeUriRelativeTo($basePath, $this->basePath),
                 $this->makeUriRelativeTo($baseUrl, $this->baseUrl),
             );
-            if (isset($assets['css']) && !($this->useDistFiles && $basePath === '' && in_array($assets['css'], $this->distIncludedAssets))) {
+            if (isset($assets['css']) && !($this->useDistFiles && $basePath === '' && in_array($assets['css'], $this->distIncludedAssets, true))) {
                 $cssFiles = array_merge($cssFiles, $this->makeUrisRelativeTo(is_string($assets['css']) ? [$assets['css']] : $assets['css'], $root));
             }
-            if (isset($assets['js']) && !($this->useDistFiles && $basePath === '' && in_array($assets['js'], $this->distIncludedAssets))) {
+            if (isset($assets['js']) && !($this->useDistFiles && $basePath === '' && in_array($assets['js'], $this->distIncludedAssets, true))) {
                 $jsFiles = array_merge($jsFiles, $this->makeUrisRelativeTo(is_string($assets['js']) ? [$assets['js']] : $assets['js'], $root));
             }
 
@@ -899,9 +899,9 @@ class JavascriptRenderer
         $jsFiles = [];
         foreach ($this->distIncludedAssets as $asset) {
             $ext = strtolower(pathinfo($asset, PATHINFO_EXTENSION));
-            if ($ext == 'css') {
+            if ($ext === 'css') {
                 $cssFiles[] = $asset;
-            } elseif ($ext == 'js') {
+            } elseif ($ext === 'js') {
                 $jsFiles[] = $asset;
             }
         }
@@ -941,7 +941,7 @@ class JavascriptRenderer
      */
     protected function makeUrisRelativeTo(array $uris, ?string $root): array
     {
-        if ($root == null) {
+        if ($root === null) {
             return $uris;
         }
 
@@ -1286,7 +1286,7 @@ $js
         // finds controls provided by collectors
         $widgets = [];
         foreach ($this->debugBar->getCollectors() as $collector) {
-            if (($collector instanceof Renderable) && !in_array($collector->getName(), $this->ignoredCollectors)) {
+            if (($collector instanceof Renderable) && !in_array($collector->getName(), $this->ignoredCollectors, true)) {
                 if ($w = $collector->getWidgets()) {
                     $widgets = array_merge($widgets, $w);
                 }

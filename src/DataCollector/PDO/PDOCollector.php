@@ -151,7 +151,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
      */
     protected function collectPDO(TraceablePDO $pdo, ?string $connectionName = null): array
     {
-        if (empty($connectionName) || $connectionName == 'default') {
+        if (!$connectionName || $connectionName === 'default') {
             $connectionName = 'pdo';
         } else {
             $connectionName = 'pdo ' . $connectionName;

@@ -1,12 +1,20 @@
 parameters:
-	level: 6
-	paths:
-		- src
-		- tests
-	bootstrapFiles:
-		- tests/phpstan-stubs.php
-	ignoreErrors:
-		-
-		    identifier: missingType.iterableValue
+    level: 6
+    treatPhpDocTypesAsCertain: false
+    paths:
+        - src
+        - tests
+    bootstrapFiles:
+        - tests/phpstan-stubs.php
+    strictRules:
+        dynamicCallOnStaticMethod: false
+        booleansInConditions: false
+        disallowedShortTernary: false
+        noVariableVariables: false
+        strictArrayFilter: false
+    ignoreErrors:
+        -
+            identifier: missingType.iterableValue
 includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon

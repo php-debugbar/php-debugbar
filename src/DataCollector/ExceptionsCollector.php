@@ -64,11 +64,10 @@ class ExceptionsCollector extends DataCollector implements Renderable
      */
     public function collectWarnings(bool $preserveOriginalHandler = true): void
     {
-        $self = $this;
         $originalHandler = $preserveOriginalHandler ? set_error_handler(null) : null;
 
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($self, $originalHandler) {
-            $self->addWarning($errno, $errstr, $errfile, $errline);
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($originalHandler) {
+            $this->addWarning($errno, $errstr, $errfile, $errline);
 
             if ($originalHandler) {
                 return call_user_func($originalHandler, $errno, $errstr, $errfile, $errline);
@@ -144,7 +143,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
      */
     public function formatTrace(array $trace): array
     {
-        if (! empty($this->xdebugReplacements)) {
+        if ($this->xdebugReplacements) {
             $trace = array_map(function ($track) {
                 if (isset($track['file'])) {
                     $track['file'] = $this->normalizeFilePath($track['file']);
@@ -173,7 +172,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
      */
     public function formatTraceAsString(\Throwable $e): string
     {
-        if (! empty($this->xdebugReplacements)) {
+        if ($this->xdebugReplacements) {
             return implode("\n", array_map(function ($track) {
                 $track = explode(' ', $track);
                 if (isset($track[1])) {

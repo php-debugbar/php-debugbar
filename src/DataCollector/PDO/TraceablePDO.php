@@ -19,7 +19,7 @@ class TraceablePDO extends PDO
 
     protected ?int $backtraceLimit = null;
 
-    public function __construct(PDO $pdo)
+    public function __construct(PDO $pdo)   //@phpstan-ignore constructor.missingParentCall
     {
         $this->pdo = $pdo;
         $this->pdo->setAttribute(PDO::ATTR_STATEMENT_CLASS, [TraceablePDOStatement::class, [$this]]);
@@ -93,13 +93,13 @@ class TraceablePDO extends PDO
      *
      * @param string $statement
      *
-     * @return int|bool PDO::exec returns the number of rows that were modified or deleted by the
+     * @return int|false PDO::exec returns the number of rows that were modified or deleted by the
      *                  SQL statement you issued. If no rows were affected, PDO::exec returns 0. This function may
      *                  return Boolean FALSE, but may also return a non-Boolean value which evaluates to FALSE.
      *                  Please read the section on Booleans for more information
      */
     #[\ReturnTypeWillChange]
-    public function exec($statement)
+    public function exec(string $statement): int|false
     {
         return $this->profileCall('exec', $statement, func_get_args());
     }
@@ -137,13 +137,13 @@ class TraceablePDO extends PDO
      *
      * @link   http://php.net/manual/en/pdo.lastinsertid.php
      *
-     * @param string $name [optional]
+     * @param ?string $name [optional]
      *
      * @return false|string If a sequence name was not specified for the name parameter, PDO::lastInsertId
      *                      returns a string representing the row ID of the last row that was inserted into the database.
      */
     #[\ReturnTypeWillChange]
-    public function lastInsertId($name = null)
+    public function lastInsertId($name = null): string|false
     {
         return $this->pdo->lastInsertId($name);
     }
@@ -157,12 +157,12 @@ class TraceablePDO extends PDO
      * @param array  $driver_options [optional] This array holds one or more key=&gt;value pairs to
      *                               set attribute values for the PDOStatement object that this method returns.
      *
-     * @return TraceablePDOStatement|bool If the database server successfully prepares the statement,
+     * @return TraceablePDOStatement|false If the database server successfully prepares the statement,
      *                                    PDO::prepare returns a PDOStatement object. If the database server cannot successfully prepare
      *                                    the statement, PDO::prepare returns FALSE or emits PDOException (depending on error handling).
      */
     #[\ReturnTypeWillChange]
-    public function prepare($statement, $driver_options = [])
+    public function prepare(string $statement, $driver_options = []): TraceablePDOStatement|bool
     {
         return $this->pdo->prepare($statement, $driver_options);
     }
@@ -193,11 +193,11 @@ class TraceablePDO extends PDO
      * @param int    $parameter_type [optional] Provides a data type hint for drivers that have
      *                               alternate quoting styles.
      *
-     * @return string|bool A quoted string that is theoretically safe to pass into an SQL statement.
+     * @return string|false A quoted string that is theoretically safe to pass into an SQL statement.
      *                     Returns FALSE if the driver does not support quoting in this way.
      */
     #[\ReturnTypeWillChange]
-    public function quote($string, $parameter_type = PDO::PARAM_STR)
+    public function quote($string, $parameter_type = PDO::PARAM_STR): string|false
     {
         return $this->pdo->quote($string, $parameter_type);
     }
