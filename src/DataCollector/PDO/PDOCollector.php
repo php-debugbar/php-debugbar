@@ -151,6 +151,11 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
      */
     protected function collectPDO(TraceablePDO $pdo, ?string $connectionName = null): array
     {
+        if (empty($connectionName) || $connectionName == 'default') {
+            $connectionName = 'pdo';
+        } else {
+            $connectionName = 'pdo ' . $connectionName;
+        }
         $stmts = [];
         foreach ($pdo->getExecutedStatements() as $stmt) {
 
@@ -183,9 +188,8 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
                 'xdebug_link' => $source ? $this->getXdebugLink($source->file ?: '', $source->line) : null,
                 'slow' => $this->slowThreshold && $this->slowThreshold <= $stmt->getDuration(),
             ];
-
             if ($this->hasTimeDataCollector()) {
-                $this->addTimeMeasure($stmt->getSql(), $stmt->getStartTime(), $stmt->getEndTime());
+                $this->addTimeMeasure($stmt->getSql(), $stmt->getStartTime(), $stmt->getEndTime(), [], $connectionName);
             }
         }
 
