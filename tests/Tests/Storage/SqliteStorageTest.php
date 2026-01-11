@@ -203,7 +203,7 @@ class SqliteStorageTest extends DebugBarTestCase
     public function testGarbageCollectionRespectsLimit(): void
     {
         // Create storage with limit of 5 entries
-        $storage = new SqliteStorage($this->filepath, 'phpdebugbar', 5, 100, 86400);
+        $storage = new SqliteStorage($this->filepath, 'phpdebugbar');
 
         // Add 4 fresh entries (under limit)
         for ($i = 1; $i <= 4; $i++) {

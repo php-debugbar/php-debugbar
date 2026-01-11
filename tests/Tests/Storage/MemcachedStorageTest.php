@@ -43,6 +43,7 @@ class MemcachedStorageTest extends DebugBarTestCase
 
     public function testSaveWithExpiration(): void
     {
+        // @phpstan-ignore-next-line argument.type
         $s = new MemcachedStorage($this->memcached, 'phpdebugbar', 3600);
 
         $this->memcached->expects($this->once())
@@ -110,15 +111,7 @@ class MemcachedStorageTest extends DebugBarTestCase
 
     public function testGarbageCollection(): void
     {
-        // Memcached has built-in expiration, so GC should return 0
-        $deleted = $this->s->garbageCollection(3600);
-        $this->assertEquals(0, $deleted);
-    }
-
-    public function testGarbageCollectionWithDefaultLifetime(): void
-    {
-        // Memcached has built-in expiration, so GC should return 0
-        $deleted = $this->s->garbageCollection();
-        $this->assertEquals(0, $deleted);
+        // Memcached has built-in expiration, so should just run
+        $this->s->prune(1);
     }
 }

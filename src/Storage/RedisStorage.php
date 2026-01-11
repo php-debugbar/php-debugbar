@@ -221,9 +221,7 @@ class RedisStorage extends AbstractStorage
             $r = $this->redis;
 
             $pipe = $r->multi(\Redis::PIPELINE);
-            if ($entryKeys) {
-                $pipe->del(...$entryKeys);
-            }
+            $pipe->del(...$entryKeys);
             $pipe->zRem($this->idxKey(), ...array_map('strval', $oldIds));
             $pipe->exec();
 
@@ -233,9 +231,7 @@ class RedisStorage extends AbstractStorage
         /** @var \Predis\Client $r */
         $r = $this->redis;
         $r->pipeline(function ($pipe) use ($entryKeys, $oldIds) {
-            if ($entryKeys) {
-                $pipe->del($entryKeys);
-            }
+            $pipe->del($entryKeys);
             $pipe->zrem($this->idxKey(), $oldIds);
         });
     }
@@ -306,7 +302,7 @@ class RedisStorage extends AbstractStorage
 
         /** @var \Predis\Client $r */
         $r = $this->redis;
-        $r->zrem($key, $members);
+        $r->zrem($key, ...$members);
     }
 
     /**
@@ -314,6 +310,7 @@ class RedisStorage extends AbstractStorage
      *
      * @param list<string> $ids
      * @param list<string> $missingIds (output)
+     *
      * @return array<string, string>
      */
     private function pipelineHGetField(array $ids, string $field, array &$missingIds): array
