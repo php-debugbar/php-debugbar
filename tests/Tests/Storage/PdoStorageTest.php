@@ -85,6 +85,7 @@ class PdoStorageTest extends DebugBarTestCase
     {
         // Create a very old entry (2 days)
         $veryOldData = ['__meta' => ['id' => 'veryold', 'utime' => microtime(true) - 172800]];
+        $this->s->setAutoPrune(false);
         $this->s->save('veryold', $veryOldData);
 
         // Verify entry exists
