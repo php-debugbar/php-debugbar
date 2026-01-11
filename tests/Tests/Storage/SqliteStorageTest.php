@@ -177,7 +177,7 @@ class SqliteStorageTest extends DebugBarTestCase
         // Add old entry
         $oldData = $this->testData;
         $oldData['__meta']['id'] = 'old';
-        $oldData['__meta']['utime'] = microtime(true) - 2*3600; // 2 hours old
+        $oldData['__meta']['utime'] = microtime(true) - 2 * 3600; // 2 hours old
         $storage->save('old', $oldData);
 
         // Add recent entry
@@ -230,15 +230,15 @@ class SqliteStorageTest extends DebugBarTestCase
         // Add old entries that will be expired
         $data1 = $this->testData;
         $data1['__meta']['id'] = 'entry1';
-        $data1['__meta']['utime'] = microtime(true) - 2*3600; // 10 seconds old
+        $data1['__meta']['utime'] = microtime(true) - 2 * 3600; // 10 seconds old
 
         $data2 = $this->testData;
         $data2['__meta']['id'] = 'entry2';
-        $data2['__meta']['utime'] = microtime(true) - 2*3600;
+        $data2['__meta']['utime'] = microtime(true) - 2 * 3600;
 
         $data3 = $this->testData;
         $data3['__meta']['id'] = 'entry3';
-        $data3['__meta']['utime'] = microtime(true) - 2*3600;
+        $data3['__meta']['utime'] = microtime(true) - 2 * 3600;
 
         // Manually insert to avoid triggering GC during setup
         $pdo = $storage->getPdo();
@@ -252,7 +252,7 @@ class SqliteStorageTest extends DebugBarTestCase
                 $data['__meta']['datetime'],
                 $data['__meta']['uri'],
                 $data['__meta']['ip'],
-                $data['__meta']['method']
+                $data['__meta']['method'],
             ]);
         }
 
@@ -300,7 +300,6 @@ class SqliteStorageTest extends DebugBarTestCase
 
         $this->assertNotFalse($result->fetch());
     }
-
 
     public function testSetGarbageCollectionParams(): void
     {

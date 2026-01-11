@@ -45,8 +45,8 @@ $debugbarRenderer = $debugbar->getJavascriptRenderer()
 // $debugbar->setStorage(new DebugBar\Storage\RedisStorage(new Predis\Client()));
 
 $debugbar->setStorage($storage = new SQliteStorage(
-        filepath: __DIR__ . '/../debugbar.sqlite',
-        tableName: 'phpdebugbar',
+    filepath: __DIR__ . '/../debugbar.sqlite',
+    tableName: 'phpdebugbar',
 ));
 
 $debugbarRenderer->setOpenHandlerUrl('open.php');
