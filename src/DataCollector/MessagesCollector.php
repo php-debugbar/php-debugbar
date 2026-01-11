@@ -160,7 +160,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         ];
 
         if ($this->hasTimeDataCollector()) {
-            $this->addTimeMeasure("[{$label}]: " . substr($messageText, 0 , 100), null, microtime(true));
+            $this->addTimeMeasure("[{$label}]: " . substr($messageText, 0, 100), null, microtime(true));
         }
 
     }

@@ -250,7 +250,6 @@ class DebugBar implements ArrayAccess
             ),
         ];
 
-
         $lateCollectors = [];
         foreach ($this->collectors as $name => $collector) {
             if ($collector instanceof TimeDataCollector) {

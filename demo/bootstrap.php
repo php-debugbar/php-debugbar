@@ -16,8 +16,8 @@ $debugbar = new StandardDebugBar();
 $timeCollector = $debugbar['time'];
 
 $debugbar->addCollector(new PdoCollector());
-$debugbar->addCollector(new TemplateCollector);
-$debugbar->addCollector(new HttpCollector);
+$debugbar->addCollector(new TemplateCollector());
+$debugbar->addCollector(new HttpCollector());
 $debugbar->addCollector(new SymfonyMailCollector());
 
 // Apply TimeCollector to available collectors

@@ -105,8 +105,8 @@ class TimeDataCollector extends DataCollector implements Renderable
      */
     public function addMeasure(string $label, ?float $start = null, ?float $end = null, array $params = [], ?string $collector = null, ?string $group = null): void
     {
-        $start = $start ?? microtime(true);
-        $end = $end ?? $start;
+        $start ??= microtime(true);
+        $end ??= $start;
 
         if (isset($params['memoryUsage'])) {
             $memory = $this->memoryMeasure ? $params['memoryUsage'] : 0;
