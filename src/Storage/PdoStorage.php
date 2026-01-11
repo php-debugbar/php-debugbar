@@ -66,7 +66,7 @@ class PdoStorage extends AbstractStorage
     /**
      * {@inheritdoc}
      */
-    public function get(string $id): mixed
+    public function get(string $id): array
     {
         $stmt = $this->pdo->prepare($this->getSqlQuery('get'));
         $stmt->execute([$id]);

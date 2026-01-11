@@ -162,7 +162,7 @@ class RedisStorageTest extends DebugBarTestCase
         // Simulate SCAN ending immediately with no keys.
         $this->redis->expects($this->once())
             ->method('scan')
-            ->willReturnCallback(function (&$it, $pattern, $count) {
+            ->willReturnCallback(function (&$it, $pattern, $count): array {
                 $it = 0;
                 return [];
             });

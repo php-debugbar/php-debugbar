@@ -230,7 +230,7 @@ class RedisStorage extends AbstractStorage
 
         /** @var \Predis\Client $r */
         $r = $this->redis;
-        $r->pipeline(function ($pipe) use ($entryKeys, $oldIds) {
+        $r->pipeline(function ($pipe) use ($entryKeys, $oldIds): void {
             $pipe->del($entryKeys);
             $pipe->zrem($this->idxKey(), $oldIds);
         });
@@ -342,7 +342,7 @@ class RedisStorage extends AbstractStorage
         /** @var \Predis\Client $r */
         $r = $this->redis;
 
-        $vals = $r->pipeline(function ($pipe) use ($ids, $field) {
+        $vals = $r->pipeline(function ($pipe) use ($ids, $field): void {
             foreach ($ids as $id) {
                 $pipe->hget($this->entryKey($id), $field);
             }
