@@ -16,9 +16,9 @@ class MemcachedStorageTest extends DebugBarTestCase
 
     public function setUp(): void
     {
-//        if (!extension_loaded('memcached')) {
-            $this->markTestSkipped('Memcached not sure');
-//        }
+        //        if (!extension_loaded('memcached')) {
+        $this->markTestSkipped('Memcached not sure');
+        //        }
 
         $this->memcached = $this->createMock(\Memcached::class);
         $this->s = new MemcachedStorage($this->memcached);
