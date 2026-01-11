@@ -76,9 +76,8 @@ class QueryFormatter extends DataFormatter
     /**
      * Returns the SQL string with any parameters used embedded
      *
-     * @return string
      */
-    public function formatSqlWithBindings(string $sql, array $bindings, ?\PDO $pdo = null)
+    public function formatSqlWithBindings(string $sql, array $bindings, ?\PDO $pdo = null): string
     {
         foreach ($this->checkBindings($bindings) as $key => $binding) {
 

@@ -58,7 +58,7 @@ class MemcachedStorage extends AbstractStorage
     /**
      * {@inheritdoc}
      */
-    public function get(string $id)
+    public function get(string $id): array
     {
         return $this->memcached->get($this->createKey($id));
     }

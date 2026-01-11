@@ -187,8 +187,8 @@ class TimeDataCollector extends DataCollector implements Renderable
             $this->stopMeasure($name);
         }
 
-        usort($this->measures, function ($a, $b) {
-            if ($a['start'] == $b['start']) {
+        usort($this->measures, function ($a, $b): int {
+            if ($a['start'] === $b['start']) {
                 return 0;
             }
             return $a['start'] < $b['start'] ? -1 : 1;

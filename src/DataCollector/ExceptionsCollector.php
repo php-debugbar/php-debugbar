@@ -64,11 +64,10 @@ class ExceptionsCollector extends DataCollector implements Renderable
      */
     public function collectWarnings(bool $preserveOriginalHandler = true): void
     {
-        $self = $this;
         $originalHandler = $preserveOriginalHandler ? set_error_handler(null) : null;
 
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($self, $originalHandler) {
-            $self->addWarning($errno, $errstr, $errfile, $errline);
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($originalHandler): mixed {
+            $this->addWarning($errno, $errstr, $errfile, $errline);
 
             if ($originalHandler) {
                 return call_user_func($originalHandler, $errno, $errstr, $errfile, $errline);
@@ -144,8 +143,8 @@ class ExceptionsCollector extends DataCollector implements Renderable
      */
     public function formatTrace(array $trace): array
     {
-        if (! empty($this->xdebugReplacements)) {
-            $trace = array_map(function ($track) {
+        if ($this->xdebugReplacements) {
+            $trace = array_map(function ($track): mixed {
                 if (isset($track['file'])) {
                     $track['file'] = $this->normalizeFilePath($track['file']);
                 }
@@ -154,7 +153,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
         }
 
         // Remove large objects from the trace
-        $trace = array_map(function ($track) {
+        $trace = array_map(function ($track): mixed {
             if (isset($track['args'])) {
                 foreach ($track['args'] as $key => $arg) {
                     if (is_object($arg)) {
@@ -173,8 +172,8 @@ class ExceptionsCollector extends DataCollector implements Renderable
      */
     public function formatTraceAsString(\Throwable $e): string
     {
-        if (! empty($this->xdebugReplacements)) {
-            return implode("\n", array_map(function ($track) {
+        if ($this->xdebugReplacements) {
+            return implode("\n", array_map(function ($track): string {
                 $track = explode(' ', $track);
                 if (isset($track[1])) {
                     $track[1] = $this->normalizeFilePath($track[1]);

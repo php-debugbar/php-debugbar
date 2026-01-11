@@ -132,7 +132,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
             $data['peak_memory_usage'] = max($data['peak_memory_usage'], $pdodata['peak_memory_usage']);
             $data['statements'] = array_merge(
                 $data['statements'],
-                array_map(function ($s) use ($name) {
+                array_map(function ($s) use ($name): mixed {
                     $s['connection'] = $name;
                     return $s;
                 }, $pdodata['statements']),
@@ -151,7 +151,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
      */
     protected function collectPDO(TraceablePDO $pdo, ?string $connectionName = null): array
     {
-        if (empty($connectionName) || $connectionName == 'default') {
+        if (!$connectionName || $connectionName === 'default') {
             $connectionName = 'pdo';
         } else {
             $connectionName = 'pdo ' . $connectionName;

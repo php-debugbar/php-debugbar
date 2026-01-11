@@ -74,7 +74,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->assertFalse($this->r->isAjaxHandlerAutoShow());
         $this->assertEquals('OpenFoo', $this->r->getOpenHandlerClass());
         $this->assertEquals('open.php', $this->r->getOpenHandlerUrl());
-        $this->assertTrue($this->r->getuseDistFiles());
+        $this->assertTrue($this->r->getUseDistFiles());
         $this->assertEquals('auto', $this->r->getTheme());
         $this->assertTrue($this->r->areEmptyTabsHidden());
         $this->assertTrue($this->r->isAjaxHandlerTabEnabled());
