@@ -22,6 +22,8 @@ interface RequestIdGeneratorInterface
      * To avoid any potential confusion in ID --> value maps, the returned value must be
      * guaranteed to not be all-numeric.
      *
+     * It is recommended to use a sortable string
+     *
      */
     public function generate(): string;
 }

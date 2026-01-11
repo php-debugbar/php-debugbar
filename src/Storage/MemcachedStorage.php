@@ -19,7 +19,7 @@ use ReflectionMethod;
 /**
  * Stores collected data into Memcache using the Memcached extension
  */
-class MemcachedStorage implements StorageInterface
+class MemcachedStorage extends AbstractStorage
 {
     protected Memcached $memcached;
 
@@ -131,6 +131,13 @@ class MemcachedStorage implements StorageInterface
     protected function createKey(string $id): string
     {
         return md5("{$this->keyNamespace}.$id");
+    }
+
+    public function prune(int $hours = 24): void
+    {
+        // Memcached has built-in expiration, so GC is not needed
+        // Items automatically expire based on the expiration time set during save()
+        // This method is here to satisfy the interface requirement
     }
 
     /**

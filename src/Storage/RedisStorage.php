@@ -16,7 +16,7 @@ namespace DebugBar\Storage;
 /**
  * Stores collected data into Redis
  */
-class RedisStorage implements StorageInterface
+class RedisStorage extends AbstractStorage
 {
     protected \Predis\Client|\Redis|\RedisCluster|null $redis = null;
 
@@ -108,5 +108,43 @@ class RedisStorage implements StorageInterface
     {
         $this->redis->del("$this->hash:data");
         $this->redis->del("$this->hash:meta");
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function prune(int $hours = 24): void
+    {
+        $cutoffTime = microtime(true) - $hours * 3600;
+
+        $isPhpRedis = get_class($this->redis) === 'Redis' || get_class($this->redis) === 'RedisCluster';
+        $cursor = match (true) {
+            $isPhpRedis && version_compare(phpversion('redis'), '6.1.0', '>=') => null,
+            default => '0',
+        };
+
+        $idsToDelete = [];
+
+        do {
+            if ($isPhpRedis) {
+                $data = $this->redis->hScan("$this->hash:meta", $cursor);
+            } else {
+                [$cursor, $data] = $this->redis->hScan("$this->hash:meta", $cursor);
+            }
+
+            foreach ($data as $id => $metaJson) {
+                if ($meta = json_decode($metaJson, true)) {
+                    if (isset($meta['utime']) && $meta['utime'] < $cutoffTime) {
+                        $idsToDelete[] = $id;
+                    }
+                }
+            }
+        } while ($cursor);
+
+        // Delete old entries
+        foreach ($idsToDelete as $id) {
+            $this->redis->hDel("$this->hash:meta", $id);
+            $this->redis->hDel("$this->hash:data", $id);
+        }
     }
 }

@@ -42,4 +42,6 @@ interface StorageInterface
      * Clears all the collected data
      */
     public function clear(): void;
+
+    public function prune(int $hours = 24): void;
 }

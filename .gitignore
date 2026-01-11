@@ -17,3 +17,4 @@ clover.xml
 /docs/assets/dist/
 /site
 /build/docs
+debugbar.sqlite

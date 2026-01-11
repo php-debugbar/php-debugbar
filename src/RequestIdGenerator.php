@@ -20,6 +20,15 @@ class RequestIdGenerator implements RequestIdGeneratorInterface
 {
     public function generate(): string
     {
-        return 'X' . bin2hex(random_bytes(16));
+        // milliseconds since Unix epoch (13 digits)
+        $ms = (int) floor(microtime(true) * 1000);
+
+        // fixed-width decimal timestamp so lexical == chronological
+        $prefix = sprintf('%013d', $ms);
+
+        // random suffix (20 hex chars if 10 bytes)
+        $suffix = bin2hex(random_bytes(10));
+
+        return 'X' . $prefix . $suffix;
     }
 }
