@@ -6,25 +6,25 @@ namespace DebugBar\DataCollector;
 
 class TemplateCollector extends DataCollector implements Renderable, AssetProvider
 {
+    use HasTimeDataCollector;
+
     protected string $name;
     protected array $templates = [];
     protected bool|string $collect_data;
     /** @var array<string> */
     protected array $exclude_paths;
     protected int|bool $group;
-    protected ?TimeDataCollector $timeCollector;
 
     /**
      *
      * @param string[] $excludePaths Paths to exclude from collection
      */
-    public function __construct(bool|string $collectData = true, array $excludePaths = [], int|bool $group = true, ?TimeDataCollector $timeCollector = null)
+    public function __construct(bool|string $collectData = true, array $excludePaths = [], int|bool $group = true)
     {
         $this->collect_data = $collectData;
         $this->templates = [];
         $this->exclude_paths = $excludePaths;
         $this->group = $group;
-        $this->timeCollector = $timeCollector;
     }
 
     public function getName(): string
@@ -84,6 +84,10 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
 
         if ($path && $this->getXdebugLinkTemplate()) {
             $template['xdebug_link'] = $this->getXdebugLink($path);
+        }
+
+        if ($this->hasTimeDataCollector()) {
+            $this->addTimeMeasure($name, $template['start']);
         }
 
         $this->templates[] = $template;

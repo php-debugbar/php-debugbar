@@ -6,8 +6,8 @@ namespace DebugBar\DataCollector\PDO;
 
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
+use DebugBar\DataCollector\HasTimeDataCollector;
 use DebugBar\DataCollector\Renderable;
-use DebugBar\DataCollector\TimeDataCollector;
 use DebugBar\DataFormatter\QueryFormatter;
 
 /**
@@ -15,10 +15,10 @@ use DebugBar\DataFormatter\QueryFormatter;
  */
 class PDOCollector extends DataCollector implements Renderable, AssetProvider
 {
+    use HasTimeDataCollector;
+
     /** @var array<string, TraceablePDO> */
     protected array $connections = [];
-
-    protected ?TimeDataCollector $timeCollector;
 
     protected ?QueryFormatter $queryFormatter = null;
 
@@ -30,9 +30,8 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
 
     protected ?int $backtraceLimit = null;
 
-    public function __construct(?\PDO $pdo = null, ?TimeDataCollector $timeCollector = null)
+    public function __construct(?\PDO $pdo = null)
     {
-        $this->timeCollector = $timeCollector;
         if ($pdo !== null) {
             $this->addConnection($pdo, 'default');
         }
@@ -125,7 +124,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         ];
 
         foreach ($this->connections as $name => $pdo) {
-            $pdodata = $this->collectPDO($pdo, $this->timeCollector, $name);
+            $pdodata = $this->collectPDO($pdo, $name);
             $data['nb_statements'] += $pdodata['nb_statements'];
             $data['nb_failed_statements'] += $pdodata['nb_failed_statements'];
             $data['accumulated_duration'] += $pdodata['accumulated_duration'];
@@ -150,13 +149,8 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
     /**
      * Collects data from a single TraceablePDO instance
      */
-    protected function collectPDO(TraceablePDO $pdo, ?TimeDataCollector $timeCollector = null, ?string $connectionName = null): array
+    protected function collectPDO(TraceablePDO $pdo, ?string $connectionName = null): array
     {
-        if (empty($connectionName) || $connectionName == 'default') {
-            $connectionName = 'pdo';
-        } else {
-            $connectionName = 'pdo ' . $connectionName;
-        }
         $stmts = [];
         foreach ($pdo->getExecutedStatements() as $stmt) {
 
@@ -189,8 +183,9 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
                 'xdebug_link' => $source ? $this->getXdebugLink($source->file ?: '', $source->line) : null,
                 'slow' => $this->slowThreshold && $this->slowThreshold <= $stmt->getDuration(),
             ];
-            if ($timeCollector !== null) {
-                $timeCollector->addMeasure($stmt->getSql(), $stmt->getStartTime(), $stmt->getEndTime(), [], $connectionName);
+
+            if ($this->hasTimeDataCollector()) {
+                $this->addTimeMeasure($stmt->getSql(), $stmt->getStartTime(), $stmt->getEndTime());
             }
         }
 
