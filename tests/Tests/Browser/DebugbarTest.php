@@ -27,7 +27,7 @@ class DebugbarTest extends AbstractBrowserTestCase
 
         $crawler = $client->waitForVisibility('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-list');
         $messages = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-value')
-            ->each(function (WebDriverElement $node) {
+            ->each(function (WebDriverElement $node): string {
                 return $node->getText();
             });
 
@@ -104,7 +104,7 @@ class DebugbarTest extends AbstractBrowserTestCase
         $client->waitForElementToContain('.phpdebugbar-widgets-datasets-badge', 'ajax.php');
 
         $messages = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-value')
-            ->each(function (WebDriverElement $node) {
+            ->each(function (WebDriverElement $node): string {
                 return $node->getText();
             });
 
@@ -129,7 +129,7 @@ class DebugbarTest extends AbstractBrowserTestCase
 
         // Verify all 3 requests are in the list
         $requests = $crawler->filter('.phpdebugbar-widgets-datasets-list-item:not([hidden])')
-            ->each(function (WebDriverElement $node) {
+            ->each(function (WebDriverElement $node): string {
                 return $node->getText();
             });
         $this->assertCount(3, $requests);
@@ -161,7 +161,7 @@ class DebugbarTest extends AbstractBrowserTestCase
         $client->waitForElementToContain('.phpdebugbar-widgets-sqlqueries .phpdebugbar-widgets-status', '8 statements were executed, 2 of which were duplicates, 6 unique.');
 
         $statements = $crawler->filter('.phpdebugbar-panel[data-collector=database] li:not([hidden]) .phpdebugbar-widgets-sql')
-            ->each(function ($node) {
+            ->each(function ($node): string {
                 return $node->getText();
             });
 
@@ -171,7 +171,7 @@ class DebugbarTest extends AbstractBrowserTestCase
         $crawler->selectLink('Show only duplicated')->click();
 
         $statements = $crawler->filter('.phpdebugbar-panel[data-collector=database] li:not([hidden]) .phpdebugbar-widgets-sql')
-            ->each(function ($node) {
+            ->each(function ($node): string {
                 return $node->getText();
             });
 
@@ -181,7 +181,7 @@ class DebugbarTest extends AbstractBrowserTestCase
         $crawler->selectLink('Show All')->click();
 
         $statements = $crawler->filter('.phpdebugbar-panel[data-collector=database] li:not([hidden]) .phpdebugbar-widgets-sql')
-            ->each(function ($node) {
+            ->each(function ($node): string {
                 return $node->getText();
             });
 

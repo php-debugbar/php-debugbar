@@ -26,7 +26,7 @@ trait HasXdebugLinks
      */
     public function normalizeFilePath(string $file): string
     {
-        if (empty($file)) {
+        if ($file === '') {
             return '';
         }
 
@@ -56,7 +56,7 @@ trait HasXdebugLinks
      */
     public function getXdebugLink(string $file, ?int $line = null): ?array
     {
-        if (empty($file)) {
+        if ($file === '') {
             return null;
         }
 
@@ -94,7 +94,7 @@ trait HasXdebugLinks
 
     public function getXdebugLinkTemplate(): string
     {
-        if (empty($this->xdebugLinkTemplate) && !empty(ini_get('xdebug.file_link_format'))) {
+        if (!$this->xdebugLinkTemplate && ini_get('xdebug.file_link_format')) {
             $this->xdebugLinkTemplate = ini_get('xdebug.file_link_format');
         }
 

@@ -25,7 +25,7 @@ class FileStorageTest extends DebugBarTestCase
         $this->s->save('bar', $this->data);
     }
 
-    public function teardown(): void
+    public function tearDown(): void
     {
         $files = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($this->dirname, \RecursiveDirectoryIterator::SKIP_DOTS),

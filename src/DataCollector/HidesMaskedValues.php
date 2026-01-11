@@ -56,7 +56,7 @@ trait HidesMaskedValues
             return true;
         }
 
-        if (in_array($key, $this->maskedKeys)) {
+        if (in_array($key, $this->maskedKeys, true)) {
             return true;
         }
 

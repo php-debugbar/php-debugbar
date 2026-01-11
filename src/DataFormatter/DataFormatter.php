@@ -157,9 +157,8 @@ class DataFormatter implements DataFormatterInterface
     /**
      * Gets the VarCloner instance with configuration options set.
      *
-     * @return VarCloner
      */
-    protected function getCloner()
+    protected function getCloner(): VarCloner
     {
         if (!$this->cloner) {
             $clonerOptions = $this->getClonerOptions();

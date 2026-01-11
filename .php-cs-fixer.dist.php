@@ -27,10 +27,10 @@ return (new Config())
         // Class names
         'no_leading_namespace_whitespace' => true,
         'no_unused_imports'               => true,
-        'single_space_after_construct'    => true,
+        'single_space_around_construct'   => true,
 
         //Remove unneeded code
-        'no_unneeded_curly_braces'    => true,
+        'no_unneeded_braces'          => true,
         'no_useless_else'             => true,
         'no_useless_return'           => true,
         'no_extra_blank_lines'        => true,
@@ -40,9 +40,13 @@ return (new Config())
         'no_empty_phpdoc'               => true,
         'phpdoc_align'                  => true,
         'phpdoc_separation'             => true,
+        'phpdoc_to_param_type' => true,
+        'phpdoc_to_return_type' => true,
 
         // Strict
         'declare_strict_types'        => true,
+        'return_type_declaration'     => true,
+        'nullable_type_declaration_for_default_null_value' => true,
     ])
     // 💡 by default, Fixer looks for `*.php` files excluding `./vendor/` - here, you can groom this config
     ->setFinder(

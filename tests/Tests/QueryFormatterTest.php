@@ -64,7 +64,7 @@ class QueryFormatterTest extends DebugBarTestCase
     public function testReplacementParamsQueryWithMockPdo(): void
     {
         $pdo = $this->createMock(\PDO::class);
-        $pdo->expects($this->once())->method('quote')->willReturnCallback(function ($value) {
+        $pdo->expects($this->once())->method('quote')->willReturnCallback(function ($value): string {
             return "'$value'";
         });
 

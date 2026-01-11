@@ -41,7 +41,7 @@ class TimeDataCollectorTest extends DebugBarTestCase
         $this->assertEquals('bar', $m[0]['label']);
         $this->assertEquals('baz', $m[0]['collector']);
         $this->assertEquals(['bar' => '"baz"'], $m[0]['params']);
-        $this->assertLessThan($m[0]['end'], $m[0]['start']);
+        $this->assertTrue($m[0]['start'] < $m[0]['end'], 'Start time should be before end time');
     }
 
     public function testCollect(): void
@@ -56,7 +56,7 @@ class TimeDataCollectorTest extends DebugBarTestCase
 
     public function testMeasure(): void
     {
-        $returned = $this->c->measure('bar', function () {
+        $returned = $this->c->measure('bar', function (): string {
             usleep(50);
             return 'returnedValue';
         });

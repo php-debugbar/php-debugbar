@@ -25,9 +25,8 @@ interface StorageInterface
      * Returns collected data with the specified id
      *
      *
-     * @return array
      */
-    public function get(string $id);
+    public function get(string $id): array;
 
     /**
      * Returns a metadata about collected data

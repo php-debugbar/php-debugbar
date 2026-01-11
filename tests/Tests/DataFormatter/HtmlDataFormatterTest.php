@@ -112,7 +112,7 @@ class HtmlDataFormatterTest extends DebugBarTestCase
         $d = new HtmlDataFormatter();
 
         // Test that the 'casters' option can remove default casters
-        $testData = function () {};
+        $testData = function (): void {};
         $d->resetClonerOptions();
         $this->assertStringContainsString('HtmlDataFormatterTest.php', $d->formatVar($testData));
 
@@ -122,7 +122,7 @@ class HtmlDataFormatterTest extends DebugBarTestCase
         $this->assertStringNotContainsString('HtmlDataFormatterTest.php', $d->formatVar($testData));
 
         // Test that the 'additional_casters' option can add new casters
-        $testData = function () {};
+        $testData = function (): void {};
         $d->resetClonerOptions();
         $this->assertStringContainsString('HtmlDataFormatterTest.php', $d->formatVar($testData));
 
