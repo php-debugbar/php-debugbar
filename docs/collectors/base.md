@@ -174,6 +174,31 @@ $httpCollector->addRequest(
 );
 
 ````
+## Templates
+
+The TemplateCollector can add rendered remplates
+
+```php
+$templateCollector = new DebugBar\DataCollector\TemplateCollector();
+$debugbar->addCollector($templateCollector);
+
+$templateCollector->addTemplate('index.html.twig', ['items' => $items,], 'twig');
+```
+
+## Object Count
+
+The ObjectCountCollector can count the number of objects for a given class.
+
+```php
+$classDemo = ['FirstClass', 'SecondClass', 'ThirdClass'];
+$classEvent = ['Retrieved', 'Saved', 'Deleted'];
+$debugbar->addCollector(new \DebugBar\DataCollector\ObjectCountCollector());
+$debugbar['counter']->collectCountSummary(true);
+$debugbar['counter']->setKeyMap($classEvent);
+for ($i = 0; $i <= 20; $i++) {
+    $debugbar['counter']->countClass($classDemo[rand(0, 2)], 1, $classEvent[rand(0, 2)]);
+}
+```
 
 ## Config
 
