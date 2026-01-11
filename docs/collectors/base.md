@@ -53,7 +53,19 @@ $debugbar['time']->measure('My long operation', function() {
 });
 ```
 
-Displays the measures on a timeline
+Displays the measures on a timeline. 
+
+### Usage in other collectors
+
+Collectors that use the 'HasTimeDataCollector' trait can use the TimeDataCollector to add their data to the timeline.
+
+```php
+// Setup
+$collector->setTimeDataCollector($debugbar['time']);
+
+// In the collector
+$this->addTimeMeasure('My measure', $start);
+```
 
 ## Exceptions
 

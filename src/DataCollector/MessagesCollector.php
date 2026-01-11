@@ -24,6 +24,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
 {
     use HasDataFormatter;
     use HasXdebugLinks;
+    use HasTimeDataCollector;
 
     protected string $name;
 
@@ -157,6 +158,11 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
             'time' => microtime(true),
             'xdebug_link' => $stackItem ? $this->getXdebugLink($stackItem['file'], $stackItem['line'] ?? null) : null,
         ];
+
+        if ($this->hasTimeDataCollector()) {
+            $this->addTimeMeasure("[{$label}]: " . substr($messageText, 0, 100), null, microtime(true));
+        }
+
     }
 
     /**

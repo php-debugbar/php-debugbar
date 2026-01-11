@@ -6,14 +6,14 @@ namespace DebugBar\DataCollector;
 
 class HttpCollector extends DataCollector implements Renderable, AssetProvider
 {
+    use HasTimeDataCollector;
+
     protected string $name;
     protected array $requests = [];
-    protected ?TimeDataCollector $timeCollector;
 
-    public function __construct(string $name = 'http', ?TimeDataCollector $timeCollector = null)
+    public function __construct(string $name = 'http')
     {
         $this->name = $name;
-        $this->timeCollector = $timeCollector;
         $this->addMaskedKeys(['Authorization']);
     }
 
@@ -61,10 +61,10 @@ class HttpCollector extends DataCollector implements Renderable, AssetProvider
             'details' => $details,
         ];
 
-        if ($this->timeCollector) {
+        if ($this->hasTimeDataCollector()) {
             $end = microtime(true);
             $start = $duration ? $end - $duration : $end;
-            $this->timeCollector->addMeasure('GET ' . $url, $start, $end, [], $this->getName());
+            $this->addTimeMeasure('GET ' . $url, $start, $end);
         }
     }
 

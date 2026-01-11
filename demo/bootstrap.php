@@ -12,10 +12,20 @@ use DebugBar\DataCollector\TemplateCollector;
 use DebugBar\StandardDebugBar;
 
 $debugbar = new StandardDebugBar();
+/** @var \DebugBar\DataCollector\TimeDataCollector $timeCollector */
+$timeCollector = $debugbar['time'];
+
 $debugbar->addCollector(new PdoCollector());
-$debugbar->addCollector(new TemplateCollector(timeCollector: $debugbar['time']));
-$debugbar->addCollector(new HttpCollector(timeCollector: $debugbar['time']));
+$debugbar->addCollector(new TemplateCollector());
+$debugbar->addCollector(new HttpCollector());
 $debugbar->addCollector(new SymfonyMailCollector());
+
+// Apply TimeCollector to available collectors
+foreach ($debugbar->getCollectors() as $collector) {
+    if (method_exists($collector, 'setTimeDataCollector')) {
+        $collector->setTimeDataCollector($timeCollector);
+    }
+}
 
 $debugbarRenderer = $debugbar->getJavascriptRenderer()
                              ->setAssetHandlerUrl('assets.php')

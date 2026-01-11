@@ -15,6 +15,7 @@ namespace DebugBar;
 
 use ArrayAccess;
 use DebugBar\DataCollector\DataCollectorInterface;
+use DebugBar\DataCollector\TimeDataCollector;
 use DebugBar\Storage\StorageInterface;
 
 /**
@@ -249,7 +250,17 @@ class DebugBar implements ArrayAccess
             ),
         ];
 
+        $lateCollectors = [];
         foreach ($this->collectors as $name => $collector) {
+            if ($collector instanceof TimeDataCollector) {
+                $lateCollectors[$name] = $collector;
+            } else {
+                $this->data[$name] = $collector->collect();
+            }
+        }
+
+        // Run TimeData collectors last to catch items added during collection
+        foreach ($lateCollectors as $name => $collector) {
             $this->data[$name] = $collector->collect();
         }
 
