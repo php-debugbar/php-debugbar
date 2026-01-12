@@ -11,7 +11,6 @@ div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status {
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count,
-div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type {
   float: right;
   margin-left: 8px;
