@@ -34,11 +34,6 @@ class DataFormatter implements DataFormatterInterface
 
     public function formatVar(mixed $data, bool $deep = true): string
     {
-        $filter
-            = Caster::EXCLUDE_PRIVATE
-            | Caster::EXCLUDE_PROTECTED
-            | Caster::EXCLUDE_DYNAMIC;
-
         if ($deep) {
             // Set sensible default max depth for deep dumps if not set
             $maxDepth = $this->clonerOptions['max_depth'] ?? (is_object($data) ? 2 : 4);
@@ -47,7 +42,7 @@ class DataFormatter implements DataFormatterInterface
         }
 
         $cloner = $this->getCloner();
-        $data = $cloner->cloneVar($data, $filter)->withMaxDepth($maxDepth);
+        $data = $cloner->cloneVar($data)->withMaxDepth($maxDepth);
 
         return trim($this->dumpClonedVar($data));
     }
