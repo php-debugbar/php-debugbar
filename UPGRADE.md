@@ -16,6 +16,7 @@ This makes it easier to updates these collectors for specific versions. Other br
  - jQuery is removed, and widgets are now Javascript classes. Custom widgets should be updated.
  - FontAwesome is removed, and replaced by SVG icons from Tabler, included in CSS. Only the icons used by the default widgets are included, so packages extending the debugbar should add their own icons.
  - Typehints are added to all widgets, so you might need to update your widgets.
+ - Widgets are rendered when opening a tab, not when loading the page.
 
 ### Changes to DataCollectors 
 - TimeDataCollector is removed from the constructors, but a setTimeDataCollector method is added.
@@ -27,10 +28,12 @@ This makes it easier to updates these collectors for specific versions. Other br
  - Removed RequireJS support
  - Removed captureVar and renderCapturedVar from DebugBarVarDumper
 
-### Breaking changes to methods
+### Breaking changes to methods/interfaces
+- All code is typehinted, so you might need to update your code for custom collectors.
 - getAssets() removed the `$type` parameter and always returns all assets.
 - OpenHandler requires the `op` parameter to be always set.
 - The DataFormatterInterface has a 2nd 'deep' parameter to formatVar.
+- The StorageInterface has a new 'prune' method
 
 ### Other changes
  - Storage now uses json instead of serialize, so old data cannot be read.
