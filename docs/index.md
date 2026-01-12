@@ -55,6 +55,8 @@ examples and [php-debugbar.com](http://php-debugbar.com) for a live example.
 Additional collectors are available here:
 - [Twig](https://github.com/php-debugbar/twig-bridge)
 - [Doctrine](https://github.com/php-debugbar/doctrine-bridge)
+- [Monolog](https://github.com/php-debugbar/monolog-bridge)
+- [Symfony](https://github.com/php-debugbar/symfony-bridge)
 
 Integrations with other frameworks:
 
