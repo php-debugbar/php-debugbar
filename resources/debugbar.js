@@ -1415,10 +1415,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
             this.resize();
 
-            if (!this.isMinimized()) {
-                this.showTab();
-            }
-
             return id;
         }
 
@@ -1490,6 +1486,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 } else {
                     this.getControl(key).set('data', d);
                 }
+            }
+
+            if (!this.isMinimized()) {
+                this.showTab();
             }
 
             this.resize();
