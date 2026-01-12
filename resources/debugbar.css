@@ -331,7 +331,7 @@ a.phpdebugbar-indicator
   border-right: 1px solid var(--debugbar-header-border);
 }
 
-.phpdebugbar[data-hideEmptyTabs=true] .phpdebugbar-tab[data-empty=true] {
+.phpdebugbar[data-hideEmptyTabs=true] .phpdebugbar-tab[data-empty=true]:not(.phpdebugbar-active) {
   display: none;
 }
 

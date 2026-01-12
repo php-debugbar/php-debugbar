@@ -255,6 +255,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
         }
 
         render() {
+            this.active = false;
             this.tab = document.createElement('a');
             this.tab.classList.add(csscls('tab'));
 
@@ -291,16 +292,53 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 this.el.append(widget.el);
             });
 
+            this.widgetRendered = false;
             this.bindAttr('data', function (data) {
                 if (this.has('widget')) {
                     this.tab.setAttribute('data-empty', Object.keys(data).length === 0 || data.count === 0);
-                    PhpDebugBar.utils.schedule(() => {
-                        const widget = this.get('widget');
-                        widget.set('data', data);
-                        PhpDebugBar.utils.sfDump(widget.el);
-                    });
+                    if (!this.widgetRendered && this.active && data != null) {
+                        this.renderWidgetData();
+                    } else {
+                        this.widgetRendered = false;
+                    }
                 }
             });
+        }
+
+        renderWidgetData() {
+            const data = this.get('data');
+            const widget = this.get('widget');
+            if (data == null || !widget) {
+                return;
+            }
+
+            widget.set('data', data);
+            PhpDebugBar.utils.schedule(() => {
+                PhpDebugBar.utils.sfDump(widget.el);
+            });
+
+            this.widgetRendered = true;
+        }
+
+        show() {
+            const activeClass = csscls('active');
+            this.tab.classList.add(activeClass);
+            this.tab.hidden = false;
+            this.el.classList.add(activeClass);
+            this.el.hidden = false;
+            this.active = true;
+
+            if (!this.widgetRendered) {
+                this.renderWidgetData();
+            }
+        }
+
+        hide() {
+            const activeClass = csscls('active');
+            this.tab.classList.remove(activeClass);
+            this.el.classList.remove(activeClass);
+            this.el.hidden = true;
+            this.active = false;
         }
     }
 
@@ -886,7 +924,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.openbtn.addEventListener('click', () => {
                 self.openHandler.show((id, dataset) => {
                     self.addDataSet(dataset, id, '(opened)');
-                    self.showTab();
                 });
             });
 
@@ -1155,23 +1192,16 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
             this.recomputeBottomOffset();
 
-            const activeClass = csscls('active');
-            const headerActives = this.header.querySelectorAll(` div > .${activeClass}`);
-            for (const el of headerActives) {
-                el.classList.remove(activeClass);
+            for (const [controleName, control] of Object.entries(this.controls)) {
+                if (control instanceof Tab) {
+                    if (controleName === name) {
+                        control.show();
+                    } else {
+                        control.hide();
+                    }
+                }
             }
 
-            const panelClass = csscls('panel');
-            const bodyActives = this.body.querySelectorAll(`:scope > .${panelClass}`);
-            for (const el of bodyActives) {
-                el.classList.remove(activeClass);
-                el.hidden = true;
-            }
-
-            this.controls[name].tab.classList.add(activeClass);
-            this.controls[name].tab.hidden = false;
-            this.controls[name].el.classList.add(activeClass);
-            this.controls[name].el.hidden = false;
             this.activePanelName = name;
 
             this.el.classList.remove(csscls('minimized'));
@@ -1384,6 +1414,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             }
 
             this.resize();
+
+            if (!this.isMinimized()) {
+                this.showTab();
+            }
 
             return id;
         }
