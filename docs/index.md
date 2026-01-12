@@ -34,6 +34,7 @@ See the [Release Notes](docs/release-notes.md) for more information and breaking
 - [Very well documented](http://php-debugbar.com/docs/)
 
 Includes collectors for:
+
 - Messages
 - Config
 - Time
@@ -49,7 +50,7 @@ Includes collectors for:
 - [Symfony HttpFoundation](https://symfony.com/doc/current/components/http_foundation.html)
 
 Checkout the [demo](https://github.com/php-debugbar/php-debugbar/tree/master/demo) for
-examples and [phpdebugbar.com](http://php-debugbar.com) for a live example.
+examples and [php-debugbar.com](http://php-debugbar.com) for a live example.
 
 Additional collectors are available here:
 - [Twig](https://github.com/php-debugbar/twig-bridge)
@@ -58,8 +59,6 @@ Additional collectors are available here:
 Integrations with other frameworks:
 
 - [Laravel](https://github.com/barryvdh/laravel-debugbar)
-- [Atomik](http://atomikframework.com/docs/error-log-debug.html#debug-bar)
-- [XOOPS](http://xoops.org/modules/news/article.php?storyid=6538)
 - [Zend Framework 2](https://github.com/snapshotpl/ZfSnapPhpDebugBar)
 - [Phalcon](https://github.com/snowair/phalcon-debugbar)
 - [SilverStripe](https://github.com/lekoala/silverstripe-debugbar)
@@ -68,6 +67,7 @@ Integrations with other frameworks:
 - [Joomla](https://github.com/joomla/joomla-cms/blob/4.0-dev/plugins/system/debug/debug.php)
 - [Drupal](https://www.drupal.org/project/debugbar)
 - [October CMS](https://github.com/rainlab/debugbar-plugin)
+- [Winter CMS](https://packagist.org/packages/winter/wn-debugbar-plugin)
 - Framework-agnostic middleware and PSR-7 with [php-middleware/phpdebugbar](https://github.com/php-middleware/phpdebugbar)
 - [Dotkernel Frontend Application](https://github.com/dotkernel/dot-debugbar)
 
