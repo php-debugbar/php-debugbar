@@ -1679,24 +1679,20 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         bindToFetch() {
             const self = this;
-            const proxied = window.fetch;
 
-            if (proxied !== undefined && proxied.polyfill !== undefined) {
-                return;
+            const proxied = window.fetch.__debugbar_original || window.fetch;
+            const original = proxied.bind(window);
+
+            function wrappedFetch(...args) {
+                const p = original(...args);
+                p?.then?.(r => self.handle(r)).catch(() => {});
+                return p;
             }
 
-            window.fetch = function (...args) {
-                const promise = proxied.apply(window, args);
+            wrappedFetch.__debugbar_wrapped = true;
+            wrappedFetch.__debugbar_original = proxied;
 
-                promise.then((response) => {
-                    self.handle(response);
-                }).catch((reason) => {
-                    // Fetch request failed or aborted via AbortController.abort().
-                    // Catch is required to not trigger React's error handler.
-                });
-
-                return promise;
-            };
+            window.fetch = wrappedFetch;
         }
 
         /**
@@ -1704,16 +1700,28 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          */
         bindToXHR() {
             const self = this;
-            const proxied = XMLHttpRequest.prototype.open;
-            XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {
-                const xhr = this;
-                xhr.addEventListener('readystatechange', () => {
-                    if (xhr.readyState === 4) {
-                        self.handle(xhr);
-                    }
-                }, false);
-                proxied.apply(xhr, [method, url, async, user, pass]);
-            };
+            const proto = XMLHttpRequest.prototype;
+
+            const proxied = proto.open.__debugbar_original || proto.open;
+
+            function wrappedOpen(method, url, async, user, pass) {
+                if (!this.__debugbar_listener_attached) {
+                    this.__debugbar_listener_attached = true;
+
+                    this.addEventListener('readystatechange', () => {
+                        if (this.readyState === 4) {
+                            self.handle(this);
+                        }
+                    });
+                }
+
+                return proxied.call(this, method, url, async, user, pass);
+            }
+
+            wrappedOpen.__debugbar_wrapped = true;
+            wrappedOpen.__debugbar_original = proxied;
+
+            proto.open = wrappedOpen;
         }
     }
 
