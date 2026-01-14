@@ -1391,7 +1391,8 @@
 
         scanForNewDatasets() {
             const debugbar = this.get('debugbar');
-            if (!this.isScanning || !debugbar.openHandler) return;
+            if (!this.isScanning || !debugbar.openHandler)
+                return;
 
             const datasets = debugbar.datasets;
 
