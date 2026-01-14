@@ -32,6 +32,7 @@ class FileStorage extends AbstractStorage
     {
         if (!file_exists($this->dirname)) {
             mkdir($this->dirname, 0o755, true);
+            file_put_contents($this->dirname . '.gitignore', "*\n!.gitignore\n");
         }
         file_put_contents($this->makeFilename($id), json_encode($data));
 
@@ -122,8 +123,10 @@ class FileStorage extends AbstractStorage
      */
     public function clear(): void
     {
-        foreach (new \FilesystemIterator($this->dirname, \FilesystemIterator::CURRENT_AS_FILEINFO | \FilesystemIterator::SKIP_DOTS) as $file) {
-            unlink($file->getPathname());
+        foreach (new \FilesystemIterator($this->dirname, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS) as $path) {
+            if (is_file($path) && str_ends_with($path, '.json')) {
+                unlink($path);
+            }
         }
     }
 
@@ -145,7 +148,7 @@ class FileStorage extends AbstractStorage
 
         /** @var \DirectoryIterator $file */
         foreach (new \FilesystemIterator($this->dirname, \FilesystemIterator::CURRENT_AS_FILEINFO | \FilesystemIterator::SKIP_DOTS) as $file) {
-            if ($file->getMTime() < $cutoffTime) {
+            if ($file->isFile() && str_ends_with($file->getFilename(), '.json') && $file->getMTime() < $cutoffTime) {
                 unlink($file->getPathname());
             }
         }
