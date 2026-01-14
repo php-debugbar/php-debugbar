@@ -64,7 +64,13 @@ class FileStorage extends AbstractStorage
         //Load the metadata and filter the results.
         $results = [];
         $i = 0;
+
+        /** @var \SplFileInfo $file */
         foreach (new \DirectoryIterator($this->dirname) as $file) {
+            if (!str_ends_with($file->getFilename(), '.json')) {
+                continue;
+            }
+
             //When filter is empty, skip loading the offset
             if ($i++ < $offset && !$filters) {
                 $results[] = null;
@@ -73,6 +79,10 @@ class FileStorage extends AbstractStorage
 
             $id = $file->getBasename('.json');
             $data = $this->get($id);
+            if (!isset($data['__meta'])) {
+                continue;
+            }
+
             $meta = $data['__meta'];
             unset($data);
             if ($this->filter($meta, $filters)) {
