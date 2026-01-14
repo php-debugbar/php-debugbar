@@ -40,14 +40,14 @@ $debugbarRenderer = $debugbar->getJavascriptRenderer()
 //
 // create a writable profiles folder in the demo directory to uncomment the following lines
 //
-//$debugbar->setStorage(new DebugBar\Storage\FileStorage(__DIR__ . '/profiles'));
+$debugbar->setStorage(new DebugBar\Storage\FileStorage(__DIR__ . '/profiles'));
 
 // $debugbar->setStorage(new DebugBar\Storage\RedisStorage(new Predis\Client()));
 
-$debugbar->setStorage($storage = new SQliteStorage(
-    filepath: __DIR__ . '/../debugbar.sqlite',
-    tableName: 'phpdebugbar',
-));
+//$debugbar->setStorage($storage = new SQliteStorage(
+//    filepath: __DIR__ . '/../debugbar.sqlite',
+//    tableName: 'phpdebugbar',
+//));
 
 $debugbarRenderer->setOpenHandlerUrl('open.php');
 
