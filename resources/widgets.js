@@ -1206,8 +1206,12 @@
                 // Clear and rebuild the panel list
                 this.list.innerHTML = '';
 
-                // Get all datasets in reverse order (newest first)
-                const datasetIds = Object.keys(datasets).reverse();
+                // Get all datasets and sort by utime (latest on top)
+                const datasetIds = Object.keys(datasets).sort((a, b) => {
+                    const utimeA = datasets[a].__meta?.utime || 0;
+                    const utimeB = datasets[b].__meta?.utime || 0;
+                    return utimeB - utimeA; // Descending order (latest first)
+                });
 
                 for (const datasetId of datasetIds) {
                     const dataset = datasets[datasetId];
