@@ -65,19 +65,24 @@ class FileStorage extends AbstractStorage
         $results = [];
         $i = 0;
 
-        /** @var \SplFileInfo $file */
-        foreach (new \FilesystemIterator($this->dirname) as $file) {
-            if (!str_ends_with($file->getFilename(), '.json')) {
-                continue;
+        $files = new \FilesystemIterator($this->dirname, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::CURRENT_AS_PATHNAME);
+        foreach ($files as $path) {
+            if (str_ends_with($path, '.json')) {
+                $ids[] = basename($path, '.json');
             }
+        }
 
+        // Sort by id
+        sort($ids, SORT_STRING);
+        $ids = array_reverse($ids);
+
+        foreach ($ids as $id) {
             //When filter is empty, skip loading the offset
             if ($i++ < $offset && !$filters) {
                 $results[] = null;
                 continue;
             }
 
-            $id = $file->getBasename('.json');
             $data = $this->get($id);
             if (!isset($data['__meta'])) {
                 continue;
@@ -116,10 +121,8 @@ class FileStorage extends AbstractStorage
      */
     public function clear(): void
     {
-        foreach (new \DirectoryIterator($this->dirname) as $file) {
-            if (substr($file->getFilename(), 0, 1) !== '.') {
-                unlink($file->getPathname());
-            }
+        foreach (new \FilesystemIterator($this->dirname, \FilesystemIterator::CURRENT_AS_FILEINFO | \FilesystemIterator::SKIP_DOTS) as $file) {
+            unlink($file->getPathname());
         }
     }
 
@@ -140,8 +143,8 @@ class FileStorage extends AbstractStorage
         }
 
         /** @var \DirectoryIterator $file */
-        foreach (new \DirectoryIterator($this->dirname) as $file) {
-            if (substr($file->getFilename(), 0, 1) !== '.' && $file->getMTime() < $cutoffTime) {
+        foreach (new \FilesystemIterator($this->dirname, \FilesystemIterator::CURRENT_AS_FILEINFO | \FilesystemIterator::SKIP_DOTS) as $file) {
+            if ($file->getMTime() < $cutoffTime) {
                 unlink($file->getPathname());
             }
         }
