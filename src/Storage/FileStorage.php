@@ -63,6 +63,7 @@ class FileStorage extends AbstractStorage
     {
         //Load the metadata and filter the results.
         $results = [];
+        $ids = [];
         $i = 0;
 
         $files = new \FilesystemIterator($this->dirname, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::CURRENT_AS_PATHNAME);
