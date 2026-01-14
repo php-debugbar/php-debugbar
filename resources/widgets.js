@@ -1076,6 +1076,30 @@
             autoshowLabel.append(document.createTextNode(' Autoshow'));
             toolbar.append(autoshowLabel);
 
+            // Refresh button
+            this.refreshBtn = document.createElement('a');
+            this.refreshBtn.classList.add(csscls('datasets-refresh-btn'));
+            this.refreshBtn.innerHTML = '<i class="phpdebugbar-icon phpdebugbar-icon-refresh"></i>';
+            this.refreshBtn.title = 'Auto-scan for new datasets';
+            this.isScanning = false;
+            this.refreshBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent panel from closing
+                if (this.isScanning) {
+                    // Stop scanning
+                    this.isScanning = false;
+                    this.refreshBtn.classList.remove(csscls('active'));
+                    this.refreshBtn.title = 'Auto-scan for new datasets';
+                } else {
+                    // Start scanning
+                    this.isScanning = true;
+                    this.refreshBtn.classList.add(csscls('active'));
+                    this.refreshBtn.title = 'Stop auto-scanning';
+                    // Start first scan immediately
+                    this.scanForNewDatasets();
+                }
+            });
+            toolbar.append(this.refreshBtn);
+
             // Clear button
             const clearBtn = document.createElement('a');
             clearBtn.classList.add(csscls('datasets-clear-btn'));
@@ -1361,6 +1385,67 @@
                     item.hidden = !matches;
                 }
             }
+        }
+
+        scanForNewDatasets() {
+            const self = this;
+            const debugbar = this.get('debugbar');
+
+            if (!this.isScanning || !debugbar.openHandler) {
+                return;
+            }
+
+            // Get the latest utime from current datasets
+            const datasets = debugbar.datasets;
+            let latestUtime = 0;
+            for (const id in datasets) {
+                const utime = datasets[id].__meta?.utime || 0;
+                if (utime > latestUtime) {
+                    latestUtime = utime;
+                }
+            }
+
+            // Call the openhandler's find() to get all datasets
+            debugbar.openHandler.find({}, 0, (data) => {
+                // Filter for datasets newer than our latest
+                const newDatasets = [];
+                for (const meta of data) {
+                    if (meta.utime > latestUtime && !datasets[meta.id]) {
+                        newDatasets.push(meta);
+                    }
+                }
+
+                // Load new datasets one by one
+                let loadedCount = 0;
+                const loadNext = () => {
+                    if (loadedCount < newDatasets.length) {
+                        const meta = newDatasets[loadedCount];
+                        debugbar.loadDataSet(meta.id, '(scan)', () => {
+                            loadedCount++;
+                            loadNext();
+                        }, this.autoshowCheckbox.checked);
+                    } else {
+                        // All loaded, schedule next scan after 2 seconds if still scanning
+                        if (self.isScanning) {
+                            setTimeout(() => {
+                                self.scanForNewDatasets();
+                            }, 1000);
+                        }
+                    }
+                };
+
+                // Start loading or schedule next scan
+                if (newDatasets.length > 0) {
+                    loadNext();
+                } else {
+                    // No new datasets, schedule next scan
+                    if (self.isScanning) {
+                        setTimeout(() => {
+                            self.scanForNewDatasets();
+                        }, 1000);
+                    }
+                }
+            });
         }
     }
     PhpDebugBar.Widgets.DatasetWidget = DatasetWidget;

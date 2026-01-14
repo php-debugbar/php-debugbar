@@ -631,6 +631,37 @@ a.phpdebugbar-open-btn:after {
   text-decoration: underline;
 }
 
+.phpdebugbar-widgets-datasets-refresh-btn {
+  color: var(--debugbar-text-muted);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.phpdebugbar-widgets-datasets-refresh-btn:hover {
+  color: var(--debugbar-text);
+}
+
+.phpdebugbar-widgets-datasets-refresh-btn.phpdebugbar-widgets-active {
+  color: var(--debugbar-text);
+}
+
+.phpdebugbar-widgets-datasets-refresh-btn.phpdebugbar-widgets-active i {
+  animation: phpdebugbar-spin 2s linear infinite;
+}
+
+@keyframes phpdebugbar-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .phpdebugbar-widgets-datasets-search {
   flex: 1;
   padding: 3px 8px;

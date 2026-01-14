@@ -41,6 +41,7 @@ const icons = [
     'chevron-up',
     'folder-open',
     'brand-php',
+    'refresh',
 
     // Widget-specific icons
     'cpu',           // memory/performance
