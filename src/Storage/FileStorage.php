@@ -66,7 +66,7 @@ class FileStorage extends AbstractStorage
         $i = 0;
 
         /** @var \SplFileInfo $file */
-        foreach (new \DirectoryIterator($this->dirname) as $file) {
+        foreach (new \FilesystemIterator($this->dirname) as $file) {
             if (!str_ends_with($file->getFilename(), '.json')) {
                 continue;
             }
