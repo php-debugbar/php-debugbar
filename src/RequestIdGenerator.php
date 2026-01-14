@@ -23,13 +23,13 @@ class RequestIdGenerator implements RequestIdGeneratorInterface
         // 48-bit millisecond timestamp (lexical sort = time sort)
         $t = (int) (microtime(true) * 1000);
 
-        $time =
-            chr(($t >> 40) & 0xFF) .
-            chr(($t >> 32) & 0xFF) .
-            chr(($t >> 24) & 0xFF) .
-            chr(($t >> 16) & 0xFF) .
-            chr(($t >>  8) & 0xFF) .
-            chr(($t >>  0) & 0xFF);
+        $time
+            = chr(($t >> 40) & 0xFF)
+            . chr(($t >> 32) & 0xFF)
+            . chr(($t >> 24) & 0xFF)
+            . chr(($t >> 16) & 0xFF)
+            . chr(($t >>  8) & 0xFF)
+            . chr(($t >>  0) & 0xFF);
 
         $rand = random_bytes(10);
 
