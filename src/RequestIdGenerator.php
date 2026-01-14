@@ -20,15 +20,19 @@ class RequestIdGenerator implements RequestIdGeneratorInterface
 {
     public function generate(): string
     {
-        // milliseconds since Unix epoch (13 digits)
-        $ms = (int) floor(microtime(true) * 1000);
+        // 48-bit millisecond timestamp (lexical sort = time sort)
+        $t = (int) (microtime(true) * 1000);
 
-        // fixed-width decimal timestamp so lexical == chronological
-        $prefix = sprintf('%013d', $ms);
+        $time
+            = chr(($t >> 40) & 0xFF)
+            . chr(($t >> 32) & 0xFF)
+            . chr(($t >> 24) & 0xFF)
+            . chr(($t >> 16) & 0xFF)
+            . chr(($t >>  8) & 0xFF)
+            . chr(($t >>  0) & 0xFF);
 
-        // random suffix (20 hex chars if 10 bytes)
-        $suffix = bin2hex(random_bytes(10));
+        $rand = random_bytes(10);
 
-        return 'X' . $prefix . $suffix;
+        return bin2hex($time . $rand);
     }
 }

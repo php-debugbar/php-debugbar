@@ -63,15 +63,15 @@
                 self.find({ uri: window.location.pathname }, 0, self.handleFind.bind(self));
             });
 
-            this.showallbtn = document.createElement('a');
-            this.showallbtn.textContent = 'Show all';
-            this.actions.append(this.showallbtn);
-            this.showallbtn.addEventListener('click', () => {
+            this.refreshbtn = document.createElement('a');
+            this.refreshbtn.textContent = 'Refresh';
+            this.actions.append(this.refreshbtn);
+            this.refreshbtn.addEventListener('click', () => {
                 self.refresh();
             });
 
             this.clearbtn = document.createElement('a');
-            this.clearbtn.textContent = 'Delete all';
+            this.clearbtn.textContent = 'Clear storage';
             this.actions.append(this.clearbtn);
             this.clearbtn.addEventListener('click', () => {
                 self.clear(() => {
@@ -250,7 +250,10 @@
                 }
             })
                 .then(data => data.json())
-                .then(callback);
+                .then(callback)
+                .catch((err) => {
+                    callback(null, err);
+                });
         }
 
     });

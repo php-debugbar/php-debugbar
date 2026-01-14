@@ -1076,6 +1076,30 @@
             autoshowLabel.append(document.createTextNode(' Autoshow'));
             toolbar.append(autoshowLabel);
 
+            // Refresh button
+            this.refreshBtn = document.createElement('a');
+            this.refreshBtn.classList.add(csscls('datasets-refresh-btn'));
+            this.refreshBtn.innerHTML = '<i class="phpdebugbar-icon phpdebugbar-icon-refresh"></i>';
+            this.refreshBtn.title = 'Auto-scan for new datasets';
+            this.isScanning = false;
+            this.refreshBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent panel from closing
+                if (this.isScanning) {
+                    // Stop scanning
+                    this.isScanning = false;
+                    this.refreshBtn.classList.remove(csscls('active'));
+                    this.refreshBtn.title = 'Auto-scan for new datasets';
+                } else {
+                    // Start scanning
+                    this.isScanning = true;
+                    this.refreshBtn.classList.add(csscls('active'));
+                    this.refreshBtn.title = 'Stop auto-scanning';
+                    // Start first scan immediately
+                    this.scanForNewDatasets();
+                }
+            });
+            toolbar.append(this.refreshBtn);
+
             // Clear button
             const clearBtn = document.createElement('a');
             clearBtn.classList.add(csscls('datasets-clear-btn'));
@@ -1134,6 +1158,8 @@
                     this.panel.style.top = 'auto';
                     this.panel.style.maxHeight = `${spaceAbove}px`;
                 }
+
+                this.refreshBtn.hidden = !debugbar.openHandler;
             };
 
             // Toggle panel on click
@@ -1361,6 +1387,62 @@
                     item.hidden = !matches;
                 }
             }
+        }
+
+        scanForNewDatasets() {
+            const debugbar = this.get('debugbar');
+            if (!this.isScanning || !debugbar.openHandler)
+                return;
+
+            const datasets = debugbar.datasets;
+
+            const latestUtime = Object.values(datasets)
+                .reduce((max, d) => Math.max(max, d.__meta?.utime || 0), 0);
+
+            const scheduleNextScan = () => {
+                if (this.isScanning) {
+                    setTimeout(() => this.scanForNewDatasets(), 1000);
+                }
+            };
+
+            debugbar.openHandler.find({}, 0, (data, err) => {
+                // Abort on explicit error argument
+                if (err) {
+                    console.error('scanForNewDatasets: find() failed', err);
+                    this.isScanning = false;
+                    this.refreshBtn.classList.remove(csscls('active'));
+                    this.refreshBtn.title = 'Error scanning';
+                    return;
+                }
+
+                try {
+                    const newDatasets = data.filter(
+                        meta => meta.utime > latestUtime && !datasets[meta.id]
+                    );
+
+                    const loadNext = (index = 0) => {
+                        if (index >= newDatasets.length) {
+                            scheduleNextScan();
+                            return;
+                        }
+
+                        const { id } = newDatasets[index];
+                        debugbar.loadDataSet(
+                            id,
+                            '(scan)',
+                            () => loadNext(index + 1),
+                            this.autoshowCheckbox.checked
+                        );
+                    };
+
+                    newDatasets.length ? loadNext() : scheduleNextScan();
+                } catch (error) {
+                    console.error('scanForNewDatasets: unexpected error', error);
+                    this.refreshBtn.classList.remove(csscls('active'));
+                    this.refreshBtn.title = 'Error scanning';
+                    this.isScanning = false;
+                }
+            });
         }
     }
     PhpDebugBar.Widgets.DatasetWidget = DatasetWidget;
