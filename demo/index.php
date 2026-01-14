@@ -53,6 +53,8 @@ render_demo_page(function () {
 <ul>
     <li><a href="ajax.php" class="ajax">load ajax content</a></li>
     <li><a href="ajax_exception.php" class="ajax">load ajax content with exception</a></li>
+    <li><a href="ajax_stack.php" class="ajax">load ajax content with stacked redirect</a></li>
+
 </ul>
 <div id="ajax-result"></div>
 <h2>IFRAMES</h2>

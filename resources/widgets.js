@@ -1081,16 +1081,13 @@
             clearBtn.classList.add(csscls('datasets-clear-btn'));
             clearBtn.textContent = 'Clear';
             clearBtn.addEventListener('click', () => {
-                // eslint-disable-next-line no-alert
-                if (confirm('Are you sure you want to clear the request history?')) {
-                    const currentId = debugbar.activeDatasetId;
-                    const currentDataset = debugbar.datasets[currentId];
-                    debugbar.datasets = {};
-                    if (currentDataset) {
-                        debugbar.addDataSet(currentDataset, currentId, currentDataset.__meta.suffix, true);
-                    }
-                    this.panel.hidden = true;
+                const currentId = debugbar.activeDatasetId;
+                const currentDataset = debugbar.datasets[currentId];
+                debugbar.datasets = {};
+                if (currentDataset) {
+                    debugbar.addDataSet(currentDataset, currentId, currentDataset.__meta.suffix, true);
                 }
+                this.panel.hidden = true;
             });
             toolbar.append(clearBtn);
 
