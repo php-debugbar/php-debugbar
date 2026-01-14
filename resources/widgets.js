@@ -1334,24 +1334,6 @@
                     }
                     item.append(badges);
 
-                    // Status code
-                    if (dataset.__meta.status_code) {
-                        const status = document.createElement('span');
-                        status.classList.add(csscls('datasets-item-status'));
-                        status.textContent = dataset.__meta.status_code;
-
-                        const statusCode = Number.parseInt(dataset.__meta.status_code);
-                        if (statusCode >= 200 && statusCode < 300) {
-                            status.classList.add(csscls('status-success'));
-                        } else if (statusCode >= 300 && statusCode < 400) {
-                            status.classList.add(csscls('status-redirect'));
-                        } else if (statusCode >= 400) {
-                            status.classList.add(csscls('status-error'));
-                        }
-
-                        item.append(status);
-                    }
-
                     // Click handler
                     item.addEventListener('click', () => {
                         debugbar.showDataSet(datasetId);
