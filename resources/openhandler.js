@@ -250,7 +250,10 @@
                 }
             })
                 .then(data => data.json())
-                .then(callback);
+                .then(callback)
+                .catch(err => {
+                    callback(null, err);
+                });
         }
 
     });

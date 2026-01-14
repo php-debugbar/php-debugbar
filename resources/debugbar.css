@@ -641,6 +641,9 @@ a.phpdebugbar-open-btn:after {
   align-items: center;
 }
 
+.phpdebugbar-widgets-datasets-refresh-btn[hidden] {
+    display: none;
+}
 .phpdebugbar-widgets-datasets-refresh-btn:hover {
   color: var(--debugbar-text);
 }

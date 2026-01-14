@@ -1158,6 +1158,8 @@
                     this.panel.style.top = 'auto';
                     this.panel.style.maxHeight = `${spaceAbove}px`;
                 }
+
+                this.refreshBtn.hidden = !debugbar.openHandler;
             };
 
             // Toggle panel on click
@@ -1388,62 +1390,56 @@
         }
 
         scanForNewDatasets() {
-            const self = this;
             const debugbar = this.get('debugbar');
+            if (!this.isScanning || !debugbar.openHandler) return;
 
-            if (!this.isScanning || !debugbar.openHandler) {
-                return;
-            }
-
-            // Get the latest utime from current datasets
             const datasets = debugbar.datasets;
-            let latestUtime = 0;
-            for (const id in datasets) {
-                const utime = datasets[id].__meta?.utime || 0;
-                if (utime > latestUtime) {
-                    latestUtime = utime;
-                }
-            }
 
-            // Call the openhandler's find() to get all datasets
-            debugbar.openHandler.find({}, 0, (data) => {
-                // Filter for datasets newer than our latest
-                const newDatasets = [];
-                for (const meta of data) {
-                    if (meta.utime > latestUtime && !datasets[meta.id]) {
-                        newDatasets.push(meta);
-                    }
+            const latestUtime = Object.values(datasets)
+                .reduce((max, d) => Math.max(max, d.__meta?.utime || 0), 0);
+
+            const scheduleNextScan = () => {
+                if (this.isScanning) {
+                    setTimeout(() => this.scanForNewDatasets(), 1000);
+                }
+            };
+
+            debugbar.openHandler.find({}, 0, (data, err) => {
+                // Abort on explicit error argument
+                if (err) {
+                    console.error('scanForNewDatasets: find() failed', err);
+                    this.isScanning = false;
+                    this.refreshBtn.classList.remove(csscls('active'));
+                    this.refreshBtn.title = 'Error scanning';
+                    return;
                 }
 
-                // Load new datasets one by one
-                let loadedCount = 0;
-                const loadNext = () => {
-                    if (loadedCount < newDatasets.length) {
-                        const meta = newDatasets[loadedCount];
-                        debugbar.loadDataSet(meta.id, '(scan)', () => {
-                            loadedCount++;
-                            loadNext();
-                        }, this.autoshowCheckbox.checked);
-                    } else {
-                        // All loaded, schedule next scan after 2 seconds if still scanning
-                        if (self.isScanning) {
-                            setTimeout(() => {
-                                self.scanForNewDatasets();
-                            }, 1000);
+                try {
+                    const newDatasets = data.filter(
+                        meta => meta.utime > latestUtime && !datasets[meta.id]
+                    );
+
+                    const loadNext = (index = 0) => {
+                        if (index >= newDatasets.length) {
+                            scheduleNextScan();
+                            return;
                         }
-                    }
-                };
 
-                // Start loading or schedule next scan
-                if (newDatasets.length > 0) {
-                    loadNext();
-                } else {
-                    // No new datasets, schedule next scan
-                    if (self.isScanning) {
-                        setTimeout(() => {
-                            self.scanForNewDatasets();
-                        }, 1000);
-                    }
+                        const { id } = newDatasets[index];
+                        debugbar.loadDataSet(
+                            id,
+                            '(scan)',
+                            () => loadNext(index + 1),
+                            this.autoshowCheckbox.checked
+                        );
+                    };
+
+                    newDatasets.length ? loadNext() : scheduleNextScan();
+                } catch (error) {
+                    console.error('scanForNewDatasets: unexpected error', error);
+                    this.refreshBtn.classList.remove(csscls('active'));
+                    this.refreshBtn.title = 'Error scanning';
+                    this.isScanning = false;
                 }
             });
         }
