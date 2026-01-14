@@ -1,7 +1,8 @@
 <?php
 
-use DebugBar\DataCollector\MessagesCollector;
+declare(strict_types=1);
 
+use DebugBar\DataCollector\MessagesCollector;
 
 include 'bootstrap.php';
 
@@ -12,4 +13,3 @@ $debugbar['messages']->addMessage('Hello from redirected AJAX');
 $debugbar->stackData();
 
 header('Location: ajax.php');
-
