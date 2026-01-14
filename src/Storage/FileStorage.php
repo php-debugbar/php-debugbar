@@ -61,32 +61,18 @@ class FileStorage extends AbstractStorage
      */
     public function find(array $filters = [], int $max = 20, int $offset = 0): array
     {
-        //Loop through all .json files and remember the modified time and id.
-        $files = [];
-        foreach (new \DirectoryIterator($this->dirname) as $file) {
-            if ($file->getExtension() === 'json') {
-                $files[] = [
-                    'time' => $file->getMTime(),
-                    'id' => $file->getBasename('.json'),
-                ];
-            }
-        }
-
-        //Sort the files, newest first
-        usort($files, function ($a, $b): int {
-            return $a['time'] < $b['time'] ? 1 : -1;
-        });
-
         //Load the metadata and filter the results.
         $results = [];
         $i = 0;
-        foreach ($files as $file) {
+        foreach (new \DirectoryIterator($this->dirname) as $file) {
             //When filter is empty, skip loading the offset
             if ($i++ < $offset && !$filters) {
                 $results[] = null;
                 continue;
             }
-            $data = $this->get($file['id']);
+
+            $id = $file->getBasename('.json');
+            $data = $this->get($id);
             $meta = $data['__meta'];
             unset($data);
             if ($this->filter($meta, $filters)) {
