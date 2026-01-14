@@ -38,4 +38,5 @@ This makes it easier to updates these collectors for specific versions. Other br
 ### Other changes
  - Storage now uses json instead of serialize, so old data cannot be read.
  - StorageInterface now has a prune() method
+ - ReuqestIdGenerator now returns a Lexicographically Sortable string. Other generators should also do this, to improve storage performance.
  - PDO now quotes using the PDO connection when available. The quotation char is now always `'`. Methods have moved to the QueryFormatter instead of TracedStatement.
