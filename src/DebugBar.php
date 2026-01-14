@@ -342,10 +342,17 @@ class DebugBar implements ArrayAccess
         if ($useOpenHandler === null) {
             $useOpenHandler = self::$useOpenHandlerWhenSendingDataHeaders;
         }
-        if ($useOpenHandler && $this->storage !== null) {
+        if ($useOpenHandler && $this->isDataPersisted()) {
             $this->getData();
-            $headerName .= '-id';
-            $headers = [$headerName => $this->getCurrentRequestId()];
+            $headers = ["{$headerName}-id" => $this->getCurrentRequestId()];
+
+            // Only send stacked data in ajax if storage is used
+            if (!$this->stackAlwaysUseSessionStorage && $this->hasStackedData()) {
+                $stackIds = $this->getStackedIds();
+                if (count($stackIds) > 0) {
+                    $headers["{$headerName}-stack"] = json_encode($stackIds);
+                }
+            }
         } else {
             $headers = $this->getDataAsHeaders($headerName, $maxHeaderLength);
         }
@@ -414,6 +421,17 @@ class DebugBar implements ArrayAccess
         }
 
         return array_filter($datasets);
+    }
+
+    public function getStackedIds(bool $delete = true): array
+    {
+        $http = $this->initStackSession();
+        $stackedData = $http->getSessionValue($this->stackSessionNamespace);
+        if ($delete) {
+            $http->deleteSessionValue($this->stackSessionNamespace);
+        }
+
+        return array_keys($stackedData);
     }
 
     /**

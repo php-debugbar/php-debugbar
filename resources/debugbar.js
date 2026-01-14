@@ -1565,6 +1565,14 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * @return {boolean}
          */
         handle(response) {
+            const stack = this.getHeader(response, `${this.headerName}-stack`);
+            if (stack) {
+                const stackIds = JSON.parse(stack);
+                stackIds.forEach((id) => {
+                    this.debugbar.loadDataSet(id, ' (stacked)', null, false);
+                })
+            }
+
             if (this.loadFromId(response)) {
                 return true;
             }
