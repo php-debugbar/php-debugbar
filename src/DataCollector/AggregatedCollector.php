@@ -49,7 +49,7 @@ class AggregatedCollector implements DataCollectorInterface, ArrayAccess, Resett
     public function reset(): void
     {
         foreach ($this->collectors as $collector) {
-            if ($collector instanceof ResettableInterface) {
+            if ($collector instanceof Resettable) {
                 $collector->reset();
             }
         }

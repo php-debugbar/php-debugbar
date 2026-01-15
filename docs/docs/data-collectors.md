@@ -140,3 +140,8 @@ class MyDbCollector extends DebugBar\DataCollector\DataCollector implements Debu
     }
 }
 ```
+
+### Resetting collectors
+
+Some collectors can be reset, to be re-used in long-lived processes (like FrankenPHP worker mode). 
+You can reset the data with `$debugbar->reset()`. This will clear all data from all collectors that implement the `Resettable` interface.
