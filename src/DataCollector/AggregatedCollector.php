@@ -28,7 +28,7 @@ use DebugBar\DebugBarException;
  *
  * @implements ArrayAccess<string, DataCollectorInterface>
  */
-class AggregatedCollector implements DataCollectorInterface, ArrayAccess
+class AggregatedCollector implements DataCollectorInterface, ArrayAccess, Resettable
 {
     protected string $name;
 
@@ -44,6 +44,15 @@ class AggregatedCollector implements DataCollectorInterface, ArrayAccess
         $this->name = $name;
         $this->mergeProperty = $mergeProperty;
         $this->sort = $sort;
+    }
+
+    public function reset(): void
+    {
+        foreach ($this->collectors as $collector) {
+            if ($collector instanceof Resettable) {
+                $collector->reset();
+            }
+        }
     }
 
     public function addCollector(DataCollectorInterface $collector): void

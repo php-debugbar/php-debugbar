@@ -16,7 +16,7 @@ namespace DebugBar\DataCollector;
 /**
  * Collects array data
  */
-class ConfigCollector extends DataCollector implements Renderable
+class ConfigCollector extends DataCollector implements Renderable, Resettable
 {
     protected string $name;
 
@@ -26,6 +26,11 @@ class ConfigCollector extends DataCollector implements Renderable
     {
         $this->name = $name;
         $this->setData($data);
+    }
+
+    public function reset(): void
+    {
+        $this->data = [];
     }
 
     /**

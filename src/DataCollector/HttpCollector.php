@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DebugBar\DataCollector;
 
-class HttpCollector extends DataCollector implements Renderable, AssetProvider
+class HttpCollector extends DataCollector implements Renderable, AssetProvider, Resettable
 {
     use HasTimeDataCollector;
 
@@ -15,6 +15,11 @@ class HttpCollector extends DataCollector implements Renderable, AssetProvider
     {
         $this->name = $name;
         $this->addMaskedKeys(['Authorization']);
+    }
+
+    public function reset(): void
+    {
+        $this->requests = [];
     }
 
     public function getName(): string

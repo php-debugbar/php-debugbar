@@ -37,6 +37,13 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         }
     }
 
+    public function reset(): void
+    {
+        foreach ($this->connections as $pdo) {
+            $pdo->resetExecutedStatements();
+        }
+    }
+
     public function getQueryFormatter(): QueryFormatter
     {
         if ($this->queryFormatter === null) {

@@ -19,7 +19,7 @@ use DebugBar\DebugBarException;
  * Collects info about the request duration as well as providing
  * a way to log duration of any operations
  */
-class TimeDataCollector extends DataCollector implements Renderable
+class TimeDataCollector extends DataCollector implements Renderable, Resettable
 {
     protected float $requestStartTime;
 
@@ -33,6 +33,19 @@ class TimeDataCollector extends DataCollector implements Renderable
 
     public function __construct(?float $requestStartTime = null)
     {
+        $this->setRequestStartTime($requestStartTime);
+        static::getDefaultDataFormatter(); // initializes formatter for lineal timeline
+    }
+
+    public function reset(): void
+    {
+        $this->measures = [];
+        $this->startedMeasures = [];
+        $this->setRequestStartTime(microtime(true));
+    }
+
+    public function setRequestStartTime(?float $requestStartTime = null): void
+    {
         if ($requestStartTime === null) {
             if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
                 $requestStartTime = $_SERVER['REQUEST_TIME_FLOAT'];
@@ -41,7 +54,6 @@ class TimeDataCollector extends DataCollector implements Renderable
             }
         }
         $this->requestStartTime = (float) $requestStartTime;
-        static::getDefaultDataFormatter(); // initializes formatter for lineal timeline
     }
 
     /**

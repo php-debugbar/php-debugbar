@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DebugBar\DataCollector;
 
-class TemplateCollector extends DataCollector implements Renderable, AssetProvider
+class TemplateCollector extends DataCollector implements Renderable, AssetProvider, Resettable
 {
     use HasTimeDataCollector;
 
@@ -25,6 +25,11 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
         $this->templates = [];
         $this->exclude_paths = $excludePaths;
         $this->group = $group;
+    }
+
+    public function reset(): void
+    {
+        $this->templates = [];
     }
 
     public function getName(): string

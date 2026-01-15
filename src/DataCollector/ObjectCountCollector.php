@@ -7,7 +7,7 @@ namespace DebugBar\DataCollector;
 /**
  * Collector for hit counts.
  */
-class ObjectCountCollector extends DataCollector implements DataCollectorInterface, Renderable
+class ObjectCountCollector extends DataCollector implements DataCollectorInterface, Renderable, Resettable
 {
     private string $name;
     private string $icon;
@@ -24,6 +24,12 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
     {
         $this->name = $name;
         $this->icon = $icon;
+    }
+
+    public function reset(): void
+    {
+        $this->classList = [];
+        $this->classCount = 0;
     }
 
     /**

@@ -14,13 +14,14 @@ declare(strict_types=1);
 namespace DebugBar\DataCollector;
 
 use DebugBar\DataFormatter\HasXdebugLinks;
+use Monolog\ResettableInterface;
 use Psr\Log\AbstractLogger;
 use DebugBar\DataFormatter\HasDataFormatter;
 
 /**
  * Provides a way to log messages
  */
-class MessagesCollector extends AbstractLogger implements DataCollectorInterface, MessagesAggregateInterface, Renderable
+class MessagesCollector extends AbstractLogger implements DataCollectorInterface, MessagesAggregateInterface, Renderable, Resettable
 {
     use HasDataFormatter;
     use HasXdebugLinks;
@@ -44,6 +45,17 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     public function __construct(string $name = 'messages')
     {
         $this->name = $name;
+    }
+
+    public function reset(): void
+    {
+        $this->messages = [];
+
+        foreach ($this->aggregates as $collector) {
+            if ($collector instanceof ResettableInterface) {
+                $collector->reset();
+            }
+        }
     }
 
     public function compactDumps(bool $enabled = true): void
