@@ -340,7 +340,7 @@ class TraceablePDO extends PDO
 
     public function resetExecutedStatements(): void
     {
-        $this->executedStatements = array();
+        $this->executedStatements = [];
     }
 
     public function __get(string $name): mixed
