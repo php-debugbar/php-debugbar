@@ -18,7 +18,7 @@ use Throwable;
 /**
  * Collects info about exceptions
  */
-class ExceptionsCollector extends DataCollector implements Renderable
+class ExceptionsCollector extends DataCollector implements Renderable, Resettable
 {
     protected string $name = 'exceptions';
     protected string $icon = 'bug';
@@ -32,6 +32,10 @@ class ExceptionsCollector extends DataCollector implements Renderable
         $this->icon = $icon;
     }
 
+    public function reset(): void
+    {
+        $this->exceptions = [];
+    }
     /**
      * Adds an exception to be profiled in the debug bar. Same as addThrowable
      */

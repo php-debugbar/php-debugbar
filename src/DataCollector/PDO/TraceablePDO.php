@@ -338,6 +338,11 @@ class TraceablePDO extends PDO
         return array_filter($this->executedStatements, function ($s): bool { return !$s->isSuccess(); });
     }
 
+    public function resetExecutedStatements(): void
+    {
+        $this->executedStatements = array();
+    }
+
     public function __get(string $name): mixed
     {
         return $this->pdo->$name;
