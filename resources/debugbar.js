@@ -1048,6 +1048,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 if (!self.isMinimized() && self.activePanelName === name) {
                     self.minimize();
                 } else {
+                    self.restore();
                     self.showTab(name);
                 }
             });
