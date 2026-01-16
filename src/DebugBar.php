@@ -15,9 +15,9 @@ namespace DebugBar;
 
 use ArrayAccess;
 use DebugBar\DataCollector\DataCollectorInterface;
+use DebugBar\DataCollector\Resettable;
 use DebugBar\DataCollector\TimeDataCollector;
 use DebugBar\Storage\StorageInterface;
-use Monolog\ResettableInterface;
 
 /**
  * Main DebugBar object
@@ -298,7 +298,7 @@ class DebugBar implements ArrayAccess
         $this->data = null;
 
         foreach ($this->collectors as $collector) {
-            if ($collector instanceof ResettableInterface) {
+            if ($collector instanceof Resettable) {
                 $collector->reset();
             }
         }
