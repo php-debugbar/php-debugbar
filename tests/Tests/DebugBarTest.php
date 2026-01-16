@@ -118,4 +118,17 @@ class DebugBarTest extends DebugBarTestCase
         $data = $this->debugbar->getStackedData();
         $this->assertEquals($c->collect(), $data[$id]['mock']);
     }
+
+    public function testReset(): void
+    {
+        $data = ['foo' => 'bar'];
+        $this->debugbar->addCollector(new MockCollector($data));
+        $this->debugbar->reset();
+
+        $datac = $this->debugbar->collect();
+
+        $this->assertArrayHasKey('mock', $datac);
+        $this->assertEquals([], $datac['mock']);
+        $this->assertEquals([], $this->debugbar->getData()['mock']);
+    }
 }
