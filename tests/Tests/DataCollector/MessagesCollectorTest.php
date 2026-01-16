@@ -43,6 +43,16 @@ class MessagesCollectorTest extends DebugBarTestCase
         $this->assertEquals($c->getMessages(), $data['messages']);
     }
 
+    public function testReset(): void
+    {
+        $c = new MessagesCollector();
+        $c->addMessage('foo');
+
+        $c->reset();
+        $data = $c->collect();
+        $this->assertEquals(0, $data['count']);
+    }
+
     public function testHtmlMessages(): void
     {
         $var = ['one', 'two'];

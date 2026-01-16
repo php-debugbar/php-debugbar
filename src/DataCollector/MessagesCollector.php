@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace DebugBar\DataCollector;
 
 use DebugBar\DataFormatter\HasXdebugLinks;
-use Monolog\ResettableInterface;
 use Psr\Log\AbstractLogger;
 use DebugBar\DataFormatter\HasDataFormatter;
 
@@ -52,7 +51,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         $this->messages = [];
 
         foreach ($this->aggregates as $collector) {
-            if ($collector instanceof ResettableInterface) {
+            if ($collector instanceof Resettable) {
                 $collector->reset();
             }
         }
