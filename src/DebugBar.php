@@ -295,6 +295,7 @@ class DebugBar implements ArrayAccess
 
     public function reset(): void
     {
+        $this->requestId = null;
         $this->data = null;
 
         foreach ($this->collectors as $collector) {
