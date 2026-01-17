@@ -42,6 +42,7 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
         $this->measures = [];
         $this->startedMeasures = [];
         $this->setRequestStartTime(microtime(true));
+        $this->requestEndTime = null;
     }
 
     public function setRequestStartTime(?float $requestStartTime = null): void

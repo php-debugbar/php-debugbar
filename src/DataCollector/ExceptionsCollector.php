@@ -35,6 +35,7 @@ class ExceptionsCollector extends DataCollector implements Renderable, Resettabl
     public function reset(): void
     {
         $this->exceptions = [];
+        $this->existingWarnings = [];
     }
     /**
      * Adds an exception to be profiled in the debug bar. Same as addThrowable
