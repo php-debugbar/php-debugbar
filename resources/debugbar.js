@@ -1187,8 +1187,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 throw new Error(`Unknown tab '${name}'`);
             }
 
-            this.resizeHandle.hidden = false;
-            this.resizeHandleBottom.hidden = false;
             this.body.hidden = false;
 
             this.recomputeBottomOffset();
@@ -1224,8 +1222,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 el.classList.remove(activeClass);
             }
             this.body.hidden = true;
-            this.resizeHandle.hidden = true;
-            this.resizeHandleBottom.hidden = true;
             this.minimizebtn.hidden = true;
             this.maximizebtn.hidden = false;
 
@@ -1250,8 +1246,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * @this {DebugBar}
          */
         close() {
-            this.resizeHandle.hidden = true;
-            this.resizeHandleBottom.hidden = true;
             this.header.hidden = true;
             this.body.hidden = true;
             this.restorebtn.hidden = false;
@@ -1275,8 +1269,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * @this {DebugBar}
          */
         restore() {
-            this.resizeHandle.hidden = false;
-            this.resizeHandleBottom.hidden = false;
             this.header.hidden = false;
             this.restorebtn.hidden = true;
             this.maximizebtn.hidden = true;

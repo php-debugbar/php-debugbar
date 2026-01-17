@@ -237,6 +237,10 @@ div.phpdebugbar-resize-handle {
   border-bottom: 1px solid var(--debugbar-header-border);
   cursor: ns-resize;
 }
+div.phpdebugbar-minimized div.phpdebugbar-resize-handle {
+    cursor: auto;
+}
+
 div.phpdebugbar-resize-handle.phpdebugbar-resize-handle-bottom {
   margin-top: 4px;
 }
