@@ -1704,7 +1704,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             const proto = XMLHttpRequest.prototype;
 
             const proxied = (proto.open || {}).__debugbar_original || proto.open;
-            if (typeof proxied !== "function") {
+            if (typeof proxied !== 'function') {
                 return;
             }
 
