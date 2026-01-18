@@ -103,7 +103,7 @@ class DebugbarTest extends AbstractBrowserTestCase
 
         $crawler = $client->waitForVisibility('.phpdebugbar-widgets-messages .phpdebugbar-widgets-list');
 
-        $crawler->selectLink('load ajax content')->click();
+        $crawler->selectLink('load content with fetch()')->click();
         $client->waitForElementToContain('.phpdebugbar-panel[data-collector=messages]', 'hello from ajax');
         $client->waitForElementToContain('.phpdebugbar-widgets-datasets-badge', 'ajax.php');
 
@@ -142,6 +142,36 @@ class DebugbarTest extends AbstractBrowserTestCase
         $this->assertStringContainsString('ajax_exception.php', $requests[0]); // Most recent (top of list)
 
         $client->takeScreenshot(__DIR__ . '/../../screenshots/ajax.png');
+    }
+
+    public function testDebugbarXhr(): void
+    {
+        $client = static::createPantherClient();
+        $size = new WebDriverDimension(1920, 800);
+        $client->manage()->window()->setSize($size);
+
+        $crawler = $client->request('GET', '/');
+
+        // Wait for Debugbar to load
+        $crawler = $client->waitFor('.phpdebugbar-body');
+        usleep(1000);
+
+        if (!$this->isTabActive($crawler, 'messages')) {
+            $client->click($this->getTabLink($crawler, 'messages'));
+        }
+
+        $crawler = $client->waitForVisibility('.phpdebugbar-widgets-messages .phpdebugbar-widgets-list');
+
+        $crawler->selectLink('load content with an XMLHttpRequest')->click();
+        $client->waitForElementToContain('.phpdebugbar-panel[data-collector=messages]', 'hello from ajax');
+        $client->waitForElementToContain('.phpdebugbar-widgets-datasets-badge', 'ajax.php');
+
+        $messages = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-value')
+            ->each(function (WebDriverElement $node): string {
+                return $node->getText();
+            });
+
+        $this->assertEquals('hello from ajax', $messages[0]);
     }
 
     public function testPdoCollector(): void
