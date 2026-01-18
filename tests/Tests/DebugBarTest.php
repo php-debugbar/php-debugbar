@@ -113,10 +113,28 @@ class DebugBarTest extends DebugBarTestCase
         $this->debugbar->stackData();
 
         $id = $this->debugbar->getCurrentRequestId();
-        $this->assertNull($http->session[$this->debugbar->getStackDataSessionNamespace()][$id]);
+        $ns = $this->debugbar->getStackDataSessionNamespace();
+        $this->assertNull($http->session[$ns][$id]);
 
         $data = $this->debugbar->getStackedData();
         $this->assertEquals($c->collect(), $data[$id]['mock']);
+    }
+
+    public function testStackedIds(): void
+    {
+        /** @var MockHttpDriver $http */
+        $http = $this->debugbar->getHttpDriver();
+        $this->debugbar->addCollector($c = new MockCollector(['foo']));
+        $this->debugbar->stackData();
+
+        $id = $this->debugbar->getCurrentRequestId();
+        $ns = $this->debugbar->getStackDataSessionNamespace();
+        $this->assertTrue($this->debugbar->hasStackedData());
+
+        $data = $this->debugbar->getStackedIds();
+        $this->assertArrayNotHasKey($ns, $http->session);
+        $this->assertEquals($id, $data[0]);
+        $this->assertCount(1, $data);
     }
 
     public function testReset(): void

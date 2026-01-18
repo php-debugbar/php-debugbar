@@ -401,11 +401,30 @@ class DebugBar implements ArrayAccess
     public function hasStackedData(): bool
     {
         try {
-            $http = $this->initStackSession();
+            $stackedData = $this->getStackedValue(false);
         } catch (DebugBarException $e) {
             return false;
         }
-        return count($http->getSessionValue($this->stackSessionNamespace)) > 0;
+
+        return count($stackedData) > 0;
+    }
+
+    /**
+     * @throws DebugBarException
+     */
+    protected function getStackedValue(bool $delete = true): ?array
+    {
+        $http = $this->initStackSession();
+        $stackedData = $http->getSessionValue($this->stackSessionNamespace);
+        if ($delete) {
+            $http->deleteSessionValue($this->stackSessionNamespace);
+        }
+
+        if ($stackedData === null || !is_array($stackedData)) {
+            return [];
+        }
+
+        return $stackedData;
     }
 
     /**
@@ -418,11 +437,7 @@ class DebugBar implements ArrayAccess
      */
     public function getStackedData(bool $delete = true): array
     {
-        $http = $this->initStackSession();
-        $stackedData = $http->getSessionValue($this->stackSessionNamespace);
-        if ($delete) {
-            $http->deleteSessionValue($this->stackSessionNamespace);
-        }
+        $stackedData = $this->getStackedValue($delete);
 
         $datasets = [];
         if ($this->isDataPersisted() && !$this->stackAlwaysUseSessionStorage) {
@@ -438,11 +453,7 @@ class DebugBar implements ArrayAccess
 
     public function getStackedIds(bool $delete = true): array
     {
-        $http = $this->initStackSession();
-        $stackedData = $http->getSessionValue($this->stackSessionNamespace);
-        if ($delete) {
-            $http->deleteSessionValue($this->stackSessionNamespace);
-        }
+        $stackedData = $this->getStackedValue($delete);
 
         return array_keys($stackedData);
     }
