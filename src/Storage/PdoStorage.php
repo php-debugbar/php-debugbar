@@ -54,10 +54,10 @@ class PdoStorage extends AbstractStorage
             $id,
             json_encode($data),
             $meta['utime'],
-            $meta['datetime'],
-            $meta['uri'],
-            $meta['ip'],
-            $meta['method'],
+            $meta['datetime'] ?? null,
+            $meta['uri'] ?? null,
+            $meta['ip'] ?? null,
+            $meta['method'] ?? null,
         ]);
 
         $this->autoPrune();
