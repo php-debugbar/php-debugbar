@@ -412,7 +412,7 @@ class DebugBar implements ArrayAccess
     /**
      * @throws DebugBarException
      */
-    protected function getStackedValue(bool $delete = true): ?array
+    protected function getStackedValue(bool $delete = true): array
     {
         $http = $this->initStackSession();
         $stackedData = $http->getSessionValue($this->stackSessionNamespace);
@@ -420,7 +420,7 @@ class DebugBar implements ArrayAccess
             $http->deleteSessionValue($this->stackSessionNamespace);
         }
 
-        if ($stackedData === null || !is_array($stackedData)) {
+        if (!is_array($stackedData)) {
             return [];
         }
 

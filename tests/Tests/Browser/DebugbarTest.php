@@ -59,6 +59,8 @@ class DebugbarTest extends AbstractBrowserTestCase
             $client->click($this->getTabLink($crawler, 'messages'));
         }
 
+        $this->assertEquals(1, $crawler->filter('.phpdebugbar[data-theme="light"]')->count());
+
         $client->takeScreenshot(__DIR__ . '/../../screenshots/light.png');
     }
 
@@ -77,6 +79,8 @@ class DebugbarTest extends AbstractBrowserTestCase
         if (!$this->isTabActive($crawler, 'messages')) {
             $client->click($this->getTabLink($crawler, 'messages'));
         }
+
+        $this->assertEquals(1, $crawler->filter('.phpdebugbar[data-theme="dark"]')->count());
 
         $client->takeScreenshot(__DIR__ . '/../../screenshots/dark.png');
     }
