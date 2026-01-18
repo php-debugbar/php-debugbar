@@ -51,7 +51,8 @@ render_demo_page(function () {
 </ul>
 <h2>AJAX</h2>
 <ul>
-    <li><a href="ajax.php" class="ajax">load ajax content</a></li>
+    <li><a href="ajax.php" class="ajax">load content with fetch()</a></li>
+    <li><a href="ajax.php" class="xhr">load content with an XMLHttpRequest</a></li>
     <li><a href="ajax_exception.php" class="ajax">load ajax content with exception</a></li>
     <li><a href="ajax_stack.php" class="ajax">load ajax content with stacked redirect</a></li>
 

@@ -1703,7 +1703,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             const self = this;
             const proto = XMLHttpRequest.prototype;
 
-            const proxied = proto.open.__debugbar_original || proto.open;
+            const proxied = (proto.open || {}).__debugbar_original || proto.open;
+            if (typeof proxied !== 'function') {
+                return;
+            }
 
             function wrappedOpen(method, url, async, user, pass) {
                 if (!this.__debugbar_listener_attached) {

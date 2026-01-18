@@ -77,6 +77,28 @@ function render_demo_page(?Closure $callback = null)
                             });
                     });
                 });
+
+                document.querySelectorAll('.xhr').forEach(function(el) {
+                    el.addEventListener('click', function(event) {
+                        event.preventDefault();
+
+                        var xhr = new XMLHttpRequest();
+
+                        xhr.open("GET", this.href, true);
+
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === 4) {          // request finished
+                                if (xhr.status >= 200 && xhr.status < 300) {
+                                    document.getElementById('ajax-result').innerHTML = xhr.responseText;
+                                } else {
+                                    console.error("Error:", xhr.status, xhr.statusText);
+                                }
+                            }
+                        };
+
+                        xhr.send();
+                    });
+                });
             });
         </script>
     </head>
