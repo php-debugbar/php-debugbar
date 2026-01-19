@@ -206,13 +206,13 @@
                     }
                 });
                 header.append(link);
-                li.append(header);
+                li.prepend(header);
             } else if (typeof (stmt.filename) !== 'undefined' && stmt.filename) {
                 const header = document.createElement('span');
                 header.setAttribute('title', 'Filename');
                 header.classList.add(csscls('filename'));
                 header.textContent = stmt.filename;
-                li.append(header);
+                li.prepend(header);
             }
             if (stmt.type === 'transaction') {
                 const strong = document.createElement('strong');
