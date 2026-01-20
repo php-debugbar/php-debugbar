@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DebugBar\Tests\Browser;
 
+use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverDimension;
 use Facebook\WebDriver\WebDriverElement;
 
@@ -225,4 +226,33 @@ class DebugbarTest extends AbstractBrowserTestCase
 
     }
 
+    public function testIframe(): void
+    {
+        $client = static::createPantherClient();
+        $size = new WebDriverDimension(1920, 800);
+        $client->manage()->window()->setSize($size);
+
+        $client->request('GET', '/iframes/index.php');
+
+        // Wait for Debugbar to load
+        $crawler = $client->waitFor('.phpdebugbar-body');
+        usleep(1000);
+
+        if (!$this->isTabActive($crawler, 'messages')) {
+            $client->click($this->getTabLink($crawler, 'messages'));
+        }
+
+        $crawler = $client->waitForVisibility('.phpdebugbar-widgets-messages .phpdebugbar-widgets-list');
+
+        $client->waitForElementToContain('.phpdebugbar-panel[data-collector=messages]', "I'm a Deeper Hidden Iframe");
+        $client->waitForElementToContain('.phpdebugbar-widgets-datasets-badge', 'iframes/iframe2.php');
+
+        $iframe = $client->findElement(WebDriverBy::cssSelector('iframe'));
+        $iframeDebugbar = $client->switchTo()->frame($iframe)->findElement(WebDriverBy::cssSelector('.phpdebugbar'));
+
+        $this->assertEquals('true', $iframeDebugbar->getAttribute('hidden'));
+
+        $client->takeScreenshot(__DIR__ . '/../../screenshots/iframe.png');
+
+    }
 }
