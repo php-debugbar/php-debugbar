@@ -1245,6 +1245,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
             this.recomputeBottomOffset();
             localStorage.setItem('phpdebugbar-visible', '1');
+            localStorage.setItem('phpdebugbar-open', '1');
             this.el.classList.remove(csscls('minimized'));
             this.el.classList.remove(csscls('closed'));
 
