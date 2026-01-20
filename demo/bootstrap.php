@@ -29,7 +29,7 @@ foreach ($debugbar->getCollectors() as $collector) {
 }
 
 $debugbarRenderer = $debugbar->getJavascriptRenderer()
-                             ->setAssetHandlerUrl('assets.php')
+                             ->setAssetHandlerUrl('/assets.php')
                              ->setAjaxHandlerEnableTab(true)
                              ->setHideEmptyTabs(true)
                              ->setUseDistFiles(false)
@@ -49,7 +49,7 @@ $debugbar->setStorage(new DebugBar\Storage\FileStorage(__DIR__ . '/profiles'));
 //    tableName: 'phpdebugbar',
 //));
 
-$debugbarRenderer->setOpenHandlerUrl('open.php');
+$debugbarRenderer->setOpenHandlerUrl('/open.php');
 
 // configs
 // $debugbar->useHtmlVarDumper();

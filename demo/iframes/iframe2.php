@@ -9,13 +9,14 @@ $debugbar['messages']->addMessage('I\'m a Deeper Hidden Iframe');
 render_demo_page(function () {
     ?>
 <script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(()=>
         fetch('../ajax.php')
             .then(response => response.text())
             .then(data => {
                 //ajax from IFRAME
-            });
-    });
+            }),
+        100
+    )
 </script>
 <?php
 });

@@ -704,7 +704,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.bodyPaddingTopHeight = Number.parseInt(bodyStyles.paddingTop);
 
             try {
-                this.isIframe = window.self !== window.top && window.top.phpdebugbar;
+                this.isIframe = window.self !== window.top && window.top.PhpDebugBar && window.top[window.top.phpdebugbar_variable_name];
             } catch (_error) {
                 this.isIframe = false;
             }
@@ -1391,7 +1391,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 return;
             }
             if (this.isIframe) {
-                window.top.phpdebugbar.addDataSet(data, id, `(iframe)${suffix || ''}`, show);
+                window.top[window.top.phpdebugbar_variable_name].addDataSet(data, id, `(iframe)${suffix || ''}`, show);
                 return;
             }
 

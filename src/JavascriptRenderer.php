@@ -1195,6 +1195,7 @@ class JavascriptRenderer
         $nonce = $this->getNonceAttribute();
 
         return "<script type=\"text/javascript\"{$nonce}>
+var {$this->variableName}, phpdebugbar_variable_name = \"{$this->variableName}\";
 (function () {
     const renderDebugbar = function () {
 $js
@@ -1219,7 +1220,7 @@ $js
 
         if (($this->initialization & self::INITIALIZE_CONSTRUCTOR) === self::INITIALIZE_CONSTRUCTOR) {
             $initializeOptions = $this->getInitializeOptions();
-            $js .= sprintf("var %s = new %s(%s);\n", $this->variableName, $this->javascriptClass, $initializeOptions ? json_encode((object) $initializeOptions) : '');
+            $js .= sprintf("%s = new %s(%s);\n", $this->variableName, $this->javascriptClass, $initializeOptions ? json_encode((object) $initializeOptions) : '');
         }
 
         if (($this->initialization & self::INITIALIZE_CONTROLS) === self::INITIALIZE_CONTROLS) {
