@@ -252,7 +252,6 @@ class DebugbarTest extends AbstractBrowserTestCase
 
         $this->assertEquals('true', $iframeDebugbar->getAttribute('hidden'));
 
-
         $client->takeScreenshot(__DIR__ . '/../../screenshots/iframe.png');
 
     }
