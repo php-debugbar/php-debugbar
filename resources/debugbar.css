@@ -461,6 +461,16 @@ a.phpdebugbar-maximize-btn:after {
   mask-image: var(--debugbar-icon-chevron-up);
 }
 
+div.phpdebugbar[data-toolbarPosition="top"] a.phpdebugbar-minimize-btn:after {
+    -webkit-mask-image: var(--debugbar-icon-chevron-up);
+    mask-image: var(--debugbar-icon-chevron-up);
+}
+
+div.phpdebugbar[data-toolbarPosition="top"] a.phpdebugbar-maximize-btn:after {
+    -webkit-mask-image: var(--debugbar-icon-chevron-down);
+    mask-image: var(--debugbar-icon-chevron-down);
+}
+
 a.phpdebugbar-close-btn:after {
   -webkit-mask-image: var(--debugbar-icon-x);
   mask-image: var(--debugbar-icon-x);
