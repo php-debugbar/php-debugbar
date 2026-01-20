@@ -14,11 +14,13 @@ render_demo_page(function () {
     ?>
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('../ajax.php')
-            .then(response => response.text())
-            .then(data => {
-                //ajax from IFRAME
-            });
+        setTimeout(() => {
+            fetch('../ajax.php')
+                .then(response => response.text())
+                .then(data => {
+                    //ajax from IFRAME
+                });
+        }, 250);
     });
 </script>
 <?php
