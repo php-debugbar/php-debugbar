@@ -1207,7 +1207,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             localStorage.setItem('phpdebugbar-visible', '1');
             localStorage.setItem('phpdebugbar-tab', name);
 
-            this.resize();
+            this.maximize();
         }
 
         /**
@@ -1228,6 +1228,26 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.recomputeBottomOffset();
             localStorage.setItem('phpdebugbar-visible', '0');
             this.el.classList.add(csscls('minimized'));
+            this.resize();
+        }
+
+        /**
+         * Show panels and maxime the debug bar
+         *
+         * @this {DebugBar}
+         */
+        maximize() {
+            this.header.hidden = false;
+            this.restorebtn.hidden = true;
+            this.body.hidden = false;
+            this.minimizebtn.hidden = false;
+            this.maximizebtn.hidden = true;
+
+            this.recomputeBottomOffset();
+            localStorage.setItem('phpdebugbar-visible', '1');
+            this.el.classList.remove(csscls('minimized'));
+            this.el.classList.remove(csscls('closed'));
+
             this.resize();
         }
 
@@ -1269,11 +1289,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * @this {DebugBar}
          */
         restore() {
-            this.header.hidden = false;
-            this.restorebtn.hidden = true;
-            this.maximizebtn.hidden = true;
-            this.minimizebtn.hidden = false;
-            localStorage.setItem('phpdebugbar-open', '1');
             const tab = localStorage.getItem('phpdebugbar-tab');
             if (this.pendingDataSetId) {
                 this.dataChangeHandler(this.datasets[this.pendingDataSetId]);
@@ -1284,8 +1299,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             } else {
                 this.showTab();
             }
-            this.el.classList.remove(csscls('closed'));
-            this.resize();
         }
 
         /**
