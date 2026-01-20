@@ -5,7 +5,8 @@ include '../bootstrap.php';
 /** @var \DebugBar\DebugBar $debugbar */
 /** @var \DebugBar\JavascriptRenderer $debugbarRenderer */
 
-$debugbarRenderer->setAssetHandlerUrl('../assets.php');
+$debugbarRenderer->setAssetHandlerUrl('../assets.php')
+    ->setOpenHandlerUrl('../open.php');
 
 $debugbar['messages']->addMessage('Top Page(Main debugbar)');
 

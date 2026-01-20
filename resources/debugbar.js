@@ -704,7 +704,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.bodyPaddingTopHeight = Number.parseInt(bodyStyles.paddingTop);
 
             try {
-                this.isIframe = window.self !== window.top && window.top.PhpDebugBar && window.top.PhpDebugBar.instance;
+                this.isIframe = window.self !== window.top && window.top.PhpDebugBar && window.top.PhpDebugBar;
             } catch (_error) {
                 this.isIframe = false;
             }
@@ -1391,7 +1391,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             if (!data || !data.__meta) {
                 return;
             }
-            if (this.isIframe) {
+            if (this.isIframe && window.top.PhpDebugBar && window.top.PhpDebugBar.instance) {
                 window.top.PhpDebugBar.instance.addDataSet(data, id, `(iframe)${suffix || ''}`, show);
                 return;
             }

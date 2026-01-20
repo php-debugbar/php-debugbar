@@ -246,6 +246,8 @@ class DebugbarTest extends AbstractBrowserTestCase
         $client->waitForElementToContain('.phpdebugbar-panel[data-collector=messages]', "I'm a Deeper Hidden Iframe");
         $client->waitForElementToContain('.phpdebugbar-widgets-datasets-badge', 'iframes/iframe2.php');
 
+//        $this->assertEquals(1, $crawler->filter('iframe .phpdebugbar[hidden]')->count());
+
         $client->takeScreenshot(__DIR__ . '/../../screenshots/iframe.png');
 
     }
