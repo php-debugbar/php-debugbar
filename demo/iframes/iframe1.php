@@ -2,7 +2,10 @@
 
 include '../bootstrap.php';
 
-$debugbarRenderer->setBaseUrl('../../resources');
+/** @var \DebugBar\DebugBar $debugbar */
+/** @var \DebugBar\JavascriptRenderer $debugbarRenderer */
+
+$debugbarRenderer->setAssetHandlerUrl('../assets.php');
 
 $debugbar['messages']->addMessage('I\'m a IFRAME');
 
