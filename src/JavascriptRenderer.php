@@ -1198,6 +1198,7 @@ class JavascriptRenderer
 (function () {
     const renderDebugbar = function () {
 $js
+    window.PhpDebugBar.instance = {$this->getVariableName()};
     };
 
     if (document.readyState === 'loading') {
@@ -1219,7 +1220,7 @@ $js
 
         if (($this->initialization & self::INITIALIZE_CONSTRUCTOR) === self::INITIALIZE_CONSTRUCTOR) {
             $initializeOptions = $this->getInitializeOptions();
-            $js .= sprintf("window.%s = new %s(%s);\n", $this->variableName, $this->javascriptClass, $initializeOptions ? json_encode((object) $initializeOptions) : '');
+            $js .= sprintf("const %s = new %s(%s);\n", $this->variableName, $this->javascriptClass, $initializeOptions ? json_encode((object) $initializeOptions) : '');
         }
 
         if (($this->initialization & self::INITIALIZE_CONTROLS) === self::INITIALIZE_CONTROLS) {

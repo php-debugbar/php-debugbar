@@ -224,5 +224,4 @@ class DebugbarTest extends AbstractBrowserTestCase
         $client->takeScreenshot(__DIR__ . '/../../screenshots/pdo.png');
 
     }
-
 }
