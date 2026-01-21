@@ -42,6 +42,11 @@ class ConfigCollector extends DataCollector implements Renderable, Resettable
         foreach ($data as $k => $v) {
             if (!is_string($v)) {
                 $v = $this->getDataFormatter()->formatVar($v);
+
+                $expanded = strpos((string) $v, 'sf-dump-expanded');
+                if ($expanded !== false) {
+                    $v = substr_replace($v, 'sf-dump-compact', $expanded, 16);
+                }
             }
             $this->data[$k] = $v;
         }
