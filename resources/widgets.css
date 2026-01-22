@@ -427,16 +427,19 @@ table.phpdebugbar-widgets-tablevar td {
   font-weight: normal;
 }
 
-table.phpdebugbar-widgets-tablevar tr.phpdebugbar-widgets-header td{
+table.phpdebugbar-widgets-tablevar tr.phpdebugbar-widgets-header td,
+table.phpdebugbar-widgets-tablevar tr.phpdebugbar-widgets-summary td {
   position: sticky;
   inset-inline-start: 0px;
   background: var(--debugbar-background);
   border-bottom: none;
   z-index: 1;
   top: 0;
+  bottom: 0;
 }
 
-table.phpdebugbar-widgets-tablevar tr.phpdebugbar-widgets-header td::after {
+table.phpdebugbar-widgets-tablevar tr.phpdebugbar-widgets-header td::after,
+table.phpdebugbar-widgets-tablevar tr.phpdebugbar-widgets-summary td::after {
   content: "";
   position: absolute;
   left: 0;
@@ -444,6 +447,11 @@ table.phpdebugbar-widgets-tablevar tr.phpdebugbar-widgets-header td::after {
   width: 100%;
   height: 1px;
   background-color: var(--debugbar-border);
+}
+
+table.phpdebugbar-widgets-tablevar tr.phpdebugbar-widgets-summary td::after {
+  bottom: auto;
+  top: 0;
 }
 
 div.phpdebugbar span.phpdebugbar-widgets-badge {
