@@ -369,6 +369,7 @@
                 if (!data.data) {
                     return;
                 }
+                let hasXdebuglinks = false;
                 for (const [key, values] of Object.entries(data.data)) {
                     const tr = document.createElement('tr');
                     tr.classList.add(csscls('item'));
@@ -416,8 +417,8 @@
                         }
                         filename.append(link);
 
-                        if (!data.xdebug_link) {
-                            data.xdebug_link = true;
+                        if (!hasXdebuglinks) {
+                            hasXdebuglinks = true;
                             header.append(document.createElement('td'));
                         }
                     }
@@ -449,7 +450,7 @@
                     }
                 }
 
-                if (data.xdebug_link) {
+                if (hasXdebuglinks) {
                     summaryTr.append(document.createElement('td'));
                 }
             });
