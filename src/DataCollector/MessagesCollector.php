@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace DebugBar\DataCollector;
 
+use DebugBar\DataCollector\Message\LinkMessage;
 use DebugBar\DataCollector\Message\MessageInterface;
 use DebugBar\DataFormatter\HasXdebugLinks;
 use Psr\Log\AbstractLogger;
@@ -182,6 +183,13 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
             $this->addTimeMeasure("[{$label}]: " . substr($messageText, 0, 100), null, microtime(true));
         }
 
+    }
+
+    public function addLink(string $text, string $url, string $label = 'info', array $context = []): void
+    {
+        $message = new LinkMessage($text, $url);
+
+        $this->addMessage($message, $label, $context);
     }
 
     /**
