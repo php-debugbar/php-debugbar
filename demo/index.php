@@ -14,6 +14,7 @@ include 'bootstrap.php';
 
 // PSR Interpolation
 $debugbar['messages']->log('info', 'Hello {name}!', ['name' => 'World', 'location' => 'Earth']);
+$debugbar['messages']->addLink('Checkout the documentation on phpdebugbar.com', 'https://phpdebugbar.com');
 
 $debugbar['time']->startMeasure('op1', 'sleep 500');
 usleep(300);

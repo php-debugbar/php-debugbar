@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace DebugBar\DataCollector;
 
+use DebugBar\DataCollector\Message\LinkMessage;
+use DebugBar\DataCollector\Message\MessageInterface;
 use DebugBar\DataFormatter\HasXdebugLinks;
 use Psr\Log\AbstractLogger;
 use DebugBar\DataFormatter\HasDataFormatter;
@@ -135,15 +137,21 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         $messageHtml = null;
         $isString = true;
         if (!is_string($message)) {
-            // Send both text and HTML representations; the text version is used for searches
-            $messageText = $this->getDataFormatter()->formatVar($message);
-            if ($this->isHtmlVarDumperUsed()) {
-                $messageHtml = $messageText;
-                if ($this->compactDumps) {
-                    $messageHtml = $this->compactMessageDump($messageHtml);
+            if ($message instanceof MessageInterface) {
+                $messageText = $message->getText();
+                $messageHtml = $message->getHtml();
+            } else {
+                // Send both text and HTML representations; the text version is used for searches
+                $messageText = $this->getDataFormatter()->formatVar($message);
+                if ($this->isHtmlVarDumperUsed()) {
+                    $messageHtml = $messageText;
+                    if ($this->compactDumps) {
+                        $messageHtml = $this->compactMessageDump($messageHtml);
+                    }
+                    $messageText = strip_tags($messageHtml);
                 }
-                $messageText = strip_tags($messageHtml);
             }
+
             $isString = false;
         }
 
@@ -174,6 +182,13 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
             $this->addTimeMeasure("[{$label}]: " . substr($messageText, 0, 100), null, microtime(true));
         }
 
+    }
+
+    public function addLink(string $text, string $url, string $label = 'info', array $context = []): void
+    {
+        $message = new LinkMessage($text, $url);
+
+        $this->addMessage($message, $label, $context);
     }
 
     /**

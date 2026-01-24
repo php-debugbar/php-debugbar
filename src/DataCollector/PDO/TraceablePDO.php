@@ -294,7 +294,9 @@ class TraceablePDO extends PDO
      */
     public function getAccumulatedStatementsDuration(): float
     {
-        return array_reduce($this->executedStatements, function ($v, $s): float { return $v + $s->getDuration(); }, 0.0);
+        return array_reduce($this->executedStatements, function ($v, $s): float {
+            return $v + $s->getDuration();
+        }, 0.0);
     }
 
     /**
@@ -303,7 +305,9 @@ class TraceablePDO extends PDO
      */
     public function getMemoryUsage(): int
     {
-        return array_reduce($this->executedStatements, function ($v, $s): int { return $v + $s->getMemoryUsage(); }, 0);
+        return array_reduce($this->executedStatements, function ($v, $s): int {
+            return $v + $s->getMemoryUsage();
+        }, 0);
     }
 
     /**
@@ -335,7 +339,9 @@ class TraceablePDO extends PDO
      */
     public function getFailedExecutedStatements(): array
     {
-        return array_filter($this->executedStatements, function ($s): bool { return !$s->isSuccess(); });
+        return array_filter($this->executedStatements, function ($s): bool {
+            return !$s->isSuccess();
+        });
     }
 
     public function resetExecutedStatements(): void

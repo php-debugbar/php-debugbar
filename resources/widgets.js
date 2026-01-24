@@ -539,7 +539,7 @@
                                 val.classList.remove(csscls('pretty'));
                                 val.classList.add(csscls('truncated'));
                             } else {
-                                prettyVal = prettyVal || createCodeBlock(value.message, 'php');
+                                prettyVal = prettyVal || createCodeBlock(value.message);
                                 val.classList.add(csscls('pretty'));
                                 val.classList.remove(csscls('truncated'));
                                 val.innerHTML = '';
