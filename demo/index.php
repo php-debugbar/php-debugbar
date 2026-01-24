@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 // Adds the Content-Security-Policy to the HTTP header.
-use DebugBar\DataCollector\Message\LinkMessage;
 use DebugBar\DataCollector\MessagesCollector;
 use DebugBar\DataCollector\TimeDataCollector;
 
