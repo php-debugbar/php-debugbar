@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 // Adds the Content-Security-Policy to the HTTP header.
+use DebugBar\DataCollector\Message\LinkMessage;
 use DebugBar\DataCollector\MessagesCollector;
 use DebugBar\DataCollector\TimeDataCollector;
 
@@ -14,6 +15,7 @@ include 'bootstrap.php';
 
 // PSR Interpolation
 $debugbar['messages']->log('info', 'Hello {name}!', ['name' => 'World', 'location' => 'Earth']);
+$debugbar['messages']->log('info', new LinkMessage('Checkout the documentation on phpdebugbar.com', 'https://phpdebugbar.com'));
 
 $debugbar['time']->startMeasure('op1', 'sleep 500');
 usleep(300);

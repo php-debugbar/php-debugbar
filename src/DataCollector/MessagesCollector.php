@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace DebugBar\DataCollector;
 
+use DebugBar\DataCollector\Message\MessageInterface;
 use DebugBar\DataFormatter\HasXdebugLinks;
 use Psr\Log\AbstractLogger;
 use DebugBar\DataFormatter\HasDataFormatter;
@@ -135,15 +136,21 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         $messageHtml = null;
         $isString = true;
         if (!is_string($message)) {
-            // Send both text and HTML representations; the text version is used for searches
-            $messageText = $this->getDataFormatter()->formatVar($message);
-            if ($this->isHtmlVarDumperUsed()) {
-                $messageHtml = $messageText;
-                if ($this->compactDumps) {
-                    $messageHtml = $this->compactMessageDump($messageHtml);
+            if ($message instanceof MessageInterface) {
+                $messageText = $message->getText();
+                $messageHtml = $message->getHtml();
+            } else {
+                // Send both text and HTML representations; the text version is used for searches
+                $messageText = $this->getDataFormatter()->formatVar($message);
+                if ($this->isHtmlVarDumperUsed()) {
+                    $messageHtml = $messageText;
+                    if ($this->compactDumps) {
+                        $messageHtml = $this->compactMessageDump($messageHtml);
+                    }
+                    $messageText = strip_tags($messageHtml);
                 }
-                $messageText = strip_tags($messageHtml);
             }
+
             $isString = false;
         }
 
@@ -168,6 +175,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
             'label' => $label,
             'time' => microtime(true),
             'xdebug_link' => $stackItem ? $this->getXdebugLink($stackItem['file'], $stackItem['line'] ?? null) : null,
+            'message_object' => $message instanceof MessageInterface ? $message : null,
         ];
 
         if ($this->hasTimeDataCollector()) {
