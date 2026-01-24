@@ -289,25 +289,27 @@ div.phpdebugbar-widgets-messages {
 
 dl.phpdebugbar-widgets-kvlist {
   margin: 0;
+  display: grid;
+  grid-template-columns: minmax(160px, 15%) 1fr;
 }
   dl.phpdebugbar-widgets-kvlist dt {
-    float: left;
-    width: calc(15% - 10px);
-    min-width: 150px;
+    grid-column: 1;
+    min-width: 0;
     padding: 5px 10px;
     border-top: 1px solid var(--debugbar-border);
     font-weight: bold;
-    clear: both;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   dl.phpdebugbar-widgets-kvlist dd {
-    margin-left: 160px;
-    padding: 5px;
+    grid-column: 2;
+    margin: 0;
+    padding: 5px 10px;
     border-top: 1px solid var(--debugbar-border);
     cursor: pointer;
     min-height: 17px;
+    overflow-wrap: anywhere;
   }
 
 /* -------------------------------------- */
