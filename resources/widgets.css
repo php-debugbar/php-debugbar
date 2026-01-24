@@ -40,7 +40,8 @@ pre.phpdebugbar-widgets-code-block {
     margin-left: 8px;
     color: var(--debugbar-link);
   }
-  a.phpdebugbar-widgets-editor-link, a.phpdebugbar-widgets-external-link {
+  a.phpdebugbar-widgets-editor-link,
+  a.phpdebugbar-widgets-external-link {
     color: var(--debugbar-link);
   }
   .phpdebugbar-widgets-kvlist span.phpdebugbar-widgets-filename:hover,
