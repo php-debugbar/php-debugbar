@@ -293,6 +293,8 @@ dl.phpdebugbar-widgets-kvlist {
   grid-template-columns: minmax(160px, 15%) 1fr;
 }
   dl.phpdebugbar-widgets-kvlist dt {
+    grid-column: 1;
+    min-width: 0;
     padding: 5px 10px;
     border-top: 1px solid var(--debugbar-border);
     font-weight: bold;
@@ -301,6 +303,7 @@ dl.phpdebugbar-widgets-kvlist {
     white-space: nowrap;
   }
   dl.phpdebugbar-widgets-kvlist dd {
+    grid-column: 2;
     margin: 0;
     padding: 5px 10px;
     border-top: 1px solid var(--debugbar-border);
