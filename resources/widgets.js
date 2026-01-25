@@ -1403,6 +1403,9 @@
                         meta => meta.utime > latestUtime && !datasets[meta.id]
                     );
 
+                    // Reverse to load oldest first (since find() returns newest first)
+                    newDatasets.reverse();
+
                     const loadNext = (index = 0) => {
                         if (index >= newDatasets.length) {
                             scheduleNextScan();
@@ -1410,11 +1413,12 @@
                         }
 
                         const { id } = newDatasets[index];
+                        const isLast = index === newDatasets.length - 1;
                         debugbar.loadDataSet(
                             id,
                             '(scan)',
                             () => loadNext(index + 1),
-                            this.autoshowCheckbox.checked
+                            this.autoshowCheckbox.checked && isLast
                         );
                     };
 
