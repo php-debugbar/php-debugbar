@@ -105,4 +105,39 @@ class FileStorageTest extends DebugBarTestCase
 
         $this->assertFileExists($this->dirname . '/bar.json');
     }
+
+    public function testFindWithUtimeFilter(): void
+    {
+        // Clear any existing data from setUp
+        $this->s->clear();
+
+        // Create entries with different timestamps
+        $time1 = microtime(true) - 300; // 5 minutes ago
+        $time2 = microtime(true) - 200; // 3.3 minutes ago
+        $time3 = microtime(true) - 100; // 1.6 minutes ago
+
+        $data1 = ['__meta' => ['id' => 'entry1', 'utime' => $time1]];
+        $data2 = ['__meta' => ['id' => 'entry2', 'utime' => $time2]];
+        $data3 = ['__meta' => ['id' => 'entry3', 'utime' => $time3]];
+
+        $this->s->save('entry1', $data1);
+        $this->s->save('entry2', $data2);
+        $this->s->save('entry3', $data3);
+
+        // Filter for entries AFTER time2 (should return only entry3)
+        $results = $this->s->find(['utime' => $time2]);
+        $this->assertCount(1, $results);
+        $this->assertEquals('entry3', $results[0]['id']);
+
+        // Filter for entries AFTER time1 (should return entry2 and entry3)
+        $results = $this->s->find(['utime' => $time1]);
+        $this->assertCount(2, $results);
+        $ids = array_column($results, 'id');
+        $this->assertContains('entry2', $ids);
+        $this->assertContains('entry3', $ids);
+
+        // Filter for entries AFTER time3 (should return nothing)
+        $results = $this->s->find(['utime' => $time3]);
+        $this->assertCount(0, $results);
+    }
 }

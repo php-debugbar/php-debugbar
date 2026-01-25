@@ -111,6 +111,7 @@ class RedisStorage extends AbstractStorage
 
         $collected = [];
         $start = 0;
+        $filterUtime = isset($filters['utime']) ? (float) $filters['utime'] : null;
 
         while (count($collected) < $need) {
             $ids = $this->zRevRange($this->idxKey(), $start, $start + $batch - 1);
@@ -131,6 +132,12 @@ class RedisStorage extends AbstractStorage
                 if (!is_array($meta)) {
                     continue;
                 }
+
+                // Since data is sorted by utime desc, if we hit an entry that's too old, stop scanning
+                if ($filterUtime !== null && isset($meta['utime']) && $meta['utime'] <= $filterUtime) {
+                    break 2; // Break out of both foreach and while loops
+                }
+
                 if ($this->filter($meta, $filters)) {
                     $collected[] = $meta;
                     if (count($collected) >= $need) {
@@ -152,6 +159,10 @@ class RedisStorage extends AbstractStorage
     protected function filter(array $meta, array $filters): bool
     {
         foreach ($filters as $key => $value) {
+            // utime is handled separately in find() for early termination optimization
+            if ($key === 'utime') {
+                continue;
+            }
             if (!isset($meta[$key]) || fnmatch((string) $value, (string) $meta[$key]) === false) {
                 return false;
             }

@@ -254,4 +254,48 @@ class RedisStorageTest extends DebugBarTestCase
 
         $this->s->prune(1);
     }
+
+    public function testFindWithUtimeFilter(): void
+    {
+        $time1 = microtime(true) - 300; // 5 minutes ago
+        $time2 = microtime(true) - 200; // 3.3 minutes ago
+        $time3 = microtime(true) - 100; // 1.6 minutes ago
+
+        $meta1 = ['id' => 'entry1', 'utime' => $time1];
+        $meta2 = ['id' => 'entry2', 'utime' => $time2];
+        $meta3 = ['id' => 'entry3', 'utime' => $time3];
+
+        // find() calls zRevRange to get IDs (sorted newest first), then pipelines hGet for metadata
+        // Test: Filter for entries AFTER time2 (should return only entry3)
+        // With early termination optimization, zRevRange is called only once
+        $this->redis->expects($this->once())
+            ->method('zRevRange')
+            ->willReturn(['entry3', 'entry2', 'entry1']);
+
+        $this->redis->expects($this->once())
+            ->method('multi')
+            ->with(\Redis::PIPELINE)
+            ->willReturn($this->redis);
+
+        // Pipeline fetches meta for all three entries
+        $this->redis->expects($this->exactly(3))
+            ->method('hGet')
+            ->willReturnOnConsecutiveCalls($this->redis, $this->redis, $this->redis);
+
+        $this->redis->expects($this->once())
+            ->method('exec')
+            ->willReturn([
+                json_encode($meta3),
+                json_encode($meta2),
+                json_encode($meta1),
+            ]);
+
+        $this->redis->expects($this->never())
+            ->method('zRem');
+
+        $results = $this->s->find(['utime' => $time2]);
+
+        $this->assertCount(1, $results);
+        $this->assertEquals('entry3', $results[0]['id']);
+    }
 }
