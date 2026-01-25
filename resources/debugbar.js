@@ -1722,7 +1722,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 return;
             }
 
-            function wrappedOpen(method, url, async, user, pass) {
+            function wrappedOpen(method, url, async = true, user = null, pass = null) {
                 if (!this.__debugbar_listener_attached) {
                     this.__debugbar_listener_attached = true;
 
