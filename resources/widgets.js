@@ -1388,7 +1388,7 @@
                 }
             };
 
-            debugbar.openHandler.find({}, 0, (data, err) => {
+            debugbar.openHandler.find({utime: latestUtime}, 0, (data, err) => {
                 // Abort on explicit error argument
                 if (err) {
                     console.error('scanForNewDatasets: find() failed', err);

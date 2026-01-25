@@ -78,6 +78,12 @@ class FileStorage extends AbstractStorage
         sort($ids, SORT_STRING);
         $ids = array_reverse($ids);
 
+        $filterUtime = null;
+        if ($filters['utime'] ?? false) {
+            $filterUtime = (float) $filters['utime'];
+            unset($filters['utime']);
+        }
+
         foreach ($ids as $id) {
             //When filter is empty, skip loading the offset
             if ($i++ < $offset && !$filters) {
@@ -92,9 +98,14 @@ class FileStorage extends AbstractStorage
 
             $meta = $data['__meta'];
             unset($data);
+
+            if ($filterUtime !== null && $meta['utime'] <= $filterUtime) {
+                break;
+            }
             if ($this->filter($meta, $filters)) {
                 $results[] = $meta;
             }
+
             if (count($results) >= ($max + $offset)) {
                 break;
             }

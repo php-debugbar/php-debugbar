@@ -90,8 +90,11 @@ class PdoStorage extends AbstractStorage
         $offset = max(0, $offset);
 
         foreach ($filters as $key => $value) {
-            if (in_array($key, ['utime', 'datetime', 'uri', 'ip', 'method'], true)) {
+            if (in_array($key, ['datetime', 'uri', 'ip', 'method'], true)) {
                 $where[] = "meta_$key = ?";
+                $params[] = $value;
+            } elseif ($key === 'utime') {
+                $where[] = "meta_utime > ?";
                 $params[] = $value;
             }
         }
