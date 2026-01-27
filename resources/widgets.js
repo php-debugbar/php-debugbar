@@ -1079,6 +1079,7 @@
 
             // Refresh button
             this.refreshBtn = document.createElement('a');
+            this.refreshBtn.tabIndex = 0;
             this.refreshBtn.classList.add(csscls('datasets-refresh-btn'));
             this.refreshBtn.innerHTML = '<i class="phpdebugbar-icon phpdebugbar-icon-refresh"></i>';
             this.refreshBtn.title = 'Auto-scan for new datasets';
@@ -1103,6 +1104,7 @@
 
             // Clear button
             const clearBtn = document.createElement('a');
+            clearBtn.tabIndex = 0;
             clearBtn.classList.add(csscls('datasets-clear-btn'));
             clearBtn.textContent = 'Clear';
             clearBtn.addEventListener('click', () => {
