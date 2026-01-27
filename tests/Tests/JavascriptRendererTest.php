@@ -197,6 +197,8 @@ class JavascriptRendererTest extends DebugBarTestCase
         );
 
         $html = $this->r->renderHead();
+        $this->assertStringContainsString('<script type="text/javascript" nonce="mynonce" src="/burl/debugbar.js"></script>', $html);
+        $this->assertStringContainsString('<link rel="stylesheet" type="text/css" nonce="mynonce" href="/foobar/foo.css">', $html);
         $this->assertStringContainsString('<style nonce="mynonce">CssTest</style>', $html);
         $this->assertStringContainsString('<script type="text/javascript" nonce="mynonce">JsTest</script>', $html);
         $this->assertStringContainsString(

@@ -1050,7 +1050,7 @@ class JavascriptRenderer
         $nonce = $this->getNonceAttribute();
 
         foreach ($cssFiles as $file) {
-            $html .= sprintf('<link rel="stylesheet" type="text/css" href="%s">' . "\n", $file);
+            $html .= sprintf('<link rel="stylesheet" type="text/css"%s href="%s">' . "\n", $nonce, $file);
         }
 
         foreach ($inlineCss as $content) {
@@ -1058,7 +1058,7 @@ class JavascriptRenderer
         }
 
         foreach ($jsFiles as $file) {
-            $html .= sprintf('<script type="text/javascript" src="%s"></script>' . "\n", $file);
+            $html .= sprintf('<script type="text/javascript"%s src="%s"></script>' . "\n", $nonce, $file);
         }
 
         foreach ($inlineJs as $content) {
