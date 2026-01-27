@@ -1,4 +1,4 @@
-name: Tests
+name: Code Analysis
 
 on:
   push:
@@ -15,11 +15,11 @@ jobs:
     env:
       COMPOSER_NO_INTERACTION: 1
 
-    name: PHP${{ matrix.php }}
+    name: PHPStan Analysis
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
