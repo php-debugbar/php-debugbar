@@ -6,7 +6,7 @@ declare(strict_types=1);
 use DebugBar\DataCollector\MessagesCollector;
 use DebugBar\DataCollector\TimeDataCollector;
 
-header("Content-Security-Policy: default-src 'self' 'nonce-demo'; img-src data:");
+header("Content-Security-Policy: default-src 'self' 'nonce-demo'; img-src data:; script-src 'nonce-demo' 'strict-dynamic'");
 
 /** @var \DebugBar\DebugBar|array{messages: MessagesCollector,time: TimeDataCollector} $debugbar */
 
