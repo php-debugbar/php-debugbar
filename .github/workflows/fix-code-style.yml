@@ -1,4 +1,4 @@
-name: Tests
+name: Fix Code Style
 
 on:
   push:
@@ -22,11 +22,14 @@ jobs:
     env:
       COMPOSER_NO_INTERACTION: 1
 
-    name: PHP${{ matrix.php }}
+    name: Check Code Style
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
+      with:
+        repository: ${{ github.event.pull_request.head.repo.full_name }}
+        ref: ${{ github.head_ref }}
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
