@@ -51,7 +51,7 @@ if ($startPos !== false && $endPos !== false) {
 }
 
 // Copy dist folder to docs/assets/dist
-$distSource = __DIR__ . '/../dist';
+$distSource = __DIR__ . '/../resources/dist';
 $distDest = __DIR__ . '/../docs/assets/dist';
 
 if (!is_dir($distSource)) {
