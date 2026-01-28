@@ -205,7 +205,6 @@ class DebugbarTest extends AbstractBrowserTestCase
         $this->assertEquals('hello from rendered ajax', $messages[0]);
     }
 
-
     public function testPdoCollector(): void
     {
         $client = static::createPantherClient();
