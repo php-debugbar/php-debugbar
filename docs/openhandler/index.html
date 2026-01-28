@@ -1,0 +1,1085 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="PHP Debug Bar">
+      
+      
+        <meta name="author" content="Barry vd. Heuvel">
+      
+      
+        <link rel="canonical" href="https://php-debugbar.com/docs/openhandler/">
+      
+      
+        <link rel="prev" href="../storage/">
+      
+      
+        <link rel="next" href="../http-drivers/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Open handler - PHP Debug Bar</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/dist/debugbar.min.css?v=1769605101">
+    
+      <link rel="stylesheet" href="../../assets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-RRZHNXY76R"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-RRZHNXY76R",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-RRZHNXY76R",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+
+
+
+<meta property="og:title" content="Open handler - PHP Debug Bar" />
+
+
+
+<meta property="og:description" content="PHP Debug Bar" />
+
+
+<meta property="og:type" content="website" />
+
+<meta property="og:url" content="https://php-debugbar.com/docs/openhandler/" />
+
+
+
+<meta property="og:image" content="https://php-debugbar.com/img/preview.jpg" />
+
+
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#open-handler" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="PHP Debug Bar" class="md-header__button md-logo" aria-label="PHP Debug Bar" data-md-component="logo">
+      
+  <img src="../../assets/logo_white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PHP Debug Bar
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Open handler
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/php-debugbar/php-debugbar" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  DebugBar
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  Documentation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../collectors/base/" class="md-tabs__link">
+          
+  
+  
+  Collectors
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PHP Debug Bar" class="md-nav__button md-logo" aria-label="PHP Debug Bar" data-md-component="logo">
+      
+  <img src="../../assets/logo_white.png" alt="logo">
+
+    </a>
+    PHP Debug Bar
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/php-debugbar/php-debugbar" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DebugBar
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Documentation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data-collectors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Collecting Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rendering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ajax-and-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AJAX and Stacked data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data-formatter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Formatter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Open handler
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../http-drivers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP drivers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../javascript-bar/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Javascript Bar
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Collectors
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Collectors
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../collectors/base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Base collectors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../collectors/bridge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bridge collectors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="open-handler">Open handler<a class="headerlink" href="#open-handler" title="Permanent link">&para;</a></h1>
+<p>The debug bar can open previous sets of collected data which were stored using
+a storage handler (see previous section). To do so, it needs to be provided an
+url to an open handler.</p>
+<p>An open handler must respect a very simple protocol. The default implementation
+is <code>DebugBar\OpenHandler</code>.
+<div class="language-php highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">$openHandler</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DebugBar\OpenHandler</span><span class="p">(</span><span class="nv">$debugbar</span><span class="p">);</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nv">$openHandler</span><span class="o">-&gt;</span><span class="na">handle</span><span class="p">();</span>
+</span></code></pre></div></p>
+<p>Calling <code>handle()</code> will use data from the <code>$_REQUEST</code> array and echo the output.
+The function also supports input from other source if you provide an array as
+first argument. It can also return the data instead of echoing (use false as
+second argument) and not send the content-type header (use false as third argument).</p>
+<p>One you have setup your open handler, tell the <code>JavascriptRenderer</code> its url.
+<div class="language-php highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">$renderer</span><span class="o">-&gt;</span><span class="na">setOpenHandlerUrl</span><span class="p">(</span><span class="s1">&#39;open.php&#39;</span><span class="p">);</span>
+</span></code></pre></div></p>
+<p>This adds a button in the top right corner of the debug bar which allows you
+to browse and open previous sets of collected data.</p>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../storage/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Storage">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Storage
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../http-drivers/" class="md-footer__link md-footer__link--next" aria-label="Next: HTTP drivers">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                HTTP drivers
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; Barry vd. Heuvel & Maxime Bouroumeau-Fuseau
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/php-debugbar/php-debugbar" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "navigation.top", "navigation.footer", "navigation.sections", "navigation.expand", "content.tooltips", "content.code.copy", "toc.follow", "toc.integrate", "search.highlight", "meta"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+<!-- Add scripts that need to run before here -->
+
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../assets/dist/debugbar.min.js?v=1769605101"></script>
+      
+    
+
+<!-- Start Debugbar -->
+
+<script nonce="demo"> Sfdump = window.Sfdump || (function (doc) { doc.documentElement.classList.add('sf-js-enabled'); var rxEsc = /([.*+?^${}()|\[\]\/\\])/g, idRx = /\bsf-dump-\d+-ref[012]\w+\b/, keyHint = 0 <= navigator.platform.toUpperCase().indexOf('MAC') ? 'Cmd' : 'Ctrl', addEventListener = function (e, n, cb) { e.addEventListener(n, cb, false); }; if (!doc.addEventListener) { addEventListener = function (element, eventName, callback) { element.attachEvent('on' + eventName, function (e) { e.preventDefault = function () {e.returnValue = false;}; e.target = e.srcElement; callback(e); }); }; } function toggle(a, recursive) { var s = a.nextSibling || {}, oldClass = s.className, arrow, newClass; if (/\bsf-dump-compact\b/.test(oldClass)) { arrow = '▼'; newClass = 'sf-dump-expanded'; } else if (/\bsf-dump-expanded\b/.test(oldClass)) { arrow = '▶'; newClass = 'sf-dump-compact'; } else { return false; } if (doc.createEvent && s.dispatchEvent) { var event = doc.createEvent('Event'); event.initEvent('sf-dump-expanded' === newClass ? 'sfbeforedumpexpand' : 'sfbeforedumpcollapse', true, false); s.dispatchEvent(event); } a.lastChild.innerHTML = arrow; s.className = s.className.replace(/\bsf-dump-(compact|expanded)\b/, newClass); if (recursive) { try { a = s.querySelectorAll('.'+oldClass); for (s = 0; s < a.length; ++s) { if (-1 == a[s].className.indexOf(newClass)) { a[s].className = newClass; a[s].previousSibling.lastChild.innerHTML = arrow; } } } catch (e) { } } return true; }; function collapse(a, recursive) { var s = a.nextSibling || {}, oldClass = s.className; if (/\bsf-dump-expanded\b/.test(oldClass)) { toggle(a, recursive); return true; } return false; }; function expand(a, recursive) { var s = a.nextSibling || {}, oldClass = s.className; if (/\bsf-dump-compact\b/.test(oldClass)) { toggle(a, recursive); return true; } return false; }; function collapseAll(root) { var a = root.querySelector('a.sf-dump-toggle'); if (a) { collapse(a, true); expand(a); return true; } return false; } function reveal(node) { var previous, parents = []; while ((node = node.parentNode || {}) && (previous = node.previousSibling) && 'A' === previous.tagName) { parents.push(previous); } if (0 !== parents.length) { parents.forEach(function (parent) { expand(parent); }); return true; } return false; } function highlight(root, activeNode, nodes) { resetHighlightedNodes(root); Array.from(nodes||[]).forEach(function (node) { if (!/\bsf-dump-highlight\b/.test(node.className)) { node.className = node.className + ' sf-dump-highlight'; } }); if (!/\bsf-dump-highlight-active\b/.test(activeNode.className)) { activeNode.className = activeNode.className + ' sf-dump-highlight-active'; } } function resetHighlightedNodes(root) { Array.from(root.querySelectorAll('.sf-dump-str, .sf-dump-key, .sf-dump-public, .sf-dump-protected, .sf-dump-private')).forEach(function (strNode) { strNode.className = strNode.className.replace(/\bsf-dump-highlight\b/, ''); strNode.className = strNode.className.replace(/\bsf-dump-highlight-active\b/, ''); }); } return function (root, x) { root = doc.getElementById(root); var indentRx = new RegExp('^('+(root.getAttribute('data-indent-pad') || ' ').replace(rxEsc, '\\$1')+')+', 'm'), options = {"maxDepth":1,"maxStringLength":160,"fileLinkFormat":false}, elt = root.getElementsByTagName('A'), len = elt.length, i = 0, s, h, t = []; while (i < len) t.push(elt[i++]); for (i in x) { options[i] = x[i]; } function a(e, f) { addEventListener(root, e, function (e, n) { if ('A' == e.target.tagName) { f(e.target, e); } else if ('A' == e.target.parentNode.tagName) { f(e.target.parentNode, e); } else { n = /\bsf-dump-ellipsis\b/.test(e.target.className) ? e.target.parentNode : e.target; if ((n = n.nextElementSibling) && 'A' == n.tagName) { if (!/\bsf-dump-toggle\b/.test(n.className)) { n = n.nextElementSibling || n; } f(n, e, true); } } }); }; function isCtrlKey(e) { return e.ctrlKey || e.metaKey; } function xpathString(str) { var parts = str.match(/[^'"]+|['"]/g).map(function (part) { if ("'" == part) { return '"\'"'; } if ('"' == part) { return "'\"'"; } return "'" + part + "'"; }); return "concat(" + parts.join(",") + ", '')"; } function xpathHasClass(className) { return "contains(concat(' ', normalize-space(@class), ' '), ' " + className +" ')"; } a('mouseover', function (a, e, c) { if (c) { e.target.style.cursor = "pointer"; } }); a('click', function (a, e, c) { if (/\bsf-dump-toggle\b/.test(a.className)) { e.preventDefault(); if (!toggle(a, isCtrlKey(e))) { var r = doc.getElementById(a.getAttribute('href').slice(1)), s = r.previousSibling, f = r.parentNode, t = a.parentNode; t.replaceChild(r, a); f.replaceChild(a, s); t.insertBefore(s, r); f = f.firstChild.nodeValue.match(indentRx); t = t.firstChild.nodeValue.match(indentRx); if (f && t && f[0] !== t[0]) { r.innerHTML = r.innerHTML.replace(new RegExp('^'+f[0].replace(rxEsc, '\\$1'), 'mg'), t[0]); } if (/\bsf-dump-compact\b/.test(r.className)) { toggle(s, isCtrlKey(e)); } } if (c) { } else if (doc.getSelection) { try { doc.getSelection().removeAllRanges(); } catch (e) { doc.getSelection().empty(); } } else { doc.selection.empty(); } } else if (/\bsf-dump-str-toggle\b/.test(a.className)) { e.preventDefault(); e = a.parentNode.parentNode; e.className = e.className.replace(/\bsf-dump-str-(expand|collapse)\b/, a.parentNode.className); } }); elt = root.getElementsByTagName('SAMP'); len = elt.length; i = 0; while (i < len) t.push(elt[i++]); len = t.length; for (i = 0; i < len; ++i) { elt = t[i]; if ('SAMP' == elt.tagName) { a = elt.previousSibling || {}; if ('A' != a.tagName) { a = doc.createElement('A'); a.className = 'sf-dump-ref'; elt.parentNode.insertBefore(a, elt); } else { a.innerHTML += ' '; } a.title = (a.title ? a.title+'\n[' : '[')+keyHint+'+click] Expand all children'; a.innerHTML += elt.className == 'sf-dump-compact' ? '<span>▶</span>' : '<span>▼</span>'; a.className += ' sf-dump-toggle'; x = 1; if ('sf-dump' != elt.parentNode.className) { x += elt.parentNode.getAttribute('data-depth')/1; } } else if (/\bsf-dump-ref\b/.test(elt.className) && (a = elt.getAttribute('href'))) { a = a.slice(1); elt.className += ' sf-dump-hover'; elt.className += ' '+a; if (/[\[{]$/.test(elt.previousSibling.nodeValue)) { a = a != elt.nextSibling.id && doc.getElementById(a); try { s = a.nextSibling; elt.appendChild(a); s.parentNode.insertBefore(a, s); if (/^[@#]/.test(elt.innerHTML)) { elt.innerHTML += ' <span>▶</span>'; } else { elt.innerHTML = '<span>▶</span>'; elt.className = 'sf-dump-ref'; } elt.className += ' sf-dump-toggle'; } catch (e) { if ('&' == elt.innerHTML.charAt(0)) { elt.innerHTML = '…'; elt.className = 'sf-dump-ref'; } } } } } if (doc.evaluate && Array.from && root.children.length > 1) { root.setAttribute('tabindex', 0); SearchState = function () { this.nodes = []; this.idx = 0; }; SearchState.prototype = { next: function () { if (this.isEmpty()) { return this.current(); } this.idx = this.idx < (this.nodes.length - 1) ? this.idx + 1 : 0; return this.current(); }, previous: function () { if (this.isEmpty()) { return this.current(); } this.idx = this.idx > 0 ? this.idx - 1 : (this.nodes.length - 1); return this.current(); }, isEmpty: function () { return 0 === this.count(); }, current: function () { if (this.isEmpty()) { return null; } return this.nodes[this.idx]; }, reset: function () { this.nodes = []; this.idx = 0; }, count: function () { return this.nodes.length; }, }; function showCurrent(state) { var currentNode = state.current(), currentRect, searchRect; if (currentNode) { reveal(currentNode); highlight(root, currentNode, state.nodes); if ('scrollIntoView' in currentNode) { currentNode.scrollIntoView(true); currentRect = currentNode.getBoundingClientRect(); searchRect = search.getBoundingClientRect(); if (currentRect.top < (searchRect.top + searchRect.height)) { window.scrollBy(0, -(searchRect.top + searchRect.height + 5)); } } } counter.textContent = (state.isEmpty() ? 0 : state.idx + 1) + ' of ' + state.count(); } var search = doc.createElement('div'); search.className = 'sf-dump-search-wrapper sf-dump-search-hidden'; search.innerHTML = ' <input type="text" class="sf-dump-search-input"> <span class="sf-dump-search-count">0 of 0<\/span> <button type="button" class="sf-dump-search-input-previous" tabindex="-1"> <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1683 1331l-166 165q-19 19-45 19t-45-19L896 965l-531 531q-19 19-45 19t-45-19l-166-165q-19-19-19-45.5t19-45.5l742-741q19-19 45-19t45 19l742 741q19 19 19 45.5t-19 45.5z"\/><\/svg> <\/button> <button type="button" class="sf-dump-search-input-next" tabindex="-1"> <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1683 808l-742 741q-19 19-45 19t-45-19L109 808q-19-19-19-45.5t19-45.5l166-165q19-19 45-19t45 19l531 531 531-531q19-19 45-19t45 19l166 165q19 19 19 45.5t-19 45.5z"\/><\/svg> <\/button> '; root.insertBefore(search, root.firstChild); var state = new SearchState(); var searchInput = search.querySelector('.sf-dump-search-input'); var counter = search.querySelector('.sf-dump-search-count'); var searchInputTimer = 0; var previousSearchQuery = ''; addEventListener(searchInput, 'keyup', function (e) { var searchQuery = e.target.value; /* Don't perform anything if the pressed key didn't change the query */ if (searchQuery === previousSearchQuery) { return; } previousSearchQuery = searchQuery; clearTimeout(searchInputTimer); searchInputTimer = setTimeout(function () { state.reset(); collapseAll(root); resetHighlightedNodes(root); if ('' === searchQuery) { counter.textContent = '0 of 0'; return; } var classMatches = [ "sf-dump-str", "sf-dump-key", "sf-dump-public", "sf-dump-protected", "sf-dump-private", ].map(xpathHasClass).join(' or '); var xpathResult = doc.evaluate('.//span[' + classMatches + '][contains(translate(child::text(), ' + xpathString(searchQuery.toUpperCase()) + ', ' + xpathString(searchQuery.toLowerCase()) + '), ' + xpathString(searchQuery.toLowerCase()) + ')]', root, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null); while (node = xpathResult.iterateNext()) state.nodes.push(node); showCurrent(state); }, 400); }); Array.from(search.querySelectorAll('.sf-dump-search-input-next, .sf-dump-search-input-previous')).forEach(function (btn) { addEventListener(btn, 'click', function (e) { e.preventDefault(); -1 !== e.target.className.indexOf('next') ? state.next() : state.previous(); searchInput.focus(); collapseAll(root); showCurrent(state); }) }); addEventListener(root, 'keydown', function (e) { var isSearchActive = !/\bsf-dump-search-hidden\b/.test(search.className); if ((114 === e.keyCode && !isSearchActive) || (isCtrlKey(e) && 70 === e.keyCode)) { /* F3 or CMD/CTRL + F */ if (70 === e.keyCode && document.activeElement === searchInput) { /* * If CMD/CTRL + F is hit while having focus on search input, * the user probably meant to trigger browser search instead. * Let the browser execute its behavior: */ return; } e.preventDefault(); search.className = search.className.replace(/\bsf-dump-search-hidden\b/, ''); searchInput.focus(); } else if (isSearchActive) { if (27 === e.keyCode) { /* ESC key */ search.className += ' sf-dump-search-hidden'; e.preventDefault(); resetHighlightedNodes(root); searchInput.value = ''; } else if ( (isCtrlKey(e) && 71 === e.keyCode) /* CMD/CTRL + G */ || 13 === e.keyCode /* Enter */ || 114 === e.keyCode /* F3 */ ) { e.preventDefault(); e.shiftKey ? state.previous() : state.next(); collapseAll(root); showCurrent(state); } } }); } if (0 >= options.maxStringLength) { return; } try { elt = root.querySelectorAll('.sf-dump-str'); len = elt.length; i = 0; t = []; while (i < len) t.push(elt[i++]); len = t.length; for (i = 0; i < len; ++i) { elt = t[i]; s = elt.innerText || elt.textContent; x = s.length - options.maxStringLength; if (0 < x) { h = elt.innerHTML; elt[elt.innerText ? 'innerText' : 'textContent'] = s.substring(0, options.maxStringLength); elt.className += ' sf-dump-str-collapse'; elt.innerHTML = '<span class=sf-dump-str-collapse>'+h+'<a class="sf-dump-ref sf-dump-str-toggle" title="Collapse"> ◀</a></span>'+ '<span class=sf-dump-str-expand>'+elt.innerHTML+'<a class="sf-dump-ref sf-dump-str-toggle" title="'+x+' remaining characters"> ▶</a></span>'; } } } catch (e) { } }; })(document); </script><style nonce="demo"> .sf-js-enabled .phpdebugbar pre.sf-dump .sf-dump-compact, .sf-js-enabled .sf-dump-str-collapse .sf-dump-str-collapse, .sf-js-enabled .sf-dump-str-expand .sf-dump-str-expand { display: none; } .sf-dump-hover:hover { background-color: #B729D9; color: #FFF !important; border-radius: 2px; } .phpdebugbar pre.sf-dump { display: block; white-space: pre; padding: 5px; overflow: initial !important; } .phpdebugbar pre.sf-dump:after { content: ""; visibility: hidden; display: block; height: 0; clear: both; } .phpdebugbar pre.sf-dump .sf-dump-ellipsization { display: inline-flex; } .phpdebugbar pre.sf-dump a { text-decoration: none; cursor: pointer; border: 0; outline: none; color: inherit; } .phpdebugbar pre.sf-dump img { max-width: 50em; max-height: 50em; margin: .5em 0 0 0; padding: 0; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAAAAAA6mKC9AAAAHUlEQVQY02O8zAABilCaiQEN0EeA8QuUcX9g3QEAAjcC5piyhyEAAAAASUVORK5CYII=) #D3D3D3; } .phpdebugbar pre.sf-dump .sf-dump-ellipsis { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; } .phpdebugbar pre.sf-dump .sf-dump-ellipsis-tail { flex-shrink: 0; } .phpdebugbar pre.sf-dump code { display:inline; padding:0; background:none; } .sf-dump-public.sf-dump-highlight, .sf-dump-protected.sf-dump-highlight, .sf-dump-private.sf-dump-highlight, .sf-dump-str.sf-dump-highlight, .sf-dump-key.sf-dump-highlight { background: rgba(111, 172, 204, 0.3); border: 1px solid #7DA0B1; border-radius: 3px; } .sf-dump-public.sf-dump-highlight-active, .sf-dump-protected.sf-dump-highlight-active, .sf-dump-private.sf-dump-highlight-active, .sf-dump-str.sf-dump-highlight-active, .sf-dump-key.sf-dump-highlight-active { background: rgba(253, 175, 0, 0.4); border: 1px solid #ffa500; border-radius: 3px; } .phpdebugbar pre.sf-dump .sf-dump-search-hidden { display: none !important; } .phpdebugbar pre.sf-dump .sf-dump-search-wrapper { font-size: 0; white-space: nowrap; margin-bottom: 5px; display: flex; position: -webkit-sticky; position: sticky; top: 5px; } .phpdebugbar pre.sf-dump .sf-dump-search-wrapper > * { vertical-align: top; box-sizing: border-box; height: 21px; font-weight: normal; border-radius: 0; background: #FFF; color: #757575; border: 1px solid #BBB; } .phpdebugbar pre.sf-dump .sf-dump-search-wrapper > input.sf-dump-search-input { padding: 3px; height: 21px; font-size: 12px; border-right: none; border-top-left-radius: 3px; border-bottom-left-radius: 3px; color: #000; min-width: 15px; width: 100%; } .phpdebugbar pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-next, .phpdebugbar pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-previous { background: #F2F2F2; outline: none; border-left: none; font-size: 0; line-height: 0; } .phpdebugbar pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-next { border-top-right-radius: 3px; border-bottom-right-radius: 3px; } .phpdebugbar pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-next > svg, .phpdebugbar pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-previous > svg { pointer-events: none; width: 12px; height: 12px; } .phpdebugbar pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-count { display: inline-block; padding: 0 5px; margin: 0; border-left: none; line-height: 21px; font-size: 12px; }.phpdebugbar pre.sf-dump, .phpdebugbar pre.sf-dump .sf-dump-default{word-wrap: break-word; white-space: pre-wrap; word-break: normal}.phpdebugbar pre.sf-dump .sf-dump-num{font-weight:bold; color:#1299DA}.phpdebugbar pre.sf-dump .sf-dump-const{font-weight:bold}.phpdebugbar pre.sf-dump .sf-dump-str{font-weight:bold; color:#3A9B26}.phpdebugbar pre.sf-dump .sf-dump-note{color:#1299DA}.phpdebugbar pre.sf-dump .sf-dump-ref{color:#7B7B7B}.phpdebugbar pre.sf-dump .sf-dump-public{color:#000000}.phpdebugbar pre.sf-dump .sf-dump-protected{color:#000000}.phpdebugbar pre.sf-dump .sf-dump-private{color:#000000}.phpdebugbar pre.sf-dump .sf-dump-meta{color:#B729D9}.phpdebugbar pre.sf-dump .sf-dump-key{color:#3A9B26}.phpdebugbar pre.sf-dump .sf-dump-index{color:#1299DA}.phpdebugbar pre.sf-dump .sf-dump-ellipsis{color:#A0A000}.phpdebugbar pre.sf-dump .sf-dump-virtual{font-style:italic}.phpdebugbar pre.sf-dump .sf-dump-ns{user-select:none;}.phpdebugbar pre.sf-dump .sf-dump-ellipsis-note{color:#1299DA}.phpdebugbar[data-theme='dark'] pre.sf-dump, pre.sf-dump .sf-dump-default{background-color:#18171B; color:#FF8400; line-height:1.2em; font:12px Menlo, Monaco, Consolas, monospace; word-wrap: break-word; white-space: pre-wrap; position:relative; z-index:99999; word-break: break-all}.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-num{font-weight:bold; color:#1299DA}.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-const{font-weight:bold}.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-virtual{font-style:italic}.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-str{font-weight:bold; color:#56DB3A}.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-note{color:#1299DA}.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-ref{color:#A0A0A0}.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-public{color:#FFFFFF}.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-protected{color:#FFFFFF}.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-private{color:#FFFFFF}.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-meta{color:#B729D9}.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-key{color:#56DB3A}.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-index{color:#1299DA}.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-ellipsis{color:#FF8400}.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-ns{user-select:none;}.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-ellipsis-note{color:#1299DA}</style>
+<script type="text/javascript" nonce="demo">
+(function () {
+    const renderDebugbar = function () {
+const phpdebugbar = new PhpDebugBar.DebugBar({"theme":"auto","hideEmptyTabs":true});
+phpdebugbar.addIndicator("php_version", new PhpDebugBar.DebugBar.Indicator({"icon":"code","tooltip":"PHP Version"}), "right");
+phpdebugbar.addTab("messages", new PhpDebugBar.DebugBar.Tab({"icon":"logs","title":"Messages", "widget": new PhpDebugBar.Widgets.MessagesWidget()}));
+phpdebugbar.addTab("request", new PhpDebugBar.DebugBar.Tab({"icon":"arrows-left-right","title":"Request", "widget": new PhpDebugBar.Widgets.HtmlVariableListWidget()}));
+phpdebugbar.addIndicator("time", new PhpDebugBar.DebugBar.Indicator({"icon":"clock","tooltip":"Request Duration","link":"timeline"}), "right");
+phpdebugbar.addTab("timeline", new PhpDebugBar.DebugBar.Tab({"icon":"chart-infographic","title":"Timeline", "widget": new PhpDebugBar.Widgets.TimelineWidget()}));
+phpdebugbar.addIndicator("memory", new PhpDebugBar.DebugBar.Indicator({"icon":"server-cog","tooltip":"Memory Usage"}), "right");
+phpdebugbar.addTab("exceptions", new PhpDebugBar.DebugBar.Tab({"icon":"bug","title":"Exceptions", "widget": new PhpDebugBar.Widgets.ExceptionsWidget()}));
+phpdebugbar.addTab("database", new PhpDebugBar.DebugBar.Tab({"icon":"database","title":"Database", "widget": new PhpDebugBar.Widgets.SQLQueriesWidget()}));
+phpdebugbar.addTab("templates", new PhpDebugBar.DebugBar.Tab({"icon":"file-code","title":"Templates", "widget": new PhpDebugBar.Widgets.TemplatesWidget()}));
+phpdebugbar.addTab("http", new PhpDebugBar.DebugBar.Tab({"icon":"mobiledata","title":"Http", "widget": new PhpDebugBar.Widgets.HttpWidget()}));
+phpdebugbar.addTab("emails", new PhpDebugBar.DebugBar.Tab({"icon":"inbox","title":"Mails", "widget": new PhpDebugBar.Widgets.MailsWidget()}));
+phpdebugbar.addTab("counter", new PhpDebugBar.DebugBar.Tab({"icon":"box","title":"Counter", "widget": new PhpDebugBar.Widgets.TableVariableListWidget()}));
+phpdebugbar.addTab("monolog", new PhpDebugBar.DebugBar.Tab({"icon":"logs","title":"Monolog", "widget": new PhpDebugBar.Widgets.MessagesWidget()}));
+phpdebugbar.setDataMap({
+"php_version": ["php.version", ],
+"messages": ["messages.messages", []],
+"messages:badge": ["messages.count", null],
+"request": ["request.data", {}],
+"request:badge": ["request.badge", null],
+"time": ["time.duration_str", '0ms'],
+"timeline": ["time", {}],
+"memory": ["memory.peak_usage_str", '0B'],
+"exceptions": ["exceptions.exceptions", []],
+"exceptions:badge": ["exceptions.count", null],
+"database": ["pdo", []],
+"database:badge": ["pdo.nb_statements", 0],
+"templates": ["templates", []],
+"templates:badge": ["templates.nb_templates", 0],
+"http": ["http.requests", []],
+"http:badge": ["http.nb_requests", 0],
+"emails": ["symfonymailer_mails.mails", []],
+"emails:badge": ["symfonymailer_mails.count", null],
+"counter": ["counter", {}],
+"counter:badge": ["counter.count", 0],
+"monolog": ["monolog.messages", []],
+"monolog:badge": ["monolog.count", null]
+});
+phpdebugbar.restoreState();
+phpdebugbar.enableAjaxHandlerTab();
+phpdebugbar.ajaxHandler = new PhpDebugBar.AjaxHandler(phpdebugbar, undefined, true);
+phpdebugbar.ajaxHandler.bindToFetch();
+phpdebugbar.ajaxHandler.bindToXHR();
+phpdebugbar.setOpenHandler(new PhpDebugBar.OpenHandler({"url":"open.php"}));
+phpdebugbar.addDataSet({"__meta":{"id":"019c04aef35b9a0888ff869878521fa8","datetime":"2026-01-28 12:58:20","utime":1769605100.379989,"method":"GET","uri":"\/","ip":"127.0.0.1"},"php":{"version":"8.2.30","interface":"cli-server"},"messages":{"count":10,"messages":[{"message":"Hello World!","message_html":null,"is_string":true,"context":{"name":"\u003Cpre class=sf-dump id=sf-dump-134484423 data-indent-pad=\u0022  \u0022\u003E\u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003EWorld\u003C\/span\u003E\u0022\n\u003C\/pre\u003E","location":"\u003Cpre class=sf-dump id=sf-dump-286353398 data-indent-pad=\u0022  \u0022\u003E\u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003EEarth\u003C\/span\u003E\u0022\n\u003C\/pre\u003E"},"label":"info","time":1769605100.372638,"xdebug_link":null},{"message":"Checkout the documentation on phpdebugbar.com: https:\/\/phpdebugbar.com","message_html":"\u003Ca href=\u0022https:\/\/phpdebugbar.com\u0022 target=\u0022_blank\u0022 class=\u0022phpdebugbar-widgets-external-link\u0022\u003ECheckout the documentation on phpdebugbar.com\u003C\/a\u003E","is_string":false,"context":null,"label":"info","time":1769605100.372675,"xdebug_link":null},{"message":"This is a demo","message_html":null,"is_string":true,"context":null,"label":"warning","time":1769605100.373623,"xdebug_link":null},{"message":"array:1 [\n  \u0022toto\u0022 =\u003E array:1 [\n    0 =\u003E \u0022titi\u0022\n  ]\n]\n","message_html":"\u003Cpre class=sf-dump id=sf-dump-2092540078 data-indent-pad=\u0022  \u0022\u003E\u003Cspan class=sf-dump-note\u003Earray:1\u003C\/span\u003E [\u003Csamp data-depth=1 class=sf-dump-expanded\u003E\n  \u0022\u003Cspan class=sf-dump-key\u003Etoto\u003C\/span\u003E\u0022 =\u003E \u003Cspan class=sf-dump-note\u003Earray:1\u003C\/span\u003E [\u003Csamp data-depth=2 class=sf-dump-compact\u003E\n    \u003Cspan class=sf-dump-index\u003E0\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00224 characters\u0022\u003Etiti\u003C\/span\u003E\u0022\n  \u003C\/samp\u003E]\n\u003C\/samp\u003E]\n\u003C\/pre\u003E","is_string":false,"context":{"foo":"\u003Cpre class=sf-dump id=sf-dump-2092659055 data-indent-pad=\u0022  \u0022\u003E\u0022\u003Cspan class=sf-dump-str title=\u00223 characters\u0022\u003Ebar\u003C\/span\u003E\u0022\n\u003C\/pre\u003E"},"label":"debug","time":1769605100.373723,"xdebug_link":null},{"message":"oups","message_html":null,"is_string":true,"context":null,"label":"error","time":1769605100.373728,"xdebug_link":null},{"message":"welcome!","message_html":null,"is_string":true,"context":null,"label":"success","time":1769605100.37373,"xdebug_link":null},{"message":"panic!","message_html":null,"is_string":true,"context":null,"label":"critical","time":1769605100.373732,"xdebug_link":null},{"message":"\u003C!--\u003Cscript\u003E","message_html":null,"is_string":true,"context":null,"label":"info","time":1769605100.373734,"xdebug_link":null},{"message":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et nibh non est ultrices suscipit a non arcu. Sed sit amet est vel mi facilisis varius. Pellentesque vitae rutrum massa. Praesent magna diam, viverra eu nibh a, commodo aliquam mi. Morbi placerat tortor nec efficitur vestibulum. Nunc imperdiet feugiat massa, eu ornare dui tincidunt eget. Suspendisse accumsan hendrerit ex a iaculis. Nullam molestie sapien sed sapien feugiat tempor. Vivamus mollis vitae arcu vel commodo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sollicitudin purus vitae mi rutrum, sit amet molestie felis pellentesque. Vivamus in pellentesque nisl, ut lobortis metus. In hac habitasse platea dictumst.","message_html":null,"is_string":true,"context":null,"label":"info","time":1769605100.373735,"xdebug_link":null},{"message":"Sending message \u0022Wonderful Subject\u0022","message_html":null,"is_string":true,"context":{"message":"\u003Cpre class=sf-dump id=sf-dump-802612291 data-indent-pad=\u0022  \u0022\u003E\u003Cspan class=sf-dump-note\u003ESymfony\\Component\\Mailer\\SentMessage\u003C\/span\u003E {\u003Ca class=sf-dump-ref\u003E#68\u003C\/a\u003E\u003Csamp data-depth=1 class=sf-dump-expanded\u003E\n  -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mailer\\SentMessage`\u0022\u003Eoriginal\u003C\/span\u003E: \u003Cspan class=\u0022sf-dump-note sf-dump-ellipsization\u0022 title=\u0022Symfony\\Component\\Mime\\Email\n\u0022\u003E\u003Cspan class=\u0022sf-dump-ellipsis sf-dump-ellipsis-note\u0022\u003ESymfony\\Component\\Mime\u003C\/span\u003E\u003Cspan class=\u0022sf-dump-ellipsis sf-dump-ellipsis-note\u0022\u003E\\\u003C\/span\u003E\u003Cspan class=\u0022sf-dump-ellipsis-tail\u0022\u003EEmail\u003C\/span\u003E\u003C\/span\u003E {\u003Ca class=sf-dump-ref href=#sf-dump-802612291-ref269 title=\u00222 occurrences\u0022\u003E#69\u003C\/a\u003E\u003Csamp data-depth=2 id=sf-dump-802612291-ref269 class=sf-dump-compact\u003E\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mime\\RawMessage`\u0022\u003EisGeneratorClosed\u003C\/span\u003E: \u003Cspan class=sf-dump-const title=\u0022Uninitialized property\u0022\u003E? bool\u003C\/span\u003E\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mime\\RawMessage`\u0022\u003Emessage\u003C\/span\u003E: \u003Cspan class=sf-dump-const\u003Enull\u003C\/span\u003E\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mime\\Message`\u0022\u003Eheaders\u003C\/span\u003E: \u003Cspan class=\u0022sf-dump-note sf-dump-ellipsization\u0022 title=\u0022Symfony\\Component\\Mime\\Header\\Headers\n\u0022\u003E\u003Cspan class=\u0022sf-dump-ellipsis sf-dump-ellipsis-note\u0022\u003ESymfony\\Component\\Mime\\Header\u003C\/span\u003E\u003Cspan class=\u0022sf-dump-ellipsis sf-dump-ellipsis-note\u0022\u003E\\\u003C\/span\u003E\u003Cspan class=\u0022sf-dump-ellipsis-tail\u0022\u003EHeaders\u003C\/span\u003E\u003C\/span\u003E {\u003Ca class=sf-dump-ref\u003E#72\u003C\/a\u003E \u0026#8230;2}\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mime\\Message`\u0022\u003Ebody\u003C\/span\u003E: \u003Cspan class=sf-dump-const\u003Enull\u003C\/span\u003E\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mime\\Email`\u0022\u003Etext\u003C\/span\u003E: \u003Cspan class=sf-dump-const\u003Enull\u003C\/span\u003E\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mime\\Email`\u0022\u003EtextCharset\u003C\/span\u003E: \u003Cspan class=sf-dump-const\u003Enull\u003C\/span\u003E\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mime\\Email`\u0022\u003Ehtml\u003C\/span\u003E: \u0022\u003Cspan class=sf-dump-str title=\u002237 characters\u0022\u003E\u0026lt;div\u0026gt;Here is the message itself\u0026lt;\/div\u0026gt;\u003C\/span\u003E\u0022\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mime\\Email`\u0022\u003EhtmlCharset\u003C\/span\u003E: \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003Eutf-8\u003C\/span\u003E\u0022\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mime\\Email`\u0022\u003Eattachments\u003C\/span\u003E: []\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mime\\Email`\u0022\u003EcachedBody\u003C\/span\u003E: \u003Cspan class=sf-dump-const\u003Enull\u003C\/span\u003E\n  \u003C\/samp\u003E}\n  -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mailer\\SentMessage`\u0022\u003Eraw\u003C\/span\u003E: \u003Cspan class=\u0022sf-dump-note sf-dump-ellipsization\u0022 title=\u0022Symfony\\Component\\Mime\\RawMessage\n\u0022\u003E\u003Cspan class=\u0022sf-dump-ellipsis sf-dump-ellipsis-note\u0022\u003ESymfony\\Component\\Mime\u003C\/span\u003E\u003Cspan class=\u0022sf-dump-ellipsis sf-dump-ellipsis-note\u0022\u003E\\\u003C\/span\u003E\u003Cspan class=\u0022sf-dump-ellipsis-tail\u0022\u003ERawMessage\u003C\/span\u003E\u003C\/span\u003E {\u003Ca class=sf-dump-ref\u003E#80\u003C\/a\u003E\u003Csamp data-depth=2 class=sf-dump-compact\u003E\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mime\\RawMessage`\u0022\u003EisGeneratorClosed\u003C\/span\u003E: \u003Cspan class=sf-dump-const title=\u0022Uninitialized property\u0022\u003E? bool\u003C\/span\u003E\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mime\\RawMessage`\u0022\u003Emessage\u003C\/span\u003E: \u003Cspan class=sf-dump-note\u003EGenerator\u003C\/span\u003E {\u003Ca class=sf-dump-ref\u003E#93\u003C\/a\u003E \u0026#8230;3}\n  \u003C\/samp\u003E}\n  -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mailer\\SentMessage`\u0022\u003EmessageId\u003C\/span\u003E: \u0022\u003Cspan class=sf-dump-str title=\u002240 characters\u0022\u003E811367cb537a2fc556d3346615beb035@doe.com\u003C\/span\u003E\u0022\n  -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mailer\\SentMessage`\u0022\u003Edebug\u003C\/span\u003E: \u0022\u0022\n  -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mailer\\SentMessage`\u0022\u003Eenvelope\u003C\/span\u003E: \u003Cspan class=\u0022sf-dump-note sf-dump-ellipsization\u0022 title=\u0022Symfony\\Component\\Mailer\\DelayedEnvelope\n\u0022\u003E\u003Cspan class=\u0022sf-dump-ellipsis sf-dump-ellipsis-note\u0022\u003ESymfony\\Component\\Mailer\u003C\/span\u003E\u003Cspan class=\u0022sf-dump-ellipsis sf-dump-ellipsis-note\u0022\u003E\\\u003C\/span\u003E\u003Cspan class=\u0022sf-dump-ellipsis-tail\u0022\u003EDelayedEnvelope\u003C\/span\u003E\u003C\/span\u003E {\u003Ca class=sf-dump-ref\u003E#66\u003C\/a\u003E\u003Csamp data-depth=2 class=sf-dump-compact\u003E\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mailer\\Envelope`\u0022\u003Esender\u003C\/span\u003E: \u003Cspan class=sf-dump-const title=\u0022Uninitialized property\u0022\u003E? Symfony\\Component\\Mime\\Address\u003C\/span\u003E\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mailer\\Envelope`\u0022\u003Erecipients\u003C\/span\u003E: []\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mailer\\DelayedEnvelope`\u0022\u003EsenderSet\u003C\/span\u003E: \u003Cspan class=sf-dump-const\u003Efalse\u003C\/span\u003E\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mailer\\DelayedEnvelope`\u0022\u003ErecipientsSet\u003C\/span\u003E: \u003Cspan class=sf-dump-const\u003Efalse\u003C\/span\u003E\n    -\u003Cspan class=sf-dump-private title=\u0022Private property defined in class:\u0026#10;`Symfony\\Component\\Mailer\\DelayedEnvelope`\u0022\u003Emessage\u003C\/span\u003E: \u003Cspan class=\u0022sf-dump-note sf-dump-ellipsization\u0022 title=\u0022Symfony\\Component\\Mime\\Email\n\u0022\u003E\u003Cspan class=\u0022sf-dump-ellipsis sf-dump-ellipsis-note\u0022\u003ESymfony\\Component\\Mime\u003C\/span\u003E\u003Cspan class=\u0022sf-dump-ellipsis sf-dump-ellipsis-note\u0022\u003E\\\u003C\/span\u003E\u003Cspan class=\u0022sf-dump-ellipsis-tail\u0022\u003EEmail\u003C\/span\u003E\u003C\/span\u003E {\u003Ca class=sf-dump-ref href=#sf-dump-802612291-ref269 title=\u00222 occurrences\u0022\u003E#69\u003C\/a\u003E}\n  \u003C\/samp\u003E}\n\u003C\/samp\u003E}\n\u003C\/pre\u003E"},"label":"debug","time":1769605100.377599,"xdebug_link":null,"collector":"mails"}]},"request":{"data":{"uri":"\/","$_GET":"\u003Cpre class=sf-dump id=sf-dump-2032327395 data-indent-pad=\u0022  \u0022\u003E[]\n\u003C\/pre\u003E","$_POST":"\u003Cpre class=sf-dump id=sf-dump-710317627 data-indent-pad=\u0022  \u0022\u003E[]\n\u003C\/pre\u003E","$_COOKIE":"\u003Cpre class=sf-dump id=sf-dump-1150145148 data-indent-pad=\u0022  \u0022\u003E[]\n\u003C\/pre\u003E","$_SESSION":"\u003Cpre class=sf-dump id=sf-dump-9455403 data-indent-pad=\u0022  \u0022\u003E\u003Cspan class=sf-dump-note\u003Earray:1\u003C\/span\u003E [\u003Csamp data-depth=1 class=sf-dump-expanded\u003E\n  \u0022\u003Cspan class=sf-dump-key\u003EPHPDEBUGBAR_STACK_DATA\u003C\/span\u003E\u0022 =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00223 characters\u0022\u003E***\u003C\/span\u003E\u0022\n\u003C\/samp\u003E]\n\u003C\/pre\u003E"},"tooltip":null,"badge":null},"memory":{"peak_usage":1028128,"peak_usage_str":"1004KB"},"exceptions":{"count":0,"exceptions":[]},"pdo":{"nb_statements":8,"nb_failed_statements":0,"accumulated_duration":0.00016999244689941406,"memory_usage":2840,"peak_memory_usage":606840,"statements":[{"sql":"create table users (id integer, name varchar, email varchar)","type":"","row_count":0,"params":{},"duration":0.00013303756713867188,"duration_str":"133\u03bcs","memory":0,"memory_str":"0B","end_memory":585752,"end_memory_str":"572.02KB","is_success":true,"error_code":0,"error_message":"","backtrace":[{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDO.php","line":272,"function":"checkBacktrace","class":"DebugBar\\DataCollector\\PDO\\TracedStatement","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDO.php","line":257,"function":"addExecutedStatement","class":"DebugBar\\DataCollector\\PDO\\TraceablePDO","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDO.php","line":102,"function":"profileCall","class":"DebugBar\\DataCollector\\PDO\\TraceablePDO","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php","line":22,"function":"exec","class":"DebugBar\\DataCollector\\PDO\\TraceablePDO","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/index.php","line":40,"args":["\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php"],"function":"require"}],"filename":"TraceablePDO.php:272","xdebug_link":null,"slow":false,"start_percent":0,"width_percent":79.601,"connection":"write"},{"sql":"insert into users (name) values (\u0027foo\u0027)","type":"","row_count":1,"params":{"0":"foo"},"duration":1.0013580322265625e-5,"duration_str":"10\u03bcs","memory":464,"memory_str":"464B","end_memory":589568,"end_memory_str":"575.75KB","is_success":true,"error_code":0,"error_message":"","backtrace":[{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDO.php","line":272,"function":"checkBacktrace","class":"DebugBar\\DataCollector\\PDO\\TracedStatement","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDOStatement.php","line":133,"function":"addExecutedStatement","class":"DebugBar\\DataCollector\\PDO\\TraceablePDO","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php","line":26,"function":"execute","class":"DebugBar\\DataCollector\\PDO\\TraceablePDOStatement","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/index.php","line":40,"args":["\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php"],"function":"require"}],"filename":"TraceablePDO.php:272","xdebug_link":null,"slow":false,"start_percent":79.601,"width_percent":5.991,"connection":"write"},{"sql":"insert into users (name) values (\u0027bar\u0027)","type":"","row_count":1,"params":{"0":"bar"},"duration":3.0994415283203125e-6,"duration_str":"3\u03bcs","memory":0,"memory_str":"0B","end_memory":592072,"end_memory_str":"578.2KB","is_success":true,"error_code":0,"error_message":"","backtrace":[{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDO.php","line":272,"function":"checkBacktrace","class":"DebugBar\\DataCollector\\PDO\\TracedStatement","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDOStatement.php","line":133,"function":"addExecutedStatement","class":"DebugBar\\DataCollector\\PDO\\TraceablePDO","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php","line":27,"function":"execute","class":"DebugBar\\DataCollector\\PDO\\TraceablePDOStatement","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/index.php","line":40,"args":["\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php"],"function":"require"}],"filename":"TraceablePDO.php:272","xdebug_link":null,"slow":false,"start_percent":85.592,"width_percent":1.854,"connection":"write"},{"sql":"select * from users","type":"","row_count":0,"params":{},"duration":1.0967254638671875e-5,"duration_str":"11\u03bcs","memory":648,"memory_str":"648B","end_memory":595184,"end_memory_str":"581.23KB","is_success":true,"error_code":0,"error_message":"","backtrace":[{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDO.php","line":272,"function":"checkBacktrace","class":"DebugBar\\DataCollector\\PDO\\TracedStatement","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDO.php","line":257,"function":"addExecutedStatement","class":"DebugBar\\DataCollector\\PDO\\TraceablePDO","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDO.php","line":182,"function":"profileCall","class":"DebugBar\\DataCollector\\PDO\\TraceablePDO","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php","line":29,"function":"query","class":"DebugBar\\DataCollector\\PDO\\TraceablePDO","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/index.php","line":40,"args":["\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php"],"function":"require"}],"filename":"TraceablePDO.php:272","xdebug_link":null,"slow":false,"start_percent":87.447,"width_percent":6.562,"connection":"write"},{"sql":"select * from users where name=\u0027foo\u0027","type":"","row_count":0,"params":{"0":"foo"},"duration":2.1457672119140625e-6,"duration_str":"2\u03bcs","memory":632,"memory_str":"632B","end_memory":598496,"end_memory_str":"584.47KB","is_success":true,"error_code":0,"error_message":"","backtrace":[{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDO.php","line":272,"function":"checkBacktrace","class":"DebugBar\\DataCollector\\PDO\\TracedStatement","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDOStatement.php","line":133,"function":"addExecutedStatement","class":"DebugBar\\DataCollector\\PDO\\TraceablePDO","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php","line":31,"function":"execute","class":"DebugBar\\DataCollector\\PDO\\TraceablePDOStatement","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/index.php","line":40,"args":["\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php"],"function":"require"}],"filename":"TraceablePDO.php:272","xdebug_link":null,"slow":false,"start_percent":94.009,"width_percent":1.284,"connection":"write"},{"sql":"select * from users where name=\u0027foo\u0027","type":"","row_count":0,"params":{"0":"foo"},"duration":9.5367431640625e-7,"duration_str":"1\u03bcs","memory":0,"memory_str":"0B","end_memory":601000,"end_memory_str":"586.91KB","is_success":true,"error_code":0,"error_message":"","backtrace":[{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDO.php","line":272,"function":"checkBacktrace","class":"DebugBar\\DataCollector\\PDO\\TracedStatement","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDOStatement.php","line":133,"function":"addExecutedStatement","class":"DebugBar\\DataCollector\\PDO\\TraceablePDO","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php","line":32,"function":"execute","class":"DebugBar\\DataCollector\\PDO\\TraceablePDOStatement","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/index.php","line":40,"args":["\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php"],"function":"require"}],"filename":"TraceablePDO.php:272","xdebug_link":null,"slow":false,"start_percent":95.292,"width_percent":0.571,"connection":"write"},{"sql":"delete from users","type":"","row_count":0,"params":{},"duration":6.9141387939453125e-6,"duration_str":"7\u03bcs","memory":0,"memory_str":"0B","end_memory":606840,"end_memory_str":"592.62KB","is_success":true,"error_code":0,"error_message":"","backtrace":[{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDO.php","line":272,"function":"checkBacktrace","class":"DebugBar\\DataCollector\\PDO\\TracedStatement","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDO.php","line":257,"function":"addExecutedStatement","class":"DebugBar\\DataCollector\\PDO\\TraceablePDO","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDO.php","line":102,"function":"profileCall","class":"DebugBar\\DataCollector\\PDO\\TraceablePDO","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php","line":39,"function":"exec","class":"DebugBar\\DataCollector\\PDO\\TraceablePDO","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/index.php","line":40,"args":["\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php"],"function":"require"}],"filename":"TraceablePDO.php:272","xdebug_link":null,"slow":false,"start_percent":95.863,"width_percent":4.137,"connection":"write"},{"sql":"select * from users where name=\u0027Barry\u0027 and email=\u0027\u003Cscript\u003Ealert();\u003C\/script\u003E\u0027","type":"","row_count":0,"params":{"name":"Barry",":email":"\u003Cscript\u003Ealert();\u003C\/script\u003E"},"duration":2.86102294921875e-6,"duration_str":"3\u03bcs","memory":1096,"memory_str":"1.07KB","end_memory":604664,"end_memory_str":"590.49KB","is_success":true,"error_code":0,"error_message":"","backtrace":[{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDO.php","line":272,"function":"checkBacktrace","class":"DebugBar\\DataCollector\\PDO\\TracedStatement","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/src\/DataCollector\/PDO\/TraceablePDOStatement.php","line":133,"function":"addExecutedStatement","class":"DebugBar\\DataCollector\\PDO\\TraceablePDO","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php","line":36,"function":"execute","class":"DebugBar\\DataCollector\\PDO\\TraceablePDOStatement","type":"-\u003E"},{"file":"\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/index.php","line":40,"args":["\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/pdo.php"],"function":"require"}],"filename":"TraceablePDO.php:272","xdebug_link":null,"slow":false,"start_percent":0,"width_percent":100,"connection":"read"}],"accumulated_duration_str":"170\u03bcs","memory_usage_str":"2.77KB","peak_memory_usage_str":"592.62KB"},"templates":{"count":2,"nb_templates":2,"templates":[{"name":"1x index.php","param_count":2,"params":{"foo":"\u003Cpre class=sf-dump id=sf-dump-1991212 data-indent-pad=\u0022  \u0022\u003E\u0022\u003Cspan class=sf-dump-str title=\u00223 characters\u0022\u003Ebar\u003C\/span\u003E\u0022\n\u003C\/pre\u003E","items":"\u003Cpre class=sf-dump id=sf-dump-2131353427 data-indent-pad=\u0022  \u0022\u003E\u003Cspan class=sf-dump-note\u003Earray:2\u003C\/span\u003E [\u003Csamp data-depth=1 class=sf-dump-expanded\u003E\n  \u0022\u003Cspan class=sf-dump-key\u003Ea\u003C\/span\u003E\u0022 =\u003E \u003Cspan class=sf-dump-num\u003E1\u003C\/span\u003E\n  \u0022\u003Cspan class=sf-dump-key\u003Eb\u003C\/span\u003E\u0022 =\u003E \u003Cspan class=sf-dump-num\u003E2\u003C\/span\u003E\n\u003C\/samp\u003E]\n\u003C\/pre\u003E"},"start":1769605100.373828,"type":"php","hash":"php\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/templates.phpindex.phpfooitems","render_count":1,"name_original":"index.php"},{"name":"1x docs.php","param_count":1,"params":{"demo":"\u003Cpre class=sf-dump id=sf-dump-1171506546 data-indent-pad=\u0022  \u0022\u003E\u0022\u003Cspan class=sf-dump-str title=\u00224 characters\u0022\u003Etrue\u003C\/span\u003E\u0022\n\u003C\/pre\u003E"},"start":1769605100.373851,"type":"php","hash":"php\/home\/runner\/work\/php-debugbar\/php-debugbar\/demo\/collectors\/templates.phpdocs.phpdemo","render_count":1,"name_original":"docs.php"}]},"http":{"nb_requests":1,"requests":[{"method":"GET","url":"https:\/\/packagist.org\/packages\/php-debugbar\/php-debugbar\/stats.json","status":200,"duration":"6.84ms","details":{"response":"\u003Cpre class=sf-dump id=sf-dump-1192805481 data-indent-pad=\u0022  \u0022\u003E{\u003Ca class=sf-dump-ref\u003E#35\u003C\/a\u003E\u003Csamp data-depth=1 class=sf-dump-expanded\u003E\n  +\u0022\u003Cspan class=sf-dump-public title=\u0022Runtime added dynamic property\u0022\u003Edownloads\u003C\/span\u003E\u0022: {\u003Ca class=sf-dump-ref\u003E#34\u003C\/a\u003E\u003Csamp data-depth=2 class=sf-dump-compact\u003E\n    +\u0022\u003Cspan class=sf-dump-public title=\u0022Runtime added dynamic property\u0022\u003Etotal\u003C\/span\u003E\u0022: \u003Cspan class=sf-dump-num\u003E14881281\u003C\/span\u003E\n    +\u0022\u003Cspan class=sf-dump-public title=\u0022Runtime added dynamic property\u0022\u003Emonthly\u003C\/span\u003E\u0022: \u003Cspan class=sf-dump-num\u003E1559760\u003C\/span\u003E\n    +\u0022\u003Cspan class=sf-dump-public title=\u0022Runtime added dynamic property\u0022\u003Edaily\u003C\/span\u003E\u0022: \u003Cspan class=sf-dump-num\u003E86909\u003C\/span\u003E\n  \u003C\/samp\u003E}\n  +\u0022\u003Cspan class=sf-dump-public title=\u0022Runtime added dynamic property\u0022\u003Eversions\u003C\/span\u003E\u0022: \u003Cspan class=sf-dump-note\u003Earray:256\u003C\/span\u003E [\u003Csamp data-depth=2 class=sf-dump-compact\u003E\n    \u003Cspan class=sf-dump-index\u003E0\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003E3.x-dev\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E1\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002210 characters\u0022\u003Edev-master\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E2\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002212 characters\u0022\u003Ev3.0-beta.15\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E3\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002212 characters\u0022\u003Ev3.0-beta.14\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E4\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002212 characters\u0022\u003Ev3.0-beta.13\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E5\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002212 characters\u0022\u003Ev3.0-beta.12\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E6\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002212 characters\u0022\u003Ev3.0-beta.11\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E7\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002212 characters\u0022\u003Ev3.0-beta.10\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E8\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002211 characters\u0022\u003Ev3.0-beta.9\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E9\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002211 characters\u0022\u003Ev3.0-beta.8\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E10\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002211 characters\u0022\u003Ev3.0-beta.7\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E11\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002211 characters\u0022\u003Ev3.0-beta.6\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E12\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002211 characters\u0022\u003Ev3.0-beta.5\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E13\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002211 characters\u0022\u003Ev3.0-beta.4\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E14\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002211 characters\u0022\u003Ev3.0-beta.3\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E15\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002211 characters\u0022\u003Ev3.0-beta.2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E16\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002211 characters\u0022\u003Ev3.0-beta.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E17\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003E2.x-dev\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E18\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.2.6\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E19\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.2.5\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E20\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.2.4\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E21\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.2.3\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E22\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.2.2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E23\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.2.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E24\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.2.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E25\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.1.6\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E26\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.1.5\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E27\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.1.4\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E28\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.1.3\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E29\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.1.2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E30\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.1.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E31\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.1.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E32\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.0.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E33\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Ev2.0.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E34\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002212 characters\u0022\u003Ev2.0.0-beta2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E35\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002212 characters\u0022\u003Ev2.0.0-beta1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E36\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003E1.x-dev\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E37\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.23.6\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E38\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.23.5\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E39\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.23.4\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E40\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.23.3\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E41\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.23.2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E42\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.23.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E43\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.23.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E44\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.22.6\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E45\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.22.5\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E46\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.22.4\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E47\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.22.3\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E48\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.22.2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E49\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.22.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E50\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.22.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E51\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.21.3\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E52\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.21.2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E53\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.21.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E54\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.21.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E55\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.20.2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E56\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.20.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E57\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.20.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E58\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.19.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E59\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.19.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E60\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.18.2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E61\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.18.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E62\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.18.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E63\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.17.3\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E64\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.17.2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E65\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.17.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E66\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.17.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E67\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.16.5\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E68\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.16.4\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E69\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.16.3\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E70\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.16.2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E71\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.16.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E72\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.16.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E73\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.15.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E74\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.15.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E75\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.14.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E76\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.14.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E77\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003E1.13.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E78\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.13.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E79\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.12.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E80\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.11.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E81\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.11.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E82\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.10.5\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E83\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.10.4\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E84\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.10.3\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E85\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Ev1.10.2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E86\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003E1.10.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E87\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003E1.10.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E88\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003E1.9.15\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E89\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003E1.9.14\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E90\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003E1.9.13\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E91\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003E1.9.12\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E92\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003E1.9.11\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E93\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003E1.9.10\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E94\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.9.9\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E95\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.9.8\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E96\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.9.7\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E97\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.9.6\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E98\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.9.5\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E99\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.9.4\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E100\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.9.3\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E101\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.9.2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E102\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.9.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E103\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00223 characters\u0022\u003E1.9\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E104\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00223 characters\u0022\u003E1.8\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E105\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.7.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E106\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00223 characters\u0022\u003E1.7\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E107\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.6.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E108\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00223 characters\u0022\u003E1.6\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E109\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.5.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E110\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00223 characters\u0022\u003E1.5\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E111\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00223 characters\u0022\u003E1.4\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E112\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00223 characters\u0022\u003E1.3\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E113\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00223 characters\u0022\u003E1.2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E114\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00223 characters\u0022\u003E1.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E115\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.0.4\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E116\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.0.3\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E117\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.0.2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E118\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00225 characters\u0022\u003E1.0.1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E119\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00223 characters\u0022\u003E1.0\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E120\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002220 characters\u0022\u003Edev-feat-http-widget\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E121\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002219 characters\u0022\u003Edev-safer-vardumper\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E122\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002214 characters\u0022\u003Edev-feat-icons\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E123\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002218 characters\u0022\u003Edev-tweak-test-dir\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E124\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002222 characters\u0022\u003Edev-feat-move-autoload\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E125\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002219 characters\u0022\u003Edev-faet-globalthis\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E126\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002224 characters\u0022\u003Edev-feat-relax-vardumper\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E127\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002216 characters\u0022\u003Edev-test-windows\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E128\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002221 characters\u0022\u003Edev-feat-tweak-minify\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E129\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002216 characters\u0022\u003Edev-tweak-assets\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E130\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002226 characters\u0022\u003Edev-fix-symfony-statuscode\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E131\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002222 characters\u0022\u003Edev-feat-sfdump-params\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E132\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002227 characters\u0022\u003Edev-feat-template-vardumper\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E133\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-mask-values\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E134\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-mask-public\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E135\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002228 characters\u0022\u003Edev-feat-symfony-http-driver\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E136\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002228 characters\u0022\u003Edev-feat-symfony-integration\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E137\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002221 characters\u0022\u003Edev-fix-resize-handle\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E138\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002222 characters\u0022\u003Edev-feat-release-notes\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E139\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002223 characters\u0022\u003Edev-feat-default-colors\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E140\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002218 characters\u0022\u003Edev-fix-btn-resize\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E141\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002216 characters\u0022\u003Edev-feat-top-bar\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E142\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002216 characters\u0022\u003Edev-fix-settings\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E143\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002219 characters\u0022\u003Edev-fix-render-docs\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E144\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002221 characters\u0022\u003Edev-feat-assethandler\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E145\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002218 characters\u0022\u003Edev-fix-file-check\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E146\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002211 characters\u0022\u003Edev-docs-v3\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E147\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002217 characters\u0022\u003Edev-padding-inset\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E148\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002224 characters\u0022\u003Edev-feat-garbage-collect\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E149\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002213 characters\u0022\u003Edev-feat-mask\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E150\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002226 characters\u0022\u003Edev-webmailcontatos-master\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E151\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002221 characters\u0022\u003Edev-extend-sql-widget\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E152\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002217 characters\u0022\u003Edev-feat-pdo-sort\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E153\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002222 characters\u0022\u003Edev-feat-pdo-backtrace\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E154\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002219 characters\u0022\u003Edev-feat-format-sql\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E155\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-feat-params\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E156\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-feat-hidden\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E157\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002229 characters\u0022\u003Edev-feat-queryformat-bindings\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E158\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002224 characters\u0022\u003Edev-fix-exceptions-trace\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E159\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002226 characters\u0022\u003Edev-feat-vardumper-version\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E160\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-update-docs\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E161\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002213 characters\u0022\u003Edev-feat-docs\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E162\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002219 characters\u0022\u003Edev-feat-hightlight\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E163\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002218 characters\u0022\u003Edev-feat-workflows\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E164\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-fix-options\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E165\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002212 characters\u0022\u003Edev-feat-csp\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E166\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002218 characters\u0022\u003Edev-optimize-equal\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E167\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002216 characters\u0022\u003Edev-feat-rebuild\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E168\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002224 characters\u0022\u003Edev-feat-optimize-render\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E169\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002222 characters\u0022\u003Edev-fix-exception-dump\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E170\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002224 characters\u0022\u003Edev-tweak-backtrace-lmit\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E171\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002217 characters\u0022\u003Edev-fix-vardumper\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E172\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002212 characters\u0022\u003Edev-fix-lint\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E173\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002216 characters\u0022\u003Edev-fix-autoshow\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E174\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002211 characters\u0022\u003Edev-v3-beta\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E175\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-remove-docs\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E176\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002231 characters\u0022\u003Edev-feat-openhandler-actionable\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E177\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002222 characters\u0022\u003Edev-copilot\/sub-pr-670\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E178\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002224 characters\u0022\u003Edev-3.x-dump-dist-assets\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E179\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002222 characters\u0022\u003Edev-3.x-phpstan-level6\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E180\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002222 characters\u0022\u003Edev-3.x-phpstan-level5\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E181\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-3.x-actions\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E182\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002219 characters\u0022\u003Edev-3x-no-serialize\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E183\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002212 characters\u0022\u003Edev-3.x-demo\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E184\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002220 characters\u0022\u003Edev-3.x-strict-types\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E185\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002214 characters\u0022\u003Edev-3.x-per-cs\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E186\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-3.x-analyse\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E187\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002219 characters\u0022\u003Edev-3x-minify-tweak\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E188\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002220 characters\u0022\u003Edev-3.x-tweak-minify\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E189\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-3.x-classes\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E190\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002216 characters\u0022\u003Edev-3.x-nativejs\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E191\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002217 characters\u0022\u003Edev-3.x-templates\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E192\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002221 characters\u0022\u003Edev-3.x-message-icons\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E193\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002218 characters\u0022\u003Edev-3.x-deprecated\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E194\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002214 characters\u0022\u003Edev-3.x-assets\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E195\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-3.x-sprites\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E196\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002221 characters\u0022\u003Edev-feat-widget-icons\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E197\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-tweak-icons\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E198\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002213 characters\u0022\u003Edev-3.x-fetch\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E199\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002221 characters\u0022\u003Edev-feat-build-vendor\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E200\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-feat-eslint\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E201\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002212 characters\u0022\u003Edev-feat-es6\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E202\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002229 characters\u0022\u003Edev-deprecate-doctrine-bridge\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E203\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002228 characters\u0022\u003Edev-test-wait-for-visibility\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E204\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002222 characters\u0022\u003Edev-panther-nodevtools\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E205\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-dark-dumper\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E206\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002220 characters\u0022\u003Edev-barryvdh-patch-4\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E207\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002222 characters\u0022\u003Edev-feat-tab-text-size\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E208\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002213 characters\u0022\u003Edev-feat-ulid\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E209\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002220 characters\u0022\u003Edev-barryvdh-patch-3\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E210\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002216 characters\u0022\u003Edev-sort-widgets\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E211\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002214 characters\u0022\u003Edev-fix-badges\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E212\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002218 characters\u0022\u003Edev-fix-empty-time\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E213\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002223 characters\u0022\u003Edev-feat-group-timeline\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E214\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002222 characters\u0022\u003Edev-feat-link-timeline\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E215\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002225 characters\u0022\u003Edev-fix-openhandler-theme\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E216\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002220 characters\u0022\u003Edev-barryvdh-patch-2\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E217\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002223 characters\u0022\u003Edev-feat-link-indicator\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E218\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002218 characters\u0022\u003Edev-feat-fix-links\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E219\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002226 characters\u0022\u003Edev-Rename-to-php-debugbar\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E220\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002228 characters\u0022\u003Edev-feat-rename-bump-package\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E221\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-dev-keyword\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E222\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002223 characters\u0022\u003Edev-feat-fix-lineheight\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E223\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002213 characters\u0022\u003Edev-feat-hljs\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E224\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002219 characters\u0022\u003Edev-revert-dragging\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E225\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002218 characters\u0022\u003Edev-feat-offset-20\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E226\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002220 characters\u0022\u003Edev-barryvdh-patch-1\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E227\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002217 characters\u0022\u003Edev-feat-dragicon\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E228\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002228 characters\u0022\u003Edev-remove-trace-arg-objects\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E229\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002226 characters\u0022\u003Edev-feat-extended-tooltips\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E230\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002226 characters\u0022\u003Edev-feat-check-copy-result\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E231\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002230 characters\u0022\u003Edev-feat-hide-empty-collectors\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E232\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002220 characters\u0022\u003Edev-feat-subtle-copy\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E233\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002219 characters\u0022\u003Edev-escape-doctrine\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E234\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002217 characters\u0022\u003Edev-feat\/fa-icons\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E235\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002224 characters\u0022\u003Edev-feat-dataset-combine\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E236\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002220 characters\u0022\u003Edev-test-integration\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E237\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002220 characters\u0022\u003Edev-feat-dataset-tab\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E238\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002219 characters\u0022\u003Edev-feat-fetch-only\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E239\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002217 characters\u0022\u003Edev-fix-mail-html\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E240\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002218 characters\u0022\u003Edev-fix-body-check\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E241\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002217 characters\u0022\u003Edev-feat-mailbody\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E242\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002223 characters\u0022\u003Edev-revert-606-patch-32\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E243\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002227 characters\u0022\u003Edev-feat-xdebuglink-varlist\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E244\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002229 characters\u0022\u003Edev-feat-jquery4-deprecations\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E245\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002219 characters\u0022\u003Edev-fix\/interpolate\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E246\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002217 characters\u0022\u003Edev-fix\/vardumper\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E247\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002221 characters\u0022\u003Edev-feat-servertiming\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E248\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002222 characters\u0022\u003Edev-fix-unsafe-headers\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E249\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00229 characters\u0022\u003Edev-reset\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E250\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002224 characters\u0022\u003Edev-feat-dynamic-padding\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E251\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002215 characters\u0022\u003Edev-dev_rebased\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E252\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00228 characters\u0022\u003Edev-util\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E253\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002219 characters\u0022\u003Edev-timedate-memory\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E254\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u00227 characters\u0022\u003Edev-dev\u003C\/span\u003E\u0022\n    \u003Cspan class=sf-dump-index\u003E255\u003C\/span\u003E =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002217 characters\u0022\u003Edev-serverhandler\u003C\/span\u003E\u0022\n  \u003C\/samp\u003E]\n  +\u0022\u003Cspan class=sf-dump-public title=\u0022Runtime added dynamic property\u0022\u003Eaverage\u003C\/span\u003E\u0022: \u0022\u003Cspan class=sf-dump-str title=\u00226 characters\u0022\u003Eweekly\u003C\/span\u003E\u0022\n  +\u0022\u003Cspan class=sf-dump-public title=\u0022Runtime added dynamic property\u0022\u003Edate\u003C\/span\u003E\u0022: \u0022\u003Cspan class=sf-dump-str title=\u002210 characters\u0022\u003E2025-01-26\u003C\/span\u003E\u0022\n\u003C\/samp\u003E}\n\u003C\/pre\u003E","headers":"\u003Cpre class=sf-dump id=sf-dump-129730361 data-indent-pad=\u0022  \u0022\u003E\u003Cspan class=sf-dump-note\u003Earray:2\u003C\/span\u003E [\u003Csamp data-depth=1 class=sf-dump-expanded\u003E\n  \u0022\u003Cspan class=sf-dump-key\u003EData\u003C\/span\u003E\u0022 =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002229 characters\u0022\u003EMon, 05 Jan 2026 21:07:36 GMT\u003C\/span\u003E\u0022\n  \u0022\u003Cspan class=sf-dump-key\u003EContent-Type\u003C\/span\u003E\u0022 =\u003E \u0022\u003Cspan class=sf-dump-str title=\u002216 characters\u0022\u003Eapplication\/json\u003C\/span\u003E\u0022\n\u003C\/samp\u003E]\n\u003C\/pre\u003E"}}]},"symfonymailer_mails":{"count":1,"mails":[{"to":["you@example.com"],"subject":"Wonderful Subject","headers":"From: john@doe.com\r\nTo: you@example.com\r\nSubject: Wonderful Subject\r\n","body":null,"html":"\u003Cdiv\u003EHere is the message itself\u003C\/div\u003E"}]},"counter":{"data":{"SecondClass":{"Saved":6,"Retrieved":1,"Deleted":3},"ThirdClass":{"Retrieved":5,"Deleted":2,"Saved":1},"FirstClass":{"Saved":2,"Retrieved":1}},"count":21,"key_map":["Retrieved","Saved","Deleted"],"is_counter":true,"badges":{"Retrieved":7,"Deleted":5,"Saved":9}},"monolog":{"count":1,"messages":[{"message":"hello world","message_html":null,"is_string":true,"context":{"time":"\u003Cpre class=sf-dump id=sf-dump-1191758951 data-indent-pad=\u0022  \u0022\u003E\u0022\u003Cspan class=sf-dump-str title=\u002225 characters\u0022\u003E2026-01-28T12:58:20+00:00\u003C\/span\u003E\u0022\n\u003C\/pre\u003E"},"label":"info","time":1769605100.376253,"xdebug_link":null}]},"time":{"count":23,"start":1769605100.371895,"end":1769605100.380363,"duration":0.008467912673950195,"duration_str":"8.47ms","measures":[{"label":"GET https:\/\/packagist.org\/packages\/php-debugbar\/php-debugbar\/stats.json","start":1769605100.36905,"relative_start":-0.0028450489044189453,"end":1769605100.37589,"relative_end":1769605100.37589,"duration":0.0068399906158447266,"duration_str":"6.84ms","memory":0,"memory_str":"0B","params":[],"collector":"http","group":"http"},{"label":"[info]: Hello World!","start":1769605100.372643,"relative_start":0.0007479190826416016,"end":1769605100.37264,"relative_end":1769605100.37264,"duration":-3.0994415283203125e-6,"duration_str":"-3\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"messages","group":"messages"},{"label":"[info]: Checkout the documentation on phpdebugbar.com: https:\/\/phpdebugbar.com","start":1769605100.372676,"relative_start":0.0007808208465576172,"end":1769605100.372676,"relative_end":1769605100.372676,"duration":0,"duration_str":"0\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"messages","group":"messages"},{"label":"sleep 500","start":1769605100.37268,"relative_start":0.0007848739624023438,"end":1769605100.373315,"relative_end":1769605100.373315,"duration":0.0006351470947265625,"duration_str":"635\u03bcs","memory":0,"memory_str":"0B","params":{"foo":"\u003Cpre class=sf-dump id=sf-dump-1619102948 data-indent-pad=\u0022  \u0022\u003E\u0022\u003Cspan class=sf-dump-str title=\u00223 characters\u0022\u003Ebar\u003C\/span\u003E\u0022\n\u003C\/pre\u003E"},"collector":null,"group":null},{"label":"sleep 400","start":1769605100.373051,"relative_start":0.001155853271484375,"end":1769605100.373617,"relative_end":1769605100.373617,"duration":0.0005660057067871094,"duration_str":"566\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":null,"group":null},{"label":"[warning]: This is a demo","start":1769605100.373624,"relative_start":0.0017290115356445312,"end":1769605100.373624,"relative_end":1769605100.373624,"duration":0,"duration_str":"0\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"messages","group":"messages"},{"label":"[debug]: array:1 [\n  \u0022toto\u0022 =\u003E array:1 [\n    0 =\u003E \u0022titi\u0022\n  ]\n]\n","start":1769605100.373725,"relative_start":0.0018298625946044922,"end":1769605100.373724,"relative_end":1769605100.373724,"duration":-9.5367431640625e-7,"duration_str":"-1\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"messages","group":"messages"},{"label":"[error]: oups","start":1769605100.373729,"relative_start":0.0018339157104492188,"end":1769605100.373729,"relative_end":1769605100.373729,"duration":0,"duration_str":"0\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"messages","group":"messages"},{"label":"[success]: welcome!","start":1769605100.373731,"relative_start":0.0018358230590820312,"end":1769605100.373731,"relative_end":1769605100.373731,"duration":0,"duration_str":"0\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"messages","group":"messages"},{"label":"[critical]: panic!","start":1769605100.373733,"relative_start":0.0018379688262939453,"end":1769605100.373733,"relative_end":1769605100.373733,"duration":0,"duration_str":"0\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"messages","group":"messages"},{"label":"[info]: \u003C!--\u003Cscript\u003E","start":1769605100.373734,"relative_start":0.0018389225006103516,"end":1769605100.373734,"relative_end":1769605100.373734,"duration":0,"duration_str":"0\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"messages","group":"messages"},{"label":"[info]: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et nibh non est ultrices suscipit","start":1769605100.373736,"relative_start":0.001840829849243164,"end":1769605100.373736,"relative_end":1769605100.373736,"duration":0,"duration_str":"0\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"messages","group":"messages"},{"label":"index.php","start":1769605100.373828,"relative_start":0.0019328594207763672,"end":1769605100.373828,"relative_end":1769605100.373828,"duration":0,"duration_str":"0\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"templates","group":"templates"},{"label":"docs.php","start":1769605100.373851,"relative_start":0.0019559860229492188,"end":1769605100.373851,"relative_end":1769605100.373851,"duration":0,"duration_str":"0\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"templates","group":"templates"},{"label":"create table users (id integer, name varchar, email varchar)","start":1769605100.373975,"relative_start":0.0020799636840820312,"end":1769605100.374108,"relative_end":1769605100.374108,"duration":0.00013303756713867188,"duration_str":"133\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"pdo","group":"pdo write"},{"label":"insert into users (name) values (?)","start":1769605100.374196,"relative_start":0.0023009777069091797,"end":1769605100.374206,"relative_end":1769605100.374206,"duration":1.0013580322265625e-5,"duration_str":"10\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"pdo","group":"pdo write"},{"label":"insert into users (name) values (?)","start":1769605100.374213,"relative_start":0.0023179054260253906,"end":1769605100.374216,"relative_end":1769605100.374216,"duration":3.0994415283203125e-6,"duration_str":"3\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"pdo","group":"pdo write"},{"label":"select * from users","start":1769605100.374221,"relative_start":0.0023260116577148438,"end":1769605100.374232,"relative_end":1769605100.374232,"duration":1.0967254638671875e-5,"duration_str":"11\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"pdo","group":"pdo write"},{"label":"select * from users where name=?","start":1769605100.37425,"relative_start":0.002354860305786133,"end":1769605100.374252,"relative_end":1769605100.374252,"duration":2.1457672119140625e-6,"duration_str":"2\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"pdo","group":"pdo write"},{"label":"select * from users where name=?","start":1769605100.374257,"relative_start":0.0023620128631591797,"end":1769605100.374258,"relative_end":1769605100.374258,"duration":9.5367431640625e-7,"duration_str":"1\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"pdo","group":"pdo write"},{"label":"select * from users where name=:name and email=:email","start":1769605100.374273,"relative_start":0.0023779869079589844,"end":1769605100.374276,"relative_end":1769605100.374276,"duration":2.86102294921875e-6,"duration_str":"3\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"pdo","group":"pdo read"},{"label":"delete from users","start":1769605100.37428,"relative_start":0.0023849010467529297,"end":1769605100.374287,"relative_end":1769605100.374287,"duration":6.9141387939453125e-6,"duration_str":"7\u03bcs","memory":0,"memory_str":"0B","params":[],"collector":"pdo","group":"pdo write"},{"label":"render","start":1769605100.377627,"relative_start":0.005731821060180664,"end":1769605100.380364,"relative_end":9.5367431640625e-7,"duration":0.0027370452880859375,"duration_str":"2.74ms","memory":0,"memory_str":"0B","params":[],"collector":null,"group":null}]}}, "019c04aef35b9a0888ff869878521fa8", "", true);
+
+    window.PhpDebugBar.instance = phpdebugbar;
+    window.phpdebugbar = phpdebugbar;
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderDebugbar, { once: true });
+    } else {
+        renderDebugbar();
+    }
+})();
+</script>        
+<!-- End Debugbar -->
+<!-- Add scripts that need to run afterwards here -->
+
+
+
+
+
+  </body>
+</html>
