@@ -175,6 +175,37 @@ class DebugbarTest extends AbstractBrowserTestCase
         $this->assertEquals('hello from ajax', $messages[0]);
     }
 
+    public function testDebugbarAjaxRender(): void
+    {
+        $client = static::createPantherClient();
+        $size = new WebDriverDimension(1920, 800);
+        $client->manage()->window()->setSize($size);
+
+        $crawler = $client->request('GET', '/');
+
+        // Wait for Debugbar to load
+        $crawler = $client->waitFor('.phpdebugbar-body');
+        usleep(1000);
+
+        if (!$this->isTabActive($crawler, 'messages')) {
+            $client->click($this->getTabLink($crawler, 'messages'));
+        }
+
+        $crawler = $client->waitForVisibility('.phpdebugbar-widgets-messages .phpdebugbar-widgets-list');
+
+        $crawler->selectLink('load ajax content with rendering instead of headers')->click();
+        $client->waitForElementToContain('.phpdebugbar-panel[data-collector=messages]', 'hello from rendered ajax', 5);
+        $client->waitForElementToContain('.phpdebugbar-widgets-datasets-badge', 'ajax_render.php', 5);
+
+        $messages = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-value')
+            ->each(function (WebDriverElement $node): string {
+                return $node->getText();
+            });
+
+        $this->assertEquals('hello from rendered ajax', $messages[0]);
+    }
+
+
     public function testPdoCollector(): void
     {
         $client = static::createPantherClient();

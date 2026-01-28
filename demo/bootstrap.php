@@ -99,6 +99,32 @@ function render_demo_page(?Closure $callback = null)
                         xhr.send();
                     });
                 });
+
+                document.querySelectorAll('.ajax-scripts').forEach(el => {
+                    el.addEventListener('click', e => {
+                        e.preventDefault();
+
+                        fetch(el.href)
+                            .then(res => res.text())
+                            .then(html => {
+                                const container = document.getElementById('ajax-result');
+                                container.innerHTML = html;
+
+                                // Execute scripts
+                                container.querySelectorAll('script').forEach(oldScript => {
+                                    const newScript = document.createElement('script');
+
+                                    // Copy attributes (src, type, etc.)
+                                    for (const attr of oldScript.attributes) {
+                                        newScript.setAttribute(attr.name, attr.value);
+                                    }
+
+                                    newScript.text = oldScript.text;
+                                    oldScript.replaceWith(newScript);
+                                });
+                            });
+                    });
+                });
             });
         </script>
     </head>
