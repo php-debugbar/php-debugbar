@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const distDir = path.join(__dirname, '../dist');
+const distDir = path.join(__dirname, '../resources/dist');
 
 // Minify JavaScript files
 async function minifyJS() {

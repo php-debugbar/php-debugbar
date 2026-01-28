@@ -62,10 +62,10 @@ class JavascriptRenderer
     protected bool $useDistFiles = true;
 
     /** @var string[]  */
-    protected array $distCssFiles = ['../dist/debugbar.min.css'];
+    protected array $distCssFiles = ['dist/debugbar.min.css'];
 
     /** @var string[]  */
-    protected array $distJsFiles = ['../dist/debugbar.min.js'];
+    protected array $distJsFiles = ['dist/debugbar.min.js'];
 
     /**
      * These files are included in the dist files. When using source, they are added by collectors if needed.

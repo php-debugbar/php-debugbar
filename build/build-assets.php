@@ -10,5 +10,5 @@ $debugbar = new \DebugBar\DebugBar();
 $debugbarRenderer = $debugbar->getJavascriptRenderer();
 
 $assets = $debugbarRenderer->getDistIncludedAssets();
-$debugbarRenderer->dumpAssets(files: $assets['css'], targetFilename: __DIR__ . '/../dist/debugbar.css');
-$debugbarRenderer->dumpAssets(files: $assets['js'], targetFilename: __DIR__ . '/../dist/debugbar.js');
+$debugbarRenderer->dumpAssets(files: $assets['css'], targetFilename: __DIR__ . '/../resources/dist/debugbar.css');
+$debugbarRenderer->dumpAssets(files: $assets['js'], targetFilename: __DIR__ . '/../resources/dist/debugbar.js');
