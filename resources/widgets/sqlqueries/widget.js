@@ -232,6 +232,11 @@
                 errorSpan.textContent = `[${stmt.error_code}] ${stmt.error_message}`;
                 li.append(errorSpan);
             }
+            
+            if (['info', 'transaction'].includes(stmt.type)) {
+                return;
+            }
+
             const table = document.createElement('table');
             table.classList.add(csscls('params'));
             table.hidden = true;
@@ -250,24 +255,25 @@
                 }
                 this.renderList(table, 'Backtrace', values);
             }
-            if (table.querySelectorAll('tr').length) {
-                li.append(table);
-                li.style.cursor = 'pointer';
-                li.addEventListener('click', () => {
-                    if (window.getSelection().type === 'Range') {
-                        return '';
-                    }
-                    table.hidden = !table.hidden;
-                    const code = li.querySelector('code');
-                    if (code && typeof phpdebugbar_sqlformatter !== 'undefined') {
-                        let sql = stmt.sql;
-                        if (!table.hidden) {
-                            sql = phpdebugbar_sqlformatter.format(stmt.sql);
-                        }
-                        code.innerHTML = PhpDebugBar.Widgets.highlight(sql, 'sql');
-                    }
-                });
+            if (!table.querySelectorAll('tr').length) {
+                table.style.display = 'none';
             }
+            li.append(table);
+            li.style.cursor = 'pointer';
+            li.addEventListener('click', () => {
+                if (window.getSelection().type === 'Range') {
+                    return '';
+                }
+                table.hidden = !table.hidden;
+                const code = li.querySelector('code');
+                if (code && typeof phpdebugbar_sqlformatter !== 'undefined') {
+                    let sql = stmt.sql;
+                    if (!table.hidden) {
+                        sql = phpdebugbar_sqlformatter.format(stmt.sql);
+                    }
+                    code.innerHTML = PhpDebugBar.Widgets.highlight(sql, 'sql');
+                }
+            });
         }
 
         render() {
