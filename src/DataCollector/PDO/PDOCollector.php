@@ -30,6 +30,8 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
 
     protected ?int $backtraceLimit = null;
 
+    protected int $iteration = 0;
+
     public function __construct(?\PDO $pdo = null)
     {
         if ($pdo !== null) {
@@ -177,6 +179,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
             $backtrace = $stmt->getBacktrace();
             $source = $backtrace ? (object) reset($backtrace) : null;
             $stmts[] = [
+                'iteration' => ++$this->iteration,
                 'sql' => $sql,
                 'type' => $stmt->getQueryType(),
                 'row_count' => $stmt->getRowCount(),

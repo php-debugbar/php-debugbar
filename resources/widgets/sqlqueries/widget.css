@@ -111,6 +111,13 @@ div.phpdebugbar-widgets-sqlqueries li.phpdebugbar-widgets-list-item span.phpdebu
   font-weight: bold;
 }
 
+.phpdebugbar-widgets-iteration {
+    display: inline-block;
+    color: #999;
+    min-width: 15px;
+    margin-right: 8px !important;
+}
+
 code.phpdebugbar-widgets-sql {
   white-space: pre-wrap;
   overflow-wrap: break-word;

@@ -220,6 +220,13 @@
                 strong.textContent = stmt.sql;
                 li.append(strong);
             } else {
+                if (typeof (stmt.iteration) !== 'undefined') {
+                    const queryIteration = document.createElement('span');
+                    queryIteration.classList.add(csscls('iteration'));
+                    queryIteration.textContent = stmt.iteration;
+                    li.append(queryIteration);
+                }
+
                 const code = document.createElement('code');
                 code.classList.add(csscls('sql'));
                 code.innerHTML = PhpDebugBar.Widgets.highlight(stmt.sql, 'sql');
