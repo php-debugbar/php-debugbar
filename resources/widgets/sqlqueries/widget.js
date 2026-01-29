@@ -214,7 +214,7 @@
                 header.textContent = stmt.filename;
                 li.prepend(header);
             }
-            if (stmt.type === 'transaction') {
+            if (['transaction', 'info'].includes(stmt.type)) {
                 const strong = document.createElement('strong');
                 strong.classList.add(csscls('sql'), csscls('name'));
                 strong.textContent = stmt.sql;
