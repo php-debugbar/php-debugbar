@@ -467,4 +467,35 @@ class QueryFormatterTest extends DebugBarTestCase
 
         $this->assertEquals($expected, $result);
     }
+
+    public function testBindingWithClosureIsHandled(): void
+    {
+        $formatter = new QueryFormatter();
+
+        $sql = 'SELECT * FROM users WHERE callback = ?';
+        $bindings = [
+            function (): string {
+                return 'test';
+            },
+        ];
+
+        $result = $formatter->formatSqlWithBindings($sql, $bindings);
+
+        $this->assertEquals("SELECT * FROM users WHERE callback = '[CLOSURE]'", $result);
+    }
+
+    public function testBindingWithNonJsonEncodableObjectIsHandled(): void
+    {
+        $formatter = new QueryFormatter();
+
+        $object = new \stdClass();
+        $object->self = $object;
+
+        $sql = 'SELECT * FROM users WHERE data = ?';
+        $bindings = [$object];
+
+        $result = $formatter->formatSqlWithBindings($sql, $bindings);
+
+        $this->assertEquals("SELECT * FROM users WHERE data = '[object stdClass]'", $result);
+    }
 }
