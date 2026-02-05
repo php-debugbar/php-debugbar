@@ -787,7 +787,7 @@
                             aggregate[group] = { count: 0, duration: 0, memory: 0 };
                         }
 
-                        aggregate[group].count += 1;
+                        aggregate[group].count += values.length;
                         aggregate[group].duration += measure.duration;
                         aggregate[group].memory += (measure.memory || 0);
 
