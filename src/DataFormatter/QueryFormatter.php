@@ -35,7 +35,21 @@ class QueryFormatter extends DataFormatter
             }
 
             if (is_object($binding)) {
-                $binding =  json_encode($binding);
+                if ($binding instanceof \Closure) {
+                    $binding = '[CLOSURE]';
+                } else {
+                    try {
+                        $binding = json_encode(
+                            $binding,
+                            JSON_INVALID_UTF8_SUBSTITUTE
+                            | JSON_PARTIAL_OUTPUT_ON_ERROR
+                            | JSON_UNESCAPED_UNICODE
+                            | JSON_THROW_ON_ERROR
+                        );
+                    } catch (\JsonException $e) {
+                        $binding = '[OBJECT ' . get_class($binding) . ']';
+                    }
+                }
             }
         }
 
