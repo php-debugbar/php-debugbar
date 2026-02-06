@@ -31,6 +31,8 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
 
     protected bool $memoryMeasure = false;
 
+    protected bool $mergeMeasures = false;
+
     public function __construct(?float $requestStartTime = null)
     {
         $this->setRequestStartTime($requestStartTime);
@@ -63,6 +65,14 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
     public function showMemoryUsage(): void
     {
         $this->memoryMeasure = true;
+    }
+
+    /**
+     * Merge repeated measures into a single timeline entry, reusing the same segment
+     */
+    public function mergeRepeatedMeasures(): void
+    {
+        $this->mergeMeasures = true;
     }
 
     /**
@@ -126,7 +136,7 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
             unset($params['memoryUsage']);
         }
 
-        $this->measures[] = [
+        $measure = [
             'label' => $label,
             'start' => $start,
             'relative_start' => $start - $this->requestStartTime,
@@ -140,6 +150,28 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
             'collector' => $collector,
             'group' => $group,
         ];
+
+        if (! $this->mergeMeasures) {
+            $this->measures[] = $measure;
+            return;
+        }
+
+        $hash = md5("{$label}-".json_encode($params)."-{$group}-{$collector}");
+        if (! isset($this->measures[$hash])) {
+            $this->measures[$hash] = $measure;
+            return;
+        }
+
+        $valueKeys = array_flip(['relative_start', 'duration']);
+        $oldMeasure = &$this->measures[$hash];
+        $oldMeasure['values'] = $oldMeasure['values'] ?? [array_intersect_key($oldMeasure, $valueKeys)];
+        $oldMeasure['values'][] = array_intersect_key($measure, $valueKeys);
+        $oldMeasure['start'] = min($oldMeasure['start'], $oldMeasure['start']);
+        $oldMeasure['end'] = max($oldMeasure['end'], $oldMeasure['end']);
+        $oldMeasure['memory'] += $measure['memory'];
+        $oldMeasure['memory_str'] = $this->getDataFormatter()->formatBytes($oldMeasure['memory']);
+        $oldMeasure['duration'] += $measure['duration'];
+        $oldMeasure['duration_str'] = $this->getDataFormatter()->formatDuration($oldMeasure['duration']);
     }
 
     /**

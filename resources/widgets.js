@@ -778,12 +778,16 @@
                     for (let i = 0; i < data.measures.length; i++) {
                         const measure = data.measures[i];
                         const group = measure.group || measure.label;
+                        const values = measure.values || [{
+                            relative_start: measure.relative_start,
+                            duration: measure.duration,
+                        }];
 
                         if (!aggregate[group]) {
                             aggregate[group] = { count: 0, duration: 0, memory: 0 };
                         }
 
-                        aggregate[group].count += 1;
+                        aggregate[group].count += values.length;
                         aggregate[group].duration += measure.duration;
                         aggregate[group].memory += (measure.memory || 0);
 
@@ -791,18 +795,21 @@
                         m.classList.add(csscls('measure'));
 
                         const li = document.createElement('li');
-                        const left = (measure.relative_start * 100 / data.duration).toFixed(2);
-                        const width = Math.min((measure.duration * 100 / data.duration).toFixed(2), 100 - left);
+                        for (let j = 0; j < values.length; j++) {
+                            const left = (values[j].relative_start * 100 / data.duration).toFixed(2);
+                            const width = Math.min((values[j].duration * 100 / data.duration).toFixed(2), 100 - left);
 
-                        const valueSpan = document.createElement('span');
-                        valueSpan.classList.add(csscls('value'));
-                        valueSpan.style.left = `${left}%`;
-                        valueSpan.style.width = `${width}%`;
-                        m.append(valueSpan);
+                            const valueSpan = document.createElement('span');
+                            valueSpan.classList.add(csscls('value'));
+                            valueSpan.style.left = `${left}%`;
+                            valueSpan.style.width = `${width}%`;
+                            m.append(valueSpan);
+                        }
 
                         const labelSpan = document.createElement('span');
                         labelSpan.classList.add(csscls('label'));
-                        labelSpan.textContent = measure.label.replace(/\s+/g, ' ') + (measure.duration ? ` (${measure.duration_str}${measure.memory ? `/${measure.memory_str}` : ''})` : '');
+                        labelSpan.textContent = (values.length > 1 ? values.length + 'x ' : '') + measure.label.replace(/\s+/g, ' ')
+                            + (measure.duration ? ` (${measure.duration_str}${measure.memory ? `/${measure.memory_str}` : ''})` : '');
                         m.append(labelSpan);
 
                         if (measure.collector) {
