@@ -34,7 +34,7 @@ class FileStorage extends AbstractStorage
             mkdir($this->dirname, 0o755, true);
             file_put_contents($this->dirname . '.gitignore', "*\n!.gitignore\n");
         }
-        file_put_contents($this->makeFilename($id), json_encode($data));
+        file_put_contents($this->makeFilename($id), json_encode($data, JSON_INVALID_UTF8_SUBSTITUTE));
 
         $this->autoPrune();
     }

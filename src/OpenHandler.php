@@ -69,7 +69,7 @@ class OpenHandler
             throw new DebugBarException("Invalid operation '{$request['op']}'");
         }
 
-        $response = json_encode($response);
+        $response = json_encode($response, JSON_INVALID_UTF8_SUBSTITUTE);
         if ($response === false) {
             throw new DebugBarException("Invalid JSON response");
         }

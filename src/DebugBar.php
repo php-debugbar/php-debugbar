@@ -318,7 +318,7 @@ class DebugBar implements ArrayAccess
         $data = rawurlencode(json_encode([
             'id' => $this->getCurrentRequestId(),
             'data' => $this->getData(),
-        ]));
+        ], JSON_INVALID_UTF8_SUBSTITUTE));
 
         if (strlen($data) > $maxTotalHeaderLength) {
             $data = rawurlencode(json_encode([

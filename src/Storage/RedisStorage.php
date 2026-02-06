@@ -48,7 +48,7 @@ class RedisStorage extends AbstractStorage
 
         $entryKey = $this->entryKey($id);
         $metaJson = json_encode($meta);
-        $dataJson = json_encode($data);
+        $dataJson = json_encode($data, JSON_INVALID_UTF8_SUBSTITUTE);
 
         if ($this->isPhpRedis()) {
             /** @var \Redis|\RedisCluster $r */

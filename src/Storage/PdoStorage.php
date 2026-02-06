@@ -52,7 +52,7 @@ class PdoStorage extends AbstractStorage
         $meta = $data['__meta'];
         $stmt->execute([
             $id,
-            json_encode($data),
+            json_encode($data, JSON_INVALID_UTF8_SUBSTITUTE),
             $meta['utime'],
             $meta['datetime'] ?? null,
             $meta['uri'] ?? null,
