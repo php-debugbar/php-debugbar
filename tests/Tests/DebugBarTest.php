@@ -55,7 +55,7 @@ class DebugBarTest extends DebugBarTestCase
         $this->assertEquals($s->get($this->debugbar->getCurrentRequestId()), $data);
     }
 
-    public function testStorageWithNanData()
+    public function testStorageWithNanData(): void
     {
         $this->debugbar->setStorage($s = new MockStorage());
         $this->debugbar->addCollector(new MockCollector([NAN]));
@@ -66,7 +66,7 @@ class DebugBarTest extends DebugBarTestCase
         $this->assertEquals(['[NON-FINITE FLOAT]'], $s->get($this->debugbar->getCurrentRequestId())['mock']);
     }
 
-    public function testStorageWithInvalidUtf8Data()
+    public function testStorageWithInvalidUtf8Data(): void
     {
         $this->debugbar->setStorage($s = new MockStorage());
         $this->debugbar->addCollector(new MockCollector(["\xC3\x28"]));
@@ -76,7 +76,7 @@ class DebugBarTest extends DebugBarTestCase
         $this->assertEquals($data, $s->get($this->debugbar->getCurrentRequestId()));
     }
 
-    public function testStorageWithBinaryData()
+    public function testStorageWithBinaryData(): void
     {
         $binary = random_bytes(10);
 

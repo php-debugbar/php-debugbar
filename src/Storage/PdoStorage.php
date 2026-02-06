@@ -72,7 +72,7 @@ class PdoStorage extends AbstractStorage
         $stmt->execute([$id]);
 
         if (($data = $stmt->fetchColumn(0)) !== false) {
-            return json_decode($data, true);
+            return json_decode($data, true) ?: [];
         }
 
         return [];
@@ -113,7 +113,10 @@ class PdoStorage extends AbstractStorage
         $results = [];
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
             $data = json_decode($row['data'], true);
-            $results[] = $data['__meta'];
+            if ($data !== false && isset($data['__meta'])) {
+                $results[] = $data['__meta'];
+            }
+
             unset($data);
         }
 
