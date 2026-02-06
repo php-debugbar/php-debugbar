@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DebugBar\Tests;
 
+use DebugBar\DataCollector\MessagesCollector;
 use DebugBar\DebugBarException;
 use DebugBar\Tests\DataCollector\MockCollector;
 use DebugBar\Tests\Storage\MockStorage;
@@ -51,7 +52,29 @@ class DebugBarTest extends DebugBarTestCase
         $this->debugbar->setStorage($s = new MockStorage());
         $this->debugbar->addCollector(new MockCollector(['foo']));
         $data = $this->debugbar->collect();
-        $this->assertEquals($s->data[$this->debugbar->getCurrentRequestId()], $data);
+
+        $this->assertEquals($s->get($this->debugbar->getCurrentRequestId()), $data);
+    }
+
+    public function testStorageWithNanData()
+    {
+        $this->debugbar->setStorage($s = new MockStorage());
+        $this->debugbar->addCollector(new MockCollector([NAN]));
+
+        $data = $this->debugbar->collect();
+
+        // 0 is replaced by mock
+        $this->assertEquals(['[NON-FINITE FLOAT]'], $s->get($this->debugbar->getCurrentRequestId())['mock']);
+    }
+
+    public function testStorageWithInvalidUtf8Data()
+    {
+        $this->debugbar->setStorage($s = new MockStorage());
+        $this->debugbar->addCollector(new MockCollector(["\xC3\x28"]));
+
+        $data = $this->debugbar->collect();
+
+        $this->assertEquals($data, $s->get($this->debugbar->getCurrentRequestId()));
     }
 
     public function testGetDataAsHeaders(): void
