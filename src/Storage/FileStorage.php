@@ -54,7 +54,7 @@ class FileStorage extends AbstractStorage
             throw new \RuntimeException("Unable to read file $fileName");
         }
 
-        return json_decode($content, true);
+        return json_decode($content, true) ?: [];
     }
 
     /**
