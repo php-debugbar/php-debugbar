@@ -72,7 +72,7 @@ class PdoStorage extends AbstractStorage
         $stmt->execute([$id]);
 
         if (($data = $stmt->fetchColumn(0)) !== false) {
-            return json_decode($data, true);
+            return json_decode($data, true) ?: [];
         }
 
         return [];

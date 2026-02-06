@@ -46,7 +46,7 @@ class MemcachedStorage extends AbstractStorage
     public function save(string $id, array $data): void
     {
         $key = $this->createKey($id);
-        $this->memcached->set($key, json_encode($data, JSON_INVALID_UTF8_SUBSTITUTE), $this->expiration);
+        $this->memcached->set($key, $data, $this->expiration);
         if (!$this->memcached->append($this->keyNamespace, "|$key")) {
             $this->memcached->set($this->keyNamespace, $key, $this->expiration);
         } elseif ($this->expiration) {
@@ -60,7 +60,7 @@ class MemcachedStorage extends AbstractStorage
      */
     public function get(string $id): array
     {
-        return json_decode($this->memcached->get($this->createKey($id)), true);
+        return $this->memcached->get($this->createKey($id)) ?: [];
     }
 
     /**
