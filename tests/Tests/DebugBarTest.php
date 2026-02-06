@@ -77,6 +77,23 @@ class DebugBarTest extends DebugBarTestCase
         $this->assertEquals($data, $s->get($this->debugbar->getCurrentRequestId()));
     }
 
+    public function testStorageWithBinaryData()
+    {
+        $binary = random_bytes(10);
+
+        $this->debugbar->setStorage($s = new MockStorage());
+        $this->debugbar->addCollector(new MockCollector([$binary, "foo"]));
+
+        $data = $this->debugbar->collect();
+
+        // Binary data is converted
+        $this->assertNotEquals([$binary, "foo"], $data['mock']);
+
+        // But can be retrieved from storage
+        $this->assertEquals($data, $s->get($this->debugbar->getCurrentRequestId()));
+        $this->assertEquals("foo", $s->get($this->debugbar->getCurrentRequestId())['mock'][1]);
+    }
+
     public function testGetDataAsHeaders(): void
     {
         $this->debugbar->addCollector($c = new MockCollector(['foo']));
