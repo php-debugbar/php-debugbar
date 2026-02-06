@@ -216,10 +216,9 @@ class DebugBar implements ArrayAccess
     }
 
     /**
-     * Collects the data from the collectors
-     *
+     * Collects meta data about the current request
      */
-    public function collect(): array
+    public function collectMetaData(): array
     {
         if (php_sapi_name() === 'cli') {
             $ip = gethostname();
@@ -240,15 +239,25 @@ class DebugBar implements ArrayAccess
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? null,
             ];
         }
+
+        return array_merge(
+            [
+                'id' => $this->getCurrentRequestId(),
+                'datetime' => date('Y-m-d H:i:s'),
+                'utime' => microtime(true),
+            ],
+            $request_variables,
+        );
+    }
+
+    /**
+     * Collects the data from the collectors
+     *
+     */
+    public function collect(): array
+    {
         $this->data = [
-            '__meta' => array_merge(
-                [
-                    'id' => $this->getCurrentRequestId(),
-                    'datetime' => date('Y-m-d H:i:s'),
-                    'utime' => microtime(true),
-                ],
-                $request_variables,
-            ),
+            '__meta' => $this->collectMetaData(),
         ];
 
         $lateCollectors = [];
@@ -267,7 +276,9 @@ class DebugBar implements ArrayAccess
 
         // Remove all invalid (non UTF-8) characters
         array_walk_recursive($this->data, function (&$item): void {
-            if (is_string($item) && !mb_check_encoding($item, 'UTF-8')) {
+            if (is_float($item) && !is_finite($item)) {
+                $item = '[NON-FINITE FLOAT]';
+            } elseif (is_string($item) && !mb_check_encoding($item, 'UTF-8')) {
                 $item = mb_convert_encoding($item, 'UTF-8', 'UTF-8');
             }
         });

@@ -51,7 +51,46 @@ class DebugBarTest extends DebugBarTestCase
         $this->debugbar->setStorage($s = new MockStorage());
         $this->debugbar->addCollector(new MockCollector(['foo']));
         $data = $this->debugbar->collect();
-        $this->assertEquals($s->data[$this->debugbar->getCurrentRequestId()], $data);
+
+        $this->assertEquals($s->get($this->debugbar->getCurrentRequestId()), $data);
+    }
+
+    public function testStorageWithNanData(): void
+    {
+        $this->debugbar->setStorage($s = new MockStorage());
+        $this->debugbar->addCollector(new MockCollector([NAN]));
+
+        $data = $this->debugbar->collect();
+
+        // NAN is replaced
+        $this->assertEquals(['[NON-FINITE FLOAT]'], $s->get($this->debugbar->getCurrentRequestId())['mock']);
+    }
+
+    public function testStorageWithInvalidUtf8Data(): void
+    {
+        $this->debugbar->setStorage($s = new MockStorage());
+        $this->debugbar->addCollector(new MockCollector(["\xC3\x28"]));
+
+        $data = $this->debugbar->collect();
+
+        $this->assertEquals($data, $s->get($this->debugbar->getCurrentRequestId()));
+    }
+
+    public function testStorageWithBinaryData(): void
+    {
+        $binary = random_bytes(10);
+
+        $this->debugbar->setStorage($s = new MockStorage());
+        $this->debugbar->addCollector(new MockCollector([$binary, "foo"]));
+
+        $data = $this->debugbar->collect();
+
+        // Binary data is converted
+        $this->assertNotEquals([$binary, "foo"], $data['mock']);
+
+        // But can be retrieved from storage
+        $this->assertEquals($data, $s->get($this->debugbar->getCurrentRequestId()));
+        $this->assertEquals("foo", $s->get($this->debugbar->getCurrentRequestId())['mock'][1]);
     }
 
     public function testGetDataAsHeaders(): void
