@@ -32,7 +32,8 @@ class MockStorage extends AbstractStorage implements StorageInterface
     {
         $results = [];
 
-        $data = array_slice($this->data, $offset, $max);;
+        $data = array_slice($this->data, $offset, $max);
+        ;
         foreach (array_keys($data) as $id) {
             $results[$id] = $this->get($id);
         }

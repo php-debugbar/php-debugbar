@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DebugBar\Tests;
 
-use DebugBar\DataCollector\MessagesCollector;
 use DebugBar\DebugBarException;
 use DebugBar\Tests\DataCollector\MockCollector;
 use DebugBar\Tests\Storage\MockStorage;
