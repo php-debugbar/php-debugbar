@@ -63,7 +63,7 @@ class DebugBarTest extends DebugBarTestCase
 
         $data = $this->debugbar->collect();
 
-        // 0 is replaced by mock
+        // NAN is replaced
         $this->assertEquals(['[NON-FINITE FLOAT]'], $s->get($this->debugbar->getCurrentRequestId())['mock']);
     }
 
