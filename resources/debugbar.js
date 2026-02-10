@@ -688,7 +688,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 theme: 'auto',
                 toolbarPosition: 'bottom',
                 openBtnPosition: 'bottomLeft',
-                hideEmptyTabs: false
+                hideEmptyTabs: false,
+                spaNavigationEvents: ['livewire:navigated', 'turbo:load', 'htmx:afterSettle']
             }, options);
             this.defaultOptions = { ...this.options };
             this.controls = {};
@@ -710,6 +711,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             }
             this.registerResizeHandler();
             this.registerMediaListener();
+            this.registerNavigationListener();
 
             // Attach settings
             this.settingsControl = new PhpDebugBar.DebugBar.Tab({ icon: 'adjustments-horizontal', title: 'Settings', widget: new Settings({
@@ -740,6 +742,58 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                     this.setTheme('auto');
                 }
             });
+        }
+
+        /**
+         * Register navigation event listeners for SPA frameworks.
+         *
+         * When using SPA navigation (Livewire, Turbo, HTMX, etc.), the body's
+         * padding may change between pages. This listener recalculates the
+         * cached body padding values after navigation completes.
+         *
+         * The event names can be configured via the `spaNavigationEvents` option.
+         * By default, it listens to: livewire:navigated, turbo:load, htmx:afterSettle
+         *
+         * @this {DebugBar}
+         */
+        registerNavigationListener() {
+            const events = this.options.spaNavigationEvents;
+            if (!events || !events.length) {
+                return;
+            }
+
+            for (const eventName of events) {
+                document.addEventListener(eventName, () => {
+                    this.recalculateBodyPadding();
+                });
+            }
+        }
+
+        /**
+         * Recalculates and caches the body's original padding values.
+         *
+         * This should be called after SPA navigation when the page layout
+         * may have changed. It temporarily clears any debugbar-applied
+         * padding to read the page's actual padding values.
+         *
+         * @this {DebugBar}
+         */
+        recalculateBodyPadding() {
+            if (!this.options.bodyBottomInset) {
+                return;
+            }
+
+            // Clear inline styles to read the page's actual CSS values
+            document.body.style.paddingTop = '';
+            document.body.style.paddingBottom = '';
+
+            // Read the new page's padding values
+            const bodyStyles = window.getComputedStyle(document.body);
+            this.bodyPaddingTopHeight = Number.parseFloat(bodyStyles.paddingTop);
+            this.bodyPaddingBottomHeight = Number.parseFloat(bodyStyles.paddingBottom);
+
+            // Reapply the debugbar offset with the new values
+            this.recomputeBottomOffset();
         }
 
         setTheme(theme) {
