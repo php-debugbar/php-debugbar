@@ -747,14 +747,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
         /**
          * Register navigation event listeners for SPA frameworks.
          *
-         * When using SPA navigation (Livewire, Turbo, HTMX, etc.), the body's
-         * padding may change between pages. This listener recalculates the
-         * cached body padding values after navigation completes.
-         *
-         * The event names can be configured via the `spaNavigationEvents` option.
-         * By default, it listens to: livewire:navigated, turbo:load, htmx:afterSettle
-         *
-         * @this {DebugBar}
+         * Listens for events configured via the `spaNavigationEvents` option
+         * and recalculates body padding after navigation completes.
          */
         registerNavigationListener() {
             const events = this.options.spaNavigationEvents;
@@ -771,12 +765,6 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
         /**
          * Recalculates and caches the body's original padding values.
-         *
-         * This should be called after SPA navigation when the page layout
-         * may have changed. It temporarily clears any debugbar-applied
-         * padding to read the page's actual padding values.
-         *
-         * @this {DebugBar}
          */
         recalculateBodyPadding() {
             if (!this.options.bodyBottomInset) {
