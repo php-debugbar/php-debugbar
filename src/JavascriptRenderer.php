@@ -112,6 +112,9 @@ class JavascriptRenderer
 
     protected ?bool $hideEmptyTabs = null;
 
+    /** @var string[] */
+    protected array $spaNavigationEvents = ['livewire:navigated', 'turbo:load', 'htmx:afterSettle'];
+
     protected int $initialization;
 
     /**
@@ -186,6 +189,7 @@ class JavascriptRenderer
      *   use_dist_files?: bool,
      *   theme?: string|null,
      *   hide_empty_tabs?: bool,
+     *   spa_navigation_events?: string[],
      *   controls?: array<string, array{
      *     icon?: string,
      *     tooltip?: string,
@@ -237,6 +241,9 @@ class JavascriptRenderer
         }
         if (array_key_exists('hide_empty_tabs', $options)) {
             $this->setHideEmptyTabs($options['hide_empty_tabs']);
+        }
+        if (array_key_exists('spa_navigation_events', $options)) {
+            $this->setSpaNavigationEvents($options['spa_navigation_events']);
         }
         if (array_key_exists('controls', $options)) {
             foreach ($options['controls'] as $name => $control) {
@@ -463,6 +470,35 @@ class JavascriptRenderer
     public function areEmptyTabsHidden(): ?bool
     {
         return $this->hideEmptyTabs;
+    }
+
+    /**
+     * Sets the SPA navigation events to listen for.
+     *
+     * When using SPA navigation (Livewire, Turbo, HTMX, etc.), the body's
+     * padding may change between pages. Setting these events will cause
+     * the debug bar to recalculate its position after navigation.
+     *
+     * Default: ['livewire:navigated', 'turbo:load', 'htmx:afterSettle']
+     *
+     * Set to an empty array to disable this feature.
+     *
+     * @param string[] $events
+     */
+    public function setSpaNavigationEvents(array $events): static
+    {
+        $this->spaNavigationEvents = $events;
+        return $this;
+    }
+
+    /**
+     * Returns the SPA navigation events.
+     *
+     * @return string[]
+     */
+    public function getSpaNavigationEvents(): array
+    {
+        return $this->spaNavigationEvents;
     }
 
     /**
@@ -1268,6 +1304,8 @@ $js
         if ($this->hideEmptyTabs !== null) {
             $options['hideEmptyTabs'] = $this->hideEmptyTabs;
         }
+
+        $options['spaNavigationEvents'] = $this->spaNavigationEvents;
 
         return $options;
     }

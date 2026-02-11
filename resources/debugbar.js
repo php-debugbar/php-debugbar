@@ -689,7 +689,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 toolbarPosition: 'bottom',
                 openBtnPosition: 'bottomLeft',
                 hideEmptyTabs: false,
-                spaNavigationEvents: ['livewire:navigated', 'turbo:load', 'htmx:afterSettle']
+                spaNavigationEvents: []
             }, options);
             this.defaultOptions = { ...this.options };
             this.controls = {};
