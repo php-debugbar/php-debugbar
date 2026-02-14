@@ -688,7 +688,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 theme: 'auto',
                 toolbarPosition: 'bottom',
                 openBtnPosition: 'bottomLeft',
-                hideEmptyTabs: false
+                hideEmptyTabs: false,
+                spaNavigationEvents: []
             }, options);
             this.defaultOptions = { ...this.options };
             this.controls = {};
@@ -710,6 +711,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             }
             this.registerResizeHandler();
             this.registerMediaListener();
+            this.registerNavigationListener();
 
             // Attach settings
             this.settingsControl = new PhpDebugBar.DebugBar.Tab({ icon: 'adjustments-horizontal', title: 'Settings', widget: new Settings({
@@ -740,6 +742,46 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                     this.setTheme('auto');
                 }
             });
+        }
+
+        /**
+         * Register navigation event listeners for SPA frameworks.
+         *
+         * Listens for events configured via the `spaNavigationEvents` option
+         * and recalculates body padding after navigation completes.
+         */
+        registerNavigationListener() {
+            const events = this.options.spaNavigationEvents;
+            if (!events || !events.length) {
+                return;
+            }
+
+            for (const eventName of events) {
+                document.addEventListener(eventName, () => {
+                    this.recalculateBodyPadding();
+                });
+            }
+        }
+
+        /**
+         * Recalculates and caches the body's original padding values.
+         */
+        recalculateBodyPadding() {
+            if (!this.options.bodyBottomInset) {
+                return;
+            }
+
+            // Clear inline styles to read the page's actual CSS values
+            document.body.style.paddingTop = '';
+            document.body.style.paddingBottom = '';
+
+            // Read the new page's padding values
+            const bodyStyles = window.getComputedStyle(document.body);
+            this.bodyPaddingTopHeight = Number.parseFloat(bodyStyles.paddingTop);
+            this.bodyPaddingBottomHeight = Number.parseFloat(bodyStyles.paddingBottom);
+
+            // Reapply the debugbar offset with the new values
+            this.recomputeBottomOffset();
         }
 
         setTheme(theme) {

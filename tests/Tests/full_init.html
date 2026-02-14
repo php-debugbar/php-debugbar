@@ -1,7 +1,7 @@
 <script type="text/javascript">
 (function () {
     const renderDebugbar = function () {
-const phpdebugbar = new PhpDebugBar.DebugBar();
+const phpdebugbar = new PhpDebugBar.DebugBar({"spaNavigationEvents":["livewire:navigated","turbo:load","htmx:afterSettle"]});
 phpdebugbar.addTab("messages", new PhpDebugBar.DebugBar.Tab({"icon":"logs","title":"Messages", "widget": new PhpDebugBar.Widgets.MessagesWidget()}));
 phpdebugbar.addIndicator("time", new PhpDebugBar.DebugBar.Indicator({"icon":"time"}), "right");
 phpdebugbar.setDataMap({
