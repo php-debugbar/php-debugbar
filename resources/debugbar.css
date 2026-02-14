@@ -132,7 +132,7 @@ div.phpdebugbar-drag-capture {
   z-index: 100000001;
   background: none;
   display: none;
-  cursor: ns-resize;
+  cursor: row-resize;
 }
 
 div.phpdebugbar-closed {
@@ -235,7 +235,7 @@ div.phpdebugbar-resize-handle {
   width: 100%;
   background: none;
   border-bottom: 1px solid var(--debugbar-header-border);
-  cursor: ns-resize;
+  cursor: row-resize;
 }
 div.phpdebugbar-minimized div.phpdebugbar-resize-handle {
     cursor: auto;

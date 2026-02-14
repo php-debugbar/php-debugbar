@@ -679,7 +679,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
      */
     class DebugBar extends Widget {
         get className() {
-            return `phpdebugbar ${csscls('minimized')}`;
+            return `phpdebugbar`;
         }
 
         initialize(options = {}) {
@@ -1048,7 +1048,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                     } else {
                         this.showTab();
                     }
-                } else if (visible === '0') {
+                } else {
                     this.minimize();
                 }
             }
