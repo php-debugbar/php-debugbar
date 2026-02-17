@@ -91,7 +91,14 @@ class PdoStorage extends AbstractStorage
 
         foreach ($filters as $key => $value) {
             if (in_array($key, ['datetime', 'uri', 'ip', 'method'], true)) {
-                $where[] = "meta_$key = ?";
+                if (strpos($value, '%') !== false)
+                {
+                    $where[] = "meta_$key LIKE ?";
+                }
+                else
+                {
+                    $where[] = "meta_$key = ?";
+                }
                 $params[] = $value;
             } elseif ($key === 'utime') {
                 $where[] = "meta_utime > ?";
