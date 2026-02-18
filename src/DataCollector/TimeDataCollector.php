@@ -156,7 +156,7 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
             return;
         }
 
-        $hash = md5("{$label}-".json_encode($params)."-{$group}-{$collector}");
+        $hash = md5("{$label}-" . json_encode($params) . "-{$group}-{$collector}");
         if (! isset($this->measures[$hash])) {
             $this->measures[$hash] = $measure;
             return;
@@ -164,7 +164,7 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
 
         $valueKeys = array_flip(['relative_start', 'duration']);
         $oldMeasure = &$this->measures[$hash];
-        $oldMeasure['values'] = $oldMeasure['values'] ?? [array_intersect_key($oldMeasure, $valueKeys)];
+        $oldMeasure['values'] ??= [array_intersect_key($oldMeasure, $valueKeys)];
         $oldMeasure['values'][] = array_intersect_key($measure, $valueKeys);
         $oldMeasure['start'] = min($oldMeasure['start'], $oldMeasure['start']);
         $oldMeasure['end'] = max($oldMeasure['end'], $oldMeasure['end']);
