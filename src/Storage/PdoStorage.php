@@ -188,7 +188,7 @@ class PdoStorage extends AbstractStorage
             str_replace(
                 // If there are any SQL matching characters, escape them first
                 [$sqlMulti, $sqlSingle],
-                [$escapeChar.$sqlMulti, $escapeChar.$sqlSingle],
+                [$escapeChar . $sqlMulti, $escapeChar . $sqlSingle],
                 $pattern
             )
         );
