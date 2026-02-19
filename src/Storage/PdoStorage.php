@@ -90,9 +90,12 @@ class PdoStorage extends AbstractStorage
         $offset = max(0, $offset);
 
         foreach ($filters as $key => $value) {
-            if (in_array($key, ['datetime', 'uri', 'ip', 'method'], true)) {
+            if (in_array($key, ['datetime', 'uri', 'ip', 'method'], true) && strpbrk($value, '*?') === false) {
                 $where[] = "meta_$key = ?";
                 $params[] = $value;
+            } elseif (in_array($key, ['uri', 'ip'], true)) {
+                $where = "meta_$key LIKE ? ESCAPE '\\\\'";
+                $params[] = $this->globToSql($value, '\\');
             } elseif ($key === 'utime') {
                 $where[] = "meta_utime > ?";
                 $params[] = $value;
@@ -171,6 +174,22 @@ class PdoStorage extends AbstractStorage
     public function setSqlQueries(array $queries): void
     {
         $this->sqlQueries = array_merge($this->sqlQueries, $queries);
+    }
+
+    public function globToSql(string $pattern, string $escapeChar = '\\'): string
+    {
+        $sqlMulti = '%'; $sqlSingle = '_';
+        $globMulti = '*'; $globSingle = '?';
+        return str_replace(
+            [$globMulti, $globSingle],
+            [$sqlMulti, $sqlSingle],
+            str_replace(
+                // If there are any SQL matching characters, escape them first
+                [$sqlMulti, $sqlSingle],
+                [str_repeat($escapeChar,3).$sqlMulti, str_repeat($escapeChar,3).$sqlSingle],
+                $pattern
+            )
+        );
     }
 
     /**
