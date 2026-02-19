@@ -298,4 +298,82 @@ class RedisStorageTest extends DebugBarTestCase
         $this->assertCount(1, $results);
         $this->assertEquals('entry3', $results[0]['id']);
     }
+
+    public function testFindWithWildcardFilter(): void
+    {
+        $utime = microtime(true);
+        $meta1 = ['id' => 'e1', 'utime' => $utime, 'uri' => '/api/users', 'ip' => '127.0.0.1'];
+        $meta2 = ['id' => 'e2', 'utime' => $utime, 'uri' => '/api/posts', 'ip' => '127.0.0.1'];
+        $meta3 = ['id' => 'e3', 'utime' => $utime, 'uri' => '/home', 'ip' => '10.0.0.1'];
+
+        $this->redis->expects($this->exactly(2))
+            ->method('zRevRange')
+            ->willReturnOnConsecutiveCalls(['e1', 'e2', 'e3'], []);
+
+        $this->redis->expects($this->once())
+            ->method('multi')
+            ->with(\Redis::PIPELINE)
+            ->willReturn($this->redis);
+
+        $this->redis->expects($this->exactly(3))
+            ->method('hGet')
+            ->willReturnOnConsecutiveCalls($this->redis, $this->redis, $this->redis);
+
+        $this->redis->expects($this->once())
+            ->method('exec')
+            ->willReturn([
+                json_encode($meta1),
+                json_encode($meta2),
+                json_encode($meta3),
+            ]);
+
+        $this->redis->expects($this->never())
+            ->method('zRem');
+
+        // Star (*) wildcard matches multiple characters
+        $results = $this->s->find(['uri' => '/api/*']);
+
+        $this->assertCount(2, $results);
+        $ids = array_column($results, 'id');
+        $this->assertContains('e1', $ids);
+        $this->assertContains('e2', $ids);
+    }
+
+    public function testFindWithQuestionMarkWildcardFilter(): void
+    {
+        $utime = microtime(true);
+        $meta1 = ['id' => 'e1', 'utime' => $utime, 'uri' => '/api/users', 'ip' => '127.0.0.1'];
+        $meta2 = ['id' => 'e2', 'utime' => $utime, 'uri' => '/api/posts', 'ip' => '127.0.0.1'];
+        $meta3 = ['id' => 'e3', 'utime' => $utime, 'uri' => '/home', 'ip' => '10.0.0.1'];
+
+        $this->redis->expects($this->exactly(2))
+            ->method('zRevRange')
+            ->willReturnOnConsecutiveCalls(['e1', 'e2', 'e3'], []);
+
+        $this->redis->expects($this->once())
+            ->method('multi')
+            ->with(\Redis::PIPELINE)
+            ->willReturn($this->redis);
+
+        $this->redis->expects($this->exactly(3))
+            ->method('hGet')
+            ->willReturnOnConsecutiveCalls($this->redis, $this->redis, $this->redis);
+
+        $this->redis->expects($this->once())
+            ->method('exec')
+            ->willReturn([
+                json_encode($meta1),
+                json_encode($meta2),
+                json_encode($meta3),
+            ]);
+
+        $this->redis->expects($this->never())
+            ->method('zRem');
+
+        // Question mark (?) wildcard matches exactly one character
+        $results = $this->s->find(['uri' => '/api/user?']);
+
+        $this->assertCount(1, $results);
+        $this->assertEquals('e1', $results[0]['id']);
+    }
 }

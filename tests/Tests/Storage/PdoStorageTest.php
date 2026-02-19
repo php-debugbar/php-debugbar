@@ -161,4 +161,42 @@ class PdoStorageTest extends DebugBarTestCase
         $results = $this->s->find(['utime' => $time3]);
         $this->assertCount(0, $results);
     }
+
+    public function testFindWithWildcardFilter(): void
+    {
+        $this->s->clear();
+
+        $utime = microtime(true);
+        $data1 = ['__meta' => ['id' => 'e1', 'utime' => $utime, 'uri' => '/api/users', 'ip' => '127.0.0.1', 'method' => 'GET']];
+        $data2 = ['__meta' => ['id' => 'e2', 'utime' => $utime, 'uri' => '/api/posts', 'ip' => '127.0.0.1', 'method' => 'POST']];
+        $data3 = ['__meta' => ['id' => 'e3', 'utime' => $utime, 'uri' => '/home', 'ip' => '10.0.0.1', 'method' => 'GET']];
+
+        $this->s->save('e1', $data1);
+        $this->s->save('e2', $data2);
+        $this->s->save('e3', $data3);
+
+        // Star (*) wildcard matches multiple characters
+        $results = $this->s->find(['uri' => '/api/*']);
+        $this->assertCount(2, $results);
+        $ids = array_column($results, 'id');
+        $this->assertContains('e1', $ids);
+        $this->assertContains('e2', $ids);
+
+        // Question mark (?) wildcard matches exactly one character
+        $results = $this->s->find(['uri' => '/api/user?']);
+        $this->assertCount(1, $results);
+        $this->assertEquals('e1', $results[0]['id']);
+
+        // Wildcard that matches nothing
+        $results = $this->s->find(['uri' => '/other/*']);
+        $this->assertCount(0, $results);
+
+        // Wildcard on IP field
+        $results = $this->s->find(['ip' => '127.0.*']);
+        $this->assertCount(2, $results);
+
+        // Star wildcard matching all entries
+        $results = $this->s->find(['uri' => '/*']);
+        $this->assertCount(3, $results);
+    }
 }

@@ -354,4 +354,40 @@ class SqliteStorageTest extends DebugBarTestCase
 
         $this->assertEquals($complexData, $retrieved);
     }
+
+    public function testFindWithWildcardFilter(): void
+    {
+        $utime = microtime(true);
+        $data1 = ['__meta' => ['id' => 'e1', 'utime' => $utime, 'datetime' => date('Y-m-d H:i:s'), 'uri' => '/api/users', 'ip' => '127.0.0.1', 'method' => 'GET']];
+        $data2 = ['__meta' => ['id' => 'e2', 'utime' => $utime, 'datetime' => date('Y-m-d H:i:s'), 'uri' => '/api/posts', 'ip' => '127.0.0.1', 'method' => 'POST']];
+        $data3 = ['__meta' => ['id' => 'e3', 'utime' => $utime, 'datetime' => date('Y-m-d H:i:s'), 'uri' => '/home', 'ip' => '10.0.0.1', 'method' => 'GET']];
+
+        $this->storage->save('e1', $data1);
+        $this->storage->save('e2', $data2);
+        $this->storage->save('e3', $data3);
+
+        // Star (*) wildcard matches multiple characters
+        $results = $this->storage->find(['uri' => '/api/*']);
+        $this->assertCount(2, $results);
+        $ids = array_column($results, 'id');
+        $this->assertContains('e1', $ids);
+        $this->assertContains('e2', $ids);
+
+        // Question mark (?) wildcard matches exactly one character
+        $results = $this->storage->find(['uri' => '/api/user?']);
+        $this->assertCount(1, $results);
+        $this->assertEquals('e1', $results[0]['id']);
+
+        // Wildcard that matches nothing
+        $results = $this->storage->find(['uri' => '/other/*']);
+        $this->assertCount(0, $results);
+
+        // Wildcard on IP field
+        $results = $this->storage->find(['ip' => '127.0.*']);
+        $this->assertCount(2, $results);
+
+        // Star wildcard matching all entries
+        $results = $this->storage->find(['uri' => '/*']);
+        $this->assertCount(3, $results);
+    }
 }
