@@ -176,7 +176,7 @@ class PdoStorage extends AbstractStorage
         $this->sqlQueries = array_merge($this->sqlQueries, $queries);
     }
 
-    public function globToSql(string $pattern, string $escapeChar = '\\')
+    public function globToSql(string $pattern, string $escapeChar = '\\'): string
     {
         $sqlMulti = '%'; $sqlSingle = '_';
         $globMulti = '*'; $globSingle = '?';
