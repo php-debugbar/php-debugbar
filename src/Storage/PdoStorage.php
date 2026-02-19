@@ -94,7 +94,7 @@ class PdoStorage extends AbstractStorage
                 $where[] = "meta_$key = ?";
                 $params[] = $value;
             } elseif (in_array($key, ['uri', 'ip'], true)) {
-                $where = "meta_$key LIKE ? ESCAPE '\\\\'";
+                $where[] = "meta_$key LIKE ? ESCAPE '\\'";
                 $params[] = $this->globToSql($value, '\\');
             } elseif ($key === 'utime') {
                 $where[] = "meta_utime > ?";
@@ -186,7 +186,7 @@ class PdoStorage extends AbstractStorage
             str_replace(
                 // If there are any SQL matching characters, escape them first
                 [$sqlMulti, $sqlSingle],
-                [str_repeat($escapeChar,3).$sqlMulti, str_repeat($escapeChar,3).$sqlSingle],
+                [$escapeChar.$sqlMulti, $escapeChar.$sqlSingle],
                 $pattern
             )
         );

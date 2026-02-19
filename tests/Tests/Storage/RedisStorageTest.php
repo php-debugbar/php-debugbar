@@ -255,6 +255,77 @@ class RedisStorageTest extends DebugBarTestCase
         $this->s->prune(1);
     }
 
+    public function testFindWithIpWildcard(): void
+    {
+        $meta1 = ['id' => 'r1', 'utime' => microtime(true), 'ip' => '192.168.1.10'];
+        $meta2 = ['id' => 'r2', 'utime' => microtime(true), 'ip' => '192.168.2.20'];
+        $meta3 = ['id' => 'r3', 'utime' => microtime(true), 'ip' => '10.0.0.1'];
+
+        // No early termination without utime filter: zRevRange is called twice (data, then [])
+        $this->redis->expects($this->exactly(2))
+            ->method('zRevRange')
+            ->willReturnOnConsecutiveCalls(['r1', 'r2', 'r3'], []);
+
+        $this->redis->expects($this->once())
+            ->method('multi')
+            ->with(\Redis::PIPELINE)
+            ->willReturn($this->redis);
+
+        $this->redis->expects($this->exactly(3))
+            ->method('hGet')
+            ->willReturnOnConsecutiveCalls($this->redis, $this->redis, $this->redis);
+
+        $this->redis->expects($this->once())
+            ->method('exec')
+            ->willReturn([json_encode($meta1), json_encode($meta2), json_encode($meta3)]);
+
+        $this->redis->expects($this->never())->method('zRem');
+
+        // * matches any sequence: r1 and r2 match, r3 does not
+        $results = $this->s->find(['ip' => '192.168.*']);
+
+        $this->assertCount(2, $results);
+        $ids = array_column($results, 'id');
+        $this->assertContains('r1', $ids);
+        $this->assertContains('r2', $ids);
+        $this->assertNotContains('r3', $ids);
+    }
+
+    public function testFindWithUriWildcard(): void
+    {
+        $meta1 = ['id' => 'r1', 'utime' => microtime(true), 'uri' => '/api/users'];
+        $meta2 = ['id' => 'r2', 'utime' => microtime(true), 'uri' => '/api/posts'];
+        $meta3 = ['id' => 'r3', 'utime' => microtime(true), 'uri' => '/admin'];
+
+        $this->redis->expects($this->exactly(2))
+            ->method('zRevRange')
+            ->willReturnOnConsecutiveCalls(['r1', 'r2', 'r3'], []);
+
+        $this->redis->expects($this->once())
+            ->method('multi')
+            ->with(\Redis::PIPELINE)
+            ->willReturn($this->redis);
+
+        $this->redis->expects($this->exactly(3))
+            ->method('hGet')
+            ->willReturnOnConsecutiveCalls($this->redis, $this->redis, $this->redis);
+
+        $this->redis->expects($this->once())
+            ->method('exec')
+            ->willReturn([json_encode($meta1), json_encode($meta2), json_encode($meta3)]);
+
+        $this->redis->expects($this->never())->method('zRem');
+
+        // * wildcard: r1 and r2 match /api/*, r3 does not
+        $results = $this->s->find(['uri' => '/api/*']);
+
+        $this->assertCount(2, $results);
+        $ids = array_column($results, 'id');
+        $this->assertContains('r1', $ids);
+        $this->assertContains('r2', $ids);
+        $this->assertNotContains('r3', $ids);
+    }
+
     public function testFindWithUtimeFilter(): void
     {
         $time1 = microtime(true) - 300; // 5 minutes ago

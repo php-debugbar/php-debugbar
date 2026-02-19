@@ -119,6 +119,87 @@ class SqliteStorageTest extends DebugBarTestCase
         $this->assertCount(2, $results);
     }
 
+    public function testFindWithIpWildcard(): void
+    {
+        $t = microtime(true);
+        $data1 = $this->testData;
+        $data1['__meta']['id'] = 'r1';
+        $data1['__meta']['utime'] = $t;
+        $data1['__meta']['ip'] = '192.168.1.10';
+
+        $data2 = $this->testData;
+        $data2['__meta']['id'] = 'r2';
+        $data2['__meta']['utime'] = $t;
+        $data2['__meta']['ip'] = '192.168.2.20';
+
+        $data3 = $this->testData;
+        $data3['__meta']['id'] = 'r3';
+        $data3['__meta']['utime'] = $t;
+        $data3['__meta']['ip'] = '10.0.0.1';
+
+        $this->storage->save('r1', $data1);
+        $this->storage->save('r2', $data2);
+        $this->storage->save('r3', $data3);
+
+        // * matches any sequence of characters
+        $results = $this->storage->find(['ip' => '192.168.*']);
+        $this->assertCount(2, $results);
+        $ids = array_column($results, 'id');
+        $this->assertContains('r1', $ids);
+        $this->assertContains('r2', $ids);
+        $this->assertNotContains('r3', $ids);
+
+        // ? matches exactly one character
+        $results = $this->storage->find(['ip' => '10.0.0.?']);
+        $this->assertCount(1, $results);
+        $this->assertEquals('r3', $results[0]['id']);
+
+        // no wildcards still works as exact match
+        $results = $this->storage->find(['ip' => '192.168.1.10']);
+        $this->assertCount(1, $results);
+        $this->assertEquals('r1', $results[0]['id']);
+    }
+
+    public function testFindWithUriWildcard(): void
+    {
+        $t = microtime(true);
+        $data1 = $this->testData;
+        $data1['__meta']['id'] = 'r1';
+        $data1['__meta']['utime'] = $t;
+        $data1['__meta']['uri'] = '/api/users';
+
+        $data2 = $this->testData;
+        $data2['__meta']['id'] = 'r2';
+        $data2['__meta']['utime'] = $t;
+        $data2['__meta']['uri'] = '/api/posts';
+
+        $data3 = $this->testData;
+        $data3['__meta']['id'] = 'r3';
+        $data3['__meta']['utime'] = $t;
+        $data3['__meta']['uri'] = '/admin';
+
+        $this->storage->save('r1', $data1);
+        $this->storage->save('r2', $data2);
+        $this->storage->save('r3', $data3);
+
+        // * wildcard matches all /api/* URIs
+        $results = $this->storage->find(['uri' => '/api/*']);
+        $this->assertCount(2, $results);
+        $ids = array_column($results, 'id');
+        $this->assertContains('r1', $ids);
+        $this->assertContains('r2', $ids);
+        $this->assertNotContains('r3', $ids);
+
+        // ? wildcard matches exactly one character at that position
+        $results = $this->storage->find(['uri' => '/admi?']);
+        $this->assertCount(1, $results);
+        $this->assertEquals('r3', $results[0]['id']);
+
+        // no match
+        $results = $this->storage->find(['uri' => '/other/*']);
+        $this->assertCount(0, $results);
+    }
+
     public function testFindOrdersByDatetimeDesc(): void
     {
         // Create entries with different timestamps
