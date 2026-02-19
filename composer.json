@@ -1,7 +1,14 @@
 {
     "name": "php-debugbar/php-debugbar",
     "description": "Debug bar in the browser for php application",
-    "keywords": ["debug", "debugbar", "toolbar", "profiler", "debug bar", "dev"],
+    "keywords": [
+        "debug",
+        "debugbar",
+        "toolbar",
+        "profiler",
+        "debug bar",
+        "dev"
+    ],
     "homepage": "https://github.com/php-debugbar/php-debugbar",
     "type": "library",
     "license": "MIT",
@@ -34,10 +41,6 @@
         "dbrekelmans/bdi": "^1.4",
         "friendsofphp/php-cs-fixer": "^3.92",
         "monolog/monolog": "^3.9",
-        "php-debugbar/doctrine-bridge": "^3@dev",
-        "php-debugbar/monolog-bridge": "^1@dev",
-        "php-debugbar/symfony-bridge": "^1@dev",
-        "php-debugbar/twig-bridge": "^2@dev",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
@@ -77,7 +80,7 @@
             "@php vendor/bin/phpunit --testsuite=Browser --debug"
         ]
     },
-     "extra": {
+    "extra": {
         "branch-alias": {
             "dev-master": "3.0-dev"
         }
