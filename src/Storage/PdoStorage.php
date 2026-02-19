@@ -178,8 +178,10 @@ class PdoStorage extends AbstractStorage
 
     public function globToSql(string $pattern, string $escapeChar = '\\'): string
     {
-        $sqlMulti = '%'; $sqlSingle = '_';
-        $globMulti = '*'; $globSingle = '?';
+        $sqlMulti = '%';
+        $sqlSingle = '_';
+        $globMulti = '*';
+        $globSingle = '?';
         return str_replace(
             [$globMulti, $globSingle],
             [$sqlMulti, $sqlSingle],
