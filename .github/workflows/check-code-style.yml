@@ -1,17 +1,14 @@
 name: Fix Code Style
 
 on:
-  push:
+  pull_request:
     branches:
-      - master
+      - "*"
     paths:
       - '**.php'
 
-permissions:
-  contents: write
-
 jobs:
-  cs-fix:
+  cs-check:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
@@ -36,9 +33,4 @@ jobs:
       run: composer update --prefer-dist --no-progress
 
     - name: Fix Code Style
-      run: vendor/bin/php-cs-fixer fix -v --diff
-
-    - name: Commit changes
-      uses: stefanzweifel/git-auto-commit-action@v7
-      with:
-        commit_message: Fix CS
+      run: vendor/bin/php-cs-fixer check -v --diff
