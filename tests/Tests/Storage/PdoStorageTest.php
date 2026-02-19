@@ -127,6 +127,122 @@ class PdoStorageTest extends DebugBarTestCase
         }
     }
 
+    public function testGlobToSql(): void
+    {
+        // Basic wildcard conversion
+        $this->assertEquals('/api/%', $this->s->globToSql('/api/*'));
+        $this->assertEquals('/page_', $this->s->globToSql('/page?'));
+        $this->assertEquals('%', $this->s->globToSql('*'));
+
+        // Literal SQL wildcards in the pattern must be escaped
+        $this->assertEquals('/100\%/test', $this->s->globToSql('/100%/test'));
+        $this->assertEquals('/col\_name', $this->s->globToSql('/col_name'));
+
+        // Combined: glob wildcards alongside literal SQL special chars
+        $this->assertEquals('/100\%/%', $this->s->globToSql('/100%/*'));
+        $this->assertEquals('/col\_%', $this->s->globToSql('/col_*'));
+    }
+
+    public function testFindWithUriContainingPercent(): void
+    {
+        $this->s->clear();
+
+        $t = microtime(true);
+        $this->s->save('r1', ['__meta' => ['id' => 'r1', 'utime' => $t, 'uri' => '/api/100%20/users']]);
+        $this->s->save('r2', ['__meta' => ['id' => 'r2', 'utime' => $t, 'uri' => '/api/100%20/posts']]);
+        $this->s->save('r3', ['__meta' => ['id' => 'r3', 'utime' => $t, 'uri' => '/api/other']]);
+
+        // Literal % in the filter should not act as a SQL wildcard
+        $results = $this->s->find(['uri' => '/api/100%20/*']);
+        $this->assertCount(2, $results);
+        $ids = array_column($results, 'id');
+        $this->assertContains('r1', $ids);
+        $this->assertContains('r2', $ids);
+        $this->assertNotContains('r3', $ids);
+
+        // Exact match with % in the URI
+        $results = $this->s->find(['uri' => '/api/100%20/users']);
+        $this->assertCount(1, $results);
+        $this->assertEquals('r1', $results[0]['id']);
+    }
+
+    public function testFindWithUriContainingUnderscore(): void
+    {
+        $this->s->clear();
+
+        $t = microtime(true);
+        $this->s->save('r1', ['__meta' => ['id' => 'r1', 'utime' => $t, 'uri' => '/api_v1/users']]);
+        $this->s->save('r2', ['__meta' => ['id' => 'r2', 'utime' => $t, 'uri' => '/api_v2/users']]);
+        $this->s->save('r3', ['__meta' => ['id' => 'r3', 'utime' => $t, 'uri' => '/apixv1/users']]);
+
+        // Literal _ in the filter should not act as a SQL single-char wildcard
+        $results = $this->s->find(['uri' => '/api_v1/*']);
+        $this->assertCount(1, $results);
+        $this->assertEquals('r1', $results[0]['id']);
+
+        // ? glob wildcard does match the _ character
+        $results = $this->s->find(['uri' => '/api?v1/*']);
+        $this->assertCount(2, $results);
+        $ids = array_column($results, 'id');
+        $this->assertContains('r1', $ids);
+        $this->assertContains('r3', $ids);
+    }
+
+    public function testFindWithIpWildcard(): void
+    {
+        $this->s->clear();
+
+        $t = microtime(true);
+        $this->s->save('r1', ['__meta' => ['id' => 'r1', 'utime' => $t, 'ip' => '192.168.1.10']]);
+        $this->s->save('r2', ['__meta' => ['id' => 'r2', 'utime' => $t, 'ip' => '192.168.2.20']]);
+        $this->s->save('r3', ['__meta' => ['id' => 'r3', 'utime' => $t, 'ip' => '10.0.0.1']]);
+
+        // * matches any sequence of characters
+        $results = $this->s->find(['ip' => '192.168.*']);
+        $this->assertCount(2, $results);
+        $ids = array_column($results, 'id');
+        $this->assertContains('r1', $ids);
+        $this->assertContains('r2', $ids);
+        $this->assertNotContains('r3', $ids);
+
+        // ? matches exactly one character
+        $results = $this->s->find(['ip' => '10.0.0.?']);
+        $this->assertCount(1, $results);
+        $this->assertEquals('r3', $results[0]['id']);
+
+        // no wildcards still works as exact match
+        $results = $this->s->find(['ip' => '192.168.1.10']);
+        $this->assertCount(1, $results);
+        $this->assertEquals('r1', $results[0]['id']);
+    }
+
+    public function testFindWithUriWildcard(): void
+    {
+        $this->s->clear();
+
+        $t = microtime(true);
+        $this->s->save('r1', ['__meta' => ['id' => 'r1', 'utime' => $t, 'uri' => '/api/users']]);
+        $this->s->save('r2', ['__meta' => ['id' => 'r2', 'utime' => $t, 'uri' => '/api/posts']]);
+        $this->s->save('r3', ['__meta' => ['id' => 'r3', 'utime' => $t, 'uri' => '/admin']]);
+
+        // * wildcard matches all /api/* URIs
+        $results = $this->s->find(['uri' => '/api/*']);
+        $this->assertCount(2, $results);
+        $ids = array_column($results, 'id');
+        $this->assertContains('r1', $ids);
+        $this->assertContains('r2', $ids);
+        $this->assertNotContains('r3', $ids);
+
+        // ? wildcard matches exactly one character at that position
+        $results = $this->s->find(['uri' => '/admi?']);
+        $this->assertCount(1, $results);
+        $this->assertEquals('r3', $results[0]['id']);
+
+        // no match
+        $results = $this->s->find(['uri' => '/other/*']);
+        $this->assertCount(0, $results);
+    }
+
     public function testFindWithUtimeFilter(): void
     {
         // Clear any existing data from setUp

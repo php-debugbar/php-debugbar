@@ -106,6 +106,59 @@ class FileStorageTest extends DebugBarTestCase
         $this->assertFileExists($this->dirname . '/bar.json');
     }
 
+    public function testFindWithIpWildcard(): void
+    {
+        $this->s->clear();
+
+        $this->s->save('r1', ['__meta' => ['id' => 'r1', 'utime' => microtime(true), 'ip' => '192.168.1.10']]);
+        $this->s->save('r2', ['__meta' => ['id' => 'r2', 'utime' => microtime(true), 'ip' => '192.168.2.20']]);
+        $this->s->save('r3', ['__meta' => ['id' => 'r3', 'utime' => microtime(true), 'ip' => '10.0.0.1']]);
+
+        // * matches any sequence of characters
+        $results = $this->s->find(['ip' => '192.168.*']);
+        $this->assertCount(2, $results);
+        $ids = array_column($results, 'id');
+        $this->assertContains('r1', $ids);
+        $this->assertContains('r2', $ids);
+        $this->assertNotContains('r3', $ids);
+
+        // ? matches exactly one character
+        $results = $this->s->find(['ip' => '10.0.0.?']);
+        $this->assertCount(1, $results);
+        $this->assertEquals('r3', $results[0]['id']);
+
+        // no wildcards still works as exact match
+        $results = $this->s->find(['ip' => '192.168.1.10']);
+        $this->assertCount(1, $results);
+        $this->assertEquals('r1', $results[0]['id']);
+    }
+
+    public function testFindWithUriWildcard(): void
+    {
+        $this->s->clear();
+
+        $this->s->save('r1', ['__meta' => ['id' => 'r1', 'utime' => microtime(true), 'uri' => '/api/users']]);
+        $this->s->save('r2', ['__meta' => ['id' => 'r2', 'utime' => microtime(true), 'uri' => '/api/posts']]);
+        $this->s->save('r3', ['__meta' => ['id' => 'r3', 'utime' => microtime(true), 'uri' => '/admin']]);
+
+        // * wildcard matches all /api/* URIs
+        $results = $this->s->find(['uri' => '/api/*']);
+        $this->assertCount(2, $results);
+        $ids = array_column($results, 'id');
+        $this->assertContains('r1', $ids);
+        $this->assertContains('r2', $ids);
+        $this->assertNotContains('r3', $ids);
+
+        // ? wildcard matches exactly one character at that position
+        $results = $this->s->find(['uri' => '/admi?']);
+        $this->assertCount(1, $results);
+        $this->assertEquals('r3', $results[0]['id']);
+
+        // no match
+        $results = $this->s->find(['uri' => '/other/*']);
+        $this->assertCount(0, $results);
+    }
+
     public function testFindWithUtimeFilter(): void
     {
         // Clear any existing data from setUp
