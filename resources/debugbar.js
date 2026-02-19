@@ -705,7 +705,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.bodyPaddingTopHeight = Number.parseInt(bodyStyles.paddingTop);
 
             try {
-                this.isIframe = window.self !== window.top && window.top.PhpDebugBar && window.top.PhpDebugBar;
+                this.isIframe = window.self !== window.top && !!(window.top.PhpDebugBar?.instance);
             } catch (_error) {
                 this.isIframe = false;
             }
