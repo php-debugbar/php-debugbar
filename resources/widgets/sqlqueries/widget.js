@@ -217,7 +217,7 @@
             }
             if (stmt.type !== 'query') {
                 const strong = document.createElement('strong');
-                strong.classList.add(csscls('sql'), csscls('name'), csscls(stmt.type));
+                strong.classList.add(csscls('sql'), csscls(stmt.type));
                 strong.textContent = stmt.sql;
                 li.append(strong);
             } else {
