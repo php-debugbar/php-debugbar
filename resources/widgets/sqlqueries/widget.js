@@ -110,6 +110,7 @@
         }
 
         itemRenderer(li, stmt) {
+            stmt.type = stmt.type || 'query';
             if (stmt.slow) {
                 li.classList.add(csscls('sql-slow'));
             }
@@ -177,7 +178,7 @@
                     }
                 }
             }
-            if ((!stmt.type || stmt.type === 'query')) {
+            if (stmt.type === 'query') {
                 const copyBtn = document.createElement('span');
                 copyBtn.setAttribute('title', 'Copy to clipboard');
                 copyBtn.classList.add(csscls('copy-clipboard'));
@@ -214,9 +215,9 @@
                 header.textContent = stmt.filename;
                 li.prepend(header);
             }
-            if (['transaction', 'info'].includes(stmt.type)) {
+            if (stmt.type !== 'query') {
                 const strong = document.createElement('strong');
-                strong.classList.add(csscls('sql'), csscls('name'));
+                strong.classList.add(csscls('sql'), csscls('name'), csscls(stmt.type));
                 strong.textContent = stmt.sql;
                 li.append(strong);
             } else {
@@ -233,7 +234,7 @@
                 li.append(errorSpan);
             }
             
-            if (['info', 'transaction'].includes(stmt.type)) {
+            if (stmt.type !== 'query') {
                 return;
             }
 
