@@ -341,6 +341,9 @@
 
                 const t = document.createElement('span');
                 t.textContent = `${data.nb_statements} statements were executed`;
+                if (data.nb_excluded_statements) {
+                    t.textContent += `, ${data.nb_excluded_statements} have been excluded`;
+                }
                 this.status.append(t);
 
                 if (data.nb_failed_statements) {
