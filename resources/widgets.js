@@ -548,6 +548,19 @@
                         });
                     }
                 }
+                if (value.collector) {
+                    const collector = document.createElement('span');
+                    collector.classList.add(csscls('collector'));
+                    collector.textContent = value.collector;
+                    li.prepend(collector);
+                }
+                if (value.label) {
+                    val.classList.add(csscls(value.label));
+                    const label = document.createElement('span');
+                    label.classList.add(csscls('label'));
+                    label.textContent = value.label;
+                    li.prepend(label);
+                }
                 if (value.xdebug_link) {
                     const header = document.createElement('span');
                     header.classList.add(csscls('filename'));
@@ -568,19 +581,6 @@
                         header.append(link);
                     }
                     li.prepend(header);
-                }
-                if (value.collector) {
-                    const collector = document.createElement('span');
-                    collector.classList.add(csscls('collector'));
-                    collector.textContent = value.collector;
-                    li.prepend(collector);
-                }
-                if (value.label) {
-                    val.classList.add(csscls(value.label));
-                    const label = document.createElement('span');
-                    label.classList.add(csscls('label'));
-                    label.textContent = value.label;
-                    li.prepend(label);
                 }
                 if (value.context && Object.keys(value.context).length > 0) {
                     const contextCount = document.createElement('span');
