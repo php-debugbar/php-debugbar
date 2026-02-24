@@ -59,8 +59,8 @@
             this.showonlycurrentbtn.textContent = 'Show only current URL';
             this.actions.append(this.showonlycurrentbtn);
             this.showonlycurrentbtn.addEventListener('click', () => {
-                self.table.innerHTML = '';
-                self.find({ uri: window.location.pathname }, 0, self.handleFind.bind(self));
+                self.uriInput.value = window.location.pathname;
+                self.searchBtn.click();
             });
 
             this.refreshbtn = document.createElement('a');
@@ -99,7 +99,7 @@
         addSearch() {
             const self = this;
 
-            const searchBtn = document.createElement('button');
+            const searchBtn = this.searchBtn = document.createElement('button');
             searchBtn.textContent = 'Search';
             searchBtn.type = 'submit';
             searchBtn.addEventListener('click', function (e) {
@@ -178,18 +178,16 @@
                 const ipLink = document.createElement('a');
                 ipLink.textContent = meta.ip;
                 ipLink.addEventListener('click', (e) => {
-                    self.table.innerHTML = '';
                     self.ipInput.value = meta.ip;
-                    self.find({ ip: meta.ip }, 0, self.handleFind.bind(self));
+                    self.searchBtn.click();
                     e.preventDefault();
                 });
 
                 const searchLink = document.createElement('a');
                 searchLink.textContent = 'Show URL';
                 searchLink.addEventListener('click', (e) => {
-                    self.table.innerHTML = '';
                     self.uriInput.value = meta.uri;
-                    self.find({ uri: meta.uri }, 0, self.handleFind.bind(self));
+                    self.searchBtn.click();
                     e.preventDefault();
                 });
 
