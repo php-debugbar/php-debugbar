@@ -190,30 +190,10 @@
                 });
                 li.append(copyBtn);
             }
-            if (typeof (stmt.xdebug_link) !== 'undefined' && stmt.xdebug_link) {
-                const header = document.createElement('span');
-                header.setAttribute('title', 'Filename');
-                header.classList.add(csscls('filename'));
-                header.textContent = stmt.xdebug_link.filename + (stmt.xdebug_link.line ? `#${stmt.xdebug_link.line}` : '');
-
-                const link = document.createElement('a');
-                link.setAttribute('href', stmt.xdebug_link.url);
-                link.classList.add(csscls('editor-link'));
-                link.addEventListener('click', (event) => {
-                    event.stopPropagation();
-                    if (stmt.xdebug_link.ajax) {
-                        fetch(stmt.xdebug_link.url);
-                        event.preventDefault();
-                    }
-                });
-                header.append(link);
-                li.prepend(header);
+            if (stmt.xdebug_link) {
+                li.prepend(PhpDebugBar.Widgets.editorLink(stmt.xdebug_link));
             } else if (typeof (stmt.filename) !== 'undefined' && stmt.filename) {
-                const header = document.createElement('span');
-                header.setAttribute('title', 'Filename');
-                header.classList.add(csscls('filename'));
-                header.textContent = stmt.filename;
-                li.prepend(header);
+                li.prepend(PhpDebugBar.Widgets.editorLink(stmt));
             }
             if (stmt.type !== 'query') {
                 const strong = document.createElement('strong');
@@ -233,7 +213,7 @@
                 errorSpan.textContent = `[${stmt.error_code}] ${stmt.error_message}`;
                 li.append(errorSpan);
             }
-            
+
             if (stmt.type !== 'query') {
                 return;
             }

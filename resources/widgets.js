@@ -36,6 +36,37 @@
     };
 
     /**
+     * Creates html editor link span
+     *
+     * @param  {Object} value
+     * @return {HTMLElement}
+     */
+    const editorLink = PhpDebugBar.Widgets.editorLink = function (value) {
+        const linkWrapper = document.createElement('span'), line = value.line ? `#${value.line}` : '';
+        linkWrapper.classList.add(csscls('filename'));
+        linkWrapper.textContent = value.filename + line;
+        if (value.path) {
+            linkWrapper.setAttribute('title', value.path + line);
+        }
+
+        if (value.url) {
+            const link = document.createElement('a');
+            link.classList.add(csscls('editor-link'));
+            link.setAttribute(link.ajax ? 'title' : 'href', value.url);
+            link.addEventListener('click', (event) => {
+                event.stopPropagation();
+                if (value.ajax) {
+                    fetch(stmt.xdebug_link.url);
+                    event.preventDefault();
+                }
+            });
+            linkWrapper.append(link);
+        }
+
+        return linkWrapper;
+    };
+
+    /**
      * Highlights a block of code
      *
      * @param  {string} code
@@ -283,26 +314,8 @@
 
             dd.innerHTML = value && value.value || value;
 
-            if (value && value.xdebug_link) {
-                const header = document.createElement('span');
-                header.classList.add(csscls('filename'));
-                header.textContent = value.xdebug_link.filename + (value.xdebug_link.line ? `#${value.xdebug_link.line}` : '');
-
-                if (value.xdebug_link) {
-                    const link = document.createElement('a');
-                    link.classList.add(csscls('editor-link'));
-
-                    if (value.xdebug_link.ajax) {
-                        link.setAttribute('title', value.xdebug_link.url);
-                        link.addEventListener('click', () => {
-                            fetch(value.xdebug_link.url);
-                        });
-                    } else {
-                        link.setAttribute('href', value.xdebug_link.url);
-                    }
-                    header.append(link);
-                }
-                dd.append(header);
+            if (value?.xdebug_link) {
+                dd.append(editorLink(value.xdebug_link));
             }
         }
     }
@@ -398,24 +411,8 @@
                     if (values.xdebug_link) {
                         const editorCell = document.createElement('td');
                         editorCell.classList.add(csscls('editor'));
+                        editorCell.append(editorLink(values.xdebug_link));
                         tr.append(editorCell);
-
-                        const filename = document.createElement('span');
-                        filename.classList.add(csscls('filename'));
-                        filename.textContent = values.xdebug_link.filename + (values.xdebug_link.line ? `#${values.xdebug_link.line}` : '');
-                        editorCell.append(filename);
-
-                        const link = document.createElement('a');
-                        link.classList.add(csscls('editor-link'));
-                        if (values.xdebug_link.ajax) {
-                            link.setAttribute('title', values.xdebug_link.url);
-                            link.addEventListener('click', () => {
-                                fetch(values.xdebug_link.url);
-                            });
-                        } else {
-                            link.setAttribute('href', values.xdebug_link.url);
-                        }
-                        filename.append(link);
 
                         if (!hasXdebuglinks) {
                             hasXdebuglinks = true;
@@ -561,27 +558,6 @@
                     label.textContent = value.label;
                     li.prepend(label);
                 }
-                if (value.xdebug_link) {
-                    const header = document.createElement('span');
-                    header.classList.add(csscls('filename'));
-                    header.textContent = value.xdebug_link.filename + (value.xdebug_link.line ? `#${value.xdebug_link.line}` : '');
-
-                    if (value.xdebug_link) {
-                        const link = document.createElement('a');
-                        link.classList.add(csscls('editor-link'));
-
-                        if (value.xdebug_link.ajax) {
-                            link.setAttribute('title', value.xdebug_link.url);
-                            link.addEventListener('click', () => {
-                                fetch(value.xdebug_link.url);
-                            });
-                        } else {
-                            link.setAttribute('href', value.xdebug_link.url);
-                        }
-                        header.append(link);
-                    }
-                    li.prepend(header);
-                }
                 if (value.context && Object.keys(value.context).length > 0) {
                     const contextCount = document.createElement('span');
                     contextCount.setAttribute('title', 'Context');
@@ -619,6 +595,9 @@
                         }
                         contextTable.hidden = !contextTable.hidden;
                     });
+                }
+                if (value.xdebug_link) {
+                    li.prepend(editorLink(value.xdebug_link));
                 }
             } });
 
@@ -923,25 +902,7 @@
                 li.append(messageSpan);
 
                 if (e.file) {
-                    const header = document.createElement('span');
-                    header.classList.add(csscls('filename'));
-                    header.textContent = `${e.file}#${e.line}`;
-
-                    if (e.xdebug_link) {
-                        const link = document.createElement('a');
-                        link.classList.add(csscls('editor-link'));
-
-                        if (e.xdebug_link.ajax) {
-                            link.setAttribute('title', e.xdebug_link.url);
-                            link.addEventListener('click', () => {
-                                fetch(e.xdebug_link.url);
-                            });
-                        } else {
-                            link.setAttribute('href', e.xdebug_link.url);
-                        }
-                        header.append(link);
-                    }
-                    li.append(header);
+                    li.append(editorLink(e.xdebug_link || {filename: e.file, line: e.line}));
                 }
 
                 if (e.type) {
