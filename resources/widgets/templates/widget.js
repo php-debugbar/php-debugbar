@@ -27,25 +27,8 @@
                 }
                 li.append(name);
 
-                if (typeof tpl.xdebug_link !== 'undefined' && tpl.xdebug_link !== null) {
-                    const header = document.createElement('span');
-                    header.classList.add(csscls('filename'));
-                    header.textContent = tpl.xdebug_link.filename + (tpl.xdebug_link.line ? `#${tpl.xdebug_link.line}` : '');
-
-                    if (tpl.xdebug_link) {
-                        const link = document.createElement('a');
-                        link.setAttribute('href', tpl.xdebug_link.url);
-                        link.classList.add(csscls('editor-link'));
-                        link.addEventListener('click', (event) => {
-                            event.stopPropagation();
-                            if (tpl.xdebug_link.ajax) {
-                                fetch(tpl.xdebug_link.url);
-                                event.preventDefault();
-                            }
-                        });
-                        header.append(link);
-                    }
-                    li.append(header);
+                if (tpl.xdebug_link) {
+                    li.append(PhpDebugBar.Widgets.editorLink(tpl.xdebug_link));
                 }
 
                 if (tpl.render_time_str) {

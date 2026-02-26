@@ -70,7 +70,8 @@ trait HasXdebugLinks
 
         foreach ($this->xdebugReplacements as $path => $replacement) {
             if (str_starts_with($file, $path)) {
-                $file = $replacement . substr($file, strlen($path));
+                $normalizedPath = substr($file, strlen($path));
+                $file = $replacement . $normalizedPath;
                 break;
             }
         }
@@ -89,6 +90,7 @@ trait HasXdebugLinks
             'ajax' => $this->getXdebugShouldUseAjax(),
             'filename' => basename($file),
             'line' => (string) $line ?: '?',
+            ...(isset($normalizedPath) ? ['path' => $normalizedPath]: []),
         ];
     }
 
