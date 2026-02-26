@@ -90,7 +90,7 @@ trait HasXdebugLinks
             'ajax' => $this->getXdebugShouldUseAjax(),
             'filename' => basename($file),
             'line' => (string) $line ?: '?',
-            ...(isset($normalizedPath) ? ['path' => $normalizedPath]: []),
+            ...(isset($normalizedPath) ? ['path' => $normalizedPath] : []),
         ];
     }
 
