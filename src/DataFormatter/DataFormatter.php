@@ -34,11 +34,12 @@ class DataFormatter implements DataFormatterInterface
 
     public function formatVar(mixed $data, bool $deep = true): string
     {
+        $isNonIterableObject = is_object($data) && !is_iterable($data);
         if ($deep) {
             // Set sensible default max depth for deep dumps if not set
-            $maxDepth = $this->clonerOptions['max_depth'] ?? (is_object($data) ? 2 : 4);
+            $maxDepth = $this->clonerOptions['max_depth'] ?? ($isNonIterableObject ? 2 : 4);
         } else {
-            $maxDepth = min($this->clonerOptions['max_depth'] ?? 1, is_object($data) ? 0 : 1);
+            $maxDepth = min($this->clonerOptions['max_depth'] ?? 1, $isNonIterableObject ? 0 : 1);
         }
 
         $cloner = $this->getCloner();
