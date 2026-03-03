@@ -258,7 +258,6 @@
 
             // Click handler for expand/collapse
             if (hasChildren || node.cut > 0) {
-                header.style.cursor = 'pointer';
                 const toggleHandler = function (e) {
                     e.stopPropagation();
                     e.preventDefault();
@@ -277,7 +276,10 @@
                         arrowSpan.textContent = '\u25BC'; // ▼
                     }
                 };
+                header.style.cursor = 'pointer';
                 header.addEventListener('click', toggleHandler);
+                summary.style.cursor = 'pointer';
+                summary.addEventListener('click', toggleHandler);
             }
 
             // Closing bracket
