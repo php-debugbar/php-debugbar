@@ -36,6 +36,30 @@
     };
 
     /**
+     * Tries to render a value as a JSON variable dump. If the value is a JSON
+     * string representing a dump node (with a "t" field), renders it using
+     * VarDumpRenderer and returns the DOM element. Returns null otherwise.
+     *
+     * @param {string|object} value
+     * @return {HTMLElement|null}
+     */
+    PhpDebugBar.Widgets.renderDumpValue = function (value) {
+        if (typeof value !== 'string') {
+            return null;
+        }
+        try {
+            const parsed = JSON.parse(value);
+            if (parsed && typeof parsed === 'object' && parsed.t) {
+                const renderer = new PhpDebugBar.Widgets.VarDumpRenderer();
+                return renderer.render(parsed);
+            }
+        } catch (e) {
+            // Not JSON, fall through
+        }
+        return null;
+    };
+
+    /**
      * Creates html editor link span
      *
      * @param  {Object} value
@@ -829,8 +853,8 @@
                             li.append(table);
 
                             li.style.cursor = 'pointer';
-                            li.addEventListener('click', function () {
-                                if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
+                            li.addEventListener('click', function (event) {
+                                if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump') || event.target.closest('.vd-dump')) {
                                     return '';
                                 }
                                 const table = this.querySelector('table');
@@ -838,7 +862,7 @@
                             });
 
                             li.addEventListener('click', (event) => {
-                                if (event.target.closest('.sf-dump')) {
+                                if (event.target.closest('.sf-dump') || event.target.closest('.vd-dump')) {
                                     event.stopPropagation();
                                 }
                             });
@@ -933,7 +957,7 @@
 
                     // This click event makes the var-dumper hard to use.
                     li.addEventListener('click', (event) => {
-                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
+                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump') || event.target.closest('.vd-dump')) {
                             return;
                         }
                         pre.hidden = !pre.hidden;

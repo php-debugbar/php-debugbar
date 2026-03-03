@@ -81,7 +81,24 @@
                     for (const key in request.details) {
                         if (typeof request.details[key] !== 'function') {
                             const row = document.createElement('tr');
-                            row.innerHTML = `<td class="${csscls('name')}">${key}</td><td class="${csscls('value')}"><pre><code>${request.details[key]}</code></pre></td>`;
+                            const nameTd = document.createElement('td');
+                            nameTd.className = csscls('name');
+                            nameTd.textContent = key;
+                            row.append(nameTd);
+
+                            const valueTd = document.createElement('td');
+                            valueTd.className = csscls('value');
+                            const rendered = PhpDebugBar.Widgets.renderDumpValue(request.details[key]);
+                            if (rendered) {
+                                valueTd.append(rendered);
+                            } else {
+                                const pre = document.createElement('pre');
+                                const code = document.createElement('code');
+                                code.innerHTML = request.details[key];
+                                pre.append(code);
+                                valueTd.append(pre);
+                            }
+                            row.append(valueTd);
                             tbody.append(row);
                         }
                     }
@@ -89,7 +106,7 @@
                     li.append(paramsTable);
                     li.style.cursor = 'pointer';
                     li.addEventListener('click', (event) => {
-                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
+                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump') || event.target.closest('.vd-dump')) {
                             return;
                         }
                         paramsTable.hidden = !paramsTable.hidden;

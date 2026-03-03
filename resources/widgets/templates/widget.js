@@ -80,7 +80,24 @@
                     for (const key in tpl.params) {
                         if (typeof tpl.params[key] !== 'function') {
                             const row = document.createElement('tr');
-                            row.innerHTML = `<td class="${csscls('name')}">${key}</td><td class="${csscls('value')}"><pre><code>${tpl.params[key]}</code></pre></td>`;
+                            const nameTd = document.createElement('td');
+                            nameTd.className = csscls('name');
+                            nameTd.textContent = key;
+                            row.append(nameTd);
+
+                            const valueTd = document.createElement('td');
+                            valueTd.className = csscls('value');
+                            const rendered = PhpDebugBar.Widgets.renderDumpValue(tpl.params[key]);
+                            if (rendered) {
+                                valueTd.append(rendered);
+                            } else {
+                                const pre = document.createElement('pre');
+                                const code = document.createElement('code');
+                                code.innerHTML = tpl.params[key];
+                                pre.append(code);
+                                valueTd.append(pre);
+                            }
+                            row.append(valueTd);
                             tbody.append(row);
                         }
                     }
@@ -88,7 +105,7 @@
                     li.append(table);
                     li.style.cursor = 'pointer';
                     li.addEventListener('click', (event) => {
-                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
+                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump') || event.target.closest('.vd-dump')) {
                             return;
                         }
                         table.hidden = !table.hidden;
