@@ -18,16 +18,7 @@
         render(data) {
             if (typeof data === 'string') {
                 try {
-                    const parsed = JSON.parse(data);
-                    if (parsed && typeof parsed === 'object' && parsed.t) {
-                        data = parsed;
-                    } else {
-                        // Valid JSON but not a dump node — show as plain text
-                        const pre = document.createElement('pre');
-                        pre.className = 'sf-dump';
-                        pre.textContent = data;
-                        return pre;
-                    }
+                    data = JSON.parse(data);
                 } catch (e) {
                     const pre = document.createElement('pre');
                     pre.className = 'sf-dump';
@@ -36,9 +27,18 @@
                 }
             }
 
+            // Dump node (from Symfony VarDumper)
+            if (data && typeof data === 'object' && data.t) {
+                const pre = document.createElement('pre');
+                pre.className = 'sf-dump';
+                this.renderNode(pre, data, 0);
+                return pre;
+            }
+
+            // Plain JSON value (from simple value fast path)
             const pre = document.createElement('pre');
             pre.className = 'sf-dump';
-            this.renderNode(pre, data, 0);
+            this.renderPlainValue(pre, data, 0);
             return pre;
         }
 
@@ -274,6 +274,131 @@
                 childrenEl.hidden = !isExpanded;
                 summary.hidden = isExpanded;
                 arrow.textContent = isExpanded ? '\u25BC' : '\u25B6'; // ▼ or ▶
+            };
+            header.style.cursor = 'pointer';
+            header.addEventListener('click', toggleHandler);
+            summary.style.cursor = 'pointer';
+            summary.addEventListener('click', toggleHandler);
+        }
+
+        renderPlainValue(parent, value, depth) {
+            if (value === null) {
+                const span = document.createElement('span');
+                span.className = 'sf-dump-const';
+                span.textContent = 'null';
+                parent.appendChild(span);
+            } else if (typeof value === 'boolean') {
+                const span = document.createElement('span');
+                span.className = 'sf-dump-const';
+                span.textContent = value ? 'true' : 'false';
+                parent.appendChild(span);
+            } else if (typeof value === 'number') {
+                const span = document.createElement('span');
+                span.className = 'sf-dump-num';
+                span.textContent = String(value);
+                parent.appendChild(span);
+            } else if (typeof value === 'string') {
+                const span = document.createElement('span');
+                span.className = 'sf-dump-str';
+                span.textContent = '"' + value + '"';
+                parent.appendChild(span);
+            } else if (Array.isArray(value)) {
+                this.renderPlainHash(parent, value, depth, true);
+            } else if (typeof value === 'object') {
+                this.renderPlainHash(parent, value, depth, false);
+            }
+        }
+
+        renderPlainHash(parent, value, depth, isArray) {
+            const keys = isArray ? null : Object.keys(value);
+            const count = isArray ? value.length : keys.length;
+            const expanded = depth < this.expandedDepth;
+            const closingChar = isArray ? ']' : '}';
+
+            // Header
+            const header = document.createElement('span');
+            if (isArray && count > 0) {
+                const cls = document.createElement('span');
+                cls.className = 'sf-dump-note';
+                cls.textContent = 'array:' + count;
+                header.appendChild(cls);
+                header.appendChild(document.createTextNode(' ['));
+            } else {
+                header.appendChild(document.createTextNode(isArray ? '[' : '{'));
+            }
+            parent.appendChild(header);
+
+            if (count === 0) {
+                parent.appendChild(document.createTextNode(closingChar));
+                return;
+            }
+
+            // Toggle arrow
+            const arrow = document.createElement('a');
+            arrow.className = 'sf-dump-toggle';
+            arrow.href = '#';
+            arrow.textContent = expanded ? '\u25BC' : '\u25B6';
+            header.appendChild(arrow);
+
+            // Toggle container
+            const toggle = document.createElement('samp');
+
+            // Children container
+            const childrenEl = document.createElement('samp');
+            childrenEl.className = 'sf-dump-children';
+            if (!expanded) {
+                childrenEl.hidden = true;
+            }
+
+            // Render entries
+            const items = isArray ? value : keys;
+            for (let i = 0; i < items.length; i++) {
+                const line = document.createElement('span');
+                line.className = 'sf-dump-child';
+
+                const keySpan = document.createElement('span');
+                if (isArray) {
+                    keySpan.className = 'sf-dump-index';
+                    keySpan.textContent = String(i);
+                    line.appendChild(keySpan);
+                    line.appendChild(document.createTextNode(' => '));
+                    this.renderPlainValue(line, value[i], depth + 1);
+                } else {
+                    keySpan.className = 'sf-dump-key';
+                    keySpan.textContent = '"' + items[i] + '"';
+                    line.appendChild(keySpan);
+                    line.appendChild(document.createTextNode(' => '));
+                    this.renderPlainValue(line, value[items[i]], depth + 1);
+                }
+
+                line.appendChild(document.createTextNode('\n'));
+                childrenEl.appendChild(line);
+            }
+
+            // Closing bracket
+            childrenEl.appendChild(document.createTextNode(closingChar));
+            toggle.appendChild(childrenEl);
+
+            // Collapsed summary
+            const summary = document.createElement('span');
+            summary.className = 'sf-dump-summary';
+            if (expanded) {
+                summary.hidden = true;
+            }
+            summary.textContent = ' \u2026' + closingChar;
+            toggle.appendChild(summary);
+
+            parent.appendChild(toggle);
+
+            // Click handler for expand/collapse
+            let isExpanded = expanded;
+            const toggleHandler = function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                isExpanded = !isExpanded;
+                childrenEl.hidden = !isExpanded;
+                summary.hidden = isExpanded;
+                arrow.textContent = isExpanded ? '\u25BC' : '\u25B6';
             };
             header.style.cursor = 'pointer';
             header.addEventListener('click', toggleHandler);

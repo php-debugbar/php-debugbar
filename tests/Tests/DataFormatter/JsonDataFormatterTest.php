@@ -15,54 +15,41 @@ class JsonDataFormatterTest extends DebugBarTestCase
     {
         $d = new JsonDataFormatter();
         $out = $d->formatVar(42);
-        $data = json_decode($out, true);
 
-        $this->assertEquals('s', $data['t']);
-        $this->assertEquals('integer', $data['st']);
-        $this->assertEquals(42, $data['v']);
+        // Simple values are encoded as plain JSON
+        $this->assertEquals('42', $out);
     }
 
     public function testScalarBoolean(): void
     {
         $d = new JsonDataFormatter();
         $out = $d->formatVar(true);
-        $data = json_decode($out, true);
 
-        $this->assertEquals('s', $data['t']);
-        $this->assertEquals('boolean', $data['st']);
-        $this->assertTrue($data['v']);
+        $this->assertEquals('true', $out);
     }
 
     public function testScalarNull(): void
     {
         $d = new JsonDataFormatter();
         $out = $d->formatVar(null);
-        $data = json_decode($out, true);
 
-        $this->assertEquals('s', $data['t']);
-        $this->assertEquals('NULL', $data['st']);
-        $this->assertNull($data['v']);
+        $this->assertEquals('null', $out);
     }
 
     public function testScalarFloat(): void
     {
         $d = new JsonDataFormatter();
         $out = $d->formatVar(3.14);
-        $data = json_decode($out, true);
 
-        $this->assertEquals('s', $data['t']);
-        $this->assertEquals('double', $data['st']);
-        $this->assertEquals(3.14, $data['v']);
+        $this->assertEquals('3.14', $out);
     }
 
     public function testString(): void
     {
         $d = new JsonDataFormatter();
         $out = $d->formatVar('hello world');
-        $data = json_decode($out, true);
 
-        $this->assertEquals('r', $data['t']);
-        $this->assertEquals('hello world', $data['v']);
+        $this->assertEquals('"hello world"', $out);
     }
 
     public function testSimpleArray(): void
@@ -71,17 +58,8 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $out = $d->formatVar([1, 2, 3]);
         $data = json_decode($out, true);
 
-        $this->assertEquals('h', $data['t']);
-        $this->assertEquals(2, $data['ht']); // HASH_INDEXED
-        $this->assertEquals(3, $data['cls']);
-        $this->assertCount(3, $data['children']);
-
-        // Check first child
-        $child = $data['children'][0];
-        $this->assertEquals(0, $child['k']);
-        $this->assertEquals('index', $child['kt']);
-        $this->assertEquals('s', $child['n']['t']);
-        $this->assertEquals(1, $child['n']['v']);
+        // Simple arrays are encoded as plain JSON
+        $this->assertEquals([1, 2, 3], $data);
     }
 
     public function testAssociativeArray(): void
@@ -90,19 +68,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $out = $d->formatVar(['foo' => 'bar', 'baz' => 42]);
         $data = json_decode($out, true);
 
-        $this->assertEquals('h', $data['t']);
-        $this->assertEquals(1, $data['ht']); // HASH_ASSOC
-        $this->assertCount(2, $data['children']);
-
-        $this->assertEquals('foo', $data['children'][0]['k']);
-        $this->assertEquals('key', $data['children'][0]['kt']);
-        $this->assertEquals('r', $data['children'][0]['n']['t']);
-        $this->assertEquals('bar', $data['children'][0]['n']['v']);
-
-        $this->assertEquals('baz', $data['children'][1]['k']);
-        $this->assertEquals('key', $data['children'][1]['kt']);
-        $this->assertEquals('s', $data['children'][1]['n']['t']);
-        $this->assertEquals(42, $data['children'][1]['n']['v']);
+        $this->assertEquals(['foo' => 'bar', 'baz' => 42], $data);
     }
 
     public function testNestedArray(): void
@@ -111,20 +77,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $out = $d->formatVar(['foo' => [1, 2], 'bar' => true]);
         $data = json_decode($out, true);
 
-        $this->assertEquals('h', $data['t']);
-        $this->assertCount(2, $data['children']);
-
-        // Nested array
-        $nested = $data['children'][0]['n'];
-        $this->assertEquals('h', $nested['t']);
-        $this->assertEquals(2, $nested['ht']); // HASH_INDEXED
-        $this->assertCount(2, $nested['children']);
-
-        // Boolean
-        $bool = $data['children'][1]['n'];
-        $this->assertEquals('s', $bool['t']);
-        $this->assertEquals('boolean', $bool['st']);
-        $this->assertTrue($bool['v']);
+        $this->assertEquals(['foo' => [1, 2], 'bar' => true], $data);
     }
 
     public function testObject(): void
@@ -136,6 +89,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $out = $d->formatVar($obj);
         $data = json_decode($out, true);
 
+        // Objects still use the dump structure
         $this->assertEquals('h', $data['t']);
         $this->assertEquals(4, $data['ht']); // HASH_OBJECT
         $this->assertEquals('stdClass', $data['cls']);
@@ -150,11 +104,8 @@ class JsonDataFormatterTest extends DebugBarTestCase
     {
         $d = new JsonDataFormatter();
         $out = $d->formatVar([]);
-        $data = json_decode($out, true);
 
-        $this->assertEquals('h', $data['t']);
-        $this->assertEquals(0, $data['cls']);
-        $this->assertEmpty($data['children']);
+        $this->assertEquals('[]', $out);
     }
 
     public function testValidJson(): void
@@ -221,6 +172,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $d = new JsonDataFormatter();
         $d->resetClonerOptions(['max_items' => 2]);
 
+        // With max_items=2, this exceeds the limit so it falls through to Symfony dump
         $out = $d->formatVar([['one', 'two', 'three', 'four', 'five']]);
         $data = json_decode($out, true);
 
@@ -236,6 +188,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $d = new JsonDataFormatter();
         $d->resetClonerOptions(['max_string' => 5]);
 
+        // Long string exceeds max_string, so it falls through to Symfony dump
         $out = $d->formatVar('ABCDEFGHIJ');
         $data = json_decode($out, true);
 
@@ -272,5 +225,57 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $this->assertEquals('public', $keyTypes['pub']);
         $this->assertEquals('protected', $keyTypes['prot']);
         $this->assertEquals('private', $keyTypes['priv']);
+    }
+
+    public function testSimpleValueFastPath(): void
+    {
+        $d = new JsonDataFormatter();
+
+        // Scalars use plain JSON
+        $this->assertEquals('42', $d->formatVar(42));
+        $this->assertEquals('true', $d->formatVar(true));
+        $this->assertEquals('false', $d->formatVar(false));
+        $this->assertEquals('null', $d->formatVar(null));
+        $this->assertEquals('"hello"', $d->formatVar('hello'));
+
+        // Simple arrays use plain JSON
+        $this->assertEquals('[1,2,3]', $d->formatVar([1, 2, 3]));
+        $this->assertEquals('{"foo":"bar"}', $d->formatVar(['foo' => 'bar']));
+
+        // Objects always use dump structure
+        $obj = new \stdClass();
+        $obj->x = 1;
+        $data = json_decode($d->formatVar($obj), true);
+        $this->assertEquals('h', $data['t']);
+    }
+
+    public function testPrepareVarSimpleValues(): void
+    {
+        $d = new JsonDataFormatter();
+
+        // Simple values are returned as-is
+        $this->assertEquals(42, $d->prepareVar(42));
+        $this->assertEquals('hello', $d->prepareVar('hello'));
+        $this->assertEquals(['foo' => 'bar'], $d->prepareVar(['foo' => 'bar']));
+
+        // Objects still use dump structure
+        $obj = new \stdClass();
+        $obj->x = 1;
+        $result = $d->prepareVar($obj);
+        $this->assertIsArray($result);
+        $this->assertEquals('h', $result['t']);
+    }
+
+    public function testArrayWithObjectFallsBackToDump(): void
+    {
+        $d = new JsonDataFormatter();
+
+        // Array containing an object should use Symfony dump
+        $obj = new \stdClass();
+        $obj->x = 1;
+        $out = $d->formatVar(['key' => $obj]);
+        $data = json_decode($out, true);
+
+        $this->assertEquals('h', $data['t']);
     }
 }

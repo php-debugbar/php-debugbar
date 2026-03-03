@@ -166,16 +166,18 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
                 $messageHtml = $message->getHtml();
             } else {
                 // Send both text and HTML representations; the text version is used for searches
-                $messageText = $this->getDataFormatter()->formatVar($message);
+
                 if ($this->isJsonVarDumperUsed()) {
-                    $messageJson = $messageText;
+                    $messageJson = $this->getDataFormatter()->prepareVar($message);
                     $messageText = $this->getPlainTextFromVar($message);
                 } elseif ($this->isHtmlVarDumperUsed()) {
-                    $messageHtml = $messageText;
+                    $messageHtml = $this->getDataFormatter()->formatVar($message);
                     if ($this->compactDumps) {
                         $messageHtml = $this->compactMessageDump($messageHtml);
                     }
                     $messageText = strip_tags($messageHtml);
+                } else {
+                    $messageText = $this->getDataFormatter()->formatVar($message);
                 }
             }
 
