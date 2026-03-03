@@ -23,42 +23,18 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
 
     protected ?array $dumperOptions = null;
 
-    public function formatVar(mixed $data, bool $deep = true): string
-    {
-        if ($this->isSimpleValue($data)) {
-            return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        }
-
-        return parent::formatVar($data, $deep);
-    }
-
-    protected function dumpClonedVar(Data $data): string
-    {
-        $dumper = $this->getDumper();
-        if ($dumper instanceof DebugBarJsonDumper) {
-            return $dumper->dump($data);
-        }
-        return parent::dumpClonedVar($data);
-    }
-
-    public function prepareVar(mixed $data, bool $deep = true): mixed
+    public function formatVar(mixed $data, bool $deep = true): mixed
     {
         if ($this->isSimpleValue($data)) {
             return $data;
         }
 
-        $isNonIterableObject = is_object($data) && !is_iterable($data);
-        if ($deep) {
-            // Set sensible default max depth for deep dumps if not set
-            $maxDepth = $this->clonerOptions['max_depth'] ?? ($isNonIterableObject ? 2 : 4);
-        } else {
-            $maxDepth = min($this->clonerOptions['max_depth'] ?? 1, $isNonIterableObject ? 0 : 1);
+        $dumper = $this->getDumper();
+        if ($dumper instanceof DebugBarJsonDumper) {
+            return $dumper->dumpAsArray($this->cloneVar($data, $deep));
         }
 
-        $cloner = $this->getCloner();
-        $data = $cloner->cloneVar($data)->withMaxDepth($maxDepth);
-
-        return $this->getDumper()->dumpAsArray($data);
+        return parent::formatVar($data, $deep);
     }
 
     /**
