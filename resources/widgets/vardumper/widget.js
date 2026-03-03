@@ -164,13 +164,24 @@
                 header.appendChild(document.createTextNode('array:' + (node.cls || 0) + ' ['));
             }
 
+            const closingChar = isArray ? ']' : '}';
+
             parent.appendChild(header);
 
             if (!hasChildren && !node.cut) {
-                // Empty hash
-                const closing = document.createElement('span');
-                closing.textContent = isArray ? ']' : '}';
-                parent.appendChild(closing);
+                // Empty hash: array:0 [] or ClassName {}
+                parent.appendChild(document.createTextNode(closingChar));
+                return;
+            }
+
+            if (!hasChildren && node.cut > 0) {
+                // Cut-only (no expandable children): render compact inline
+                // e.g. array:12 [ …12] or ClassName {#id …12}
+                const cutSpan = document.createElement('span');
+                cutSpan.className = 'vd-ellipsis';
+                cutSpan.textContent = ' \u2026' + node.cut;
+                parent.appendChild(cutSpan);
+                parent.appendChild(document.createTextNode(closingChar));
                 return;
             }
 
@@ -188,15 +199,7 @@
 
             // Toggle container
             const toggle = document.createElement('samp');
-            toggle.className = 'vd-toggle';
-
-            if (hasChildren) {
-                if (expanded) {
-                    toggle.classList.add('vd-expanded');
-                } else {
-                    toggle.classList.add('vd-collapsed');
-                }
-            }
+            toggle.className = expanded ? 'vd-toggle vd-expanded' : 'vd-toggle vd-collapsed';
 
             // Children container
             const childrenEl = document.createElement('samp');
@@ -231,7 +234,7 @@
                 childrenEl.appendChild(line);
             }
 
-            // Cut indicator
+            // Cut indicator (inside expanded children)
             if (node.cut > 0) {
                 const cutLine = document.createElement('span');
                 cutLine.className = 'vd-child';
@@ -243,50 +246,45 @@
                 childrenEl.appendChild(cutLine);
             }
 
+            // Closing bracket inside expanded view (on its own line, at parent indent)
+            childrenEl.appendChild(document.createTextNode(closingChar + '\n'));
+
             toggle.appendChild(childrenEl);
 
-            // Collapsed summary (shown when collapsed)
+            // Collapsed summary: " …]" or " …}" (includes closing bracket)
             const summary = document.createElement('span');
             summary.className = 'vd-summary';
             if (expanded) {
                 summary.hidden = true;
             }
-            summary.textContent = ' \u2026';
+            summary.textContent = ' \u2026' + closingChar;
             toggle.appendChild(summary);
 
             parent.appendChild(toggle);
 
             // Click handler for expand/collapse
-            if (hasChildren || node.cut > 0) {
-                const toggleHandler = function (e) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    const isExpanded = toggle.classList.contains('vd-expanded');
-                    if (isExpanded) {
-                        toggle.classList.remove('vd-expanded');
-                        toggle.classList.add('vd-collapsed');
-                        childrenEl.hidden = true;
-                        summary.hidden = false;
-                        arrowSpan.textContent = '\u25B6'; // ▶
-                    } else {
-                        toggle.classList.remove('vd-collapsed');
-                        toggle.classList.add('vd-expanded');
-                        childrenEl.hidden = false;
-                        summary.hidden = true;
-                        arrowSpan.textContent = '\u25BC'; // ▼
-                    }
-                };
-                header.style.cursor = 'pointer';
-                header.addEventListener('click', toggleHandler);
-                summary.style.cursor = 'pointer';
-                summary.addEventListener('click', toggleHandler);
-            }
-
-            // Closing bracket
-            const closing = document.createElement('span');
-            closing.className = 'vd-closing';
-            closing.textContent = isArray ? ']' : '}';
-            parent.appendChild(closing);
+            const toggleHandler = function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                const isExpanded = toggle.classList.contains('vd-expanded');
+                if (isExpanded) {
+                    toggle.classList.remove('vd-expanded');
+                    toggle.classList.add('vd-collapsed');
+                    childrenEl.hidden = true;
+                    summary.hidden = false;
+                    arrowSpan.textContent = '\u25B6'; // ▶
+                } else {
+                    toggle.classList.remove('vd-collapsed');
+                    toggle.classList.add('vd-expanded');
+                    childrenEl.hidden = false;
+                    summary.hidden = true;
+                    arrowSpan.textContent = '\u25BC'; // ▼
+                }
+            };
+            header.style.cursor = 'pointer';
+            header.addEventListener('click', toggleHandler);
+            summary.style.cursor = 'pointer';
+            summary.addEventListener('click', toggleHandler);
         }
 
         renderKey(parent, entry) {
