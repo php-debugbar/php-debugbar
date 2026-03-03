@@ -101,9 +101,10 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
             'children' => [],
         ];
 
-        // Track soft references (object/resource identity)
-        if ($cursor->softRefTo) {
-            $node['ref'] = ['s' => $cursor->softRefTo, 'c' => $cursor->softRefCount];
+        // Track object/resource identity (softRefHandle is the display ID #N)
+        $handle = $cursor->softRefHandle ?: $cursor->softRefTo;
+        if ($handle > 0) {
+            $node['ref'] = ['s' => $handle, 'c' => $cursor->softRefCount];
         }
 
         // Push current hash onto stack
@@ -198,6 +199,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
                         case '+': // Dynamic property
                             $entry['k'] = $propName;
                             $entry['kt'] = 'public';
+                            $entry['dyn'] = true;
                             break;
                         case '~': // Meta property
                             $entry['k'] = $propName;

@@ -124,17 +124,6 @@
             const isResource = (ht === 5);
             const isArray = (ht === 1 || ht === 2);
 
-            // Reference info for already-seen objects
-            if (node.ref && node.ref.c === 0) {
-                // Soft ref with zero count means it's a reference to an already-dumped object
-                const refSpan = document.createElement('span');
-                refSpan.className = 'sf-dump-ref';
-                const label = isObject ? (node.cls || 'object') : (isResource ? (node.cls || 'resource') : 'array');
-                refSpan.textContent = label + ' {#' + node.ref.s + ' \u2026}';
-                parent.appendChild(refSpan);
-                return;
-            }
-
             // Header
             const header = document.createElement('span');
 

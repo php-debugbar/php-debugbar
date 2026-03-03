@@ -14,70 +14,49 @@ class JsonDataFormatterTest extends DebugBarTestCase
     public function testScalarInteger(): void
     {
         $d = new JsonDataFormatter();
-        $out = $d->formatVar(42);
-
-        // Simple values are encoded as plain JSON
-        $this->assertEquals('42', $out);
+        $this->assertSame(42, $d->formatVar(42));
     }
 
     public function testScalarBoolean(): void
     {
         $d = new JsonDataFormatter();
-        $out = $d->formatVar(true);
-
-        $this->assertEquals('true', $out);
+        $this->assertSame(true, $d->formatVar(true));
     }
 
     public function testScalarNull(): void
     {
         $d = new JsonDataFormatter();
-        $out = $d->formatVar(null);
-
-        $this->assertEquals('null', $out);
+        $this->assertNull($d->formatVar(null));
     }
 
     public function testScalarFloat(): void
     {
         $d = new JsonDataFormatter();
-        $out = $d->formatVar(3.14);
-
-        $this->assertEquals('3.14', $out);
+        $this->assertSame(3.14, $d->formatVar(3.14));
     }
 
     public function testString(): void
     {
         $d = new JsonDataFormatter();
-        $out = $d->formatVar('hello world');
-
-        $this->assertEquals('"hello world"', $out);
+        $this->assertSame('hello world', $d->formatVar('hello world'));
     }
 
     public function testSimpleArray(): void
     {
         $d = new JsonDataFormatter();
-        $out = $d->formatVar([1, 2, 3]);
-        $data = json_decode($out, true);
-
-        // Simple arrays are encoded as plain JSON
-        $this->assertEquals([1, 2, 3], $data);
+        $this->assertSame([1, 2, 3], $d->formatVar([1, 2, 3]));
     }
 
     public function testAssociativeArray(): void
     {
         $d = new JsonDataFormatter();
-        $out = $d->formatVar(['foo' => 'bar', 'baz' => 42]);
-        $data = json_decode($out, true);
-
-        $this->assertEquals(['foo' => 'bar', 'baz' => 42], $data);
+        $this->assertSame(['foo' => 'bar', 'baz' => 42], $d->formatVar(['foo' => 'bar', 'baz' => 42]));
     }
 
     public function testNestedArray(): void
     {
         $d = new JsonDataFormatter();
-        $out = $d->formatVar(['foo' => [1, 2], 'bar' => true]);
-        $data = json_decode($out, true);
-
-        $this->assertEquals(['foo' => [1, 2], 'bar' => true], $data);
+        $this->assertSame(['foo' => [1, 2], 'bar' => true], $d->formatVar(['foo' => [1, 2], 'bar' => true]));
     }
 
     public function testObject(): void
@@ -86,10 +65,10 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $obj = new \stdClass();
         $obj->name = 'test';
         $obj->value = 123;
-        $out = $d->formatVar($obj);
-        $data = json_decode($out, true);
+        $data = $d->formatVar($obj);
 
-        // Objects still use the dump structure
+        // Objects use the dump structure (returned as array)
+        $this->assertIsArray($data);
         $this->assertEquals('h', $data['t']);
         $this->assertEquals(4, $data['ht']); // HASH_OBJECT
         $this->assertEquals('stdClass', $data['cls']);
@@ -103,24 +82,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
     public function testEmptyArray(): void
     {
         $d = new JsonDataFormatter();
-        $out = $d->formatVar([]);
-
-        $this->assertEquals('[]', $out);
-    }
-
-    public function testValidJson(): void
-    {
-        $d = new JsonDataFormatter();
-        $testData = [
-            'string' => 'hello',
-            'int' => 42,
-            'nested' => ['a', 'b', 'c'],
-        ];
-        $out = $d->formatVar($testData);
-
-        // Must be valid JSON
-        $this->assertNotNull(json_decode($out));
-        $this->assertEquals(JSON_ERROR_NONE, json_last_error());
+        $this->assertSame([], $d->formatVar([]));
     }
 
     public function testDumpAsArray(): void
@@ -173,9 +135,9 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $d->resetClonerOptions(['max_items' => 2]);
 
         // With max_items=2, this exceeds the limit so it falls through to Symfony dump
-        $out = $d->formatVar([['one', 'two', 'three', 'four', 'five']]);
-        $data = json_decode($out, true);
+        $data = $d->formatVar([['one', 'two', 'three', 'four', 'five']]);
 
+        $this->assertIsArray($data);
         // The inner array should be cut
         $inner = $data['children'][0]['n'];
         $this->assertEquals('h', $inner['t']);
@@ -189,9 +151,9 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $d->resetClonerOptions(['max_string' => 5]);
 
         // Long string exceeds max_string, so it falls through to Symfony dump
-        $out = $d->formatVar('ABCDEFGHIJ');
-        $data = json_decode($out, true);
+        $data = $d->formatVar('ABCDEFGHIJ');
 
+        $this->assertIsArray($data);
         $this->assertEquals('r', $data['t']);
         $this->assertEquals('ABCDE', $data['v']);
         $this->assertEquals(5, $data['cut']);
@@ -208,15 +170,14 @@ class JsonDataFormatterTest extends DebugBarTestCase
             private string $priv = 'private_val';
         };
 
-        $out = $d->formatVar($obj);
-        $data = json_decode($out, true);
+        $data = $d->formatVar($obj);
 
+        $this->assertIsArray($data);
         $this->assertEquals('h', $data['t']);
         $this->assertEquals(4, $data['ht']); // HASH_OBJECT
 
         $keyTypes = [];
         foreach ($data['children'] as $child) {
-            // Skip meta entries (like class info)
             if (isset($child['kt'])) {
                 $keyTypes[$child['k']] = $child['kt'];
             }
@@ -231,39 +192,23 @@ class JsonDataFormatterTest extends DebugBarTestCase
     {
         $d = new JsonDataFormatter();
 
-        // Scalars use plain JSON
-        $this->assertEquals('42', $d->formatVar(42));
-        $this->assertEquals('true', $d->formatVar(true));
-        $this->assertEquals('false', $d->formatVar(false));
-        $this->assertEquals('null', $d->formatVar(null));
-        $this->assertEquals('"hello"', $d->formatVar('hello'));
+        // Scalars returned as-is
+        $this->assertSame(42, $d->formatVar(42));
+        $this->assertSame(true, $d->formatVar(true));
+        $this->assertSame(false, $d->formatVar(false));
+        $this->assertNull($d->formatVar(null));
+        $this->assertSame('hello', $d->formatVar('hello'));
 
-        // Simple arrays use plain JSON
-        $this->assertEquals('[1,2,3]', $d->formatVar([1, 2, 3]));
-        $this->assertEquals('{"foo":"bar"}', $d->formatVar(['foo' => 'bar']));
+        // Simple arrays returned as-is
+        $this->assertSame([1, 2, 3], $d->formatVar([1, 2, 3]));
+        $this->assertSame(['foo' => 'bar'], $d->formatVar(['foo' => 'bar']));
 
-        // Objects always use dump structure
+        // Objects use dump structure
         $obj = new \stdClass();
         $obj->x = 1;
-        $data = json_decode($d->formatVar($obj), true);
+        $data = $d->formatVar($obj);
+        $this->assertIsArray($data);
         $this->assertEquals('h', $data['t']);
-    }
-
-    public function testPrepareVarSimpleValues(): void
-    {
-        $d = new JsonDataFormatter();
-
-        // Simple values are returned as-is
-        $this->assertEquals(42, $d->prepareVar(42));
-        $this->assertEquals('hello', $d->prepareVar('hello'));
-        $this->assertEquals(['foo' => 'bar'], $d->prepareVar(['foo' => 'bar']));
-
-        // Objects still use dump structure
-        $obj = new \stdClass();
-        $obj->x = 1;
-        $result = $d->prepareVar($obj);
-        $this->assertIsArray($result);
-        $this->assertEquals('h', $result['t']);
     }
 
     public function testArrayWithObjectFallsBackToDump(): void
@@ -273,9 +218,9 @@ class JsonDataFormatterTest extends DebugBarTestCase
         // Array containing an object should use Symfony dump
         $obj = new \stdClass();
         $obj->x = 1;
-        $out = $d->formatVar(['key' => $obj]);
-        $data = json_decode($out, true);
+        $data = $d->formatVar(['key' => $obj]);
 
+        $this->assertIsArray($data);
         $this->assertEquals('h', $data['t']);
     }
 }
