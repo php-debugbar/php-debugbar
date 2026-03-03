@@ -79,9 +79,11 @@ class RequestDataCollector extends DataCollector implements Renderable
 
     public function getWidgets(): array
     {
-        $widget = $this->isHtmlVarDumperUsed()
-            ? "PhpDebugBar.Widgets.HtmlVariableListWidget"
-            : "PhpDebugBar.Widgets.VariableListWidget";
+        $widget = match (true) {
+            $this->isJsonVarDumperUsed() => "PhpDebugBar.Widgets.JsonVariableListWidget",
+            $this->isHtmlVarDumperUsed() => "PhpDebugBar.Widgets.HtmlVariableListWidget",
+            default => "PhpDebugBar.Widgets.VariableListWidget",
+        };
 
         $widgets = [
             "request" => [

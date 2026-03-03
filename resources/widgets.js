@@ -507,7 +507,13 @@
 
             this.list = new ListWidget({ itemRenderer(li, value) {
                 let val;
-                if (value.message_html) {
+                if (value.message_json) {
+                    val = document.createElement('span');
+                    val.classList.add(csscls('value'));
+                    const renderer = new PhpDebugBar.Widgets.VarDumpRenderer();
+                    val.append(renderer.render(value.message_json));
+                    li.append(val);
+                } else if (value.message_html) {
                     val = document.createElement('span');
                     val.classList.add(csscls('value'));
                     val.innerHTML = value.message_html;
@@ -570,6 +576,7 @@
                     contextTable.hidden = true;
                     contextTable.innerHTML = '<tr><th colspan="2">Context</th></tr>';
 
+                    const contextJsonData = value.context_json || {};
                     for (const key in value.context) {
                         if (typeof value.context[key] !== 'function') {
                             const tr = document.createElement('tr');
@@ -580,7 +587,12 @@
 
                             const td2 = document.createElement('td');
                             td2.classList.add(csscls('value'));
-                            td2.innerHTML = value.context[key];
+                            if (contextJsonData[key]) {
+                                const ctxRenderer = new PhpDebugBar.Widgets.VarDumpRenderer();
+                                td2.append(ctxRenderer.render(contextJsonData[key]));
+                            } else {
+                                td2.innerHTML = value.context[key];
+                            }
                             tr.append(td2);
 
                             contextTable.append(tr);
@@ -590,7 +602,7 @@
 
                     li.style.cursor = 'pointer';
                     li.addEventListener('click', (event) => {
-                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
+                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump') || event.target.closest('.vd-dump')) {
                             return;
                         }
                         contextTable.hidden = !contextTable.hidden;

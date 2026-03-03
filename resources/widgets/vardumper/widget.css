@@ -1,0 +1,171 @@
+/* VarDump JSON renderer styles */
+
+pre.vd-dump {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    word-break: normal;
+    background: none;
+    outline: 0;
+    margin: 0;
+    padding: 0;
+    font-family: var(--debugbar-font-mono);
+    font-size: 12px;
+    line-height: 1.4;
+    color: #a0a000;
+}
+
+/* Scalar types */
+pre.vd-dump .vd-num {
+    font-weight: bold;
+    color: #1299DA;
+}
+
+pre.vd-dump .vd-const {
+    font-weight: bold;
+}
+
+pre.vd-dump .vd-str {
+    font-weight: bold;
+    color: #3A9B26;
+}
+
+pre.vd-dump .vd-note {
+    color: #1299DA;
+}
+
+pre.vd-dump .vd-ref {
+    color: #7B7B7B;
+}
+
+/* Key visibility */
+pre.vd-dump .vd-public {
+    color: #000000;
+}
+
+pre.vd-dump .vd-protected {
+    color: #000000;
+}
+
+pre.vd-dump .vd-private {
+    color: grey;
+}
+
+pre.vd-dump .vd-meta {
+    color: #B729D9;
+}
+
+pre.vd-dump .vd-assoc-key {
+    color: #3A9B26;
+}
+
+pre.vd-dump .vd-index {
+    color: #1299DA;
+}
+
+pre.vd-dump .vd-ellipsis {
+    color: #A0A000;
+}
+
+pre.vd-dump .vd-quote {
+    color: #a0a000;
+    font-weight: normal;
+}
+
+/* Toggle arrow */
+pre.vd-dump a.vd-arrow {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    margin-left: 2px;
+}
+
+pre.vd-dump a.vd-arrow span {
+    font-size: 0.8em;
+}
+
+/* Hash toggle */
+pre.vd-dump .vd-toggle {
+    display: inline;
+}
+
+pre.vd-dump .vd-children {
+    display: block;
+    padding-left: 20px;
+}
+
+pre.vd-dump .vd-child {
+    display: block;
+}
+
+pre.vd-dump .vd-hash-header {
+    user-select: none;
+}
+
+pre.vd-dump .vd-summary {
+    color: #7B7B7B;
+}
+
+pre.vd-dump .vd-closing {
+    /* inherits from pre.vd-dump */
+}
+
+/* Dark theme */
+div.phpdebugbar[data-theme='dark'] pre.vd-dump {
+    color: #FF8400;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-num {
+    color: #1299DA;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-const {
+    color: #FF8400;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-str {
+    color: #56DB3A;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-note {
+    color: #1299DA;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-ref {
+    color: #A0A0A0;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-public {
+    color: #ffcc00;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-protected {
+    color: #a0a000;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-private {
+    color: #9d9266;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-meta {
+    color: #B729D9;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-assoc-key {
+    color: #56DB3A;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-index {
+    color: #1299DA;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-ellipsis {
+    color: #FF8400;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-quote {
+    color: #FF8400;
+}
+
+div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-summary {
+    color: #A0A0A0;
+}
