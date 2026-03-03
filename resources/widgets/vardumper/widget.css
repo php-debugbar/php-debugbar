@@ -76,16 +76,7 @@ pre.sf-dump a.sf-dump-toggle {
     margin-left: 2px;
 }
 
-pre.sf-dump a.sf-dump-toggle span {
-    font-size: 0.8em;
-}
-
 /* Hash toggle */
-pre.sf-dump .sf-dump-expanded,
-pre.sf-dump .sf-dump-compact {
-    display: inline;
-}
-
 pre.sf-dump .sf-dump-children {
     display: block;
     padding-left: 20px;

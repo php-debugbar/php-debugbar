@@ -18,7 +18,16 @@
         render(data) {
             if (typeof data === 'string') {
                 try {
-                    data = JSON.parse(data);
+                    const parsed = JSON.parse(data);
+                    if (parsed && typeof parsed === 'object' && parsed.t) {
+                        data = parsed;
+                    } else {
+                        // Valid JSON but not a dump node — show as plain text
+                        const pre = document.createElement('pre');
+                        pre.className = 'sf-dump';
+                        pre.textContent = data;
+                        return pre;
+                    }
                 } catch (e) {
                     const pre = document.createElement('pre');
                     pre.className = 'sf-dump';
@@ -63,7 +72,7 @@
 
             if (st === 'boolean') {
                 span.className = 'sf-dump-const';
-                span.textContent = node.v ? 'true' : 'false';
+                span.textContent = node.v === true ? 'true' : 'false';
             } else if (st === 'NULL') {
                 span.className = 'sf-dump-const';
                 span.textContent = 'null';
@@ -89,20 +98,15 @@
             const span = document.createElement('span');
             span.className = 'sf-dump-str';
 
-            span.appendChild(document.createTextNode('"'));
-
-            const text = document.createElement('span');
-            text.textContent = node.v;
-            span.appendChild(text);
-
-            span.appendChild(document.createTextNode('"'));
-
             if (node.cut > 0) {
+                span.appendChild(document.createTextNode('"' + node.v + '"'));
                 const ellipsis = document.createElement('span');
                 ellipsis.className = 'sf-dump-ellipsis';
                 const totalLen = node.len || (node.v.length + node.cut);
                 ellipsis.textContent = '\u2026' + totalLen;
                 span.appendChild(ellipsis);
+            } else {
+                span.textContent = '"' + node.v + '"';
             }
 
             parent.appendChild(span);
@@ -192,11 +196,7 @@
             const arrow = document.createElement('a');
             arrow.className = 'sf-dump-toggle';
             arrow.href = '#';
-            arrow.addEventListener('click', function (e) { e.preventDefault(); });
-
-            const arrowSpan = document.createElement('span');
-            arrowSpan.textContent = expanded ? '\u25BC' : '\u25B6'; // ▼ or ▶
-            arrow.appendChild(arrowSpan);
+            arrow.textContent = expanded ? '\u25BC' : '\u25B6'; // ▼ or ▶
 
             header.appendChild(arrow);
 
@@ -266,23 +266,14 @@
             parent.appendChild(toggle);
 
             // Click handler for expand/collapse
+            let isExpanded = expanded;
             const toggleHandler = function (e) {
                 e.stopPropagation();
                 e.preventDefault();
-                const isExpanded = toggle.classList.contains('sf-dump-expanded');
-                if (isExpanded) {
-                    toggle.classList.remove('sf-dump-expanded');
-                    toggle.classList.add('sf-dump-compact');
-                    childrenEl.hidden = true;
-                    summary.hidden = false;
-                    arrowSpan.textContent = '\u25B6'; // ▶
-                } else {
-                    toggle.classList.remove('sf-dump-compact');
-                    toggle.classList.add('sf-dump-expanded');
-                    childrenEl.hidden = false;
-                    summary.hidden = true;
-                    arrowSpan.textContent = '\u25BC'; // ▼
-                }
+                isExpanded = !isExpanded;
+                childrenEl.hidden = !isExpanded;
+                summary.hidden = isExpanded;
+                arrow.textContent = isExpanded ? '\u25BC' : '\u25B6'; // ▼ or ▶
             };
             header.style.cursor = 'pointer';
             header.addEventListener('click', toggleHandler);
@@ -352,6 +343,8 @@
      * Options:
      *  - data
      */
+    const jsonVarDumpRenderer = new VarDumpRenderer();
+
     class JsonVariableListWidget extends PhpDebugBar.Widgets.KVListWidget {
         get className() {
             return csscls('kvlist jsonvarlist');
@@ -364,12 +357,7 @@
             dt.appendChild(span);
 
             const rawValue = (value && value.value !== undefined) ? value.value : value;
-            const renderer = new VarDumpRenderer();
-            try {
-                dd.appendChild(renderer.render(rawValue));
-            } catch (e) {
-                dd.textContent = String(rawValue);
-            }
+            dd.appendChild(jsonVarDumpRenderer.render(rawValue));
 
             if (value && value.xdebug_link) {
                 dd.appendChild(PhpDebugBar.Widgets.editorLink(value.xdebug_link));

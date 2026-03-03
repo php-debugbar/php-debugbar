@@ -846,7 +846,24 @@
                             for (const key in measure.params) {
                                 if (typeof measure.params[key] !== 'function') {
                                     const tr = document.createElement('tr');
-                                    tr.innerHTML = `<td class="${csscls('name')}">${key}</td><td class="${csscls('value')}"><pre><code>${measure.params[key]}</code></pre></td>`;
+                                    const nameTd = document.createElement('td');
+                                    nameTd.className = csscls('name');
+                                    nameTd.textContent = key;
+                                    tr.append(nameTd);
+
+                                    const valueTd = document.createElement('td');
+                                    valueTd.className = csscls('value');
+                                    const rendered = PhpDebugBar.Widgets.renderDumpValue(measure.params[key]);
+                                    if (rendered) {
+                                        valueTd.append(rendered);
+                                    } else {
+                                        const pre = document.createElement('pre');
+                                        const code = document.createElement('code');
+                                        code.innerHTML = measure.params[key];
+                                        pre.append(code);
+                                        valueTd.append(pre);
+                                    }
+                                    tr.append(valueTd);
                                     table.append(tr);
                                 }
                             }
