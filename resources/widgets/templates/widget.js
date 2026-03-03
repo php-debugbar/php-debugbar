@@ -105,7 +105,7 @@
                     li.append(table);
                     li.style.cursor = 'pointer';
                     li.addEventListener('click', (event) => {
-                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump') || event.target.closest('.vd-dump')) {
+                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
                             return;
                         }
                         table.hidden = !table.hidden;

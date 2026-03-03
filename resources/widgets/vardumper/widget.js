@@ -3,6 +3,7 @@
 
     /**
      * Renders a JSON variable dump as an interactive expandable/collapsible tree.
+     * Uses the same sf-dump-* CSS classes as Symfony's HtmlDumper for consistent styling.
      *
      * Usage:
      *   const renderer = new PhpDebugBar.Widgets.VarDumpRenderer({ expandedDepth: 1 });
@@ -20,14 +21,14 @@
                     data = JSON.parse(data);
                 } catch (e) {
                     const pre = document.createElement('pre');
-                    pre.className = 'vd-dump';
+                    pre.className = 'sf-dump';
                     pre.textContent = data;
                     return pre;
                 }
             }
 
             const pre = document.createElement('pre');
-            pre.className = 'vd-dump';
+            pre.className = 'sf-dump';
             this.renderNode(pre, data, 0);
             return pre;
         }
@@ -35,7 +36,7 @@
         renderNode(parent, node, depth) {
             if (!node || typeof node !== 'object') {
                 const span = document.createElement('span');
-                span.className = 'vd-scalar vd-null';
+                span.className = 'sf-dump-const';
                 span.textContent = 'null';
                 parent.appendChild(span);
                 return;
@@ -61,24 +62,23 @@
             const st = node.st;
 
             if (st === 'boolean') {
-                span.className = 'vd-scalar vd-const';
+                span.className = 'sf-dump-const';
                 span.textContent = node.v ? 'true' : 'false';
             } else if (st === 'NULL') {
-                span.className = 'vd-scalar vd-const';
+                span.className = 'sf-dump-const';
                 span.textContent = 'null';
             } else if (st === 'integer' || st === 'double') {
-                span.className = 'vd-scalar vd-num';
+                span.className = 'sf-dump-num';
                 span.textContent = String(node.v);
             } else if (st === 'label') {
                 // Labels are annotations (e.g., from SourceContextProvider)
                 if (node.v) {
-                    span.className = 'vd-scalar vd-note';
+                    span.className = 'sf-dump-note';
                     span.textContent = node.v;
                     parent.appendChild(span);
                 }
                 return;
             } else {
-                span.className = 'vd-scalar';
                 span.textContent = String(node.v);
             }
 
@@ -87,23 +87,19 @@
 
         renderString(parent, node) {
             const span = document.createElement('span');
-            span.className = 'vd-str';
+            span.className = 'sf-dump-str';
 
-            const quote = document.createElement('span');
-            quote.className = 'vd-quote';
-            quote.textContent = '"';
-
-            span.appendChild(quote.cloneNode(true));
+            span.appendChild(document.createTextNode('"'));
 
             const text = document.createElement('span');
             text.textContent = node.v;
             span.appendChild(text);
 
-            span.appendChild(quote.cloneNode(true));
+            span.appendChild(document.createTextNode('"'));
 
             if (node.cut > 0) {
                 const ellipsis = document.createElement('span');
-                ellipsis.className = 'vd-ellipsis';
+                ellipsis.className = 'sf-dump-ellipsis';
                 const totalLen = node.len || (node.v.length + node.cut);
                 ellipsis.textContent = '\u2026' + totalLen;
                 span.appendChild(ellipsis);
@@ -128,7 +124,7 @@
             if (node.ref && node.ref.c === 0) {
                 // Soft ref with zero count means it's a reference to an already-dumped object
                 const refSpan = document.createElement('span');
-                refSpan.className = 'vd-ref';
+                refSpan.className = 'sf-dump-ref';
                 const label = isObject ? (node.cls || 'object') : (isResource ? (node.cls || 'resource') : 'array');
                 refSpan.textContent = label + ' {#' + node.ref.s + ' \u2026}';
                 parent.appendChild(refSpan);
@@ -137,17 +133,16 @@
 
             // Header
             const header = document.createElement('span');
-            header.className = 'vd-hash-header';
 
             if (isObject) {
                 const cls = document.createElement('span');
-                cls.className = 'vd-note';
+                cls.className = 'sf-dump-note';
                 cls.textContent = String(node.cls || 'object');
                 header.appendChild(cls);
 
                 if (node.ref && node.ref.s) {
                     const refId = document.createElement('span');
-                    refId.className = 'vd-ref';
+                    refId.className = 'sf-dump-ref';
                     refId.textContent = ' {#' + node.ref.s;
                     header.appendChild(refId);
                 } else {
@@ -155,13 +150,21 @@
                 }
             } else if (isResource) {
                 const cls = document.createElement('span');
-                cls.className = 'vd-note';
+                cls.className = 'sf-dump-note';
                 cls.textContent = String(node.cls || 'resource');
                 header.appendChild(cls);
                 header.appendChild(document.createTextNode(' {'));
             } else {
-                // Array
-                header.appendChild(document.createTextNode('array:' + (node.cls || 0) + ' ['));
+                // Array: show "array:N [" when count > 0, just "[" for empty
+                if (node.cls) {
+                    const cls = document.createElement('span');
+                    cls.className = 'sf-dump-note';
+                    cls.textContent = 'array:' + node.cls;
+                    header.appendChild(cls);
+                    header.appendChild(document.createTextNode(' ['));
+                } else {
+                    header.appendChild(document.createTextNode('['));
+                }
             }
 
             const closingChar = isArray ? ']' : '}';
@@ -178,7 +181,7 @@
                 // Cut-only (no expandable children): render compact inline
                 // e.g. array:12 [ …12] or ClassName {#id …12}
                 const cutSpan = document.createElement('span');
-                cutSpan.className = 'vd-ellipsis';
+                cutSpan.className = 'sf-dump-ellipsis';
                 cutSpan.textContent = ' \u2026' + node.cut;
                 parent.appendChild(cutSpan);
                 parent.appendChild(document.createTextNode(closingChar));
@@ -187,7 +190,7 @@
 
             // Toggle arrow
             const arrow = document.createElement('a');
-            arrow.className = 'vd-arrow';
+            arrow.className = 'sf-dump-toggle';
             arrow.href = '#';
             arrow.addEventListener('click', function (e) { e.preventDefault(); });
 
@@ -199,11 +202,11 @@
 
             // Toggle container
             const toggle = document.createElement('samp');
-            toggle.className = expanded ? 'vd-toggle vd-expanded' : 'vd-toggle vd-collapsed';
+            toggle.className = expanded ? 'sf-dump-expanded' : 'sf-dump-compact';
 
             // Children container
             const childrenEl = document.createElement('samp');
-            childrenEl.className = 'vd-children';
+            childrenEl.className = 'sf-dump-children';
             if (!expanded) {
                 childrenEl.hidden = true;
             }
@@ -212,7 +215,7 @@
             for (let i = 0; i < children.length; i++) {
                 const entry = children[i];
                 const line = document.createElement('span');
-                line.className = 'vd-child';
+                line.className = 'sf-dump-child';
 
                 // Key
                 if (entry.kt !== undefined) {
@@ -222,7 +225,7 @@
                 // Hard reference indicator
                 if (entry.ref) {
                     const ref = document.createElement('span');
-                    ref.className = 'vd-ref';
+                    ref.className = 'sf-dump-ref';
                     ref.textContent = '&' + entry.ref + ' ';
                     line.appendChild(ref);
                 }
@@ -237,9 +240,9 @@
             // Cut indicator (inside expanded children)
             if (node.cut > 0) {
                 const cutLine = document.createElement('span');
-                cutLine.className = 'vd-child';
+                cutLine.className = 'sf-dump-child';
                 const cutSpan = document.createElement('span');
-                cutSpan.className = 'vd-ellipsis';
+                cutSpan.className = 'sf-dump-ellipsis';
                 cutSpan.textContent = '\u2026' + node.cut;
                 cutLine.appendChild(cutSpan);
                 cutLine.appendChild(document.createTextNode('\n'));
@@ -247,13 +250,13 @@
             }
 
             // Closing bracket inside expanded view (on its own line, at parent indent)
-            childrenEl.appendChild(document.createTextNode(closingChar + '\n'));
+            childrenEl.appendChild(document.createTextNode(closingChar));
 
             toggle.appendChild(childrenEl);
 
             // Collapsed summary: " …]" or " …}" (includes closing bracket)
             const summary = document.createElement('span');
-            summary.className = 'vd-summary';
+            summary.className = 'sf-dump-summary';
             if (expanded) {
                 summary.hidden = true;
             }
@@ -266,16 +269,16 @@
             const toggleHandler = function (e) {
                 e.stopPropagation();
                 e.preventDefault();
-                const isExpanded = toggle.classList.contains('vd-expanded');
+                const isExpanded = toggle.classList.contains('sf-dump-expanded');
                 if (isExpanded) {
-                    toggle.classList.remove('vd-expanded');
-                    toggle.classList.add('vd-collapsed');
+                    toggle.classList.remove('sf-dump-expanded');
+                    toggle.classList.add('sf-dump-compact');
                     childrenEl.hidden = true;
                     summary.hidden = false;
                     arrowSpan.textContent = '\u25B6'; // ▶
                 } else {
-                    toggle.classList.remove('vd-collapsed');
-                    toggle.classList.add('vd-expanded');
+                    toggle.classList.remove('sf-dump-compact');
+                    toggle.classList.add('sf-dump-expanded');
                     childrenEl.hidden = false;
                     summary.hidden = true;
                     arrowSpan.textContent = '\u25BC'; // ▼
@@ -293,31 +296,31 @@
 
             switch (kt) {
                 case 'index':
-                    span.className = 'vd-key vd-index';
+                    span.className = 'sf-dump-index';
                     span.textContent = String(entry.k);
                     parent.appendChild(span);
                     parent.appendChild(document.createTextNode(' => '));
                     break;
                 case 'key':
-                    span.className = 'vd-key vd-assoc-key';
+                    span.className = 'sf-dump-key';
                     span.textContent = '"' + entry.k + '"';
                     parent.appendChild(span);
                     parent.appendChild(document.createTextNode(' => '));
                     break;
                 case 'public':
-                    span.className = 'vd-key vd-public';
+                    span.className = 'sf-dump-public';
                     span.textContent = '+' + entry.k;
                     parent.appendChild(span);
                     parent.appendChild(document.createTextNode(': '));
                     break;
                 case 'protected':
-                    span.className = 'vd-key vd-protected';
+                    span.className = 'sf-dump-protected';
                     span.textContent = '#' + entry.k;
                     parent.appendChild(span);
                     parent.appendChild(document.createTextNode(': '));
                     break;
                 case 'private':
-                    span.className = 'vd-key vd-private';
+                    span.className = 'sf-dump-private';
                     span.textContent = '-' + entry.k;
                     if (entry.kc) {
                         span.setAttribute('title', 'Declared in ' + entry.kc);
@@ -326,13 +329,12 @@
                     parent.appendChild(document.createTextNode(': '));
                     break;
                 case 'meta':
-                    span.className = 'vd-key vd-meta';
+                    span.className = 'sf-dump-meta';
                     span.textContent = entry.k;
                     parent.appendChild(span);
                     parent.appendChild(document.createTextNode(': '));
                     break;
                 default:
-                    span.className = 'vd-key';
                     span.textContent = String(entry.k);
                     parent.appendChild(span);
                     parent.appendChild(document.createTextNode(': '));

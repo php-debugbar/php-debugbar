@@ -1,6 +1,8 @@
-/* VarDump JSON renderer styles */
+/* VarDump JSON renderer styles
+ * Uses sf-dump-* classes matching Symfony's HtmlDumper for consistent styling.
+ * These styles provide the base when Symfony's inline CSS is not loaded. */
 
-pre.vd-dump {
+pre.sf-dump {
     word-wrap: break-word;
     white-space: pre-wrap;
     word-break: normal;
@@ -15,157 +17,141 @@ pre.vd-dump {
 }
 
 /* Scalar types */
-pre.vd-dump .vd-num {
+pre.sf-dump .sf-dump-num {
     font-weight: bold;
     color: #1299DA;
 }
 
-pre.vd-dump .vd-const {
+pre.sf-dump .sf-dump-const {
     font-weight: bold;
 }
 
-pre.vd-dump .vd-str {
+pre.sf-dump .sf-dump-str {
     font-weight: bold;
     color: #3A9B26;
 }
 
-pre.vd-dump .vd-note {
+pre.sf-dump .sf-dump-note {
     color: #1299DA;
 }
 
-pre.vd-dump .vd-ref {
+pre.sf-dump .sf-dump-ref {
     color: #7B7B7B;
 }
 
 /* Key visibility */
-pre.vd-dump .vd-public {
+pre.sf-dump .sf-dump-public {
     color: #000000;
 }
 
-pre.vd-dump .vd-protected {
+pre.sf-dump .sf-dump-protected {
     color: #000000;
 }
 
-pre.vd-dump .vd-private {
+pre.sf-dump .sf-dump-private {
     color: grey;
 }
 
-pre.vd-dump .vd-meta {
+pre.sf-dump .sf-dump-meta {
     color: #B729D9;
 }
 
-pre.vd-dump .vd-assoc-key {
+pre.sf-dump .sf-dump-key {
     color: #3A9B26;
 }
 
-pre.vd-dump .vd-index {
+pre.sf-dump .sf-dump-index {
     color: #1299DA;
 }
 
-pre.vd-dump .vd-ellipsis {
+pre.sf-dump .sf-dump-ellipsis {
     color: #A0A000;
 }
 
-pre.vd-dump .vd-quote {
-    color: #a0a000;
-    font-weight: normal;
-}
-
 /* Toggle arrow */
-pre.vd-dump a.vd-arrow {
+pre.sf-dump a.sf-dump-toggle {
     text-decoration: none;
     color: inherit;
     cursor: pointer;
     margin-left: 2px;
 }
 
-pre.vd-dump a.vd-arrow span {
+pre.sf-dump a.sf-dump-toggle span {
     font-size: 0.8em;
 }
 
 /* Hash toggle */
-pre.vd-dump .vd-toggle {
+pre.sf-dump .sf-dump-expanded,
+pre.sf-dump .sf-dump-compact {
     display: inline;
 }
 
-pre.vd-dump .vd-children {
+pre.sf-dump .sf-dump-children {
     display: block;
     padding-left: 20px;
 }
 
-pre.vd-dump .vd-child {
+pre.sf-dump .sf-dump-child {
     display: block;
 }
 
-pre.vd-dump .vd-hash-header {
-    user-select: none;
-}
-
-pre.vd-dump .vd-summary {
+pre.sf-dump .sf-dump-summary {
     color: #7B7B7B;
 }
 
-pre.vd-dump .vd-closing {
-    /* inherits from pre.vd-dump */
-}
-
 /* Dark theme */
-div.phpdebugbar[data-theme='dark'] pre.vd-dump {
+div.phpdebugbar[data-theme='dark'] pre.sf-dump {
     color: #FF8400;
 }
 
-div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-num {
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-num {
     color: #1299DA;
 }
 
-div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-const {
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-const {
     color: #FF8400;
 }
 
-div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-str {
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-str {
     color: #56DB3A;
 }
 
-div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-note {
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-note {
     color: #1299DA;
 }
 
-div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-ref {
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-ref {
     color: #A0A0A0;
 }
 
-div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-public {
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-public {
     color: #ffcc00;
 }
 
-div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-protected {
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-protected {
     color: #a0a000;
 }
 
-div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-private {
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-private {
     color: #9d9266;
 }
 
-div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-meta {
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-meta {
     color: #B729D9;
 }
 
-div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-assoc-key {
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-key {
     color: #56DB3A;
 }
 
-div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-index {
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-index {
     color: #1299DA;
 }
 
-div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-ellipsis {
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-ellipsis {
     color: #FF8400;
 }
 
-div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-quote {
-    color: #FF8400;
-}
-
-div.phpdebugbar[data-theme='dark'] pre.vd-dump .vd-summary {
+div.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-summary {
     color: #A0A0A0;
 }

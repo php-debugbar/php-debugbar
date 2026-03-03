@@ -626,7 +626,7 @@
 
                     li.style.cursor = 'pointer';
                     li.addEventListener('click', (event) => {
-                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump') || event.target.closest('.vd-dump')) {
+                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
                             return;
                         }
                         contextTable.hidden = !contextTable.hidden;
@@ -854,7 +854,7 @@
 
                             li.style.cursor = 'pointer';
                             li.addEventListener('click', function (event) {
-                                if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump') || event.target.closest('.vd-dump')) {
+                                if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
                                     return '';
                                 }
                                 const table = this.querySelector('table');
@@ -862,7 +862,7 @@
                             });
 
                             li.addEventListener('click', (event) => {
-                                if (event.target.closest('.sf-dump') || event.target.closest('.vd-dump')) {
+                                if (event.target.closest('.sf-dump')) {
                                     event.stopPropagation();
                                 }
                             });
@@ -957,7 +957,7 @@
 
                     // This click event makes the var-dumper hard to use.
                     li.addEventListener('click', (event) => {
-                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump') || event.target.closest('.vd-dump')) {
+                        if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
                             return;
                         }
                         pre.hidden = !pre.hidden;
