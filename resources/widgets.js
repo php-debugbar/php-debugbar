@@ -854,11 +854,6 @@
                                 table.hidden = !table.hidden;
                             });
 
-                            li.addEventListener('click', (event) => {
-                                if (event.target.closest('.sf-dump')) {
-                                    event.stopPropagation();
-                                }
-                            });
                         }
                     }
 

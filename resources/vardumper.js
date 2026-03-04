@@ -318,7 +318,8 @@
             dt.appendChild(span);
 
             const rawValue = (value && value.value !== undefined) ? value.value : value;
-            dd.appendChild(jsonVarDumpRenderer.render(rawValue));
+            const rendered = jsonVarDumpRenderer.render(rawValue);
+            dd.appendChild(rendered instanceof Node ? rendered : document.createTextNode(String(rendered)));
 
             if (value && value.xdebug_link) {
                 dd.appendChild(PhpDebugBar.Widgets.editorLink(value.xdebug_link));
