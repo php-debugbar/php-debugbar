@@ -304,7 +304,6 @@
      * Options:
      *  - data
      */
-    const jsonVarDumpRenderer = new VarDumpRenderer();
 
     class JsonVariableListWidget extends PhpDebugBar.Widgets.KVListWidget {
         get className() {
@@ -318,8 +317,12 @@
             dt.appendChild(span);
 
             const rawValue = (value && value.value !== undefined) ? value.value : value;
-            const rendered = jsonVarDumpRenderer.render(rawValue);
-            dd.appendChild(rendered instanceof Node ? rendered : document.createTextNode(String(rendered)));
+            const rendered = PhpDebugBar.Widgets.renderValue(rawValue);
+            if (rendered instanceof Node) {
+                dd.appendChild(rendered);
+            } else {
+                dd.innerHTML += rendered;
+            }
 
             if (value && value.xdebug_link) {
                 dd.appendChild(PhpDebugBar.Widgets.editorLink(value.xdebug_link));
