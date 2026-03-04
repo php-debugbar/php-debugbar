@@ -18,24 +18,6 @@
     };
 
     /**
-     * Returns a string representation of value, using JSON.stringify
-     * if it's an object.
-     *
-     * @param {object} value
-     * @param {boolean} prettify Uses htmlize() if true
-     * @return {string}
-     */
-    const renderValue = function (value, prettify) {
-        if (typeof value !== 'string') {
-            if (prettify) {
-                return htmlize(JSON.stringify(value, undefined, 2));
-            }
-            return JSON.stringify(value);
-        }
-        return value;
-    };
-
-    /**
      * Renders any value as a DOM element. Handles dump objects (with "_sd"
      * marker), JSON-encoded dumps, and plain HTML/scalar strings.
      *
@@ -43,30 +25,23 @@
      * @return {HTMLElement}
      */
     let dumpRenderer;
-    PhpDebugBar.Widgets.renderValue = function (value) {
-        if (!dumpRenderer) {
-            dumpRenderer = new PhpDebugBar.Widgets.VarDumpRenderer();
-        }
+    const renderValue =  PhpDebugBar.Widgets.renderValue = function (value, prettify) {
         // Dump object (from JsonDataFormatter)
         if (value && typeof value === 'object' && '_sd' in value) {
+            if (!dumpRenderer) {
+                dumpRenderer = new PhpDebugBar.Widgets.VarDumpRenderer();
+            }
             return dumpRenderer.render(value);
         }
-        // String: try JSON-encoded dump, else HTML fallback (from HtmlDataFormatter)
-        if (typeof value === 'string') {
-            try {
-                const parsed = JSON.parse(value);
-                if (parsed && typeof parsed === 'object' && '_sd' in parsed) {
-                    return dumpRenderer.render(parsed);
-                }
-            } catch (e) {}
-            const pre = document.createElement('pre');
-            const code = document.createElement('code');
-            code.innerHTML = value;
-            pre.append(code);
-            return pre;
+
+        if (typeof value !== 'string') {
+            if (prettify) {
+                return htmlize(JSON.stringify(value, undefined, 2));
+            }
+            return JSON.stringify(value);
         }
-        // Scalar or other plain value
-        return dumpRenderer.render(value);
+
+        return value;
     };
 
     /**

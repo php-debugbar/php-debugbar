@@ -207,7 +207,7 @@
             if (value === null || value === undefined) return '<span class=sf-dump-const>null</span>';
             if (typeof value === 'boolean') return '<span class=sf-dump-const>' + value + '</span>';
             if (typeof value === 'number') return '<span class=sf-dump-num>' + value + '</span>';
-            if (typeof value === 'string') return '"<span class=sf-dump-str title="' + value.length + ' characters">' + this.esc(value) + '</span>"';
+            if (typeof value === 'string') return '<span class=sf-dump-str title="' + value.length + ' characters">' + this.esc(value) + '</span>';
             return this.esc(String(value));
         }
     }
