@@ -23,16 +23,10 @@
 
         render(data) {
             if (typeof data === 'string') {
-                try {
-                    data = JSON.parse(data);
-                } catch (e) {
-                    const pre = document.createElement('pre');
-                    pre.className = 'sf-dump';
-                    pre.id = 'sf-dump-' + (++dumpId);
-                    pre.setAttribute('data-indent-pad', '  ');
-                    pre.textContent = data;
-                    return pre;
-                }
+                const pre = document.createElement('pre');
+                pre.className = 'sf-dump';
+                pre.textContent = data;
+                return pre;
             }
 
             const pre = document.createElement('pre');
@@ -40,20 +34,15 @@
             pre.id = 'sf-dump-' + (++dumpId);
             pre.setAttribute('data-indent-pad', '  ');
 
-            let html;
             if (data && typeof data === 'object' && '_sd' in data) {
-                // Dump node from DebugBarJsonDumper; _sd holds the expanded depth
-                const savedDepth = this.expandedDepth;
                 if (typeof data._sd === 'number') {
                     this.expandedDepth = data._sd;
                 }
-                html = this.nodeToHtml(data, 0, '');
-                this.expandedDepth = savedDepth;
+                pre.innerHTML = this.nodeToHtml(data, 0, '') + '\n';
             } else {
-                html = this.plainToHtml(data, 0, '');
+                pre.innerHTML = this.scalarHtml(data) + '\n';
             }
 
-            pre.innerHTML = html + '\n';
             return pre;
         }
 
@@ -214,67 +203,12 @@
             }
         }
 
-        plainToHtml(value, depth, indent) {
-            if (value === null) {
-                return '<span class=sf-dump-const>null</span>';
-            }
-            if (typeof value === 'boolean') {
-                return '<span class=sf-dump-const>' + (value ? 'true' : 'false') + '</span>';
-            }
-            if (typeof value === 'number') {
-                return '<span class=sf-dump-num>' + value + '</span>';
-            }
-            if (typeof value === 'string') {
-                return '"<span class=sf-dump-str title="' + value.length + ' characters">' + this.esc(value) + '</span>"';
-            }
-            if (Array.isArray(value)) {
-                return this.plainHashToHtml(value, depth, indent, true);
-            }
-            if (typeof value === 'object') {
-                return this.plainHashToHtml(value, depth, indent, false);
-            }
+        scalarHtml(value) {
+            if (value === null || value === undefined) return '<span class=sf-dump-const>null</span>';
+            if (typeof value === 'boolean') return '<span class=sf-dump-const>' + value + '</span>';
+            if (typeof value === 'number') return '<span class=sf-dump-num>' + value + '</span>';
+            if (typeof value === 'string') return '"<span class=sf-dump-str title="' + value.length + ' characters">' + this.esc(value) + '</span>"';
             return this.esc(String(value));
-        }
-
-        plainHashToHtml(value, depth, indent, isArray) {
-            const keys = isArray ? null : Object.keys(value);
-            const count = isArray ? value.length : keys.length;
-            const closingChar = isArray ? ']' : '}';
-            const expanded = depth < this.expandedDepth;
-            const sampClass = expanded ? 'sf-dump-expanded' : 'sf-dump-compact';
-            const childIndent = indent + '  ';
-
-            let html = '';
-
-            // Header
-            if (isArray && count > 0) {
-                html += '<span class=sf-dump-note>array:' + count + '</span> [';
-            } else {
-                html += isArray ? '[' : '{';
-            }
-
-            if (count === 0) {
-                html += closingChar;
-                return html;
-            }
-
-            html += '<samp data-depth=' + (depth + 1) + ' class=' + sampClass + '>';
-
-            const items = isArray ? value : keys;
-            for (let i = 0; i < items.length; i++) {
-                html += '\n' + childIndent;
-
-                if (isArray) {
-                    html += '<span class=sf-dump-index>' + i + '</span> => ';
-                    html += this.plainToHtml(value[i], depth + 1, childIndent);
-                } else {
-                    html += '"<span class=sf-dump-key>' + this.esc(items[i]) + '</span>" => ';
-                    html += this.plainToHtml(value[items[i]], depth + 1, childIndent);
-                }
-            }
-
-            html += '\n' + indent + '</samp>' + closingChar;
-            return html;
         }
     }
     PhpDebugBar.Widgets.VarDumpRenderer = VarDumpRenderer;

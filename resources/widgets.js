@@ -25,7 +25,7 @@
      * @param {boolean} prettify Uses htmlize() if true
      * @return {string}
      */
-    const renderValue = PhpDebugBar.Widgets.renderValue = function (value, prettify) {
+    const renderValue = function (value, prettify) {
         if (typeof value !== 'string') {
             if (prettify) {
                 return htmlize(JSON.stringify(value, undefined, 2));
@@ -36,30 +36,37 @@
     };
 
     /**
-     * Tries to render a value as a JSON variable dump. Accepts either a dump
-     * object (with a "_sd" marker) or a JSON string encoding one. Renders it
-     * using VarDumpRenderer and returns the DOM element. Returns null otherwise.
+     * Renders any value as a DOM element. Handles dump objects (with "_sd"
+     * marker), JSON-encoded dumps, and plain HTML/scalar strings.
      *
      * @param {string|object} value
-     * @return {HTMLElement|null}
+     * @return {HTMLElement}
      */
-    PhpDebugBar.Widgets.renderDumpValue = function (value) {
-        if (value && typeof value === 'object' && '_sd' in value) {
-            const renderer = new PhpDebugBar.Widgets.VarDumpRenderer();
-            return renderer.render(value);
+    let dumpRenderer;
+    PhpDebugBar.Widgets.renderValue = function (value) {
+        if (!dumpRenderer) {
+            dumpRenderer = new PhpDebugBar.Widgets.VarDumpRenderer();
         }
+        // Dump object (from JsonDataFormatter)
+        if (value && typeof value === 'object' && '_sd' in value) {
+            return dumpRenderer.render(value);
+        }
+        // String: try JSON-encoded dump, else HTML fallback (from HtmlDataFormatter)
         if (typeof value === 'string') {
             try {
                 const parsed = JSON.parse(value);
                 if (parsed && typeof parsed === 'object' && '_sd' in parsed) {
-                    const renderer = new PhpDebugBar.Widgets.VarDumpRenderer();
-                    return renderer.render(parsed);
+                    return dumpRenderer.render(parsed);
                 }
-            } catch (e) {
-                // Not JSON, fall through
-            }
+            } catch (e) {}
+            const pre = document.createElement('pre');
+            const code = document.createElement('code');
+            code.innerHTML = value;
+            pre.append(code);
+            return pre;
         }
-        return null;
+        // Scalar or other plain value
+        return dumpRenderer.render(value);
     };
 
     /**
@@ -856,16 +863,7 @@
 
                                     const valueTd = document.createElement('td');
                                     valueTd.className = csscls('value');
-                                    const rendered = PhpDebugBar.Widgets.renderDumpValue(measure.params[key]);
-                                    if (rendered) {
-                                        valueTd.append(rendered);
-                                    } else {
-                                        const pre = document.createElement('pre');
-                                        const code = document.createElement('code');
-                                        code.innerHTML = measure.params[key];
-                                        pre.append(code);
-                                        valueTd.append(pre);
-                                    }
+                                    valueTd.append(PhpDebugBar.Widgets.renderValue(measure.params[key]));
                                     tr.append(valueTd);
                                     table.append(tr);
                                 }

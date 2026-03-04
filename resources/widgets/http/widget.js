@@ -88,16 +88,7 @@
 
                             const valueTd = document.createElement('td');
                             valueTd.className = csscls('value');
-                            const rendered = PhpDebugBar.Widgets.renderDumpValue(request.details[key]);
-                            if (rendered) {
-                                valueTd.append(rendered);
-                            } else {
-                                const pre = document.createElement('pre');
-                                const code = document.createElement('code');
-                                code.innerHTML = request.details[key];
-                                pre.append(code);
-                                valueTd.append(pre);
-                            }
+                            valueTd.append(PhpDebugBar.Widgets.renderValue(request.details[key]));
                             row.append(valueTd);
                             tbody.append(row);
                         }
