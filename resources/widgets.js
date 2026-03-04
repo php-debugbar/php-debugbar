@@ -19,13 +19,13 @@
 
     /**
      * Renders any value as a DOM element. Handles dump objects (with "_sd"
-     * marker), JSON-encoded dumps, and plain HTML/scalar strings.
+     * marker), and plain HTML/scalar strings.
      *
      * @param {string|object} value
      * @return {HTMLElement}
      */
     let dumpRenderer;
-    const renderValue =  PhpDebugBar.Widgets.renderValue = function (value, prettify) {
+    const renderValue = PhpDebugBar.Widgets.renderValue = function (value, prettify) {
         // Dump object (from JsonDataFormatter)
         if (value && typeof value === 'object' && '_sd' in value) {
             if (!dumpRenderer) {
