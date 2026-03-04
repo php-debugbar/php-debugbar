@@ -21,6 +21,9 @@ parameters:
             identifier: missingType.iterableValue
         -
             identifier: cast.useless
+        -
+            identifier: missingType.parameter
+            path: src/DataFormatter/VarDumper/DebugBarJsonDumper.php
 includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-strict-rules/rules.neon
