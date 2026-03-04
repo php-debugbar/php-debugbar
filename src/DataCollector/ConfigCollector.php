@@ -39,6 +39,7 @@ class ConfigCollector extends DataCollector implements Renderable, Resettable
     public function setData(array $data): void
     {
         $this->data = [];
+        $data = $this->hideMaskedValues($data);
         foreach ($data as $k => $v) {
             if (!is_string($v)) {
                 $v = $this->getDataFormatter()->formatVar($v);
