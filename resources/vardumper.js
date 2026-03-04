@@ -22,28 +22,21 @@
         }
 
         render(data) {
-            if (typeof data === 'string') {
+            if (data && typeof data === 'object' && '_sd' in data) {
                 const pre = document.createElement('pre');
                 pre.className = 'sf-dump';
-                pre.textContent = data;
-                return pre;
-            }
+                pre.id = 'sf-dump-' + (++dumpId);
+                pre.setAttribute('data-indent-pad', '  ');
 
-            const pre = document.createElement('pre');
-            pre.className = 'sf-dump';
-            pre.id = 'sf-dump-' + (++dumpId);
-            pre.setAttribute('data-indent-pad', '  ');
-
-            if (data && typeof data === 'object' && '_sd' in data) {
                 if (typeof data._sd === 'number') {
                     this.expandedDepth = data._sd;
                 }
                 pre.innerHTML = this.nodeToHtml(data, 0, '') + '\n';
-            } else {
-                pre.innerHTML = this.scalarHtml(data) + '\n';
+
+                return pre;
             }
 
-            return pre;
+            return data;
         }
 
         esc(s) {
@@ -201,14 +194,6 @@
                 default:
                     return k + ': ';
             }
-        }
-
-        scalarHtml(value) {
-            if (value === null || value === undefined) return '<span class=sf-dump-const>null</span>';
-            if (typeof value === 'boolean') return '<span class=sf-dump-const>' + value + '</span>';
-            if (typeof value === 'number') return '<span class=sf-dump-num>' + value + '</span>';
-            if (typeof value === 'string') return '<span class=sf-dump-str title="' + value.length + ' characters">' + this.esc(value) + '</span>';
-            return this.esc(String(value));
         }
     }
     PhpDebugBar.Widgets.VarDumpRenderer = VarDumpRenderer;
