@@ -125,7 +125,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
         }
 
         // Pop from stack
-        if (!empty($this->stack)) {
+        if ($this->stack !== []) {
             [$this->currentHash, $this->pendingCursor] = array_pop($this->stack);
             // Emit the completed hash node as a child of the parent
             $this->emitNode($cursor, $node);
@@ -186,6 +186,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
             case Cursor::HASH_RESOURCE:
                 $key = "\0~\0" . $key;
                 // fall through
+                // no break
             case Cursor::HASH_OBJECT:
                 if (!isset($key[0]) || $key[0] !== "\0") {
                     // Public property

@@ -96,6 +96,7 @@ class JsonRoundtripTest extends DebugBarTestCase
         yield [new class {
             public string $pub = 'a';
             protected string $prot = 'b';
+            /** @phpstan-ignore property.onlyWritten */
             private string $priv = 'c';
         }, 'visibility'];
 
@@ -159,7 +160,7 @@ class JsonRoundtripTest extends DebugBarTestCase
         $v = $node['v'];
 
         // Binary strings get a 'b' prefix
-        $prefix = !empty($node['bin']) ? 'b' : '';
+        $prefix = ($node['bin'] ?? false) ? 'b' : '';
 
         if (isset($node['cut']) && $node['cut'] > 0) {
             return $prefix . '"' . $v . '"…' . $node['cut'];
@@ -209,12 +210,12 @@ class JsonRoundtripTest extends DebugBarTestCase
         $closingChar = $isArray ? ']' : '}';
 
         // Empty hash
-        if (empty($children) && $cut === 0) {
+        if ($children === [] && $cut === 0) {
             return $header . $closingChar;
         }
 
         // Compact cut-only (no children to expand)
-        if (empty($children) && $cut > 0) {
+        if ($children === [] && $cut > 0) {
             return $header . ' …' . $cut . $closingChar;
         }
 
@@ -253,7 +254,7 @@ class JsonRoundtripTest extends DebugBarTestCase
 
         $k = $entry['k'];
         $kt = $entry['kt'];
-        $isDynamic = !empty($entry['dyn']);
+        $isDynamic = ($entry['dyn'] ?? false) === true;
 
         return match ($kt) {
             'index' => $k . ' => ',

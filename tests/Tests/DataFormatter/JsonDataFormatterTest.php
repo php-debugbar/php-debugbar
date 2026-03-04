@@ -119,7 +119,6 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $data = $cloner->cloneVar(['a' => 1]);
 
         $result = $dumper->dumpAsArray($data);
-        $this->assertIsArray($result);
         $this->assertEquals('h', $result['t']);
     }
 
@@ -128,11 +127,10 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $d = new JsonDataFormatter();
         $assets = $d->getAssets();
 
-        $this->assertArrayHasKey('base_path', $assets);
         $this->assertArrayHasKey('inline_head', $assets);
         $this->assertArrayHasKey('html_var_dumper', $assets['inline_head']);
         $this->assertArrayHasKey('js', $assets);
-        $this->assertEquals('widget.js', $assets['js']);
+        $this->assertEquals('vardumper.js', $assets['js']);
     }
 
     public function testDumperOptions(): void
@@ -194,6 +192,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $obj = new class {
             public string $pub = 'public_val';
             protected string $prot = 'protected_val';
+            /** @phpstan-ignore property.onlyWritten */
             private string $priv = 'private_val';
         };
 

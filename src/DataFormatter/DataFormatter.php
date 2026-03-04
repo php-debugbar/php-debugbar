@@ -37,7 +37,7 @@ class DataFormatter implements DataFormatterInterface
         return trim($this->dumpClonedVar($this->cloneVar($data, $deep)));
     }
 
-    protected function cloneVar(mixed $data, bool $deep ): Data
+    protected function cloneVar(mixed $data, bool $deep): Data
     {
         $isNonIterableObject = is_object($data) && !is_iterable($data);
         if ($deep) {

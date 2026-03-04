@@ -44,6 +44,7 @@ function buildTestData(): array
         public string $name = 'TestObject';
         public int $id = 42;
         protected array $config = ['debug' => true, 'level' => 3];
+        /** @phpstan-ignore property.onlyWritten */
         private string $secret = 'hidden_value';
         public array $items = ['alpha', 'beta', 'gamma', 'delta', 'epsilon'];
     };
@@ -237,7 +238,7 @@ echo "$separator\n";
 
 $batchIterations = 200;
 
-$htmlBatch = benchmark(function () use ($htmlFormatter, $testData) {
+$htmlBatch = benchmark(static function () use ($htmlFormatter, $testData): void {
     $collected = [];
     foreach ($testData as $name => $data) {
         $collected[$name] = $htmlFormatter->formatVar($data);
@@ -245,7 +246,7 @@ $htmlBatch = benchmark(function () use ($htmlFormatter, $testData) {
     json_encode($collected);
 }, $batchIterations);
 
-$jsonBatch = benchmark(function () use ($jsonFormatter, $testData) {
+$jsonBatch = benchmark(static function () use ($jsonFormatter, $testData): void {
     $collected = [];
     foreach ($testData as $name => $data) {
         $collected[$name] = $jsonFormatter->formatVar($data);

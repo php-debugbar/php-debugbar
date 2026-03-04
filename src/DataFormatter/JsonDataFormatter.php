@@ -7,7 +7,6 @@ namespace DebugBar\DataFormatter;
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataFormatter\VarDumper\DebugBarHtmlDumper;
 use DebugBar\DataFormatter\VarDumper\DebugBarJsonDumper;
-use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
 
 /**
