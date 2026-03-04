@@ -58,7 +58,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
         return $this->root ?? ['t' => 's', 'st' => 'NULL', 'v' => null];
     }
 
-    public function dumpScalar(Cursor $cursor, string $type, string|int|float|bool|null $value): void
+    public function dumpScalar(Cursor $cursor, string $type, $value): void
     {
         $node = [
             't' => 's',
@@ -91,7 +91,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
         $this->emitNode($cursor, $node);
     }
 
-    public function enterHash(Cursor $cursor, int $type, string|int|null $class, bool $hasChild): void
+    public function enterHash(Cursor $cursor, int $type, $class, bool $hasChild): void
     {
         $node = [
             't' => 'h',
@@ -116,7 +116,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
         $this->pendingCursor = clone $cursor;
     }
 
-    public function leaveHash(Cursor $cursor, int $type, string|int|null $class, bool $hasChild, int $cut): void
+    public function leaveHash(Cursor $cursor, int $type, $class, bool $hasChild, int $cut): void
     {
         $node = $this->currentHash;
 
