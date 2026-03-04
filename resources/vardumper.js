@@ -105,11 +105,12 @@
             let html = '';
 
             // Header
+            let ref = '';
             if (isObject) {
                 html += '<span class=sf-dump-note>' + this.esc(String(node.cls || 'object')) + '</span>';
                 html += ' {';
                 if (node.ref && node.ref.s) {
-                    html += '<a class=sf-dump-ref>#' + this.esc(String(node.ref.s)) + '</a>';
+                    ref = '<span class=sf-dump-ref>#' + this.esc(String(node.ref.s)) + '</span> ';
                 }
             } else if (isResource) {
                 html += '<span class=sf-dump-note>' + this.esc(String(node.cls || 'resource')) + '</span>';
@@ -125,18 +126,20 @@
 
             // Empty hash
             if (!hasChildren && !node.cut) {
+                if (ref) html += ref;
                 html += closingChar;
                 return html;
             }
 
             // Cut-only (no expandable children)
             if (!hasChildren && node.cut > 0) {
+                if (ref) html += ref;
                 html += ' …' + node.cut + closingChar;
                 return html;
             }
 
-            // Toggle anchor
-            html += '<a class=sf-dump-toggle><span>' + (expanded ? '▼' : '▶') + '</span></a>';
+            // Toggle anchor (includes ref if present)
+            html += '<a class=sf-dump-toggle>' + ref + '<span>' + (expanded ? '▼' : '▶') + '</span></a>';
 
             if (expanded) {
                 // Render children eagerly
@@ -249,6 +252,7 @@
     document.addEventListener('click', function (e) {
         const toggle = e.target.closest('a.sf-dump-toggle');
         if (!toggle) return;
+
         const pre = toggle.closest('pre.sf-dump');
         if (!pre || pre.id) return; // has id → belongs to Sfdump, skip
 
@@ -272,15 +276,15 @@
                 // Then expand all compact children
                 samp.querySelectorAll('samp.sf-dump-compact').forEach(function (s) {
                     s.classList.replace('sf-dump-compact', 'sf-dump-expanded');
-                    const span = s.previousElementSibling && s.previousElementSibling.querySelector('span');
-                    if (span) span.textContent = '▼';
+                    const arrow = s.previousElementSibling && s.previousElementSibling.lastElementChild;
+                    if (arrow) arrow.textContent = '▼';
                 });
             } else {
                 // Collapse all expanded children
                 samp.querySelectorAll('samp.sf-dump-expanded').forEach(function (s) {
                     s.classList.replace('sf-dump-expanded', 'sf-dump-compact');
-                    const span = s.previousElementSibling && s.previousElementSibling.querySelector('span');
-                    if (span) span.textContent = '▶';
+                    const arrow = s.previousElementSibling && s.previousElementSibling.lastElementChild;
+                    if (arrow) arrow.textContent = '▶';
                 });
             }
         }
@@ -288,7 +292,7 @@
         // Toggle current
         samp.classList.toggle('sf-dump-compact', !isCompact);
         samp.classList.toggle('sf-dump-expanded', isCompact);
-        toggle.querySelector('span').textContent = isCompact ? '▼' : '▶';
+        toggle.lastElementChild.textContent = isCompact ? '▼' : '▶';
     });
 
     // ------------------------------------------------------------------

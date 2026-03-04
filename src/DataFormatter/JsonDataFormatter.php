@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace DebugBar\DataFormatter;
 
 use DebugBar\DataCollector\AssetProvider;
-use DebugBar\DataFormatter\VarDumper\DebugBarHtmlDumper;
 use DebugBar\DataFormatter\VarDumper\DebugBarJsonDumper;
 use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
 
@@ -22,6 +21,10 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     ];
 
     protected ?array $dumperOptions = null;
+
+    protected ?array $clonerOptions = [
+        'max_depth' => 6,
+    ];
 
     public function formatVar(mixed $data, bool $deep = true): mixed
     {
@@ -88,14 +91,10 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
 
     public function getAssets(): array
     {
-        $dumper = new DebugBarHtmlDumper();
-        $dumper->resetDumpHeader();
+        $htmlFormatter = new HtmlDataFormatter();
+        $assets = $htmlFormatter->getAssets();
+        $assets['js'] = 'vardumper.js';
 
-        return [
-            'inline_head' => [
-                'html_var_dumper' => $dumper->getDumpHeaderByDebugBar(),
-            ],
-            'js' => 'vardumper.js',
-        ];
+        return $assets;
     }
 }
