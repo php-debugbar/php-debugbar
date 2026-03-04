@@ -41,8 +41,14 @@
             pre.setAttribute('data-indent-pad', '  ');
 
             let html;
-            if (data && typeof data === 'object' && data.t) {
+            if (data && typeof data === 'object' && '_sd' in data) {
+                // Dump node from DebugBarJsonDumper; _sd holds the expanded depth
+                const savedDepth = this.expandedDepth;
+                if (typeof data._sd === 'number') {
+                    this.expandedDepth = data._sd;
+                }
                 html = this.nodeToHtml(data, 0, '');
+                this.expandedDepth = savedDepth;
             } else {
                 html = this.plainToHtml(data, 0, '');
             }

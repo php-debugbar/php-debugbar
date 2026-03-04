@@ -32,7 +32,9 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
 
         $dumper = $this->getDumper();
         if ($dumper instanceof DebugBarJsonDumper) {
-            return $dumper->dumpAsArray($this->cloneVar($data, $deep));
+            $result = $dumper->dumpAsArray($this->cloneVar($data, $deep));
+            $result['_sd'] = $this->getDumperOptions()['expanded_depth'] ?? 1;
+            return $result;
         }
 
         return parent::formatVar($data, $deep);
@@ -40,42 +42,21 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
 
     /**
      * Check if a value can be represented as plain JSON without the Symfony dump structure.
-     * Returns true for scalars, null, and arrays containing only simple values that
-     * don't exceed the configured max_items/max_string limits.
+     * Only scalars, null, and short strings qualify — arrays always go through the dumper
+     * to preserve type info (array vs object) and element counts.
      */
     private function isSimpleValue(mixed $data): bool
-    {
-        $count = 0;
-        $maxItems = $this->getClonerOptions()['max_items'] ?? 1000;
-        $maxString = $this->getClonerOptions()['max_string'] ?? 10000;
-
-        return $this->isPlainValue($data, $count, $maxItems, $maxString);
-    }
-
-    private function isPlainValue(mixed $data, int &$count, int $maxItems, int $maxString): bool
     {
         if ($data === null || is_bool($data) || is_int($data) || is_float($data)) {
             return true;
         }
 
         if (is_string($data)) {
+            $maxString = $this->getClonerOptions()['max_string'] ?? 10000;
             return strlen($data) <= $maxString;
         }
 
-        if (!is_array($data)) {
-            return false;
-        }
-
-        foreach ($data as $value) {
-            if (++$count > $maxItems) {
-                return false;
-            }
-            if (!$this->isPlainValue($value, $count, $maxItems, $maxString)) {
-                return false;
-            }
-        }
-
-        return true;
+        return false;
     }
 
     protected function getDumper(): DataDumperInterface

@@ -3,8 +3,7 @@
 /**
  * Benchmark: HtmlDataFormatter vs JsonDataFormatter
  *
- * Compares storage size, formatting speed, and JSON-encoded transport size
- * for a variety of data structures.
+ * Compares formatting speed, JSON transport size, and asset overhead.
  *
  * Usage: php tests/benchmark-formatter.php
  */
@@ -193,48 +192,13 @@ printf(
 );
 echo "\n";
 
-// ── 2. Output size ───────────────────────────────────────────────────
+// ── 2. JSON transport size ──────────────────────────────────────────
 
-echo "2. OUTPUT SIZE (formatVar result)\n";
+echo "2. JSON TRANSPORT SIZE (json_encode of formatVar result)\n";
+echo "   HTML: string containing HTML markup → JSON-escaped\n";
+echo "   JSON: array/scalar structure → JSON-encoded natively\n";
 echo "$separator\n";
 $sizeFmt = "%-15s │ %12s │ %12s │ %8s";
-printf("$sizeFmt\n", 'Test Case', 'HTML size', 'JSON size', 'Diff');
-echo "$separator\n";
-
-$totalHtmlSize = 0;
-$totalJsonSize = 0;
-
-foreach ($testData as $name => $data) {
-    $htmlOut = $htmlFormatter->formatVar($data);
-    $jsonOut = $jsonFormatter->formatVar($data);
-
-    $htmlSize = strlen($htmlOut);
-    $jsonSize = strlen($jsonOut);
-    $diff = (($jsonSize - $htmlSize) / $htmlSize) * 100;
-
-    $totalHtmlSize += $htmlSize;
-    $totalJsonSize += $jsonSize;
-
-    printf(
-        "$sizeFmt\n",
-        $name,
-        formatBytes($htmlSize),
-        formatBytes($jsonSize),
-        sprintf('%+.0f%%', $diff),
-    );
-}
-
-$totalSizeDiff = (($totalJsonSize - $totalHtmlSize) / $totalHtmlSize) * 100;
-echo "$separator\n";
-printf("$sizeFmt\n", 'TOTAL', formatBytes($totalHtmlSize), formatBytes($totalJsonSize), sprintf('%+.0f%%', $totalSizeDiff));
-echo "\n";
-
-// ── 3. JSON transport size ───────────────────────────────────────────
-
-echo "3. JSON TRANSPORT SIZE (json_encode of formatVar result)\n";
-echo "   HTML output is a string containing HTML → gets JSON-escaped (double-encoded)\n";
-echo "   JSON output is a JSON string → gets double-encoded as a string\n";
-echo "$separator\n";
 printf("$sizeFmt\n", 'Test Case', 'HTML encoded', 'JSON encoded', 'Diff');
 echo "$separator\n";
 
@@ -266,9 +230,9 @@ echo "$separator\n";
 printf("$sizeFmt\n", 'TOTAL', formatBytes($totalHtmlTransport), formatBytes($totalJsonTransport), sprintf('%+.0f%%', $totalTransportDiff));
 echo "\n";
 
-// ── 4. Batch simulation ─────────────────────────────────────────────
+// ── 3. Batch simulation ─────────────────────────────────────────────
 
-echo "4. BATCH SIMULATION (typical page: format all test cases + json_encode everything)\n";
+echo "3. BATCH SIMULATION (typical page: format all test cases + json_encode everything)\n";
 echo "$separator\n";
 
 $batchIterations = 200;
@@ -312,31 +276,32 @@ printf("JSON payload size:  %s\n", formatBytes(strlen($jsonPayload)));
 printf("Difference:         %+.0f%%\n", $payloadDiff);
 echo "\n";
 
-// ── 5. Symfony dumper overhead breakdown ─────────────────────────────
+// ── 4. Symfony asset overhead ────────────────────────────────────────
 
-echo "5. SYMFONY ASSET OVERHEAD\n";
+echo "4. ASSET OVERHEAD\n";
 echo "$separator\n";
 
 $htmlAssets = $htmlFormatter->getAssets();
 $jsonAssets = $jsonFormatter->getAssets();
 
+// Both formatters now use inline_head for Sfdump JS+CSS
 if (isset($htmlAssets['inline_head']['html_var_dumper'])) {
-    $inlineSize = strlen($htmlAssets['inline_head']['html_var_dumper']);
-    printf("HTML inline_head (Sfdump JS+CSS): %s\n", formatBytes($inlineSize));
-    echo "  → This is injected into every page load as inline <script>/<style>\n";
-} else {
-    echo "HTML inline_head: (none)\n";
+    $htmlInlineSize = strlen($htmlAssets['inline_head']['html_var_dumper']);
+    printf("HTML inline_head (Sfdump JS+CSS): %s\n", formatBytes($htmlInlineSize));
 }
 
+if (isset($jsonAssets['inline_head']['html_var_dumper'])) {
+    $jsonInlineSize = strlen($jsonAssets['inline_head']['html_var_dumper']);
+    printf("JSON inline_head (Sfdump JS+CSS): %s\n", formatBytes($jsonInlineSize));
+    echo "  → Same Sfdump bundle, deduplicated by shared 'html_var_dumper' key\n";
+}
+
+// JSON widget.js (client-side renderer)
 $jsonBasePath = $jsonAssets['base_path'] ?? '';
 $jsFile = $jsonBasePath . '/' . ($jsonAssets['js'] ?? '');
-$cssFile = $jsonBasePath . '/' . ($jsonAssets['css'] ?? '');
 $jsSize = file_exists($jsFile) ? filesize($jsFile) : 0;
-$cssSize = file_exists($cssFile) ? filesize($cssFile) : 0;
-
 printf("JSON widget.js:                   %s\n", formatBytes($jsSize));
-printf("JSON widget.css:                  %s\n", formatBytes($cssSize));
-printf("JSON total assets:                %s\n", formatBytes($jsSize + $cssSize));
-echo "  → These are static files, cached by the browser\n";
+echo "  → Static file, cached by the browser\n";
+
 echo "\n$separator\n";
 echo "Done.\n";

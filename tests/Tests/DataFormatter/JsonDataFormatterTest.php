@@ -44,19 +44,42 @@ class JsonDataFormatterTest extends DebugBarTestCase
     public function testSimpleArray(): void
     {
         $d = new JsonDataFormatter();
-        $this->assertSame([1, 2, 3], $d->formatVar([1, 2, 3]));
+        $data = $d->formatVar([1, 2, 3]);
+
+        $this->assertIsArray($data);
+        $this->assertEquals('h', $data['t']);
+        $this->assertEquals(2, $data['ht']); // HASH_INDEXED
+        $this->assertCount(3, $data['children']);
+        $this->assertArrayHasKey('_sd', $data);
     }
 
     public function testAssociativeArray(): void
     {
         $d = new JsonDataFormatter();
-        $this->assertSame(['foo' => 'bar', 'baz' => 42], $d->formatVar(['foo' => 'bar', 'baz' => 42]));
+        $data = $d->formatVar(['foo' => 'bar', 'baz' => 42]);
+
+        $this->assertIsArray($data);
+        $this->assertEquals('h', $data['t']);
+        $this->assertEquals(1, $data['ht']); // HASH_ASSOC
+        $this->assertCount(2, $data['children']);
+        $this->assertEquals('foo', $data['children'][0]['k']);
+        $this->assertEquals('key', $data['children'][0]['kt']);
     }
 
     public function testNestedArray(): void
     {
         $d = new JsonDataFormatter();
-        $this->assertSame(['foo' => [1, 2], 'bar' => true], $d->formatVar(['foo' => [1, 2], 'bar' => true]));
+        $data = $d->formatVar(['foo' => [1, 2], 'bar' => true]);
+
+        $this->assertIsArray($data);
+        $this->assertEquals('h', $data['t']);
+        $this->assertCount(2, $data['children']);
+
+        // Nested array child
+        $inner = $data['children'][0]['n'];
+        $this->assertEquals('h', $inner['t']);
+        $this->assertEquals(2, $inner['ht']); // HASH_INDEXED
+        $this->assertCount(2, $inner['children']);
     }
 
     public function testObject(): void
@@ -82,7 +105,11 @@ class JsonDataFormatterTest extends DebugBarTestCase
     public function testEmptyArray(): void
     {
         $d = new JsonDataFormatter();
-        $this->assertSame([], $d->formatVar([]));
+        $data = $d->formatVar([]);
+
+        $this->assertIsArray($data);
+        $this->assertEquals('h', $data['t']);
+        $this->assertEmpty($data['children']);
     }
 
     public function testDumpAsArray(): void
@@ -199,9 +226,11 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $this->assertNull($d->formatVar(null));
         $this->assertSame('hello', $d->formatVar('hello'));
 
-        // Simple arrays returned as-is
-        $this->assertSame([1, 2, 3], $d->formatVar([1, 2, 3]));
-        $this->assertSame(['foo' => 'bar'], $d->formatVar(['foo' => 'bar']));
+        // Arrays always go through dump to preserve type info
+        $data = $d->formatVar([1, 2, 3]);
+        $this->assertIsArray($data);
+        $this->assertEquals('h', $data['t']);
+        $this->assertArrayHasKey('_sd', $data);
 
         // Objects use dump structure
         $obj = new \stdClass();
