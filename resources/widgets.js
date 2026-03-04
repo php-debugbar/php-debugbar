@@ -36,25 +36,28 @@
     };
 
     /**
-     * Tries to render a value as a JSON variable dump. If the value is a JSON
-     * string representing a dump node (with a "t" field), renders it using
-     * VarDumpRenderer and returns the DOM element. Returns null otherwise.
+     * Tries to render a value as a JSON variable dump. Accepts either a dump
+     * object (with a "_sd" marker) or a JSON string encoding one. Renders it
+     * using VarDumpRenderer and returns the DOM element. Returns null otherwise.
      *
      * @param {string|object} value
      * @return {HTMLElement|null}
      */
     PhpDebugBar.Widgets.renderDumpValue = function (value) {
-        if (typeof value !== 'string') {
-            return null;
+        if (value && typeof value === 'object' && '_sd' in value) {
+            const renderer = new PhpDebugBar.Widgets.VarDumpRenderer();
+            return renderer.render(value);
         }
-        try {
-            const parsed = JSON.parse(value);
-            if (parsed && typeof parsed === 'object' && parsed.t) {
-                const renderer = new PhpDebugBar.Widgets.VarDumpRenderer();
-                return renderer.render(parsed);
+        if (typeof value === 'string') {
+            try {
+                const parsed = JSON.parse(value);
+                if (parsed && typeof parsed === 'object' && '_sd' in parsed) {
+                    const renderer = new PhpDebugBar.Widgets.VarDumpRenderer();
+                    return renderer.render(parsed);
+                }
+            } catch (e) {
+                // Not JSON, fall through
             }
-        } catch (e) {
-            // Not JSON, fall through
         }
         return null;
     };
