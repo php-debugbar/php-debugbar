@@ -96,9 +96,7 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
             'inline_head' => [
                 'html_var_dumper' => $dumper->getDumpHeaderByDebugBar(),
             ],
-            'base_path' => __DIR__ . '/../../resources/widgets/vardumper',
-            'base_url' => 'vendor/php-debugbar/php-debugbar/resources/widgets/vardumper',
-            'js' => 'widget.js',
+            'js' => 'vardumper.js',
         ];
     }
 }
