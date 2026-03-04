@@ -1,20 +1,21 @@
 (function () {
     const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
 
-    let dumpId = 0;
+    const lazyStore = new Map();
+    let lazySeq = 0;
 
     /**
-     * Renders a JSON variable dump as Sfdump()-compatible HTML.
+     * Renders a JSON variable dump as HTML with lazy-rendered collapsed nodes.
      *
-     * Generates HTML matching Symfony's HtmlDumper output format, then relies on
-     * Sfdump() (loaded via inline_head) for all interactivity (expand/collapse,
-     * search, cross-references).
+     * Generates HTML using Sfdump CSS classes for styling compatibility. Collapsed
+     * children are deferred until the user clicks to expand them. A document-level
+     * click handler manages toggle/expand for these id-less <pre> elements, while
+     * Sfdump continues to handle server-rendered HTML dumps (with IDs) unchanged.
      *
      * Usage:
      *   const renderer = new PhpDebugBar.Widgets.VarDumpRenderer({ expandedDepth: 1 });
      *   const el = renderer.render(jsonData);
      *   container.appendChild(el);
-     *   // Then PhpDebugBar.utils.sfDump(container) activates Sfdump on all pre.sf-dump[id]
      */
     class VarDumpRenderer {
         constructor(options) {
@@ -25,7 +26,6 @@
             if (data && typeof data === 'object' && '_sd' in data) {
                 const pre = document.createElement('pre');
                 pre.className = 'sf-dump';
-                pre.id = 'sf-dump-' + (++dumpId);
                 pre.setAttribute('data-indent-pad', '  ');
 
                 if (typeof data._sd === 'number') {
@@ -101,7 +101,6 @@
             const closingChar = isArray ? ']' : '}';
             const childIndent = indent + '  ';
             const expanded = depth < this.expandedDepth;
-            const sampClass = expanded ? 'sf-dump-expanded' : 'sf-dump-compact';
 
             let html = '';
 
@@ -136,33 +135,47 @@
                 return html;
             }
 
-            // Children in <samp>
-            html += '<samp data-depth=' + (depth + 1) + ' class=' + sampClass + '>';
+            // Toggle anchor
+            html += '<a class=sf-dump-toggle><span>' + (expanded ? '▼' : '▶') + '</span></a>';
 
-            for (let i = 0; i < children.length; i++) {
-                const entry = children[i];
-                html += '\n' + childIndent;
+            if (expanded) {
+                // Render children eagerly
+                html += '<samp data-depth=' + (depth + 1) + ' class=sf-dump-expanded>';
 
-                // Key
-                if (entry.kt !== undefined) {
-                    html += this.keyToHtml(entry);
+                for (let i = 0; i < children.length; i++) {
+                    const entry = children[i];
+                    html += '\n' + childIndent;
+
+                    if (entry.kt !== undefined) {
+                        html += this.keyToHtml(entry);
+                    }
+                    if (entry.ref) {
+                        html += '<span class=sf-dump-ref>&amp;' + this.esc(String(entry.ref)) + '</span> ';
+                    }
+                    html += this.nodeToHtml(entry.n, depth + 1, childIndent);
                 }
 
-                // Hard reference
-                if (entry.ref) {
-                    html += '<span class=sf-dump-ref>&amp;' + this.esc(String(entry.ref)) + '</span> ';
+                if (node.cut > 0) {
+                    html += '\n' + childIndent + '…' + node.cut;
                 }
 
-                // Value
-                html += this.nodeToHtml(entry.n, depth + 1, childIndent);
+                html += '\n' + indent + '</samp>';
+            } else {
+                // Lazy placeholder — store data, emit empty samp
+                const id = ++lazySeq;
+                lazyStore.set(id, {
+                    children: children,
+                    cut: node.cut,
+                    depth: depth,
+                    childIndent: childIndent,
+                    indent: indent,
+                    renderer: this,
+                    expandedDepth: this.expandedDepth
+                });
+                html += '<samp data-depth=' + (depth + 1) + ' class=sf-dump-compact data-lazy=' + id + '></samp>';
             }
 
-            // Cut indicator
-            if (node.cut > 0) {
-                html += '\n' + childIndent + '…' + node.cut;
-            }
-
-            html += '\n' + indent + '</samp>' + closingChar;
+            html += closingChar;
             return html;
         }
 
@@ -197,6 +210,86 @@
         }
     }
     PhpDebugBar.Widgets.VarDumpRenderer = VarDumpRenderer;
+
+    function expandLazy(samp) {
+        const id = parseInt(samp.dataset.lazy, 10);
+        const data = lazyStore.get(id);
+        if (!data) return;
+
+        const renderer = data.renderer;
+        const savedDepth = renderer.expandedDepth;
+        renderer.expandedDepth = data.expandedDepth;
+
+        let html = '';
+        for (let i = 0; i < data.children.length; i++) {
+            const entry = data.children[i];
+            html += '\n' + data.childIndent;
+
+            if (entry.kt !== undefined) {
+                html += renderer.keyToHtml(entry);
+            }
+            if (entry.ref) {
+                html += '<span class=sf-dump-ref>&amp;' + renderer.esc(String(entry.ref)) + '</span> ';
+            }
+            html += renderer.nodeToHtml(entry.n, data.depth + 1, data.childIndent);
+        }
+
+        if (data.cut > 0) {
+            html += '\n' + data.childIndent + '…' + data.cut;
+        }
+
+        html += '\n' + data.indent;
+        samp.innerHTML = html;
+
+        delete samp.dataset.lazy;
+        lazyStore.delete(id);
+        renderer.expandedDepth = savedDepth;
+    }
+
+    document.addEventListener('click', function (e) {
+        const toggle = e.target.closest('a.sf-dump-toggle');
+        if (!toggle) return;
+        const pre = toggle.closest('pre.sf-dump');
+        if (!pre || pre.id) return; // has id → belongs to Sfdump, skip
+
+        const samp = toggle.nextElementSibling;
+        if (!samp || samp.tagName !== 'SAMP') return;
+
+        e.preventDefault();
+        const isCompact = samp.classList.contains('sf-dump-compact');
+
+        // Lazy expand if needed
+        if (isCompact && samp.dataset.lazy) expandLazy(samp);
+
+        // Ctrl/Meta+click → recursive
+        if (e.ctrlKey || e.metaKey) {
+            if (isCompact) {
+                // Expand all lazy descendants first
+                let pending;
+                while ((pending = samp.querySelectorAll('[data-lazy]')).length) {
+                    pending.forEach(expandLazy);
+                }
+                // Then expand all compact children
+                samp.querySelectorAll('samp.sf-dump-compact').forEach(function (s) {
+                    s.classList.replace('sf-dump-compact', 'sf-dump-expanded');
+                    const span = s.previousElementSibling && s.previousElementSibling.querySelector('span');
+                    if (span) span.textContent = '▼';
+                });
+            } else {
+                // Collapse all expanded children
+                samp.querySelectorAll('samp.sf-dump-expanded').forEach(function (s) {
+                    s.classList.replace('sf-dump-expanded', 'sf-dump-compact');
+                    const span = s.previousElementSibling && s.previousElementSibling.querySelector('span');
+                    if (span) span.textContent = '▶';
+                });
+            }
+        }
+
+        // Toggle current
+        samp.classList.toggle('sf-dump-compact', !isCompact);
+        samp.classList.toggle('sf-dump-expanded', isCompact);
+        toggle.querySelector('span').textContent = isCompact ? '▼' : '▶';
+    });
 
     // ------------------------------------------------------------------
 
