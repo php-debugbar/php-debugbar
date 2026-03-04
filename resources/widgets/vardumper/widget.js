@@ -1,14 +1,20 @@
 (function () {
     const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
 
+    let dumpId = 0;
+
     /**
-     * Renders a JSON variable dump as an interactive expandable/collapsible tree.
-     * Uses the same sf-dump-* CSS classes as Symfony's HtmlDumper for consistent styling.
+     * Renders a JSON variable dump as Sfdump()-compatible HTML.
+     *
+     * Generates HTML matching Symfony's HtmlDumper output format, then relies on
+     * Sfdump() (loaded via inline_head) for all interactivity (expand/collapse,
+     * search, cross-references).
      *
      * Usage:
      *   const renderer = new PhpDebugBar.Widgets.VarDumpRenderer({ expandedDepth: 1 });
      *   const el = renderer.render(jsonData);
      *   container.appendChild(el);
+     *   // Then PhpDebugBar.utils.sfDump(container) activates Sfdump on all pre.sf-dump[id]
      */
     class VarDumpRenderer {
         constructor(options) {
@@ -22,428 +28,247 @@
                 } catch (e) {
                     const pre = document.createElement('pre');
                     pre.className = 'sf-dump';
+                    pre.id = 'sf-dump-' + (++dumpId);
+                    pre.setAttribute('data-indent-pad', '  ');
                     pre.textContent = data;
                     return pre;
                 }
             }
 
-            // Dump node (from Symfony VarDumper)
-            if (data && typeof data === 'object' && data.t) {
-                const pre = document.createElement('pre');
-                pre.className = 'sf-dump';
-                this.renderNode(pre, data, 0);
-                return pre;
-            }
-
-            // Plain JSON value (from simple value fast path)
             const pre = document.createElement('pre');
             pre.className = 'sf-dump';
-            this.renderPlainValue(pre, data, 0);
+            pre.id = 'sf-dump-' + (++dumpId);
+            pre.setAttribute('data-indent-pad', '  ');
+
+            let html;
+            if (data && typeof data === 'object' && data.t) {
+                html = this.nodeToHtml(data, 0, '');
+            } else {
+                html = this.plainToHtml(data, 0, '');
+            }
+
+            pre.innerHTML = html + '\n';
             return pre;
         }
 
-        renderNode(parent, node, depth) {
+        esc(s) {
+            return String(s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        nodeToHtml(node, depth, indent) {
             if (!node || typeof node !== 'object') {
-                const span = document.createElement('span');
-                span.className = 'sf-dump-const';
-                span.textContent = 'null';
-                parent.appendChild(span);
-                return;
+                return '<span class=sf-dump-const>null</span>';
             }
 
             switch (node.t) {
                 case 's':
-                    this.renderScalar(parent, node);
-                    break;
+                    return this.scalarToHtml(node);
                 case 'r':
-                    this.renderString(parent, node);
-                    break;
+                    return this.stringToHtml(node);
                 case 'h':
-                    this.renderHash(parent, node, depth);
-                    break;
+                    return this.hashToHtml(node, depth, indent);
                 default:
-                    parent.appendChild(document.createTextNode(JSON.stringify(node)));
+                    return this.esc(JSON.stringify(node));
             }
         }
 
-        renderScalar(parent, node) {
-            const span = document.createElement('span');
+        scalarToHtml(node) {
             const st = node.st;
-
             if (st === 'boolean') {
-                span.className = 'sf-dump-const';
-                span.textContent = node.v === true ? 'true' : 'false';
-            } else if (st === 'NULL') {
-                span.className = 'sf-dump-const';
-                span.textContent = 'null';
-            } else if (st === 'integer' || st === 'double') {
-                span.className = 'sf-dump-num';
-                span.textContent = String(node.v);
-            } else if (st === 'label') {
-                // Labels are annotations (e.g., from SourceContextProvider)
-                if (node.v) {
-                    span.className = 'sf-dump-note';
-                    span.textContent = node.v;
-                    parent.appendChild(span);
-                }
-                return;
-            } else {
-                span.textContent = String(node.v);
+                return '<span class=sf-dump-const>' + (node.v === true ? 'true' : 'false') + '</span>';
             }
-
-            parent.appendChild(span);
+            if (st === 'NULL') {
+                return '<span class=sf-dump-const>null</span>';
+            }
+            if (st === 'integer' || st === 'double') {
+                return '<span class=sf-dump-num>' + this.esc(String(node.v)) + '</span>';
+            }
+            if (st === 'label') {
+                return node.v ? '<span class=sf-dump-note>' + this.esc(node.v) + '</span>' : '';
+            }
+            return this.esc(String(node.v));
         }
 
-        renderString(parent, node) {
-            const span = document.createElement('span');
-            span.className = 'sf-dump-str';
-
+        stringToHtml(node) {
+            const totalLen = node.len || (node.v.length + (node.cut || 0));
+            let html = '"<span class=sf-dump-str title="' + totalLen + ' characters">' + this.esc(node.v) + '</span>';
             if (node.cut > 0) {
-                span.appendChild(document.createTextNode('"' + node.v + '"'));
-                const ellipsis = document.createElement('span');
-                ellipsis.className = 'sf-dump-ellipsis';
-                const totalLen = node.len || (node.v.length + node.cut);
-                ellipsis.textContent = '\u2026' + totalLen;
-                span.appendChild(ellipsis);
-            } else {
-                span.textContent = '"' + node.v + '"';
+                html += '…';
             }
-
-            parent.appendChild(span);
+            html += '"';
+            return html;
         }
 
-        renderHash(parent, node, depth) {
+        hashToHtml(node, depth, indent) {
             const children = node.children || [];
             const hasChildren = children.length > 0;
-            const expanded = depth < this.expandedDepth;
             const ht = node.ht;
-
-            // Hash type labels:
-            // 1 = HASH_ASSOC (array), 2 = HASH_INDEXED (array), 4 = HASH_OBJECT, 5 = HASH_RESOURCE
             const isObject = (ht === 4);
             const isResource = (ht === 5);
             const isArray = (ht === 1 || ht === 2);
+            const closingChar = isArray ? ']' : '}';
+            const childIndent = indent + '  ';
+            const expanded = depth < this.expandedDepth;
+            const sampClass = expanded ? 'sf-dump-expanded' : 'sf-dump-compact';
+
+            let html = '';
 
             // Header
-            const header = document.createElement('span');
-
             if (isObject) {
-                const cls = document.createElement('span');
-                cls.className = 'sf-dump-note';
-                cls.textContent = String(node.cls || 'object');
-                header.appendChild(cls);
-
+                html += '<span class=sf-dump-note>' + this.esc(String(node.cls || 'object')) + '</span>';
+                html += ' {';
                 if (node.ref && node.ref.s) {
-                    const refId = document.createElement('span');
-                    refId.className = 'sf-dump-ref';
-                    refId.textContent = ' {#' + node.ref.s;
-                    header.appendChild(refId);
-                } else {
-                    header.appendChild(document.createTextNode(' {'));
+                    html += '<a class=sf-dump-ref>#' + this.esc(String(node.ref.s)) + '</a>';
                 }
             } else if (isResource) {
-                const cls = document.createElement('span');
-                cls.className = 'sf-dump-note';
-                cls.textContent = String(node.cls || 'resource');
-                header.appendChild(cls);
-                header.appendChild(document.createTextNode(' {'));
+                html += '<span class=sf-dump-note>' + this.esc(String(node.cls || 'resource')) + '</span>';
+                html += ' {';
             } else {
-                // Array: show "array:N [" when count > 0, just "[" for empty
+                // Array
                 if (node.cls) {
-                    const cls = document.createElement('span');
-                    cls.className = 'sf-dump-note';
-                    cls.textContent = 'array:' + node.cls;
-                    header.appendChild(cls);
-                    header.appendChild(document.createTextNode(' ['));
+                    html += '<span class=sf-dump-note>array:' + this.esc(String(node.cls)) + '</span> [';
                 } else {
-                    header.appendChild(document.createTextNode('['));
+                    html += '[';
                 }
             }
 
-            const closingChar = isArray ? ']' : '}';
-
-            parent.appendChild(header);
-
+            // Empty hash
             if (!hasChildren && !node.cut) {
-                // Empty hash: array:0 [] or ClassName {}
-                parent.appendChild(document.createTextNode(closingChar));
-                return;
+                html += closingChar;
+                return html;
             }
 
+            // Cut-only (no expandable children)
             if (!hasChildren && node.cut > 0) {
-                // Cut-only (no expandable children): render compact inline
-                // e.g. array:12 [ …12] or ClassName {#id …12}
-                const cutSpan = document.createElement('span');
-                cutSpan.className = 'sf-dump-ellipsis';
-                cutSpan.textContent = ' \u2026' + node.cut;
-                parent.appendChild(cutSpan);
-                parent.appendChild(document.createTextNode(closingChar));
-                return;
+                html += ' …' + node.cut + closingChar;
+                return html;
             }
 
-            // Toggle arrow
-            const arrow = document.createElement('a');
-            arrow.className = 'sf-dump-toggle';
-            arrow.href = '#';
-            arrow.textContent = expanded ? '\u25BC' : '\u25B6'; // ▼ or ▶
+            // Children in <samp>
+            html += '<samp data-depth=' + (depth + 1) + ' class=' + sampClass + '>';
 
-            header.appendChild(arrow);
-
-            // Toggle container
-            const toggle = document.createElement('samp');
-            toggle.className = expanded ? 'sf-dump-expanded' : 'sf-dump-compact';
-
-            // Children container
-            const childrenEl = document.createElement('samp');
-            childrenEl.className = 'sf-dump-children';
-            if (!expanded) {
-                childrenEl.hidden = true;
-            }
-
-            // Render each child entry
             for (let i = 0; i < children.length; i++) {
                 const entry = children[i];
-                const line = document.createElement('span');
-                line.className = 'sf-dump-child';
+                html += '\n' + childIndent;
 
                 // Key
                 if (entry.kt !== undefined) {
-                    this.renderKey(line, entry);
+                    html += this.keyToHtml(entry);
                 }
 
-                // Hard reference indicator
+                // Hard reference
                 if (entry.ref) {
-                    const ref = document.createElement('span');
-                    ref.className = 'sf-dump-ref';
-                    ref.textContent = '&' + entry.ref + ' ';
-                    line.appendChild(ref);
+                    html += '<span class=sf-dump-ref>&amp;' + this.esc(String(entry.ref)) + '</span> ';
                 }
 
                 // Value
-                this.renderNode(line, entry.n, depth + 1);
-
-                line.appendChild(document.createTextNode('\n'));
-                childrenEl.appendChild(line);
+                html += this.nodeToHtml(entry.n, depth + 1, childIndent);
             }
 
-            // Cut indicator (inside expanded children)
+            // Cut indicator
             if (node.cut > 0) {
-                const cutLine = document.createElement('span');
-                cutLine.className = 'sf-dump-child';
-                const cutSpan = document.createElement('span');
-                cutSpan.className = 'sf-dump-ellipsis';
-                cutSpan.textContent = '\u2026' + node.cut;
-                cutLine.appendChild(cutSpan);
-                cutLine.appendChild(document.createTextNode('\n'));
-                childrenEl.appendChild(cutLine);
+                html += '\n' + childIndent + '…' + node.cut;
             }
 
-            // Closing bracket inside expanded view (on its own line, at parent indent)
-            childrenEl.appendChild(document.createTextNode(closingChar));
-
-            toggle.appendChild(childrenEl);
-
-            // Collapsed summary: " …]" or " …}" (includes closing bracket)
-            const summary = document.createElement('span');
-            summary.className = 'sf-dump-summary';
-            if (expanded) {
-                summary.hidden = true;
-            }
-            summary.textContent = ' \u2026' + closingChar;
-            toggle.appendChild(summary);
-
-            parent.appendChild(toggle);
-
-            // Click handler for expand/collapse
-            let isExpanded = expanded;
-            const toggleHandler = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-                isExpanded = !isExpanded;
-                childrenEl.hidden = !isExpanded;
-                summary.hidden = isExpanded;
-                arrow.textContent = isExpanded ? '\u25BC' : '\u25B6'; // ▼ or ▶
-            };
-            header.style.cursor = 'pointer';
-            header.addEventListener('click', toggleHandler);
-            summary.style.cursor = 'pointer';
-            summary.addEventListener('click', toggleHandler);
+            html += '\n' + indent + '</samp>' + closingChar;
+            return html;
         }
 
-        renderPlainValue(parent, value, depth) {
-            if (value === null) {
-                const span = document.createElement('span');
-                span.className = 'sf-dump-const';
-                span.textContent = 'null';
-                parent.appendChild(span);
-            } else if (typeof value === 'boolean') {
-                const span = document.createElement('span');
-                span.className = 'sf-dump-const';
-                span.textContent = value ? 'true' : 'false';
-                parent.appendChild(span);
-            } else if (typeof value === 'number') {
-                const span = document.createElement('span');
-                span.className = 'sf-dump-num';
-                span.textContent = String(value);
-                parent.appendChild(span);
-            } else if (typeof value === 'string') {
-                const span = document.createElement('span');
-                span.className = 'sf-dump-str';
-                span.textContent = '"' + value + '"';
-                parent.appendChild(span);
-            } else if (Array.isArray(value)) {
-                this.renderPlainHash(parent, value, depth, true);
-            } else if (typeof value === 'object') {
-                this.renderPlainHash(parent, value, depth, false);
-            }
-        }
-
-        renderPlainHash(parent, value, depth, isArray) {
-            const keys = isArray ? null : Object.keys(value);
-            const count = isArray ? value.length : keys.length;
-            const expanded = depth < this.expandedDepth;
-            const closingChar = isArray ? ']' : '}';
-
-            // Header
-            const header = document.createElement('span');
-            if (isArray && count > 0) {
-                const cls = document.createElement('span');
-                cls.className = 'sf-dump-note';
-                cls.textContent = 'array:' + count;
-                header.appendChild(cls);
-                header.appendChild(document.createTextNode(' ['));
-            } else {
-                header.appendChild(document.createTextNode(isArray ? '[' : '{'));
-            }
-            parent.appendChild(header);
-
-            if (count === 0) {
-                parent.appendChild(document.createTextNode(closingChar));
-                return;
-            }
-
-            // Toggle arrow
-            const arrow = document.createElement('a');
-            arrow.className = 'sf-dump-toggle';
-            arrow.href = '#';
-            arrow.textContent = expanded ? '\u25BC' : '\u25B6';
-            header.appendChild(arrow);
-
-            // Toggle container
-            const toggle = document.createElement('samp');
-
-            // Children container
-            const childrenEl = document.createElement('samp');
-            childrenEl.className = 'sf-dump-children';
-            if (!expanded) {
-                childrenEl.hidden = true;
-            }
-
-            // Render entries
-            const items = isArray ? value : keys;
-            for (let i = 0; i < items.length; i++) {
-                const line = document.createElement('span');
-                line.className = 'sf-dump-child';
-
-                const keySpan = document.createElement('span');
-                if (isArray) {
-                    keySpan.className = 'sf-dump-index';
-                    keySpan.textContent = String(i);
-                    line.appendChild(keySpan);
-                    line.appendChild(document.createTextNode(' => '));
-                    this.renderPlainValue(line, value[i], depth + 1);
-                } else {
-                    keySpan.className = 'sf-dump-key';
-                    keySpan.textContent = '"' + items[i] + '"';
-                    line.appendChild(keySpan);
-                    line.appendChild(document.createTextNode(' => '));
-                    this.renderPlainValue(line, value[items[i]], depth + 1);
-                }
-
-                line.appendChild(document.createTextNode('\n'));
-                childrenEl.appendChild(line);
-            }
-
-            // Closing bracket
-            childrenEl.appendChild(document.createTextNode(closingChar));
-            toggle.appendChild(childrenEl);
-
-            // Collapsed summary
-            const summary = document.createElement('span');
-            summary.className = 'sf-dump-summary';
-            if (expanded) {
-                summary.hidden = true;
-            }
-            summary.textContent = ' \u2026' + closingChar;
-            toggle.appendChild(summary);
-
-            parent.appendChild(toggle);
-
-            // Click handler for expand/collapse
-            let isExpanded = expanded;
-            const toggleHandler = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-                isExpanded = !isExpanded;
-                childrenEl.hidden = !isExpanded;
-                summary.hidden = isExpanded;
-                arrow.textContent = isExpanded ? '\u25BC' : '\u25B6';
-            };
-            header.style.cursor = 'pointer';
-            header.addEventListener('click', toggleHandler);
-            summary.style.cursor = 'pointer';
-            summary.addEventListener('click', toggleHandler);
-        }
-
-        renderKey(parent, entry) {
-            const span = document.createElement('span');
+        keyToHtml(entry) {
             const kt = entry.kt;
+            const k = this.esc(String(entry.k));
 
             switch (kt) {
                 case 'index':
-                    span.className = 'sf-dump-index';
-                    span.textContent = String(entry.k);
-                    parent.appendChild(span);
-                    parent.appendChild(document.createTextNode(' => '));
-                    break;
+                    return '<span class=sf-dump-index>' + k + '</span> => ';
                 case 'key':
-                    span.className = 'sf-dump-key';
-                    span.textContent = '"' + entry.k + '"';
-                    parent.appendChild(span);
-                    parent.appendChild(document.createTextNode(' => '));
-                    break;
+                    return '"<span class=sf-dump-key>' + k + '</span>" => ';
                 case 'public':
-                    span.className = 'sf-dump-public';
-                    span.textContent = '+' + entry.k;
-                    parent.appendChild(span);
-                    parent.appendChild(document.createTextNode(': '));
-                    break;
-                case 'protected':
-                    span.className = 'sf-dump-protected';
-                    span.textContent = '#' + entry.k;
-                    parent.appendChild(span);
-                    parent.appendChild(document.createTextNode(': '));
-                    break;
-                case 'private':
-                    span.className = 'sf-dump-private';
-                    span.textContent = '-' + entry.k;
-                    if (entry.kc) {
-                        span.setAttribute('title', 'Declared in ' + entry.kc);
+                    if (entry.dyn) {
+                        return '+"<span class=sf-dump-public title="Runtime added dynamic property">' + k + '</span>": ';
                     }
-                    parent.appendChild(span);
-                    parent.appendChild(document.createTextNode(': '));
-                    break;
+                    return '+<span class=sf-dump-public title="Public property">' + k + '</span>: ';
+                case 'protected':
+                    return '#<span class=sf-dump-protected title="Protected property">' + k + '</span>: ';
+                case 'private': {
+                    let title = 'Private property';
+                    if (entry.kc) {
+                        title += ' declared in ' + this.esc(entry.kc);
+                    }
+                    return '-<span class=sf-dump-private title="' + title + '">' + k + '</span>: ';
+                }
                 case 'meta':
-                    span.className = 'sf-dump-meta';
-                    span.textContent = entry.k;
-                    parent.appendChild(span);
-                    parent.appendChild(document.createTextNode(': '));
-                    break;
+                    return '<span class=sf-dump-meta>' + k + '</span>: ';
                 default:
-                    span.textContent = String(entry.k);
-                    parent.appendChild(span);
-                    parent.appendChild(document.createTextNode(': '));
+                    return k + ': ';
             }
+        }
+
+        plainToHtml(value, depth, indent) {
+            if (value === null) {
+                return '<span class=sf-dump-const>null</span>';
+            }
+            if (typeof value === 'boolean') {
+                return '<span class=sf-dump-const>' + (value ? 'true' : 'false') + '</span>';
+            }
+            if (typeof value === 'number') {
+                return '<span class=sf-dump-num>' + value + '</span>';
+            }
+            if (typeof value === 'string') {
+                return '"<span class=sf-dump-str title="' + value.length + ' characters">' + this.esc(value) + '</span>"';
+            }
+            if (Array.isArray(value)) {
+                return this.plainHashToHtml(value, depth, indent, true);
+            }
+            if (typeof value === 'object') {
+                return this.plainHashToHtml(value, depth, indent, false);
+            }
+            return this.esc(String(value));
+        }
+
+        plainHashToHtml(value, depth, indent, isArray) {
+            const keys = isArray ? null : Object.keys(value);
+            const count = isArray ? value.length : keys.length;
+            const closingChar = isArray ? ']' : '}';
+            const expanded = depth < this.expandedDepth;
+            const sampClass = expanded ? 'sf-dump-expanded' : 'sf-dump-compact';
+            const childIndent = indent + '  ';
+
+            let html = '';
+
+            // Header
+            if (isArray && count > 0) {
+                html += '<span class=sf-dump-note>array:' + count + '</span> [';
+            } else {
+                html += isArray ? '[' : '{';
+            }
+
+            if (count === 0) {
+                html += closingChar;
+                return html;
+            }
+
+            html += '<samp data-depth=' + (depth + 1) + ' class=' + sampClass + '>';
+
+            const items = isArray ? value : keys;
+            for (let i = 0; i < items.length; i++) {
+                html += '\n' + childIndent;
+
+                if (isArray) {
+                    html += '<span class=sf-dump-index>' + i + '</span> => ';
+                    html += this.plainToHtml(value[i], depth + 1, childIndent);
+                } else {
+                    html += '"<span class=sf-dump-key>' + this.esc(items[i]) + '</span>" => ';
+                    html += this.plainToHtml(value[items[i]], depth + 1, childIndent);
+                }
+            }
+
+            html += '\n' + indent + '</samp>' + closingChar;
+            return html;
         }
     }
     PhpDebugBar.Widgets.VarDumpRenderer = VarDumpRenderer;

@@ -102,9 +102,9 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $assets = $d->getAssets();
 
         $this->assertArrayHasKey('base_path', $assets);
-        $this->assertArrayHasKey('css', $assets);
+        $this->assertArrayHasKey('inline_head', $assets);
+        $this->assertArrayHasKey('html_var_dumper', $assets['inline_head']);
         $this->assertArrayHasKey('js', $assets);
-        $this->assertEquals('widget.css', $assets['css']);
         $this->assertEquals('widget.js', $assets['js']);
     }
 

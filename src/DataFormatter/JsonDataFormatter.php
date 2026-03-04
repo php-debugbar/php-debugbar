@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DebugBar\DataFormatter;
 
 use DebugBar\DataCollector\AssetProvider;
+use DebugBar\DataFormatter\VarDumper\DebugBarHtmlDumper;
 use DebugBar\DataFormatter\VarDumper\DebugBarJsonDumper;
 use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
@@ -107,10 +108,15 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
 
     public function getAssets(): array
     {
+        $dumper = new DebugBarHtmlDumper();
+        $dumper->resetDumpHeader();
+
         return [
+            'inline_head' => [
+                'html_var_dumper' => $dumper->getDumpHeaderByDebugBar(),
+            ],
             'base_path' => __DIR__ . '/../../resources/widgets/vardumper',
             'base_url' => 'vendor/php-debugbar/php-debugbar/resources/widgets/vardumper',
-            'css' => 'widget.css',
             'js' => 'widget.js',
         ];
     }
