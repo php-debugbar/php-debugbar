@@ -315,10 +315,12 @@ dl.phpdebugbar-widgets-kvlist {
 /* -------------------------------------- */
 
 dl.phpdebugbar-widgets-varlist,
+dl.phpdebugbar-widgets-jsonvarlist,
 dl.phpdebugbar-widgets-htmlvarlist {
   font-family: var(--debugbar-font-mono);
 }
-  dl.phpdebugbar-widgets-htmlvarlist dd {
+  dl.phpdebugbar-widgets-jsonvarlist dd,
+  dl.phpdebugbar-widgets-htmlvarlist dd{
     cursor: initial;
   }
 
