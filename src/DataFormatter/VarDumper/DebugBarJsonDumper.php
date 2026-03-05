@@ -19,7 +19,7 @@ use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
  *  - Scalar: {t:"s", s:<subtype>, v:<value>, a:<attrs>}  (s: b=bool, i=int, d=double, n=null, l=label)
  *  - String: {t:"r", v:<string>, bin:true, cut:<n>, len:<n>}
  *  - Hash:   {t:"h", ht:<type>, cls:<class>, d:<depth>, c:[...], cut:<n>, ref:<ref>}
- *  - Entry:  {n:<node>, k:<key>, kt:<keytype>}  (kt: i=index, k=key, pub/pro/pri/meta)
+ *  - Entry:  {n:<node>, k?:<key>, kt?:<keytype>}  (inferrable fields omitted for compactness)
  */
 class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
 {
@@ -197,13 +197,12 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
 
         switch ($cursor->hashType) {
             case Cursor::HASH_INDEXED:
-                $entry['k'] = $key;
-                $entry['kt'] = 'i';
+                // Both k and kt are inferrable (k from position, kt='i' from ht=2)
                 break;
 
             case Cursor::HASH_ASSOC:
+                // kt is inferrable from typeof k (int→'i', string→'k')
                 $entry['k'] = $key;
-                $entry['kt'] = is_int($key) ? 'i' : 'k';
                 break;
 
             case Cursor::HASH_RESOURCE:
@@ -212,28 +211,26 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
                 // no break
             case Cursor::HASH_OBJECT:
                 if (!isset($key[0]) || $key[0] !== "\0") {
-                    // Public property
+                    // Public property — kt='pub' is the default for objects, omit it
                     $entry['k'] = $key;
-                    $entry['kt'] = 'pub';
                 } elseif (($pos = strpos($key, "\0", 1)) !== false && $pos > 0) {
                     $prefix = substr($key, 1, $pos - 1);
                     $propName = substr($key, $pos + 1);
 
                     switch ($prefix[0]) {
-                        case '+': // Dynamic property
+                        case '+': // Dynamic property — kt='pub' is default, omit it
                             $entry['k'] = $propName;
-                            $entry['kt'] = 'pub';
                             $entry['dyn'] = true;
                             break;
-                        case '~': // Meta property
+                        case '~': // Meta property — must be explicit
                             $entry['k'] = $propName;
                             $entry['kt'] = 'meta';
                             break;
-                        case '*': // Protected property
+                        case '*': // Protected property — must be explicit
                             $entry['k'] = $propName;
                             $entry['kt'] = 'pro';
                             break;
-                        default: // Private property (prefix is the declaring class)
+                        default: // Private property — must be explicit
                             $entry['k'] = $propName;
                             $entry['kt'] = 'pri';
                             $entry['kc'] = $prefix;

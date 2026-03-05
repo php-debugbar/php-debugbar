@@ -148,7 +148,7 @@
             if (expanded) {
                 // Render children eagerly
                 html += '<samp data-depth=' + (depth + 1) + ' class=sf-dump-expanded>';
-                html += this.childrenToHtml(children, node.cut, depth, childIndent, indent);
+                html += this.childrenToHtml(children, node.cut, depth, childIndent, indent, ht);
                 html += '</samp>';
             } else {
                 // Lazy placeholder — store data, emit empty samp
@@ -159,6 +159,7 @@
                     depth: depth,
                     childIndent: childIndent,
                     indent: indent,
+                    ht: ht,
                     renderer: this,
                     expandedDepth: this.expandedDepth
                 });
@@ -169,13 +170,28 @@
             return html;
         }
 
-        childrenToHtml(children, cut, depth, childIndent, indent) {
+        childrenToHtml(children, cut, depth, childIndent, indent, ht) {
             let html = '';
             for (let i = 0; i < children.length; i++) {
                 const entry = children[i];
                 html += '\n' + childIndent;
-                if (entry.kt !== undefined) {
-                    html += this.keyToHtml(entry);
+
+                // Infer missing kt from parent hash type
+                let kt = entry.kt;
+                if (kt === undefined) {
+                    if (entry.k !== undefined || ht === 2) {
+                        if (ht === 2) kt = 'i';               // HASH_INDEXED
+                        else if (ht === 5) kt = 'meta';        // HASH_RESOURCE
+                        else if (ht === 4) kt = 'pub';         // HASH_OBJECT default
+                        else kt = (typeof entry.k === 'number') ? 'i' : 'k';  // HASH_ASSOC
+                    }
+                }
+
+                // Infer missing k from loop index (HASH_INDEXED)
+                const k = (entry.k !== undefined) ? entry.k : i;
+
+                if (kt !== undefined) {
+                    html += this.keyToHtml(kt, k, entry);
                 }
                 if (entry.ref) {
                     html += '<span class=sf-dump-ref>&amp;' + this.esc(String(entry.ref)) + '</span> ';
@@ -189,9 +205,8 @@
             return html;
         }
 
-        keyToHtml(entry) {
-            const kt = entry.kt;
-            const k = this.esc(String(entry.k));
+        keyToHtml(kt, key, entry) {
+            const k = this.esc(String(key));
 
             switch (kt) {
                 case 'i':
@@ -233,7 +248,7 @@
         const savedDepth = renderer.expandedDepth;
         renderer.expandedDepth = data.expandedDepth;
 
-        samp.innerHTML = renderer.childrenToHtml(data.children, data.cut, data.depth, data.childIndent, data.indent);
+        samp.innerHTML = renderer.childrenToHtml(data.children, data.cut, data.depth, data.childIndent, data.indent, data.ht);
 
         renderer.expandedDepth = savedDepth;
     }
