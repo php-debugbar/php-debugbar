@@ -49,7 +49,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $this->assertIsArray($data);
         $this->assertEquals('h', $data['t']);
         $this->assertEquals(2, $data['ht']); // HASH_INDEXED
-        $this->assertCount(3, $data['children']);
+        $this->assertCount(3, $data['c']);
         $this->assertArrayHasKey('_sd', $data);
     }
 
@@ -61,9 +61,9 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $this->assertIsArray($data);
         $this->assertEquals('h', $data['t']);
         $this->assertEquals(1, $data['ht']); // HASH_ASSOC
-        $this->assertCount(2, $data['children']);
-        $this->assertEquals('foo', $data['children'][0]['k']);
-        $this->assertEquals('key', $data['children'][0]['kt']);
+        $this->assertCount(2, $data['c']);
+        $this->assertEquals('foo', $data['c'][0]['k']);
+        $this->assertEquals('k', $data['c'][0]['kt']);
     }
 
     public function testNestedArray(): void
@@ -73,13 +73,13 @@ class JsonDataFormatterTest extends DebugBarTestCase
 
         $this->assertIsArray($data);
         $this->assertEquals('h', $data['t']);
-        $this->assertCount(2, $data['children']);
+        $this->assertCount(2, $data['c']);
 
         // Nested array child
-        $inner = $data['children'][0]['n'];
+        $inner = $data['c'][0]['n'];
         $this->assertEquals('h', $inner['t']);
         $this->assertEquals(2, $inner['ht']); // HASH_INDEXED
-        $this->assertCount(2, $inner['children']);
+        $this->assertCount(2, $inner['c']);
     }
 
     public function testObject(): void
@@ -94,12 +94,12 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $this->assertIsArray($data);
         $this->assertEquals('h', $data['t']);
         $this->assertEquals(4, $data['ht']); // HASH_OBJECT
-        $this->assertEquals('stdClass', $data['cls']);
-        $this->assertCount(2, $data['children']);
+        $this->assertArrayNotHasKey('cls', $data); // stdClass omitted like Symfony
+        $this->assertCount(2, $data['c']);
 
         // Properties should be public
-        $this->assertEquals('name', $data['children'][0]['k']);
-        $this->assertEquals('public', $data['children'][0]['kt']);
+        $this->assertEquals('name', $data['c'][0]['k']);
+        $this->assertEquals('pub', $data['c'][0]['kt']);
     }
 
     public function testEmptyArray(): void
@@ -109,7 +109,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
 
         $this->assertIsArray($data);
         $this->assertEquals('h', $data['t']);
-        $this->assertEmpty($data['children']);
+        $this->assertArrayNotHasKey('c', $data);
     }
 
     public function testDumpAsArray(): void
@@ -164,9 +164,9 @@ class JsonDataFormatterTest extends DebugBarTestCase
 
         $this->assertIsArray($data);
         // The inner array should be cut
-        $inner = $data['children'][0]['n'];
+        $inner = $data['c'][0]['n'];
         $this->assertEquals('h', $inner['t']);
-        $this->assertCount(2, $inner['children']);
+        $this->assertCount(2, $inner['c']);
         $this->assertGreaterThan(0, $inner['cut']);
     }
 
@@ -203,15 +203,15 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $this->assertEquals(4, $data['ht']); // HASH_OBJECT
 
         $keyTypes = [];
-        foreach ($data['children'] as $child) {
+        foreach ($data['c'] as $child) {
             if (isset($child['kt'])) {
                 $keyTypes[$child['k']] = $child['kt'];
             }
         }
 
-        $this->assertEquals('public', $keyTypes['pub']);
-        $this->assertEquals('protected', $keyTypes['prot']);
-        $this->assertEquals('private', $keyTypes['priv']);
+        $this->assertEquals('pub', $keyTypes['pub']);
+        $this->assertEquals('pro', $keyTypes['prot']);
+        $this->assertEquals('pri', $keyTypes['priv']);
     }
 
     public function testSimpleValueFastPath(): void

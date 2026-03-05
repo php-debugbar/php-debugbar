@@ -145,12 +145,12 @@ class JsonRoundtripTest extends DebugBarTestCase
 
     private function scalarToText(array $node): string
     {
-        return match ($node['st']) {
-            'integer' => (string) $node['v'],
-            'double' => !str_contains($s = (string) $node['v'], '.') ? $s . '.0' : $s,
-            'boolean' => $node['v'] ? 'true' : 'false',
-            'NULL' => 'null',
-            'label' => $node['v'] ?? '',
+        return match ($node['s']) {
+            'i' => (string) $node['v'],
+            'd' => !str_contains($s = (string) $node['v'], '.') ? $s . '.0' : $s,
+            'b' => $node['v'] ? 'true' : 'false',
+            'n' => 'null',
+            'l' => $node['v'] ?? '',
             default => (string) ($node['v'] ?? ''),
         };
     }
@@ -182,7 +182,7 @@ class JsonRoundtripTest extends DebugBarTestCase
         $isObject = ($ht === Cursor::HASH_OBJECT);
         $isResource = ($ht === Cursor::HASH_RESOURCE);
         $isArray = ($ht === Cursor::HASH_ASSOC || $ht === Cursor::HASH_INDEXED);
-        $children = $node['children'] ?? [];
+        $children = $node['c'] ?? [];
         $cls = $node['cls'] ?? null;
         $cut = $node['cut'] ?? 0;
         $ref = $node['ref'] ?? null;
@@ -257,11 +257,11 @@ class JsonRoundtripTest extends DebugBarTestCase
         $isDynamic = ($entry['dyn'] ?? false) === true;
 
         return match ($kt) {
-            'index' => $k . ' => ',
-            'key' => is_int($k) ? ($k . ' => ') : ('"' . $k . '" => '),
-            'public' => $isDynamic ? '+"' . $k . '": ' : '+' . $k . ': ',
-            'protected' => '#' . $k . ': ',
-            'private' => '-' . $k . ': ',
+            'i' => $k . ' => ',
+            'k' => is_int($k) ? ($k . ' => ') : ('"' . $k . '" => '),
+            'pub' => $isDynamic ? '+"' . $k . '": ' : '+' . $k . ': ',
+            'pro' => '#' . $k . ': ',
+            'pri' => '-' . $k . ': ',
             'meta' => $k . ': ',
             default => $k . ': ',
         };

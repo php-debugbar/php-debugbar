@@ -28,6 +28,14 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
         'max_depth' => 6,
     ];
 
+    /**
+     * Returns the raw value for scalars/short strings, or a dump node array for complex types.
+     *
+     * Simple values (null, bool, int, float, short string) pass through unchanged.
+     * Complex values return a dump node array — see {@see DebugBarJsonDumper::dumpAsArray()}.
+     *
+     * @return null|bool|int|float|string|array
+     */
     public function formatVar(mixed $data, bool $deep = true): mixed
     {
         if ($this->isSimpleValue($data)) {
