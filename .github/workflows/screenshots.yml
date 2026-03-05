@@ -43,6 +43,7 @@ jobs:
         uses: nick-fields/retry@v3
         with:
           max_attempts: 3
+          timeout_seconds: 30
           retry_on: error
           command: vendor/bin/phpunit --testsuite=Browser
 
