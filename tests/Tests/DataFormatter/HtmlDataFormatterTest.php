@@ -30,17 +30,17 @@ class HtmlDataFormatterTest extends DebugBarTestCase
     public function testAssetProvider(): void
     {
         $d = new HtmlDataFormatter();
-        $d->mergeDumperOptions(['styles' => $this->testStyles]);
         $assets = $d->getAssets();
-        $this->assertArrayHasKey('inline_head', $assets);
-        $this->assertCount(1, $assets);
+        $this->assertArrayHasKey('css', $assets);
+        $this->assertEquals('vardumper.css', $assets['css']);
+        $this->assertArrayHasKey('inline_js', $assets);
+        $this->assertArrayHasKey('html_var_dumper', $assets['inline_js']);
+        $this->assertArrayNotHasKey('inline_head', $assets);
 
-        $inlineHead = $assets['inline_head'];
-        $this->assertArrayHasKey('html_var_dumper', $inlineHead);
-        $this->assertCount(1, $inlineHead);
-
-        $assetText = $inlineHead['html_var_dumper'];
-        $this->assertStringContainsString(self::STYLE_STRING, $assetText);
+        // inline_js should contain Sfdump JS (not CSS)
+        $js = $assets['inline_js']['html_var_dumper'];
+        $this->assertStringNotContainsString('<style', $js);
+        $this->assertStringNotContainsString('</style>', $js);
     }
 
     public function testBasicOptionOperations(): void
@@ -189,13 +189,17 @@ class HtmlDataFormatterTest extends DebugBarTestCase
         // Test the actual operation of the dumper options
         $d = new HtmlDataFormatter();
 
-        // Test that the 'styles' option affects assets
+        // Assets should return inline_js (not inline_head) with Sfdump JS
         $d->resetDumperOptions();
         $assets = $d->getAssets();
-        $this->assertStringNotContainsString(self::STYLE_STRING, $assets['inline_head']['html_var_dumper']);
+        $this->assertArrayHasKey('inline_js', $assets);
+        $this->assertArrayHasKey('html_var_dumper', $assets['inline_js']);
+        $this->assertNotEmpty($assets['inline_js']['html_var_dumper']);
 
+        // Custom styles should still work — they affect the dumper used for per-dump rendering
         $d->resetDumperOptions(['styles' => $this->testStyles]);
         $assets = $d->getAssets();
-        $this->assertStringContainsString(self::STYLE_STRING, $assets['inline_head']['html_var_dumper']);
+        $this->assertArrayHasKey('inline_js', $assets);
+        $this->assertArrayHasKey('html_var_dumper', $assets['inline_js']);
     }
 }

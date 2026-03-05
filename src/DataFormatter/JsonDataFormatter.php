@@ -110,10 +110,9 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
 
     public function getAssets(): array
     {
-        $htmlFormatter = new HtmlDataFormatter();
-        $assets = $htmlFormatter->getAssets();
-        $assets['js'] = 'vardumper.js';
-
-        return $assets;
+        return [
+            'css' => 'vardumper.css',
+            'js' => 'vardumper.js',
+        ];
     }
 }
