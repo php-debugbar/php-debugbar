@@ -16,9 +16,10 @@ use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
  * and DataDumperInterface (the high-level dump(Data) interface).
  *
  * The output is a tree of nodes with short keys for compactness:
- *  - Scalar: {t:"s", st:<subtype>, v:<value>, a:<attrs>}
+ *  - Scalar: {t:"s", s:<subtype>, v:<value>, a:<attrs>}  (s: b=bool, i=int, d=double, n=null, l=label)
  *  - String: {t:"r", v:<string>, bin:true, cut:<n>, len:<n>}
- *  - Hash:   {t:"h", ht:<type>, cls:<class>, depth:<n>, children:[...], cut:<n>, ref:<ref>}
+ *  - Hash:   {t:"h", ht:<type>, cls:<class>, d:<depth>, c:[...], cut:<n>, ref:<ref>}
+ *  - Entry:  {n:<node>, k:<key>, kt:<keytype>}  (kt: i=index, k=key, pub/pro/pri/meta)
  */
 class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
 {
@@ -58,11 +59,19 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
         return $this->root ?? ['t' => 's', 'st' => 'NULL', 'v' => null];
     }
 
+    private const SCALAR_TYPE_MAP = [
+        'boolean' => 'b',
+        'integer' => 'i',
+        'double' => 'd',
+        'NULL' => 'n',
+        'label' => 'l',
+    ];
+
     public function dumpScalar(Cursor $cursor, string $type, $value): void
     {
         $node = [
             't' => 's',
-            'st' => $type,
+            's' => self::SCALAR_TYPE_MAP[$type] ?? $type,
             'v' => $value,
         ];
 
@@ -96,10 +105,13 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
         $node = [
             't' => 'h',
             'ht' => $type,
-            'cls' => $class,
-            'depth' => $cursor->depth,
-            'children' => [],
+            'd' => $cursor->depth,
         ];
+
+        // Omit class for stdClass (matches Symfony's behavior)
+        if ($class !== null && $class !== 'stdClass') {
+            $node['cls'] = $class;
+        }
 
         // Track object/resource identity (softRefHandle is the display ID #N)
         $handle = $cursor->softRefHandle ?: $cursor->softRefTo;
@@ -143,7 +155,8 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
     {
         if ($this->currentHash !== null) {
             $entry = $this->buildEntry($cursor, $node);
-            $this->currentHash['children'][] = $entry;
+            $this->currentHash['c'] ??= [];
+            $this->currentHash['c'][] = $entry;
         } else {
             $this->root = $node;
         }
@@ -175,12 +188,12 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
         switch ($cursor->hashType) {
             case Cursor::HASH_INDEXED:
                 $entry['k'] = $key;
-                $entry['kt'] = 'index';
+                $entry['kt'] = 'i';
                 break;
 
             case Cursor::HASH_ASSOC:
                 $entry['k'] = $key;
-                $entry['kt'] = is_int($key) ? 'index' : 'key';
+                $entry['kt'] = is_int($key) ? 'i' : 'k';
                 break;
 
             case Cursor::HASH_RESOURCE:
@@ -191,7 +204,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
                 if (!isset($key[0]) || $key[0] !== "\0") {
                     // Public property
                     $entry['k'] = $key;
-                    $entry['kt'] = 'public';
+                    $entry['kt'] = 'pub';
                 } elseif (($pos = strpos($key, "\0", 1)) !== false && $pos > 0) {
                     $prefix = substr($key, 1, $pos - 1);
                     $propName = substr($key, $pos + 1);
@@ -199,7 +212,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
                     switch ($prefix[0]) {
                         case '+': // Dynamic property
                             $entry['k'] = $propName;
-                            $entry['kt'] = 'public';
+                            $entry['kt'] = 'pub';
                             $entry['dyn'] = true;
                             break;
                         case '~': // Meta property
@@ -208,25 +221,25 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
                             break;
                         case '*': // Protected property
                             $entry['k'] = $propName;
-                            $entry['kt'] = 'protected';
+                            $entry['kt'] = 'pro';
                             break;
                         default: // Private property (prefix is the declaring class)
                             $entry['k'] = $propName;
-                            $entry['kt'] = 'private';
+                            $entry['kt'] = 'pri';
                             $entry['kc'] = $prefix;
                             break;
                     }
                 } else {
                     // Fallback: private with unknown class
                     $entry['k'] = $key;
-                    $entry['kt'] = 'private';
+                    $entry['kt'] = 'pri';
                     $entry['kc'] = '';
                 }
                 break;
 
             default:
                 $entry['k'] = $key;
-                $entry['kt'] = 'key';
+                $entry['kt'] = 'k';
                 break;
         }
 

@@ -67,17 +67,17 @@
         }
 
         scalarToHtml(node) {
-            const st = node.st;
-            if (st === 'boolean') {
+            const s = node.s;
+            if (s === 'b') {
                 return '<span class=sf-dump-const>' + (node.v === true ? 'true' : 'false') + '</span>';
             }
-            if (st === 'NULL') {
+            if (s === 'n') {
                 return '<span class=sf-dump-const>null</span>';
             }
-            if (st === 'integer' || st === 'double') {
+            if (s === 'i' || s === 'd') {
                 return '<span class=sf-dump-num>' + this.esc(String(node.v)) + '</span>';
             }
-            if (st === 'label') {
+            if (s === 'l') {
                 return node.v ? '<span class=sf-dump-note>' + this.esc(node.v) + '</span>' : '';
             }
             return this.esc(String(node.v));
@@ -94,7 +94,7 @@
         }
 
         hashToHtml(node, depth, indent) {
-            const children = node.children || [];
+            const children = node.c || [];
             const hasChildren = children.length > 0;
             const ht = node.ht;
             const isObject = (ht === 4);
@@ -109,8 +109,10 @@
             // Header
             let ref = '';
             if (isObject) {
-                html += '<span class=sf-dump-note>' + this.esc(String(node.cls || 'object')) + '</span>';
-                html += ' {';
+                if (node.cls) {
+                    html += '<span class=sf-dump-note>' + this.esc(String(node.cls)) + '</span> ';
+                }
+                html += '{';
                 if (node.ref && node.ref.s) {
                     ref = '<span class=sf-dump-ref>#' + this.esc(String(node.ref.s)) + '</span> ';
                 }
@@ -192,18 +194,18 @@
             const k = this.esc(String(entry.k));
 
             switch (kt) {
-                case 'index':
+                case 'i':
                     return '<span class=sf-dump-index>' + k + '</span> => ';
-                case 'key':
+                case 'k':
                     return '"<span class=sf-dump-key>' + k + '</span>" => ';
-                case 'public':
+                case 'pub':
                     if (entry.dyn) {
                         return '+"<span class=sf-dump-public title="Runtime added dynamic property">' + k + '</span>": ';
                     }
                     return '+<span class=sf-dump-public title="Public property">' + k + '</span>: ';
-                case 'protected':
+                case 'pro':
                     return '#<span class=sf-dump-protected title="Protected property">' + k + '</span>: ';
-                case 'private': {
+                case 'pri': {
                     let title = 'Private property';
                     if (entry.kc) {
                         title += ' declared in ' + this.esc(entry.kc);
