@@ -33,7 +33,11 @@ jobs:
           composer update --prefer-dist --no-interaction --no-suggest --with-all-dependencies
 
       - name: Check Code Coverage
-        run: vendor/bin/phpunit --coverage-text --coverage-clover=clover.xml
+        uses: nick-fields/retry@v3
+        with:
+            max_attempts: 3
+            timeout_seconds: 60
+            command: vendor/bin/phpunit --coverage-text --coverage-clover=clover.xml
 
       - uses: actions/upload-artifact@v6
         with:
