@@ -5,10 +5,6 @@ declare(strict_types=1);
 include __DIR__ . '/../vendor/autoload.php';
 
 use DebugBar\StandardDebugBar;
-use DebugBar\DataCollector\DataCollector;
-use DebugBar\DataFormatter\JsonDataFormatter;
-
-DataCollector::setDefaultDataFormatter(new JsonDataFormatter());
 
 $debugbar = new \DebugBar\DebugBar();
 $debugbarRenderer = $debugbar->getJavascriptRenderer();
