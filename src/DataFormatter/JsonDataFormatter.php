@@ -22,7 +22,9 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
 
     protected ?array $dumperOptions = null;
 
-    protected ?array $clonerOptions = [
+    protected static array $defaultClonerOptions = [
+        'max_string' => 10_000,
+        'max_items' => 1000,
         'max_depth' => 6,
     ];
 

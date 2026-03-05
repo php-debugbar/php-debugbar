@@ -151,7 +151,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
     {
         $d = new JsonDataFormatter();
         $options = $d->getClonerOptions();
-        $this->assertEquals(['max_string' => 10000, 'max_items' => 1000], $options);
+        $this->assertEquals(['max_string' => 10000, 'max_items' => 1000, 'max_depth' => 6], $options);
     }
 
     public function testMaxItems(): void
