@@ -18,21 +18,39 @@
     };
 
     /**
-     * Returns a string representation of value, using JSON.stringify
-     * if it's an object.
+     * Renders any value as a DOM element. Handles dump objects (with "_sd"
+     * marker), and plain HTML/scalar strings.
      *
-     * @param {object} value
-     * @param {boolean} prettify Uses htmlize() if true
-     * @return {string}
+     * @param {string|object} value
+     * @return {HTMLElement|string}
      */
+    let dumpRenderer;
     const renderValue = PhpDebugBar.Widgets.renderValue = function (value, prettify) {
+        // Dump object (from JsonDataFormatter)
+        if (value && typeof value === 'object' && '_sd' in value) {
+            if (!dumpRenderer) {
+                dumpRenderer = new PhpDebugBar.Widgets.VarDumpRenderer();
+            }
+            return dumpRenderer.render(value);
+        }
+
         if (typeof value !== 'string') {
             if (prettify) {
                 return htmlize(JSON.stringify(value, undefined, 2));
             }
             return JSON.stringify(value);
         }
+
         return value;
+    };
+
+    PhpDebugBar.Widgets.renderValueInto = function (el, value, prettify) {
+        const rendered = renderValue(value, prettify);
+        if (rendered instanceof Node) {
+            el.append(rendered);
+        } else {
+            el.insertAdjacentHTML('beforeend', rendered);
+        }
     };
 
     /**
@@ -507,7 +525,12 @@
 
             this.list = new ListWidget({ itemRenderer(li, value) {
                 let val;
-                if (value.message_html) {
+                if (value.message_json) {
+                    val = document.createElement('span');
+                    val.classList.add(csscls('value'));
+                    PhpDebugBar.Widgets.renderValueInto(val, value.message_json);
+                    li.append(val);
+                } else if (value.message_html) {
                     val = document.createElement('span');
                     val.classList.add(csscls('value'));
                     val.innerHTML = value.message_html;
@@ -570,6 +593,7 @@
                     contextTable.hidden = true;
                     contextTable.innerHTML = '<tr><th colspan="2">Context</th></tr>';
 
+                    const contextJsonData = value.context_json || {};
                     for (const key in value.context) {
                         if (typeof value.context[key] !== 'function') {
                             const tr = document.createElement('tr');
@@ -580,7 +604,11 @@
 
                             const td2 = document.createElement('td');
                             td2.classList.add(csscls('value'));
-                            td2.innerHTML = value.context[key];
+                            if (contextJsonData[key]) {
+                                PhpDebugBar.Widgets.renderValueInto(td2, contextJsonData[key]);
+                            } else {
+                                td2.innerHTML = value.context[key];
+                            }
                             tr.append(td2);
 
                             contextTable.append(tr);
@@ -810,14 +838,22 @@
                             for (const key in measure.params) {
                                 if (typeof measure.params[key] !== 'function') {
                                     const tr = document.createElement('tr');
-                                    tr.innerHTML = `<td class="${csscls('name')}">${key}</td><td class="${csscls('value')}"><pre><code>${measure.params[key]}</code></pre></td>`;
+                                    const nameTd = document.createElement('td');
+                                    nameTd.className = csscls('name');
+                                    nameTd.textContent = key;
+                                    tr.append(nameTd);
+
+                                    const valueTd = document.createElement('td');
+                                    valueTd.className = csscls('value');
+                                    PhpDebugBar.Widgets.renderValueInto(valueTd, measure.params[key]);
+                                    tr.append(valueTd);
                                     table.append(tr);
                                 }
                             }
                             li.append(table);
 
                             li.style.cursor = 'pointer';
-                            li.addEventListener('click', function () {
+                            li.addEventListener('click', function (event) {
                                 if (window.getSelection().type === 'Range' || event.target.closest('.sf-dump')) {
                                     return '';
                                 }
@@ -825,11 +861,6 @@
                                 table.hidden = !table.hidden;
                             });
 
-                            li.addEventListener('click', (event) => {
-                                if (event.target.closest('.sf-dump')) {
-                                    event.stopPropagation();
-                                }
-                            });
                         }
                     }
 

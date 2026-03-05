@@ -32,7 +32,12 @@ class DataFormatter implements DataFormatterInterface
 
     protected ?DataDumperInterface $dumper = null;
 
-    public function formatVar(mixed $data, bool $deep = true): string
+    public function formatVar(mixed $data, bool $deep = true): mixed
+    {
+        return trim($this->dumpClonedVar($this->cloneVar($data, $deep)));
+    }
+
+    protected function cloneVar(mixed $data, bool $deep): Data
     {
         $isNonIterableObject = is_object($data) && !is_iterable($data);
         if ($deep) {
@@ -43,9 +48,8 @@ class DataFormatter implements DataFormatterInterface
         }
 
         $cloner = $this->getCloner();
-        $data = $cloner->cloneVar($data)->withMaxDepth($maxDepth);
 
-        return trim($this->dumpClonedVar($data));
+        return $cloner->cloneVar($data)->withMaxDepth($maxDepth);
     }
 
     protected function dumpClonedVar(Data $data): string

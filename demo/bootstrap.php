@@ -52,7 +52,7 @@ $debugbar->setStorage(new DebugBar\Storage\FileStorage(__DIR__ . '/profiles'));
 $debugbarRenderer->setOpenHandlerUrl('open.php');
 
 // configs
-// $debugbar->useHtmlVarDumper();
+//\DebugBar\DataCollector\DataCollector::setDefaultDataFormatter(new \DebugBar\DataFormatter\JsonDataFormatter());
 // $debugbar->setEditor('vscode');
 // $debugbar->setEditor('vscode');
 // $debugbar->setRemoteReplacements(['/remote/demo/' => '/home/demo/']);

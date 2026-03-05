@@ -81,7 +81,15 @@
                     for (const key in request.details) {
                         if (typeof request.details[key] !== 'function') {
                             const row = document.createElement('tr');
-                            row.innerHTML = `<td class="${csscls('name')}">${key}</td><td class="${csscls('value')}"><pre><code>${request.details[key]}</code></pre></td>`;
+                            const nameTd = document.createElement('td');
+                            nameTd.className = csscls('name');
+                            nameTd.textContent = key;
+                            row.append(nameTd);
+
+                            const valueTd = document.createElement('td');
+                            valueTd.className = csscls('value');
+                            PhpDebugBar.Widgets.renderValueInto(valueTd, request.details[key]);
+                            row.append(valueTd);
                             tbody.append(row);
                         }
                     }

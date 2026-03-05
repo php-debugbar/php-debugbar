@@ -44,9 +44,11 @@ class ConfigCollector extends DataCollector implements Renderable, Resettable
             if (!is_string($v)) {
                 $v = $this->getDataFormatter()->formatVar($v);
 
-                $expanded = strpos((string) $v, 'sf-dump-expanded');
-                if ($expanded !== false) {
-                    $v = substr_replace($v, 'sf-dump-compact', $expanded, 16);
+                if ($this->isHtmlVarDumperUsed()) {
+                    $expanded = strpos((string) $v, 'sf-dump-expanded');
+                    if ($expanded !== false) {
+                        $v = substr_replace($v, 'sf-dump-compact', $expanded, 16);
+                    }
                 }
             }
             $this->data[$k] = $v;
@@ -66,9 +68,11 @@ class ConfigCollector extends DataCollector implements Renderable, Resettable
     public function getWidgets(): array
     {
         $name = $this->getName();
-        $widget = $this->isHtmlVarDumperUsed()
-            ? "PhpDebugBar.Widgets.HtmlVariableListWidget"
-            : "PhpDebugBar.Widgets.VariableListWidget";
+        $widget = match (true) {
+            $this->isJsonVarDumperUsed() => "PhpDebugBar.Widgets.JsonVariableListWidget",
+            $this->isHtmlVarDumperUsed() => "PhpDebugBar.Widgets.HtmlVariableListWidget",
+            default => "PhpDebugBar.Widgets.VariableListWidget",
+        };
         return [
             "$name" => [
                 "icon" => "adjustments",

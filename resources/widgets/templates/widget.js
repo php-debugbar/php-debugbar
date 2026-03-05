@@ -80,7 +80,15 @@
                     for (const key in tpl.params) {
                         if (typeof tpl.params[key] !== 'function') {
                             const row = document.createElement('tr');
-                            row.innerHTML = `<td class="${csscls('name')}">${key}</td><td class="${csscls('value')}"><pre><code>${tpl.params[key]}</code></pre></td>`;
+                            const nameTd = document.createElement('td');
+                            nameTd.className = csscls('name');
+                            nameTd.textContent = key;
+                            row.append(nameTd);
+
+                            const valueTd = document.createElement('td');
+                            valueTd.className = csscls('value');
+                            PhpDebugBar.Widgets.renderValueInto(valueTd, tpl.params[key]);
+                            row.append(valueTd);
                             tbody.append(row);
                         }
                     }

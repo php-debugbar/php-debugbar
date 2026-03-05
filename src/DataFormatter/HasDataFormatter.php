@@ -26,7 +26,16 @@ trait HasDataFormatter
      */
     public function isHtmlVarDumperUsed(): bool
     {
-        return $this->dataFormatter instanceof HtmlDataFormatter;
+        return $this->getDataFormatter() instanceof HtmlDataFormatter;
+    }
+
+    /**
+     * Indicates whether the JSON VarDumper will be used to dump variables for client-side
+     * rendering.
+     */
+    public function isJsonVarDumperUsed(): bool
+    {
+        return $this->getDataFormatter() instanceof JsonDataFormatter;
     }
 
     /**
