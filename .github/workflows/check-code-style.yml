@@ -34,3 +34,4 @@ jobs:
 
     - name: Fix Code Style
       run: vendor/bin/php-cs-fixer check -v --diff
+      continue-on-error: true

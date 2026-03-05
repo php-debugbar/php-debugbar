@@ -53,5 +53,6 @@ jobs:
 
     - name: Commit Compiled Files
       uses: stefanzweifel/git-auto-commit-action@v7
+      continue-on-error: true
       with:
         commit_message: Update Assets
