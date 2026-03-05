@@ -128,10 +128,11 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $d = new JsonDataFormatter();
         $assets = $d->getAssets();
 
-        $this->assertArrayHasKey('inline_head', $assets);
-        $this->assertArrayHasKey('html_var_dumper', $assets['inline_head']);
+        $this->assertArrayHasKey('css', $assets);
+        $this->assertEquals('vardumper.css', $assets['css']);
         $this->assertArrayHasKey('js', $assets);
         $this->assertEquals('vardumper.js', $assets['js']);
+        $this->assertArrayNotHasKey('inline_head', $assets);
     }
 
     public function testDumperOptions(): void

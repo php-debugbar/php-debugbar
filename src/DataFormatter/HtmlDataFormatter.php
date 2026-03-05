@@ -142,14 +142,20 @@ class HtmlDataFormatter extends DataFormatter implements AssetProvider
      * Returns assets required for rendering variables.
      *
      */
+    public static function getDefaultStyles(): array
+    {
+        return static::$defaultDumperOptions['styles'];
+    }
+
     public function getAssets(): array
     {
         $dumper = $this->getDumper();
         if ($dumper instanceof DebugBarHtmlDumper) {
-            $dumper->resetDumpHeader(); // this will cause the default dump header to regenerate
+            $dumper->resetDumpHeader();
             return [
-                'inline_head' => [
-                    'html_var_dumper' => $dumper->getDumpHeaderByDebugBar(),
+                'css' => 'vardumper.css',
+                'inline_js' => [
+                    'html_var_dumper' => $dumper->getDumpJs(),
                 ],
             ];
         }

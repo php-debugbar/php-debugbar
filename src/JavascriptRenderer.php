@@ -90,6 +90,7 @@ class JavascriptRenderer
         'widgets/templates/widget.js',
         'widgets/http/widget.js',
         'highlight.css',
+        'vardumper.css',
     ];
 
     /** @var list<array{

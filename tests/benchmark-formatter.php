@@ -313,7 +313,7 @@ printf("JSON payload size:  %s\n", formatBytes(strlen($jsonPayload)));
 printf("Difference:         %+.0f%%\n", $payloadDiff);
 echo "\n";
 
-// ── 4. Symfony asset overhead ────────────────────────────────────────
+// ── 4. Asset overhead ────────────────────────────────────────────────
 
 echo "4. ASSET OVERHEAD\n";
 echo "$separator\n";
@@ -321,23 +321,23 @@ echo "$separator\n";
 $htmlAssets = $htmlFormatter->getAssets();
 $jsonAssets = $jsonFormatter->getAssets();
 
-// Both formatters now use inline_head for Sfdump JS+CSS
-if (isset($htmlAssets['inline_head']['html_var_dumper'])) {
-    $htmlInlineSize = strlen($htmlAssets['inline_head']['html_var_dumper']);
-    printf("HTML inline_head (Sfdump JS+CSS): %s\n", formatBytes($htmlInlineSize));
-}
+// Shared vardumper.css (static, cached by the browser)
+$cssFile = __DIR__ . '/../resources/' . ($htmlAssets['css'] ?? 'vardumper.css');
+$cssSize = file_exists($cssFile) ? filesize($cssFile) : 0;
+printf("vardumper.css (shared):           %s\n", formatBytes($cssSize));
+echo "  → Static file, cached by the browser\n";
 
-if (isset($jsonAssets['inline_head']['html_var_dumper'])) {
-    $jsonInlineSize = strlen($jsonAssets['inline_head']['html_var_dumper']);
-    printf("JSON inline_head (Sfdump JS+CSS): %s\n", formatBytes($jsonInlineSize));
-    echo "  → Same Sfdump bundle, deduplicated by shared 'html_var_dumper' key\n";
+// HTML inline_js (Sfdump JS only)
+if (isset($htmlAssets['inline_js']['html_var_dumper'])) {
+    $htmlInlineJsSize = strlen($htmlAssets['inline_js']['html_var_dumper']);
+    printf("HTML inline_js (Sfdump JS):       %s\n", formatBytes($htmlInlineJsSize));
 }
 
 // JSON widget.js (client-side renderer)
 $jsonBasePath = $jsonAssets['base_path'] ?? '';
 $jsFile = $jsonBasePath . '/' . ($jsonAssets['js'] ?? '');
 $jsSize = file_exists($jsFile) ? filesize($jsFile) : 0;
-printf("JSON widget.js:                   %s\n", formatBytes($jsSize));
+printf("JSON vardumper.js:                %s\n", formatBytes($jsSize));
 echo "  → Static file, cached by the browser\n";
 
 echo "\n$separator\n";
