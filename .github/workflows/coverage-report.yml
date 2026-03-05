@@ -37,7 +37,6 @@ jobs:
         with:
             max_attempts: 3
             timeout_seconds: 60
-            retry_on: error
             command: vendor/bin/phpunit --coverage-text --coverage-clover=clover.xml
 
       - uses: actions/upload-artifact@v6
