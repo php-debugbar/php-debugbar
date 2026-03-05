@@ -38,7 +38,7 @@ if ($startPos !== false && $endPos !== false) {
 
     // Replace the content between markers
     $newTemplate = substr($template, 0, $startPos)
-        . "\n" . $generatedScripts . "\n"
+        . "\n{% raw %}\n" . $generatedScripts . "\n{% endraw %}\n"
         . substr($template, $endPos);
 
     // Write back to the file
