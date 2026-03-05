@@ -28,10 +28,12 @@
                 pre.className = 'sf-dump';
                 pre.setAttribute('data-indent-pad', '  ');
 
+                const savedDepth = this.expandedDepth;
                 if (typeof data._sd === 'number') {
                     this.expandedDepth = data._sd;
                 }
                 pre.innerHTML = this.nodeToHtml(data, 0, '') + '\n';
+                this.expandedDepth = savedDepth;
 
                 return pre;
             }
@@ -144,25 +146,8 @@
             if (expanded) {
                 // Render children eagerly
                 html += '<samp data-depth=' + (depth + 1) + ' class=sf-dump-expanded>';
-
-                for (let i = 0; i < children.length; i++) {
-                    const entry = children[i];
-                    html += '\n' + childIndent;
-
-                    if (entry.kt !== undefined) {
-                        html += this.keyToHtml(entry);
-                    }
-                    if (entry.ref) {
-                        html += '<span class=sf-dump-ref>&amp;' + this.esc(String(entry.ref)) + '</span> ';
-                    }
-                    html += this.nodeToHtml(entry.n, depth + 1, childIndent);
-                }
-
-                if (node.cut > 0) {
-                    html += '\n' + childIndent + '…' + node.cut;
-                }
-
-                html += '\n' + indent + '</samp>';
+                html += this.childrenToHtml(children, node.cut, depth, childIndent, indent);
+                html += '</samp>';
             } else {
                 // Lazy placeholder — store data, emit empty samp
                 const id = ++lazySeq;
@@ -179,6 +164,26 @@
             }
 
             html += closingChar;
+            return html;
+        }
+
+        childrenToHtml(children, cut, depth, childIndent, indent) {
+            let html = '';
+            for (let i = 0; i < children.length; i++) {
+                const entry = children[i];
+                html += '\n' + childIndent;
+                if (entry.kt !== undefined) {
+                    html += this.keyToHtml(entry);
+                }
+                if (entry.ref) {
+                    html += '<span class=sf-dump-ref>&amp;' + this.esc(String(entry.ref)) + '</span> ';
+                }
+                html += this.nodeToHtml(entry.n, depth + 1, childIndent);
+            }
+            if (cut > 0) {
+                html += '\n' + childIndent + '…' + cut;
+            }
+            html += '\n' + indent;
             return html;
         }
 
@@ -216,36 +221,18 @@
 
     function expandLazy(samp) {
         const id = parseInt(samp.dataset.lazy, 10);
+        delete samp.dataset.lazy;
+
         const data = lazyStore.get(id);
         if (!data) return;
+        lazyStore.delete(id);
 
         const renderer = data.renderer;
         const savedDepth = renderer.expandedDepth;
         renderer.expandedDepth = data.expandedDepth;
 
-        let html = '';
-        for (let i = 0; i < data.children.length; i++) {
-            const entry = data.children[i];
-            html += '\n' + data.childIndent;
+        samp.innerHTML = renderer.childrenToHtml(data.children, data.cut, data.depth, data.childIndent, data.indent);
 
-            if (entry.kt !== undefined) {
-                html += renderer.keyToHtml(entry);
-            }
-            if (entry.ref) {
-                html += '<span class=sf-dump-ref>&amp;' + renderer.esc(String(entry.ref)) + '</span> ';
-            }
-            html += renderer.nodeToHtml(entry.n, data.depth + 1, data.childIndent);
-        }
-
-        if (data.cut > 0) {
-            html += '\n' + data.childIndent + '…' + data.cut;
-        }
-
-        html += '\n' + data.indent;
-        samp.innerHTML = html;
-
-        delete samp.dataset.lazy;
-        lazyStore.delete(id);
         renderer.expandedDepth = savedDepth;
     }
 
@@ -317,12 +304,7 @@
             dt.appendChild(span);
 
             const rawValue = (value && value.value !== undefined) ? value.value : value;
-            const rendered = PhpDebugBar.Widgets.renderValue(rawValue);
-            if (rendered instanceof Node) {
-                dd.appendChild(rendered);
-            } else {
-                dd.innerHTML += rendered;
-            }
+            PhpDebugBar.Widgets.renderValueInto(dd, rawValue);
 
             if (value && value.xdebug_link) {
                 dd.appendChild(PhpDebugBar.Widgets.editorLink(value.xdebug_link));

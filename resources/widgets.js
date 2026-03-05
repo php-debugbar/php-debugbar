@@ -22,7 +22,7 @@
      * marker), and plain HTML/scalar strings.
      *
      * @param {string|object} value
-     * @return {HTMLElement}
+     * @return {HTMLElement|string}
      */
     let dumpRenderer;
     const renderValue = PhpDebugBar.Widgets.renderValue = function (value, prettify) {
@@ -42,6 +42,15 @@
         }
 
         return value;
+    };
+
+    PhpDebugBar.Widgets.renderValueInto = function (el, value, prettify) {
+        const rendered = renderValue(value, prettify);
+        if (rendered instanceof Node) {
+            el.append(rendered);
+        } else {
+            el.insertAdjacentHTML('beforeend', rendered);
+        }
     };
 
     /**
@@ -519,8 +528,7 @@
                 if (value.message_json) {
                     val = document.createElement('span');
                     val.classList.add(csscls('value'));
-                    const renderer = new PhpDebugBar.Widgets.VarDumpRenderer();
-                    val.append(renderer.render(value.message_json));
+                    PhpDebugBar.Widgets.renderValueInto(val, value.message_json);
                     li.append(val);
                 } else if (value.message_html) {
                     val = document.createElement('span');
@@ -597,8 +605,7 @@
                             const td2 = document.createElement('td');
                             td2.classList.add(csscls('value'));
                             if (contextJsonData[key]) {
-                                const ctxRenderer = new PhpDebugBar.Widgets.VarDumpRenderer();
-                                td2.append(ctxRenderer.render(contextJsonData[key]));
+                                PhpDebugBar.Widgets.renderValueInto(td2, contextJsonData[key]);
                             } else {
                                 td2.innerHTML = value.context[key];
                             }
@@ -838,8 +845,7 @@
 
                                     const valueTd = document.createElement('td');
                                     valueTd.className = csscls('value');
-                                    const rendered = PhpDebugBar.Widgets.renderValue(measure.params[key]);
-                                    if (rendered instanceof Node) { valueTd.append(rendered); } else { valueTd.innerHTML = rendered; }
+                                    PhpDebugBar.Widgets.renderValueInto(valueTd, measure.params[key]);
                                     tr.append(valueTd);
                                     table.append(tr);
                                 }
