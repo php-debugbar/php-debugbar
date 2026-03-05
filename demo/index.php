@@ -29,7 +29,7 @@ $debugbar['messages']->addMessage('This is a demo', 'warning');
 // Object with extra context
 $debugbar['messages']->addMessage(['toto' => ['titi']], 'debug', ['foo' => 'bar']);
 
-$debugbar['messages']->addMessage($debugbar, 'error');
+$debugbar['messages']->addMessage($debugbar);
 $debugbar['messages']->addMessage('welcome!', 'success');
 $debugbar['messages']->addMessage('panic!', 'critical');
 $debugbar["messages"]->addMessage("<!--<script>");
