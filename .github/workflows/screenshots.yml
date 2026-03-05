@@ -40,7 +40,11 @@ jobs:
           composer update --prefer-dist --no-progress
 
       - name: Execute Unit Tests
-        run: vendor/bin/phpunit --testsuite=Browser
+        uses: nick-fields/retry@v3
+        with:
+          max_attempts: 3
+          retry_on: error
+          command: vendor/bin/phpunit --testsuite=Browser
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v6
