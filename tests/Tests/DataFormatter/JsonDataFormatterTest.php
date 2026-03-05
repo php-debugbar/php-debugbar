@@ -63,7 +63,8 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $this->assertEquals(1, $data['ht']); // HASH_ASSOC
         $this->assertCount(2, $data['c']);
         $this->assertEquals('foo', $data['c'][0]['k']);
-        $this->assertEquals('k', $data['c'][0]['kt']);
+        // kt is omitted — inferrable from typeof k (string→'k')
+        $this->assertArrayNotHasKey('kt', $data['c'][0]);
     }
 
     public function testNestedArray(): void
@@ -97,9 +98,9 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $this->assertArrayNotHasKey('cls', $data); // stdClass omitted like Symfony
         $this->assertCount(2, $data['c']);
 
-        // Properties should be public
+        // Properties should be public (kt omitted — 'pub' is default for objects)
         $this->assertEquals('name', $data['c'][0]['k']);
-        $this->assertEquals('pub', $data['c'][0]['kt']);
+        $this->assertArrayNotHasKey('kt', $data['c'][0]);
     }
 
     public function testEmptyArray(): void
@@ -151,7 +152,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
     {
         $d = new JsonDataFormatter();
         $options = $d->getClonerOptions();
-        $this->assertEquals(['max_string' => 10000, 'max_items' => 1000, 'max_depth' => 6], $options);
+        $this->assertEquals(['max_string' => 10000, 'max_items' => 1000], $options);
     }
 
     public function testMaxItems(): void
@@ -204,9 +205,8 @@ class JsonDataFormatterTest extends DebugBarTestCase
 
         $keyTypes = [];
         foreach ($data['c'] as $child) {
-            if (isset($child['kt'])) {
-                $keyTypes[$child['k']] = $child['kt'];
-            }
+            // kt='pub' is omitted (default for objects), so default to 'pub'
+            $keyTypes[$child['k']] = $child['kt'] ?? 'pub';
         }
 
         $this->assertEquals('pub', $keyTypes['pub']);

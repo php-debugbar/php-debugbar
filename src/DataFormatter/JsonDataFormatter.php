@@ -6,6 +6,7 @@ namespace DebugBar\DataFormatter;
 
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataFormatter\VarDumper\DebugBarJsonDumper;
+use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
 
 /**
@@ -21,12 +22,6 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     ];
 
     protected ?array $dumperOptions = null;
-
-    protected static array $defaultClonerOptions = [
-        'max_string' => 10_000,
-        'max_items' => 1000,
-        'max_depth' => 6,
-    ];
 
     /**
      * Returns the raw value for scalars/short strings, or a dump node array for complex types.
@@ -52,6 +47,20 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
         return parent::formatVar($data, $deep);
     }
 
+    protected function cloneVar(mixed $data, bool $deep): Data
+    {
+        $isNonIterableObject = is_object($data) && !is_iterable($data);
+        if ($deep) {
+            // Set sensible default max depth for deep dumps if not set
+            $maxDepth = $this->clonerOptions['max_depth'] ?? ($isNonIterableObject ? 3 : 5);
+        } else {
+            $maxDepth = min($this->clonerOptions['max_depth'] ?? 1, $isNonIterableObject ? 0 : 1);
+        }
+
+        $cloner = $this->getCloner();
+
+        return $cloner->cloneVar($data)->withMaxDepth($maxDepth);
+    }
     /**
      * Check if a value can be represented as plain JSON without the Symfony dump structure.
      * Only scalars, null, and short strings qualify — arrays always go through the dumper

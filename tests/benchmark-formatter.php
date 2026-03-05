@@ -17,6 +17,39 @@ use DebugBar\DataFormatter\JsonDataFormatter;
 
 // ── Test data ────────────────────────────────────────────────────────
 
+/**
+ * Build a tree of indexed arrays: each node has $width children, nested $depth levels deep.
+ * Leaf values are integers. This maximises the k/kt omission savings (both fields dropped).
+ */
+function buildIndexedTree(int $depth, int $width): array
+{
+    if ($depth <= 1) {
+        return array_fill(0, $width, 'leaf');
+    }
+    $arr = [];
+    for ($i = 0; $i < $width; $i++) {
+        $arr[] = buildIndexedTree($depth - 1, $width);
+    }
+    return $arr;
+}
+
+/**
+ * Build a tree of objects with public properties, nested $depth levels deep.
+ * Each object has $width public string props plus one child object (except leaves).
+ */
+function buildObjectTree(int $depth, int $width): object
+{
+    $obj = new \stdClass();
+    for ($i = 0; $i < $width; $i++) {
+        $prop = "prop_$i";
+        $obj->$prop = "val_{$depth}_{$i}";
+    }
+    if ($depth > 1) {
+        $obj->child = buildObjectTree($depth - 1, $width);
+    }
+    return $obj;
+}
+
 function buildTestData(): array
 {
     // 1. Small flat array
@@ -63,7 +96,9 @@ function buildTestData(): array
         'stats' => ['total_users' => 1500, 'active_today' => 342, 'memory_usage' => 67108864],
     ];
 
-    return [
+    // 7–13. Indexed arrays at increasing depth (width=3) — shows k/kt omission impact
+    //   Entry count grows as 3 + 3^2 + … + 3^depth. Depths beyond max_depth=6 get cut.
+    $result = [
         'small_array'  => $smallArray,
         'nested_array' => $nestedArray,
         'object'       => $object,
@@ -71,6 +106,15 @@ function buildTestData(): array
         'deep_nesting' => $deepNesting,
         'complex'      => $complex,
     ];
+
+    for ($d = 2; $d <= 6; $d++) {
+        $result["idx_depth$d"] = buildIndexedTree($d, 3);
+    }
+
+    // Object tree — shows pub kt omission at depth
+    $result['obj_depth4'] = buildObjectTree(4, 3);
+
+    return $result;
 }
 
 // ── Benchmark runner ─────────────────────────────────────────────────

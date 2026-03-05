@@ -222,9 +222,9 @@ class JsonRoundtripTest extends DebugBarTestCase
         $indent = str_repeat('  ', $depth + 1);
 
         // Children
-        foreach ($children as $entry) {
+        foreach ($children as $i => $entry) {
             $line = $indent;
-            $line .= $this->entryKeyToText($entry);
+            $line .= $this->entryKeyToText($entry, $ht, $i);
 
             // Hard reference
             if (isset($entry['ref'])) {
@@ -246,14 +246,28 @@ class JsonRoundtripTest extends DebugBarTestCase
         return $header . "\n" . implode("\n", $lines) . "\n" . $closingIndent . $closingChar;
     }
 
-    private function entryKeyToText(array $entry): string
+    private function entryKeyToText(array $entry, int $ht, int $index): string
     {
-        if (!isset($entry['kt'])) {
-            return '';
+        // Infer missing kt from parent hash type
+        $kt = $entry['kt'] ?? null;
+        if ($kt === null) {
+            if (isset($entry['k']) || $ht === Cursor::HASH_INDEXED) {
+                if ($ht === Cursor::HASH_INDEXED) {
+                    $kt = 'i';
+                } elseif ($ht === Cursor::HASH_RESOURCE) {
+                    $kt = 'meta';
+                } elseif ($ht === Cursor::HASH_OBJECT) {
+                    $kt = 'pub';
+                } else {
+                    $kt = is_int($entry['k']) ? 'i' : 'k';
+                }
+            } else {
+                return '';
+            }
         }
 
-        $k = $entry['k'];
-        $kt = $entry['kt'];
+        // Infer missing k from loop index (HASH_INDEXED)
+        $k = $entry['k'] ?? $index;
         $isDynamic = ($entry['dyn'] ?? false) === true;
 
         return match ($kt) {
