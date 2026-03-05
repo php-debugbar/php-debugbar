@@ -8,7 +8,7 @@ trait HidesMaskedValues
 {
     protected array $maskedKeys = [];
 
-    private array $compiledPatterns = [];
+    private array $patterns = [];
 
     /** @var array|string[]  */
     public static array $SENSITIVE_KEYS = ['password', 'secret', 'token', 'php-auth-pw'];
@@ -35,13 +35,10 @@ trait HidesMaskedValues
             $this->maskedKeys[] = strtolower($key);
         }
         $this->maskedKeys = array_unique($this->maskedKeys);
-        $this->compiledPatterns = [];
-        foreach (array_filter($this->maskedKeys, fn($key) => str_contains($key, '*')) as $pattern) {
-            $regex = preg_quote($pattern, '/');
-            $regex = str_replace('\*', '.*', $regex);
-
-            $this->compiledPatterns[] = '/^' . $regex . '$/u';
-        }
+        $this->patterns = array_filter(
+            $this->maskedKeys,
+            fn($key) => (bool) array_filter(['*', '?', '[', ']'], fn($n) => str_contains($key, $n))
+        );
     }
 
     public function maskValue(mixed $value): string
@@ -72,8 +69,8 @@ trait HidesMaskedValues
             return true;
         }
 
-        foreach ($this->compiledPatterns as $pattern) {
-            if (preg_match($pattern, $key)) {
+        foreach ($this->patterns as $pattern) {
+            if (fnmatch($pattern, $key)) {
                 return true;
             }
         }
