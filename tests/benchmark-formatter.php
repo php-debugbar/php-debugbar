@@ -19,16 +19,10 @@ use DebugBar\DataFormatter\JsonDataFormatter;
 
 function buildTestData(): array
 {
-    // 1. Simple scalar
-    $scalar = 42;
-
-    // 2. Short string
-    $shortString = 'Hello, world!';
-
-    // 3. Small flat array
+    // 1. Small flat array
     $smallArray = ['foo' => 'bar', 'baz' => 123, 'qux' => true];
 
-    // 4. Nested array (3 levels)
+    // 2. Nested array (3 levels)
     $nestedArray = [];
     for ($i = 0; $i < 10; $i++) {
         $nestedArray["key_$i"] = [
@@ -39,7 +33,7 @@ function buildTestData(): array
         ];
     }
 
-    // 5. Object with visibility
+    // 3. Object with visibility
     $object = new class {
         public string $name = 'TestObject';
         public int $id = 42;
@@ -49,16 +43,16 @@ function buildTestData(): array
         public array $items = ['alpha', 'beta', 'gamma', 'delta', 'epsilon'];
     };
 
-    // 6. Large flat array (100 items)
+    // 4. Large flat array (100 items)
     $largeArray = [];
     for ($i = 0; $i < 100; $i++) {
         $largeArray["item_$i"] = "value_$i";
     }
 
-    // 7. Deep nesting (5 levels)
+    // 5. Deep nesting (5 levels)
     $deepNesting = ['level1' => ['level2' => ['level3' => ['level4' => ['level5' => 'deep_value']]]]];
 
-    // 8. Mixed complex structure
+    // 6. Mixed complex structure
     $complex = [
         'users' => [
             ['id' => 1, 'name' => 'Alice', 'roles' => ['admin', 'user'], 'settings' => ['theme' => 'dark', 'lang' => 'en']],
@@ -70,8 +64,6 @@ function buildTestData(): array
     ];
 
     return [
-        'scalar'       => $scalar,
-        'short_string' => $shortString,
         'small_array'  => $smallArray,
         'nested_array' => $nestedArray,
         'object'       => $object,
