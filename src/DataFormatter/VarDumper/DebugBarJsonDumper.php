@@ -46,6 +46,16 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
 
     /**
      * Dump a Data object and return the raw PHP array (avoids double-encoding).
+     *
+     * @return array{
+     *     t: 's', s: string, v: mixed, a?: array<string, mixed>
+     * }|array{
+     *     t: 'r', v: string, bin?: true, cut?: int, len?: int
+     * }|array{
+     *     t: 'h', ht: int, cls?: string, d: int, c?: list<array{
+     *         n: array<string, mixed>, k?: string|int, kt?: string, kc?: string, dyn?: true, ref?: int
+     *     }>, cut?: int, ref?: array{s: int, c: int}
+     * }
      */
     public function dumpAsArray(Data $data): array
     {
