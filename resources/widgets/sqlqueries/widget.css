@@ -183,3 +183,17 @@ div.phpdebugbar-widgets-sqlqueries td.phpdebugbar-widgets-value li.phpdebugbar-w
 div.phpdebugbar-widgets-sqlqueries .phpdebugbar-text-muted {
   color: var(--debugbar-text-muted);
 }
+
+div.phpdebugbar-widgets-sqlqueries .phpdebugbar-widgets-transaction,
+div.phpdebugbar-widgets-sqlqueries .phpdebugbar-widgets-message,
+div.phpdebugbar-widgets-sqlqueries .phpdebugbar-widgets-info {
+  font-weight: bolder;
+}
+
+div.phpdebugbar-widgets-sqlqueries .phpdebugbar-widgets-transaction {
+  color: #d73a49;
+}
+
+[data-theme=dark] div.phpdebugbar-widgets-sqlqueries .phpdebugbar-widgets-transaction {
+  color: #ff7b72;
+}
