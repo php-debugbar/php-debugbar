@@ -176,6 +176,7 @@ div.phpdebugbar-widgets-messages {
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item pre.sf-dump {
     display: inline-block !important;
     padding-top: 0px;
+    padding-left: 0px;
     padding-bottom: 0px;
   }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-collector,
