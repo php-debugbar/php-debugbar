@@ -55,7 +55,7 @@ class JsonRoundtripTest extends DebugBarTestCase
 
         // Actual: JSON → text reconstruction
         $json = $this->jsonDumper->dumpAsArray($data);
-        $actual = rtrim($this->jsonToText($json, 0));
+        $actual = rtrim((new ReverseJsonDumper())->reverseFormatVar($json));
 
         $this->assertEquals($expected, $actual, "Roundtrip failed for: $description");
     }
@@ -128,14 +128,4 @@ class JsonRoundtripTest extends DebugBarTestCase
         $x = 42;
         yield [['x' => &$x, 'y' => &$x], 'hard reference'];
     }
-
-    // ---------------------------------------------------------------
-    // JSON → Text reconstruction (mirrors CliDumper output format)
-    // ---------------------------------------------------------------
-
-    private function jsonToText(array $node, int $depth): string
-    {
-        return (new ReverseJsonDumper())->reverseFormatVar($node, $depth);
-    }
-
 }
