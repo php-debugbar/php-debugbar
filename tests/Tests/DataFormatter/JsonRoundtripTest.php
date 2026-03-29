@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace DebugBar\Tests\DataFormatter;
 
+use DebugBar\DataFormatter\VarDumper\DebugBarJsonCaster;
 use DebugBar\DataFormatter\VarDumper\DebugBarJsonDumper;
+use DebugBar\DataFormatter\VarDumper\DebugBarJsonVar;
 use DebugBar\DataFormatter\VarDumper\ReverseJsonDumper;
 use DebugBar\Tests\DebugBarTestCase;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
@@ -58,6 +60,85 @@ class JsonRoundtripTest extends DebugBarTestCase
         $actual = rtrim((new ReverseJsonDumper())->reverseFormatVar($json));
 
         $this->assertEquals($expected, $actual, "Roundtrip failed for: $description");
+    }
+
+    /**
+     * @dataProvider casterValueProvider
+     */
+    public function testCasterRoundtrip(mixed $value, string $description, ?int $maxDepth = null, ?int $maxItems = null, ?int $maxString = null): void
+    {
+        if ($maxItems !== null) {
+            $this->cloner->setMaxItems($maxItems);
+        }
+        if ($maxString !== null) {
+            $this->cloner->setMaxString($maxString);
+        }
+
+        $data = $this->cloner->cloneVar($value);
+        if ($maxDepth !== null) {
+            $data = $data->withMaxDepth($maxDepth);
+        }
+
+        // Expected: CliDumper text output from direct dump
+        $expected = rtrim($this->cliDumper->dump($data, true));
+
+        // Actual: JSON → DebugBarJsonVar → VarCloner with caster → CliDumper
+        $json = $this->jsonDumper->dumpAsArray($data);
+        $casterCloner = new VarCloner();
+        $casterCloner->addCasters(DebugBarJsonCaster::getCasters());
+        $casterData = $casterCloner->cloneVar(new DebugBarJsonVar($json));
+        $actual = rtrim($this->cliDumper->dump($casterData, true));
+
+        $this->assertEquals($expected, $actual, "Caster roundtrip failed for: $description");
+    }
+
+    public static function casterValueProvider(): iterable
+    {
+        // Scalars
+        yield [42, 'integer'];
+        yield [0, 'zero'];
+        yield [-1, 'negative integer'];
+        yield [3.14, 'float'];
+        yield [0.0, 'zero float'];
+        yield [true, 'boolean true'];
+        yield [false, 'boolean false'];
+        yield [null, 'null'];
+
+        // Strings
+        yield ['hello world', 'simple string'];
+        yield ['', 'empty string'];
+        yield ['a', 'single char'];
+        yield ["line1\nline2", 'multiline string'];
+
+        // Arrays
+        yield [[], 'empty array'];
+        yield [[1, 2, 3], 'indexed array'];
+        yield [['foo' => 'bar', 'baz' => 42], 'assoc array'];
+        yield [['a' => [1, 2], 'b' => true], 'nested array'];
+        yield [[0 => 'a', 2 => 'b'], 'sparse indexed array'];
+
+        // Objects
+        yield [new \stdClass(), 'empty stdClass'];
+        $obj = new \stdClass();
+        $obj->name = 'test';
+        $obj->value = 123;
+        yield [$obj, 'stdClass with properties'];
+
+        // Nested object
+        $inner = new \stdClass();
+        $inner->x = 1;
+        $outer = new \stdClass();
+        $outer->child = $inner;
+        yield [$outer, 'nested object'];
+
+        // Mixed array with objects
+        yield [['key' => 'value', 'obj' => new \stdClass()], 'mixed array'];
+
+        // Max items
+        yield [['one', 'two', 'three', 'four', 'five'], 'max items', null, 3];
+
+        // String truncation
+        yield ['ABCDEFGHIJKLMNOP', 'string truncation', null, null, 5];
     }
 
     public static function valueProvider(): iterable
