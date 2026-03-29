@@ -78,7 +78,8 @@ class DebugBarTest extends DebugBarTestCase
 
     public function testStorageWithBinaryData(): void
     {
-        $binary = random_bytes(10);
+        // Use deterministic invalid UTF-8 bytes (not random_bytes which can produce valid UTF-8)
+        $binary = "\xc3\x28\x80\xff\xfe\xc0\xaf\xa0\xe0\x80";
 
         $this->debugbar->setStorage($s = new MockStorage());
         $this->debugbar->addCollector(new MockCollector([$binary, "foo"]));
