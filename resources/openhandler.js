@@ -36,7 +36,7 @@
             this.el.append(header);
 
             const tableWrapper = document.createElement('table');
-            tableWrapper.innerHTML = '<thead><tr><th width="155">Date</th><th width="75">Method</th><th>URL</th><th width="125">IP</th><th width="100">Filter data</th></tr></thead>';
+            tableWrapper.innerHTML = '<thead><tr><th width="80">ID</th><th width="155">Date</th><th width="75">Method</th><th>URL</th><th width="125">IP</th><th width="100">Filter data</th></tr></thead>';
             tableWrapper.append(this.table);
             this.el.append(tableWrapper);
 
@@ -192,6 +192,41 @@
                 });
 
                 const tr = document.createElement('tr');
+
+                const idTd = document.createElement('td');
+                idTd.classList.add(csscls('id-cell'));
+                const idText = document.createElement('span');
+                idText.classList.add(csscls('id-text'));
+                idText.textContent = meta.id;
+                idText.title = meta.id;
+                idTd.append(idText);
+
+                const copyIdBtn = document.createElement('a');
+                copyIdBtn.classList.add(csscls('copy-id'));
+                copyIdBtn.title = 'Copy Request ID';
+                copyIdBtn.innerHTML = '<i class="phpdebugbar-icon phpdebugbar-icon-copy"></i>';
+                copyIdBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    const tmp = document.createElement('textarea');
+                    tmp.value = meta.id;
+                    tmp.style.position = 'fixed';
+                    tmp.style.opacity = '0';
+                    document.body.append(tmp);
+                    tmp.select();
+                    document.execCommand('copy');
+                    tmp.remove();
+                    const icon = copyIdBtn.querySelector('i');
+                    icon.className = 'phpdebugbar-icon phpdebugbar-icon-circle-check';
+                    copyIdBtn.classList.add(csscls('copied'));
+                    setTimeout(() => {
+                        icon.className = 'phpdebugbar-icon phpdebugbar-icon-copy';
+                        copyIdBtn.classList.remove(csscls('copied'));
+                    }, 2000);
+                });
+                idTd.append(copyIdBtn);
+                tr.append(idTd);
+
                 const datetimeTd = document.createElement('td');
                 datetimeTd.textContent = meta.datetime;
                 tr.append(datetimeTd);

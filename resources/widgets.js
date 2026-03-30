@@ -1336,6 +1336,31 @@
                     }
                     item.append(badges);
 
+                    // Copy ID button
+                    const copyIdBtn = document.createElement('a');
+                    copyIdBtn.classList.add(csscls('datasets-item-copy-id'));
+                    copyIdBtn.title = `Copy Request ID: ${datasetId}`;
+                    copyIdBtn.innerHTML = '<i class="phpdebugbar-icon phpdebugbar-icon-copy"></i>';
+                    copyIdBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const tmp = document.createElement('textarea');
+                        tmp.value = datasetId;
+                        tmp.style.position = 'fixed';
+                        tmp.style.opacity = '0';
+                        document.body.append(tmp);
+                        tmp.select();
+                        document.execCommand('copy');
+                        tmp.remove();
+                        const icon = copyIdBtn.querySelector('i');
+                        icon.className = 'phpdebugbar-icon phpdebugbar-icon-circle-check';
+                        copyIdBtn.classList.add(csscls('copied'));
+                        setTimeout(() => {
+                            icon.className = 'phpdebugbar-icon phpdebugbar-icon-copy';
+                            copyIdBtn.classList.remove(csscls('copied'));
+                        }, 2000);
+                    });
+                    item.append(copyIdBtn);
+
                     // Click handler
                     item.addEventListener('click', () => {
                         debugbar.showDataSet(datasetId);

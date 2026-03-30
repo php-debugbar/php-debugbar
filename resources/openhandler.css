@@ -87,9 +87,9 @@ div.phpdebugbar-openhandler {
         div.phpdebugbar-openhandler table tr:nth-child(2n) {
             background-color: var(--debugbar-background-alt);
         }
-        div.phpdebugbar-openhandler table th:nth-child(2), div.phpdebugbar-openhandler table td:nth-child(2), /* Method */
-        div.phpdebugbar-openhandler table th:nth-child(4), div.phpdebugbar-openhandler table td:nth-child(4), /* IP */
-        div.phpdebugbar-openhandler table th:nth-child(5), div.phpdebugbar-openhandler table td:nth-child(5) { /* Filter */
+        div.phpdebugbar-openhandler table th:nth-child(3), div.phpdebugbar-openhandler table td:nth-child(3), /* Method */
+        div.phpdebugbar-openhandler table th:nth-child(5), div.phpdebugbar-openhandler table td:nth-child(5), /* IP */
+        div.phpdebugbar-openhandler table th:nth-child(6), div.phpdebugbar-openhandler table td:nth-child(6) { /* Filter */
             text-align: center;
         }
         div.phpdebugbar-openhandler table td {
@@ -102,6 +102,37 @@ div.phpdebugbar-openhandler {
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
+    .phpdebugbar-openhandler-id-cell {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .phpdebugbar-openhandler-id-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 55px;
+        display: inline-block;
+        font-family: var(--debugbar-font-mono);
+        font-size: 12px;
+    }
+    .phpdebugbar-openhandler-copy-id {
+        cursor: pointer;
+        color: var(--debugbar-text-muted);
+        display: inline-flex;
+        align-items: center;
+        position: relative;
+        flex-shrink: 0;
+    }
+    .phpdebugbar-openhandler-copy-id i {
+        font-size: 12px;
+    }
+    .phpdebugbar-openhandler-copy-id:hover {
+        color: var(--debugbar-text);
+    }
+    .phpdebugbar-openhandler-copy-id.phpdebugbar-openhandler-copied {
+        color: var(--debugbar-success, #28a745);
+    }
     div.phpdebugbar-openhandler .phpdebugbar-openhandler-actions {
         text-align: center;
         padding: 7px 0;
