@@ -640,7 +640,7 @@ div.phpdebugbar span.phpdebugbar-widgets-badge {
 
 .phpdebugbar-widgets-datasets-list-item {
     display: grid;
-    grid-template-columns: 45px 50px 1fr auto auto;
+    grid-template-columns: 45px 50px 1fr auto auto auto;
     gap: 6px;
     padding: 5px 10px;
     border-bottom: 1px solid var(--debugbar-border);
@@ -667,6 +667,27 @@ div.phpdebugbar span.phpdebugbar-widgets-badge {
     color: var(--debugbar-text-muted);
     font-weight: 600;
     font-family: var(--debugbar-font-mono);
+}
+
+.phpdebugbar-widgets-datasets-item-copy-id {
+    cursor: pointer;
+    color: var(--debugbar-text-muted);
+    display: inline-flex;
+    align-items: center;
+    margin-right: -4px;
+    position: relative;
+}
+
+.phpdebugbar-widgets-datasets-item-copy-id i {
+    font-size: 12px;
+}
+
+.phpdebugbar-widgets-datasets-item-copy-id:hover {
+    color: var(--debugbar-text);
+}
+
+.phpdebugbar-widgets-datasets-item-copy-id.phpdebugbar-widgets-copied {
+    color: var(--debugbar-success, #28a745);
 }
 
 .phpdebugbar-widgets-datasets-item-time {
