@@ -149,6 +149,7 @@ class ExceptionsCollector extends DataCollector implements Renderable, Resettabl
 
     /**
      * Returns Throwable trace as an formated array
+     *
      */
     public function formatTrace(array $trace): array
     {
@@ -196,6 +197,16 @@ class ExceptionsCollector extends DataCollector implements Renderable, Resettabl
     }
 
     /**
+     * Returns Throwable data as an array of lines
+     */
+    public function formatTraceAsArray(\Throwable $e): array
+    {
+        return array_map(function ($track): string {
+            return trim(explode(' ', $track, 2)[1] ?? $track);
+        }, explode("\n", $e->getTraceAsString()));
+    }
+
+    /**
      * Returns Throwable data as an array
      */
     public function formatThrowableData(\Throwable|array $e): array
@@ -214,9 +225,14 @@ class ExceptionsCollector extends DataCollector implements Renderable, Resettabl
         }
 
         $traceHtml = null;
+        $traceJson = null;
         $trace = $e->getTrace();
-        if ($trace && $this->isHtmlVarDumperUsed()) {
-            $traceHtml = $this->getDataFormatter()->formatVar($this->formatTrace($trace));
+        if ($trace) {
+            if ($this->isHtmlVarDumperUsed()) {
+                $traceHtml = $this->getDataFormatter()->formatVar($this->formatTrace($trace));
+            } elseif ($this->isJsonVarDumperUsed()) {
+                $traceJson = $this->getDataFormatter()->formatVar($this->formatTraceAsArray($e));
+            }
         }
 
         return [
@@ -227,6 +243,7 @@ class ExceptionsCollector extends DataCollector implements Renderable, Resettabl
             'line' => $e->getLine(),
             'stack_trace' => $traceHtml ? null : $this->formatTraceAsString($e),
             'stack_trace_html' => $traceHtml,
+            'stack_trace_json' => $traceJson,
             'surrounding_lines' => $lines,
             'xdebug_link' => $this->getXdebugLink($filePath, $e->getLine()),
         ];

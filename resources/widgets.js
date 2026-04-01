@@ -959,19 +959,31 @@
                     });
                 }
 
-                if (e.stack_trace_html) {
+                if (e.stack_trace_json || e.stack_trace_html) {
                     const trace = document.createElement('span');
                     trace.classList.add(csscls('filename'));
-                    trace.innerHTML = e.stack_trace_html;
 
+                    if (e.stack_trace_json) {
+                        const data = e.stack_trace_json;
+                        const savedSd = data._sd;
+                        data._sd = 0;
+                        PhpDebugBar.Widgets.renderValueInto(trace, data);
+                        data._sd = savedSd;
+                    } else {
+                        trace.innerHTML = e.stack_trace_html;
+                    }
+
+                    // Collapse and relabel as "Stack Trace:"
                     const samps = trace.querySelectorAll('samp[data-depth="1"]');
                     for (const samp of samps) {
-                        samp.classList.remove('sf-dump-expanded');
-                        samp.classList.add('sf-dump-compact');
-
+                        samp.classList.replace('sf-dump-expanded', 'sf-dump-compact');
+                        const toggle = samp.previousElementSibling;
+                        if (toggle && toggle.lastElementChild) {
+                            toggle.lastElementChild.textContent = '▶';
+                        }
                         const note = samp.parentElement.querySelector(':scope > .sf-dump-note');
                         if (note) {
-                            note.innerHTML = `${note.innerHTML.replace(/^array:/, '<span class="sf-dump-key">Stack Trace:</span> ')} files`;
+                            note.innerHTML = `${note.innerHTML.replace(/^array:/, '<span class="sf-dump-key">Stack Trace:</span> ')} lines`;
                         }
                     }
                     li.append(trace);

@@ -10,6 +10,10 @@ try {
     doSomething();
 } catch (Exception $e) {
     $debugbar['exceptions']->addException($e);
+}
+try {
+    doSomething();
+} catch (Exception $e) {
     $debugbar['exceptions']->addException($e);
 }
 http_response_code(500);
