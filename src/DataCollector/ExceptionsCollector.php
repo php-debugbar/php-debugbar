@@ -50,6 +50,10 @@ class ExceptionsCollector extends DataCollector implements Renderable, Resettabl
      */
     public function addThrowable(\Throwable $e): void
     {
+        if (in_array($e, $this->exceptions, true)) {
+            return;
+        }
+
         $this->exceptions[] = $e;
         if ($this->chainExceptions && $previous = $e->getPrevious()) {
             $this->addThrowable($previous);
