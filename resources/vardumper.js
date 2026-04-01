@@ -1,6 +1,10 @@
 (function () {
     const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
 
+    // Enable sf-dump-compact CSS (hide collapsed nodes). Symfony's Sfdump sets
+    // this for HTML dumps; the JSON vardumper needs it too.
+    document.documentElement.classList.add('sf-js-enabled');
+
     const lazyStore = new Map();
     let lazySeq = 0;
 
