@@ -12,12 +12,6 @@ use DebugBar\DataFormatter\VarDumper\DebugBarHtmlDumper;
 
 DataCollector::setDefaultDataFormatter(new JsonDataFormatter());
 
-// Generate vardumper.css from Sfdump CSS + dark theme
-$dumper = new DebugBarHtmlDumper();
-$dumper->setStyles(HtmlDataFormatter::getDefaultStyles());
-$css = $dumper->getDumpCss();
-file_put_contents(__DIR__ . '/../resources/vardumper.css', $css);
-
 // Generate dist bundles
 $debugbar = new \DebugBar\DebugBar();
 $debugbarRenderer = $debugbar->getJavascriptRenderer();
