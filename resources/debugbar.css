@@ -87,6 +87,23 @@ div.phpdebugbar {
   direction: ltr;
 }
 
+div.phpdebugbar.phpdebugbar-fullscreen,
+div.phpdebugbar.phpdebugbar-fullscreen[data-toolbarPosition="top"] {
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+div.phpdebugbar.phpdebugbar-fullscreen .phpdebugbar-body {
+  flex: 1;
+  height: auto !important;
+}
+
+div.phpdebugbar.phpdebugbar-fullscreen .phpdebugbar-resize-handle {
+  display: none;
+}
+
 .phpdebugbar [hidden] {
   display: none !important;
 }
@@ -413,6 +430,7 @@ i.phpdebugbar-icon::before {
 
 a.phpdebugbar-close-btn,
 a.phpdebugbar-open-btn,
+a.phpdebugbar-fullscreen-btn,
 a.phpdebugbar-minimize-btn,
 a.phpdebugbar-maximize-btn,
 a.phpdebugbar-tab.phpdebugbar-tab-history,
@@ -425,6 +443,7 @@ a.phpdebugbar-tab.phpdebugbar-tab-settings {
 a.phpdebugbar-close-btn:after,
 a.phpdebugbar-open-btn:after,
 a.phpdebugbar-restore-btn:after,
+a.phpdebugbar-fullscreen-btn:after,
 a.phpdebugbar-minimize-btn:after,
 a.phpdebugbar-maximize-btn:after {
     content: " ";
@@ -474,6 +493,16 @@ div.phpdebugbar[data-toolbarPosition="top"] a.phpdebugbar-maximize-btn:after {
 a.phpdebugbar-close-btn:after {
   -webkit-mask-image: var(--debugbar-icon-x);
   mask-image: var(--debugbar-icon-x);
+}
+
+a.phpdebugbar-fullscreen-btn:after {
+  -webkit-mask-image: var(--debugbar-icon-arrows-maximize);
+  mask-image: var(--debugbar-icon-arrows-maximize);
+}
+
+div.phpdebugbar.phpdebugbar-fullscreen a.phpdebugbar-fullscreen-btn:after {
+  -webkit-mask-image: var(--debugbar-icon-arrows-minimize);
+  mask-image: var(--debugbar-icon-arrows-minimize);
 }
 
 a.phpdebugbar-open-btn:after {
