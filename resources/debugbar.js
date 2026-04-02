@@ -1014,7 +1014,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             this.maximizebtn.after(this.settingsControl.tab);
             this.settingsControl.tab.hidden = false;
             this.settingsControl.tab.addEventListener('click', () => {
-                if (!this.isMinimized() && this.activePanelName === '__settings') {
+                if (!this.isMinimized() && this.activePanelName === '__settings' && !this.isFullscreen()) {
                     this.minimize();
                 } else {
                     this.showTab('__settings');
@@ -1115,7 +1115,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             const self = this;
             this.headerLeft.append(tab.tab);
             tab.tab.addEventListener('click', () => {
-                if (!self.isMinimized() && self.activePanelName === name) {
+                if (!self.isMinimized() && self.activePanelName === name && !self.isFullscreen()) {
                     self.minimize();
                 } else {
                     self.restore();
