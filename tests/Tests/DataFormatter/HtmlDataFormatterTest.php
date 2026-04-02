@@ -31,8 +31,8 @@ class HtmlDataFormatterTest extends DebugBarTestCase
     {
         $d = new HtmlDataFormatter();
         $assets = $d->getAssets();
-        $this->assertArrayHasKey('css', $assets);
-        $this->assertEquals('vardumper.css', $assets['css']);
+        $this->assertArrayHasKey('inline_css', $assets);
+        $this->assertArrayHasKey('html_var_dumper', $assets['inline_css']);
         $this->assertArrayHasKey('inline_js', $assets);
         $this->assertArrayHasKey('html_var_dumper', $assets['inline_js']);
         $this->assertArrayNotHasKey('inline_head', $assets);

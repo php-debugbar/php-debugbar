@@ -299,10 +299,6 @@
     margin-left: .4em
 }
 
-.phpdebugbar pre.sf-dump .sf-dump-preview-hidden {
-    display: none !important
-}
-
-.phpdebugbar pre.sf-dump .sf-dump-close-hidden {
+.phpdebugbar pre.sf-dump .sf-dump-hidden {
     display: none !important
 }

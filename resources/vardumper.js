@@ -151,7 +151,7 @@
 
             // Inline preview (visible when collapsed)
             const preview = this.previewHtml(children, node.cut, ht);
-            html += '<span class="sf-dump-preview' + (expanded ? ' sf-dump-preview-hidden' : '') + '"> ' + preview + ' ' + closingChar + '</span>';
+            html += '<span class="sf-dump-preview' + (expanded ? ' sf-dump-hidden' : '') + '"> ' + preview + ' ' + closingChar + '</span>';
 
             if (expanded) {
                 // Render children eagerly
@@ -174,7 +174,7 @@
                 html += '<samp data-depth=' + (depth + 1) + ' class=sf-dump-compact data-lazy=' + id + '></samp>';
             }
 
-            html += '<span class="sf-dump-close' + (expanded ? '' : ' sf-dump-close-hidden') + '">' + closingChar + '</span>';
+            html += '<span class="sf-dump-close' + (expanded ? '' : ' sf-dump-hidden') + '">' + closingChar + '</span>';
             return html;
         }
 
@@ -206,25 +206,16 @@
             if (!node || typeof node !== 'object') return '<span class=sf-dump-const>null</span>';
 
             switch (node.t) {
-                case 's': {
-                    const s = node.s;
-                    if (s === 'b') return '<span class=sf-dump-const>' + (node.v ? 'true' : 'false') + '</span>';
-                    if (s === 'n') return '<span class=sf-dump-const>null</span>';
-                    if (s === 'i' || s === 'd') return '<span class=sf-dump-num>' + this.esc(String(node.v)) + '</span>';
-                    return this.esc(String(node.v));
-                }
+                case 's':
+                    return this.scalarToHtml(node);
                 case 'r': {
-                    let str = node.v;
-                    const truncated = str.length > 30;
-                    if (truncated) str = str.substring(0, 30);
-                    return '"<span class=sf-dump-str>' + this.esc(str) + (truncated ? '…' : '') + '</span>"';
+                    const str = node.v.length > 30 ? node.v.substring(0, 30) + '…' : node.v;
+                    return '"<span class=sf-dump-str>' + this.esc(str) + '</span>"';
                 }
-                case 'h': {
-                    const isArr = (node.ht === 1 || node.ht === 2);
-                    if (isArr) return '[…]';
+                case 'h':
+                    if (node.ht === 1 || node.ht === 2) return '[…]';
                     if (node.ht === 4 && node.cls) return this.esc(node.cls) + ' {…}';
                     return '{…}';
-                }
                 default:
                     return '…';
             }
@@ -314,33 +305,23 @@
     }
 
     function togglePreview(samp, expanding) {
-        // Show/hide the preview and close-bracket spans around this samp
-        const prev = samp.previousElementSibling;
-        if (prev && prev.classList.contains('sf-dump-preview')) {
-            prev.classList.toggle('sf-dump-preview-hidden', expanding);
-        }
-        const next = samp.nextElementSibling;
-        if (next && next.classList.contains('sf-dump-close')) {
-            next.classList.toggle('sf-dump-close-hidden', !expanding);
-        }
+        const preview = samp.previousElementSibling;
+        const close = samp.nextElementSibling;
+        if (preview) preview.classList.toggle('sf-dump-hidden', expanding);
+        if (close) close.classList.toggle('sf-dump-hidden', !expanding);
     }
 
     document.addEventListener('click', function (e) {
-        // Clicking the preview also toggles the node
-        let toggle = e.target.closest('a.sf-dump-toggle');
-        if (!toggle) {
-            const preview = e.target.closest('.sf-dump-preview');
-            if (preview) toggle = preview.previousElementSibling;
-        }
+        // Clicking the toggle or the preview triggers expand/collapse
+        const toggle = e.target.closest('a.sf-dump-toggle') || e.target.closest('.sf-dump-preview')?.previousElementSibling;
         if (!toggle) return;
 
         const pre = toggle.closest('pre.sf-dump');
         if (!pre || pre.id) return; // has id → belongs to Sfdump, skip
 
-        // Find the samp element (may be after a preview span)
-        let samp = toggle.nextElementSibling;
-        while (samp && samp.tagName !== 'SAMP') samp = samp.nextElementSibling;
-        if (!samp) return;
+        // Structure: toggle > preview > samp > close
+        const samp = toggle.nextElementSibling?.nextElementSibling;
+        if (!samp || samp.tagName !== 'SAMP') return;
 
         e.preventDefault();
         const isCompact = samp.classList.contains('sf-dump-compact');
