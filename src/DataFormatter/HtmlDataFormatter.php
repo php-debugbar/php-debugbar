@@ -153,7 +153,9 @@ class HtmlDataFormatter extends DataFormatter implements AssetProvider
         if ($dumper instanceof DebugBarHtmlDumper) {
             $dumper->resetDumpHeader();
             return [
-                'css' => 'vardumper.css',
+                'inline_css' => [
+                    'html_var_dumper' => $dumper->getDumpCss(),
+                ],
                 'inline_js' => [
                     'html_var_dumper' => $dumper->getDumpJs(),
                 ],

@@ -149,6 +149,10 @@
             // Toggle anchor (includes ref if present)
             html += '<a class=sf-dump-toggle>' + ref + '<span>' + (expanded ? '▼' : '▶') + '</span></a>';
 
+            // Inline preview (visible when collapsed)
+            const preview = this.previewHtml(children, node.cut, ht);
+            html += '<span class="sf-dump-preview' + (expanded ? ' sf-dump-hidden' : '') + '"> ' + preview + ' ' + closingChar + '</span>';
+
             if (expanded) {
                 // Render children eagerly
                 html += '<samp data-depth=' + (depth + 1) + ' class=sf-dump-expanded>';
@@ -170,8 +174,51 @@
                 html += '<samp data-depth=' + (depth + 1) + ' class=sf-dump-compact data-lazy=' + id + '></samp>';
             }
 
-            html += closingChar;
+            html += '<span class="sf-dump-close' + (expanded ? '' : ' sf-dump-hidden') + '">' + closingChar + '</span>';
             return html;
+        }
+
+        previewHtml(children, cut, ht) {
+            const maxItems = 5;
+            const parts = [];
+            const isIndexed = (ht === 2);
+
+            for (let i = 0; i < Math.min(children.length, maxItems); i++) {
+                const entry = children[i];
+                const val = this.previewValue(entry.n);
+
+                if (isIndexed) {
+                    parts.push(val);
+                } else {
+                    const key = (entry.k !== undefined) ? entry.k : i;
+                    parts.push(this.esc(String(key)) + ': ' + val);
+                }
+            }
+
+            let result = parts.join(', ');
+            if (children.length > maxItems || cut > 0) {
+                result += ', …';
+            }
+            return result;
+        }
+
+        previewValue(node) {
+            if (!node || typeof node !== 'object') return '<span class=sf-dump-const>null</span>';
+
+            switch (node.t) {
+                case 's':
+                    return this.scalarToHtml(node);
+                case 'r': {
+                    const str = node.v.length > 30 ? node.v.substring(0, 30) + '…' : node.v;
+                    return '"<span class=sf-dump-str>' + this.esc(str) + '</span>"';
+                }
+                case 'h':
+                    if (node.ht === 1 || node.ht === 2) return '[…]';
+                    if (node.ht === 4 && node.cls) return this.esc(node.cls) + ' {…}';
+                    return '{…}';
+                default:
+                    return '…';
+            }
         }
 
         childrenToHtml(children, cut, depth, childIndent, indent, ht) {
@@ -257,14 +304,23 @@
         renderer.expandedDepth = savedDepth;
     }
 
+    function togglePreview(samp, expanding) {
+        const preview = samp.previousElementSibling;
+        const close = samp.nextElementSibling;
+        if (preview) preview.classList.toggle('sf-dump-hidden', expanding);
+        if (close) close.classList.toggle('sf-dump-hidden', !expanding);
+    }
+
     document.addEventListener('click', function (e) {
-        const toggle = e.target.closest('a.sf-dump-toggle');
+        // Clicking the toggle or the preview triggers expand/collapse
+        const toggle = e.target.closest('a.sf-dump-toggle') || e.target.closest('.sf-dump-preview')?.previousElementSibling;
         if (!toggle) return;
 
         const pre = toggle.closest('pre.sf-dump');
         if (!pre || pre.id) return; // has id → belongs to Sfdump, skip
 
-        const samp = toggle.nextElementSibling;
+        // Structure: toggle > preview > samp > close
+        const samp = toggle.nextElementSibling?.nextElementSibling;
         if (!samp || samp.tagName !== 'SAMP') return;
 
         e.preventDefault();
@@ -284,15 +340,17 @@
                 // Then expand all compact children
                 samp.querySelectorAll('samp.sf-dump-compact').forEach(function (s) {
                     s.classList.replace('sf-dump-compact', 'sf-dump-expanded');
-                    const arrow = s.previousElementSibling && s.previousElementSibling.lastElementChild;
-                    if (arrow) arrow.textContent = '▼';
+                    const toggleEl = s.previousElementSibling && s.previousElementSibling.previousElementSibling;
+                    if (toggleEl && toggleEl.classList.contains('sf-dump-toggle')) toggleEl.lastElementChild.textContent = '▼';
+                    togglePreview(s, true);
                 });
             } else {
                 // Collapse all expanded children
                 samp.querySelectorAll('samp.sf-dump-expanded').forEach(function (s) {
                     s.classList.replace('sf-dump-expanded', 'sf-dump-compact');
-                    const arrow = s.previousElementSibling && s.previousElementSibling.lastElementChild;
-                    if (arrow) arrow.textContent = '▶';
+                    const toggleEl = s.previousElementSibling && s.previousElementSibling.previousElementSibling;
+                    if (toggleEl && toggleEl.classList.contains('sf-dump-toggle')) toggleEl.lastElementChild.textContent = '▶';
+                    togglePreview(s, false);
                 });
             }
         }
@@ -301,6 +359,7 @@
         samp.classList.toggle('sf-dump-compact', !isCompact);
         samp.classList.toggle('sf-dump-expanded', isCompact);
         toggle.lastElementChild.textContent = isCompact ? '▼' : '▶';
+        togglePreview(samp, isCompact);
     });
 
     // ------------------------------------------------------------------
