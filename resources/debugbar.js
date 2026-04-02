@@ -544,6 +544,18 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             hideEmptyTabsLabel.append(this.hideEmptyTabs, 'Hide empty tabs until they have data');
             fields['Hide Empty Tabs'] = hideEmptyTabsLabel;
 
+            // Fullscreen button
+            const fullscreenCheck = document.createElement('input');
+            fullscreenCheck.type = 'checkbox';
+            fullscreenCheck.checked = debugbar.options.showFullscreenBtn;
+            fullscreenCheck.addEventListener('click', function () {
+                self.storeSetting('showFullscreenBtn', this.checked);
+                debugbar.toggleFullscreenBtn(this.checked);
+            });
+            const fullscreenLabel = document.createElement('label');
+            fullscreenLabel.append(fullscreenCheck, 'Show fullscreen button in toolbar');
+            fields.Fullscreen = fullscreenLabel;
+
             // Autoshow
             this.autoshow = document.createElement('input');
             this.autoshow.type = 'checkbox';
@@ -689,6 +701,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 toolbarPosition: 'bottom',
                 openBtnPosition: 'bottomLeft',
                 hideEmptyTabs: false,
+                showFullscreenBtn: false,
                 spaNavigationEvents: []
             }, options);
             this.defaultOptions = { ...this.options };
@@ -931,6 +944,15 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 self.close();
             });
 
+            // fullscreen button (visually left of close)
+            this.fullscreenbtn = document.createElement('a');
+            this.fullscreenbtn.classList.add(csscls('fullscreen-btn'));
+            this.fullscreenbtn.hidden = !this.options.showFullscreenBtn;
+            this.headerRight.append(this.fullscreenbtn);
+            this.fullscreenbtn.addEventListener('click', () => {
+                self.toggleFullscreen();
+            });
+
             // minimize button
             this.minimizebtn = document.createElement('a');
             this.minimizebtn.classList.add(csscls('minimize-btn'));
@@ -1011,6 +1033,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * @this {DebugBar}
          */
         setHeight(height) {
+            if (this.isFullscreen()) return;
             const min_h = 40;
             const max_h = window.innerHeight - this.header.offsetHeight - 10;
             height = Math.min(height, max_h);
@@ -1051,6 +1074,11 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 } else {
                     this.minimize();
                 }
+            }
+
+            // Restore fullscreen if it was active this session
+            if (this.options.showFullscreenBtn && sessionStorage.getItem('phpdebugbar-fullscreen') === '1') {
+                this.toggleFullscreen();
             }
         }
 
@@ -1258,6 +1286,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * @this {DebugBar}
          */
         minimize() {
+            this.exitFullscreen();
             const activeClass = csscls('active');
             const headerActives = this.header.querySelectorAll(`:scope > div > .${activeClass}`);
             for (const el of headerActives) {
@@ -1304,11 +1333,46 @@ window.PhpDebugBar = window.PhpDebugBar || {};
         }
 
         /**
+         * Toggle fullscreen mode — debugbar fills the entire browser viewport
+         */
+        toggleFullscreen() {
+            if (this.isFullscreen()) {
+                this.exitFullscreen();
+            } else {
+                this._preFullscreenHeight = this.body.offsetHeight;
+                this.el.classList.add(csscls('fullscreen'));
+                this.body.style.height = '';
+                sessionStorage.setItem('phpdebugbar-fullscreen', '1');
+                this.recomputeBottomOffset();
+            }
+        }
+
+        exitFullscreen() {
+            if (!this.isFullscreen()) return;
+            this.el.classList.remove(csscls('fullscreen'));
+            if (this._preFullscreenHeight) {
+                this.body.style.height = `${this._preFullscreenHeight}px`;
+            }
+            sessionStorage.removeItem('phpdebugbar-fullscreen');
+            this.recomputeBottomOffset();
+        }
+
+        isFullscreen() {
+            return this.el.classList.contains(csscls('fullscreen'));
+        }
+
+        toggleFullscreenBtn(show) {
+            this.fullscreenbtn.hidden = !show;
+            if (!show) this.exitFullscreen();
+        }
+
+        /**
          * Close the debug bar
          *
          * @this {DebugBar}
          */
         close() {
+            this.exitFullscreen();
             this.header.hidden = true;
             this.body.hidden = true;
             this.restorebtn.hidden = false;

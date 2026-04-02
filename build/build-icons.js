@@ -37,6 +37,8 @@ const icons = [
     'x',
 
     // UI control icons
+    'arrows-maximize',
+    'arrows-minimize',
     'chevron-down',
     'chevron-up',
     'folder-open',
