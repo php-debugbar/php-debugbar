@@ -174,7 +174,7 @@
         }
 
         previewHtml(children, cut, ht) {
-            const maxItems = 5;
+            const maxItems = 8;
             const parts = [];
             const isIndexed = (ht === 2);
 
@@ -204,7 +204,7 @@
                 case 's':
                     return this.scalarToHtml(node);
                 case 'r': {
-                    const str = node.v.length > 30 ? node.v.substring(0, 30) + '…' : node.v;
+                    const str = node.v.length > 40 ? node.v.substring(0, 40) + '…' : node.v;
                     return '"<span class=sf-dump-str>' + this.esc(str) + '</span>"';
                 }
                 case 'h':
