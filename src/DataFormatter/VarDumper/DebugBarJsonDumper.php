@@ -18,8 +18,9 @@ use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
  * The output is a tree of nodes with short keys for compactness:
  *  - Scalar: {t:"s", s:<subtype>, v:<value>, a:<attrs>}  (s: b=bool, i=int, d=double, n=null, l=label)
  *  - String: {t:"r", v:<string>, bin:true, cut:<n>, len:<n>}
- *  - Hash:   {t:"h", ht:<type>, cls:<class>, d:<depth>, c:[...], cut:<n>, ref:<ref>}
- *  - Entry:  {n:<node>, k?:<key>, kt?:<keytype>}  (inferrable fields omitted for compactness)
+ *  - Hash:   {t:"h", ht:<type>, cls:<class>, c:[...], cut:<n>, ref:<ref>}
+ *  - Entry:  {n:<node>, k?:<key>, kt?:<keytype>, p?:<prefix>}
+ *    For object properties, `p` encodes visibility: + (dynamic), ~ (meta), * (protected), ClassName (private).
  */
 class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
 {
@@ -52,9 +53,9 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
      * }|array{
      *     t: 'r', v: string, bin?: true, cut?: int, len?: int
      * }|array{
-     *     t: 'h', ht: int, cls?: string, d: int, c?: list<array{
-     *         n: array<string, mixed>, k?: string|int, kt?: string, kc?: string, dyn?: true, ref?: int
-     *     }>, cut?: int, ref?: array{s: int, c: int}
+     *     t: 'h', ht: int, cls?: string, c?: list<array{
+     *         n: array<string, mixed>, k?: string|int, kt?: string, p?: string, ref?: int
+     *     }>, cut?: int, ref?: int
      * }
      */
     public function dumpAsArray(Data $data): array
@@ -104,7 +105,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
         }
         if ($cut > 0) {
             $node['cut'] = $cut;
-            $node['len'] = mb_strlen($str, $bin ? '8bit' : 'UTF-8') + $cut;
+            $node['len'] = ($bin ? strlen($str) : mb_strlen($str, 'UTF-8')) + $cut;
         }
 
         $this->emitNode($cursor, $node);
@@ -115,7 +116,6 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
         $node = [
             't' => 'h',
             'ht' => $type,
-            'd' => $cursor->depth,
         ];
 
         // Omit class for stdClass (matches Symfony's behavior)
@@ -126,7 +126,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
         // Track object/resource identity (softRefHandle is the display ID #N)
         $handle = $cursor->softRefHandle ?: $cursor->softRefTo;
         if ($handle > 0) {
-            $node['ref'] = ['s' => $handle, 'c' => $cursor->softRefCount];
+            $node['ref'] = $handle;
         }
 
         // Push current hash onto stack
@@ -211,42 +211,17 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
                 // no break
             case Cursor::HASH_OBJECT:
                 if (!isset($key[0]) || $key[0] !== "\0") {
-                    // Public property — kt='pub' is the default for objects, omit it
+                    // Public property — default, no prefix needed
                     $entry['k'] = $key;
                 } elseif (($pos = strpos($key, "\0", 1)) !== false && $pos > 0) {
-                    $prefix = substr($key, 1, $pos - 1);
-                    $propName = substr($key, $pos + 1);
-
-                    switch ($prefix[0]) {
-                        case '+': // Dynamic property — kt='pub' is default, omit it
-                            $entry['k'] = $propName;
-                            $entry['dyn'] = true;
-                            break;
-                        case '~': // Meta property — must be explicit
-                            $entry['k'] = $propName;
-                            $entry['kt'] = 'meta';
-                            break;
-                        case '*': // Protected property — must be explicit
-                            $entry['k'] = $propName;
-                            $entry['kt'] = 'pro';
-                            break;
-                        default: // Private property — must be explicit
-                            $entry['k'] = $propName;
-                            $entry['kt'] = 'pri';
-                            $entry['kc'] = $prefix;
-                            break;
-                    }
+                    // Visibility prefix: + (dynamic), ~ (meta), * (protected), or ClassName (private)
+                    $entry['k'] = substr($key, $pos + 1);
+                    $entry['p'] = substr($key, 1, $pos - 1);
                 } else {
                     // Fallback: private with unknown class
                     $entry['k'] = $key;
-                    $entry['kt'] = 'pri';
-                    $entry['kc'] = '';
+                    $entry['p'] = '';
                 }
-                break;
-
-            default:
-                $entry['k'] = $key;
-                $entry['kt'] = 'k';
                 break;
         }
 

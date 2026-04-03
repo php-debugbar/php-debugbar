@@ -204,15 +204,15 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $this->assertEquals('h', $data['t']);
         $this->assertEquals(4, $data['ht']); // HASH_OBJECT
 
-        $keyTypes = [];
+        $prefixes = [];
         foreach ($data['c'] as $child) {
-            // kt='pub' is omitted (default for objects), so default to 'pub'
-            $keyTypes[$child['k']] = $child['kt'] ?? 'pub';
+            // Public properties have no 'p' field; non-public use 'p' prefix
+            $prefixes[$child['k']] = $child['p'] ?? null;
         }
 
-        $this->assertEquals('pub', $keyTypes['pub']);
-        $this->assertEquals('pro', $keyTypes['prot']);
-        $this->assertEquals('pri', $keyTypes['priv']);
+        $this->assertNull($prefixes['pub']);        // public: no prefix
+        $this->assertEquals('*', $prefixes['prot']); // protected
+        $this->assertNotNull($prefixes['priv']);     // private: declaring class name
     }
 
     public function testSimpleValueFastPath(): void

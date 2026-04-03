@@ -313,9 +313,62 @@ printf("JSON payload size:  %s\n", formatBytes(strlen($jsonPayload)));
 printf("Difference:         %+.0f%%\n", $payloadDiff);
 echo "\n";
 
-// ── 4. Asset overhead ────────────────────────────────────────────────
+// ── 4. Simple array fast path ────────────────────────────────────
 
-echo "4. ASSET OVERHEAD\n";
+echo "4. SIMPLE ARRAY FAST PATH (bypasses VarCloner for flat scalar arrays)\n";
+echo "$separator\n";
+
+$simpleArrayTests = [
+    'flat_assoc_4'   => ['foo' => 'bar', 'baz' => 42, 'ok' => true, 'x' => null],
+    'flat_indexed_50' => range(1, 50),
+    'flat_assoc_100' => array_combine(
+        array_map(fn($i) => "key_$i", range(0, 99)),
+        array_map(fn($i) => "value_$i", range(0, 99))
+    ),
+    'flat_strings_20' => array_map(fn($i) => str_repeat('x', 100), range(0, 19)),
+];
+
+$fastPathFmt = "%-18s │ %12s │ %12s │ %8s │ %12s │ %12s";
+printf("$fastPathFmt\n", 'Test Case', 'Fast median', 'Full median', 'Speedup', 'Fast size', 'Full size');
+echo "$separator\n";
+
+$fastPathIterations = 2000;
+
+// We need a formatter that skips the fast path to compare
+$jsonFormatterFull = new JsonDataFormatter();
+
+foreach ($simpleArrayTests as $name => $data) {
+    // Fast path (current): formatVar hits buildSimpleArray
+    $fastBench = benchmark(fn() => $jsonFormatter->formatVar($data), $fastPathIterations);
+
+    // Full pipeline: wrap in stdClass to force VarCloner path
+    $wrapper = new \stdClass();
+    $wrapper->d = $data;
+    $fullResult = $jsonFormatterFull->formatVar($wrapper);
+    // Time the array part through full pipeline by using a non-simple wrapper
+    $fullBench = benchmark(fn() => $jsonFormatterFull->formatVar($wrapper), $fastPathIterations);
+
+    $speedup = $fullBench['median_ns'] / max(1, $fastBench['median_ns']);
+
+    $fastSize = strlen(json_encode($jsonFormatter->formatVar($data)));
+    $fullSize = strlen(json_encode($fullResult));
+
+    printf(
+        "$fastPathFmt\n",
+        $name,
+        formatNs($fastBench['median_ns']),
+        formatNs($fullBench['median_ns']),
+        sprintf('%.1fx', $speedup),
+        formatBytes($fastSize),
+        formatBytes($fullSize),
+    );
+}
+
+echo "\n";
+
+// ── 5. Asset overhead ────────────────────────────────────────────────
+
+echo "5. ASSET OVERHEAD\n";
 echo "$separator\n";
 
 $htmlAssets = $htmlFormatter->getAssets();

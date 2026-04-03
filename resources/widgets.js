@@ -973,18 +973,10 @@
                         trace.innerHTML = e.stack_trace_html;
                     }
 
-                    // Collapse and relabel as "Stack Trace:"
-                    const samps = trace.querySelectorAll('samp[data-depth="1"]');
-                    for (const samp of samps) {
-                        samp.classList.replace('sf-dump-expanded', 'sf-dump-compact');
-                        const toggle = samp.previousElementSibling;
-                        if (toggle && toggle.lastElementChild) {
-                            toggle.lastElementChild.textContent = '▶';
-                        }
-                        const note = samp.parentElement.querySelector(':scope > .sf-dump-note');
-                        if (note) {
-                            note.innerHTML = `${note.innerHTML.replace(/^array:/, '<span class="sf-dump-key">Stack Trace:</span> ')} lines`;
-                        }
+                    // Relabel root array as "Stack Trace:"
+                    const note = trace.querySelector('.sf-dump-note');
+                    if (note) {
+                        note.innerHTML = `${note.innerHTML.replace(/^array:/, '<span class="sf-dump-key">Stack Trace:</span> ')} lines`;
                     }
                     li.append(trace);
                 } else if (e.stack_trace) {

@@ -77,7 +77,7 @@ class ReverseJsonDumper
             $header = ($cls && $cls !== 'stdClass') ? ($cls . ' ') : '';
             $header .= '{';
             if ($ref) {
-                $header .= '#' . $ref['s'];
+                $header .= '#' . (is_array($ref) ? $ref['s'] : $ref);
             }
         } elseif ($isResource) {
             $header = ($cls ? $cls . ' ' : '') . '{';
@@ -131,7 +131,20 @@ class ReverseJsonDumper
 
     private function entryKeyToText(array $entry, int $ht, int $index): string
     {
-        // Infer missing kt from parent hash type
+        $k = $entry['k'] ?? $index;
+
+        // New compact format: single prefix for object/resource visibility
+        if (isset($entry['p'])) {
+            return match ($entry['p']) {
+                '+' => '+"' . $k . '": ',
+                '~' => $k . ': ',
+                '*' => '#' . $k . ': ',
+                '' => '-' . $k . ': ',
+                default => '-' . $k . ': ',  // private with declaring class
+            };
+        }
+
+        // Legacy/inferred kt format
         $kt = $entry['kt'] ?? null;
         if ($kt === null) {
             if (isset($entry['k']) || $ht === Cursor::HASH_INDEXED) {
@@ -149,8 +162,6 @@ class ReverseJsonDumper
             }
         }
 
-        // Infer missing k from loop index (HASH_INDEXED)
-        $k = $entry['k'] ?? $index;
         $isDynamic = ($entry['dyn'] ?? false) === true;
 
         return match ($kt) {
