@@ -11,12 +11,6 @@
     display: none;
 }
 
-.sf-dump-hover:hover {
-    background-color: #B729D9;
-    color: #FFF !important;
-    border-radius: 2px;
-}
-
 .phpdebugbar pre.sf-dump {
     display: block;
     white-space: pre;
@@ -30,10 +24,6 @@
     display: block;
     height: 0;
     clear: both;
-}
-
-.phpdebugbar pre.sf-dump .sf-dump-ellipsization {
-    display: inline-flex;
 }
 
 .phpdebugbar pre.sf-dump a {
@@ -52,97 +42,10 @@
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAAAAAA6mKC9AAAAHUlEQVQY02O8zAABilCaiQEN0EeA8QuUcX9g3QEAAjcC5piyhyEAAAAASUVORK5CYII=) #D3D3D3;
 }
 
-.phpdebugbar pre.sf-dump .sf-dump-ellipsis {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.phpdebugbar pre.sf-dump .sf-dump-ellipsis-tail {
-    flex-shrink: 0;
-}
-
 .phpdebugbar pre.sf-dump code {
     display: inline;
     padding: 0;
     background: none;
-}
-
-.sf-dump-public.sf-dump-highlight, .sf-dump-protected.sf-dump-highlight, .sf-dump-private.sf-dump-highlight, .sf-dump-str.sf-dump-highlight, .sf-dump-key.sf-dump-highlight {
-    background: rgba(111, 172, 204, 0.3);
-    border: 1px solid #7DA0B1;
-    border-radius: 3px;
-}
-
-.sf-dump-public.sf-dump-highlight-active, .sf-dump-protected.sf-dump-highlight-active, .sf-dump-private.sf-dump-highlight-active, .sf-dump-str.sf-dump-highlight-active, .sf-dump-key.sf-dump-highlight-active {
-    background: rgba(253, 175, 0, 0.4);
-    border: 1px solid #ffa500;
-    border-radius: 3px;
-}
-
-.phpdebugbar pre.sf-dump .sf-dump-search-hidden {
-    display: none !important;
-}
-
-.phpdebugbar pre.sf-dump .sf-dump-search-wrapper {
-    font-size: 0;
-    white-space: nowrap;
-    margin-bottom: 5px;
-    display: flex;
-    position: -webkit-sticky;
-    position: sticky;
-    top: 5px;
-}
-
-.phpdebugbar pre.sf-dump .sf-dump-search-wrapper > * {
-    vertical-align: top;
-    box-sizing: border-box;
-    height: 21px;
-    font-weight: normal;
-    border-radius: 0;
-    background: #FFF;
-    color: #757575;
-    border: 1px solid #BBB;
-}
-
-.phpdebugbar pre.sf-dump .sf-dump-search-wrapper > input.sf-dump-search-input {
-    padding: 3px;
-    height: 21px;
-    font-size: 12px;
-    border-right: none;
-    border-top-left-radius: 3px;
-    border-bottom-left-radius: 3px;
-    color: #000;
-    min-width: 15px;
-    width: 100%;
-}
-
-.phpdebugbar pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-next, .phpdebugbar pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-previous {
-    background: #F2F2F2;
-    outline: none;
-    border-left: none;
-    font-size: 0;
-    line-height: 0;
-}
-
-.phpdebugbar pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-next {
-    border-top-right-radius: 3px;
-    border-bottom-right-radius: 3px;
-}
-
-.phpdebugbar pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-next > svg, .phpdebugbar pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-input-previous > svg {
-    pointer-events: none;
-    width: 12px;
-    height: 12px;
-}
-
-.phpdebugbar pre.sf-dump .sf-dump-search-wrapper > .sf-dump-search-count {
-    display: inline-block;
-    padding: 0 5px;
-    margin: 0;
-    border-left: none;
-    line-height: 21px;
-    font-size: 12px;
 }
 
 .phpdebugbar pre.sf-dump, .phpdebugbar pre.sf-dump .sf-dump-default {
@@ -197,22 +100,6 @@
     color: #1299DA
 }
 
-.phpdebugbar pre.sf-dump .sf-dump-ellipsis {
-    color: #A0A000
-}
-
-.phpdebugbar pre.sf-dump .sf-dump-virtual {
-    font-style: italic
-}
-
-.phpdebugbar pre.sf-dump .sf-dump-ns {
-    user-select: none;
-}
-
-.phpdebugbar pre.sf-dump .sf-dump-ellipsis-note {
-    color: #1299DA
-}
-
 .phpdebugbar[data-theme='dark'] pre.sf-dump, pre.sf-dump .sf-dump-default {
     background-color: #18171B;
     color: #FF8400;
@@ -232,10 +119,6 @@
 
 .phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-const {
     font-weight: bold
-}
-
-.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-virtual {
-    font-style: italic
 }
 
 .phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-str {
@@ -275,16 +158,9 @@
     color: #1299DA
 }
 
-.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-ellipsis {
-    color: #FF8400
-}
-
-.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-ns {
-    user-select: none;
-}
-
-.phpdebugbar[data-theme='dark'] pre.sf-dump .sf-dump-ellipsis-note {
-    color: #1299DA
+.phpdebugbar pre.sf-dump samp {
+    display: block;
+    padding-left: 2ch
 }
 
 .phpdebugbar pre.sf-dump .sf-dump-preview {

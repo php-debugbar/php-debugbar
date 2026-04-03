@@ -80,8 +80,9 @@ class DebugBarJsonCaster
             $stub->type = Stub::TYPE_OBJECT;
             $stub->class = $node['cls'] ?? 'stdClass';
             if (isset($node['ref'])) {
-                $stub->handle = $node['ref']['s'];
-                $stub->refCount = $node['ref']['c'];
+                $ref = $node['ref'];
+                $stub->handle = is_array($ref) ? $ref['s'] : $ref;
+                $stub->refCount = is_array($ref) ? $ref['c'] : 0;
             } else {
                 $stub->handle = 0;
             }
@@ -111,8 +112,21 @@ class DebugBarJsonCaster
 
     private static function buildKey(array $entry, int $ht, int $index): string|int
     {
-        $kt = $entry['kt'] ?? null;
         $k = $entry['k'] ?? $index;
+
+        // Compact format: single prefix field for object/resource visibility
+        if (isset($entry['p'])) {
+            return match ($entry['p']) {
+                '+' => Caster::PREFIX_DYNAMIC . $k,
+                '~' => Caster::PREFIX_VIRTUAL . $k,
+                '*' => Caster::PREFIX_PROTECTED . $k,
+                '' => sprintf(Caster::PATTERN_PRIVATE, '', $k),
+                default => sprintf(Caster::PATTERN_PRIVATE, $entry['p'], $k),
+            };
+        }
+
+        // Legacy format (deprecated): kt/kc/dyn fields
+        $kt = $entry['kt'] ?? null;
         $isDynamic = ($entry['dyn'] ?? false) === true;
 
         // Infer key type from parent hash type when not explicit
