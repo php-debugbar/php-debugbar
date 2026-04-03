@@ -140,7 +140,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $d = new JsonDataFormatter();
         $options = $d->getDumperOptions();
         $this->assertArrayHasKey('expanded_depth', $options);
-        $this->assertEquals(1, $options['expanded_depth']);
+        $this->assertEquals(0, $options['expanded_depth']);
 
         $d->mergeDumperOptions(['expanded_depth' => 3]);
         $this->assertEquals(3, $d->getDumperOptions()['expanded_depth']);
