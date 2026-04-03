@@ -18,7 +18,7 @@ use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
 class JsonDataFormatter extends DataFormatter implements AssetProvider
 {
     protected static array $defaultDumperOptions = [
-        'expanded_depth' => 1,
+        'expanded_depth' => 0,
     ];
 
     protected ?array $dumperOptions = null;
