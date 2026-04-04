@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-.sf-js-enabled .phpdebugbar pre.sf-dump .sf-dump-compact, .sf-js-enabled .sf-dump-str-collapse .sf-dump-str-collapse, .sf-js-enabled .sf-dump-str-expand .sf-dump-str-expand {
+.sf-js-enabled .phpdebugbar pre.sf-dump .sf-dump-compact {
     display: none;
 }
 
@@ -18,34 +18,12 @@
     overflow: initial !important;
 }
 
-.phpdebugbar pre.sf-dump:after {
-    content: "";
-    visibility: hidden;
-    display: block;
-    height: 0;
-    clear: both;
-}
-
 .phpdebugbar pre.sf-dump a {
     text-decoration: none;
     cursor: pointer;
     border: 0;
     outline: none;
     color: inherit;
-}
-
-.phpdebugbar pre.sf-dump img {
-    max-width: 50em;
-    max-height: 50em;
-    margin: .5em 0 0 0;
-    padding: 0;
-    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAAAAAA6mKC9AAAAHUlEQVQY02O8zAABilCaiQEN0EeA8QuUcX9g3QEAAjcC5piyhyEAAAAASUVORK5CYII=) #D3D3D3;
-}
-
-.phpdebugbar pre.sf-dump code {
-    display: inline;
-    padding: 0;
-    background: none;
 }
 
 .phpdebugbar pre.sf-dump, .phpdebugbar pre.sf-dump .sf-dump-default {

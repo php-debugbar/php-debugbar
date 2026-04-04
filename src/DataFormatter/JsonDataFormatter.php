@@ -33,19 +33,27 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
      */
     public function formatVar(mixed $data, bool $deep = true): mixed
     {
+        if (is_string($data)) {
+            $maxLength = $this->getClonerOptions()['max_string'] ?? 10000;
+            if (strlen($data) <= $maxLength) {
+                return $data;
+            }
+            return substr($data, 0, $maxLength) . '[truncated ' . (strlen($data) - $maxLength) . ' chars]';
+        }
+
         if ($this->isSimpleValue($data)) {
             return $data;
         }
 
-        if (is_array($data) && ($node = $this->buildSimpleArray($data)) !== null) {
-            $node['_sd'] = $this->getDumperOptions()['expanded_depth'] ?? 1;
-            return $node;
+        $maxItems = $this->getClonerOptions()['max_items'] ?? 1000;
+        if ($deep && is_array($data) && $this->isSimpleArray($data, $maxItems)) {
+            return $data;
         }
 
         $dumper = $this->getDumper();
         if ($dumper instanceof DebugBarJsonDumper) {
             $result = $dumper->dumpAsArray($this->cloneVar($data, $deep));
-            $result['_sd'] = $this->getDumperOptions()['expanded_depth'] ?? 1;
+            $result['_sd'] = $this->getDumperOptions()['expanded_depth'] ?? 0;
             return $result;
         }
 
@@ -68,72 +76,24 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     }
 
     /**
-     * Build the dump node structure directly for flat arrays of scalars/strings,
-     * bypassing VarCloner + Data + dump callback chain entirely.
-     *
-     * Returns null if the array contains non-simple values (objects, nested arrays, etc.).
+     * Check if an array contains only simple values (scalars/strings)
+     * and can be passed through as plain JSON without the dump node structure.
      */
-    private function buildSimpleArray(array $data): ?array
+    private function isSimpleArray(array $data, int &$budget = 1000): bool
     {
-        $maxString = $this->getClonerOptions()['max_string'] ?? 10000;
-        $maxItems = $this->getClonerOptions()['max_items'] ?? 1000;
-        $isIndexed = array_is_list($data);
-
-        $children = [];
-        $count = 0;
-        foreach ($data as $k => $v) {
-            if ($count >= $maxItems) {
-                break;
+        foreach ($data as $v) {
+            if (--$budget < 0) {
+                return false;
             }
-
-            $node = match (true) {
-                $v === null => ['t' => 's', 's' => 'n', 'v' => null],
-                is_bool($v) => ['t' => 's', 's' => 'b', 'v' => $v],
-                is_int($v) => ['t' => 's', 's' => 'i', 'v' => $v],
-                is_float($v) => ['t' => 's', 's' => 'd', 'v' => $v],
-                is_string($v) && strlen($v) <= $maxString => ['t' => 'r', 'v' => $v],
-                is_string($v) => self::truncateString($v, $maxString),
-                default => null, // non-simple value → bail out
-            };
-
-            if ($node === null) {
-                return null;
+            if (is_array($v)) {
+                if (!$this->isSimpleArray($v, $budget)) {
+                    return false;
+                }
+            } elseif (!$this->isSimpleValue($v)) {
+                return false;
             }
-
-            $entry = ['n' => $node];
-            if (!$isIndexed) {
-                $entry['k'] = $k;
-            }
-            $children[] = $entry;
-            $count++;
         }
-
-        $cut = max(0, count($data) - $count);
-
-        $result = [
-            't' => 'h',
-            'ht' => $isIndexed ? 2 : 1,
-        ];
-
-        if ($count > 0) {
-            $result['cls'] = (string) ($count + $cut);
-        }
-
-        if ($children !== []) {
-            $result['c'] = $children;
-        }
-
-        if ($cut > 0) {
-            $result['cut'] = $cut;
-        }
-
-        return $result;
-    }
-
-    private static function truncateString(string $v, int $maxString): array
-    {
-        $totalLen = mb_strlen($v, 'UTF-8');
-        return ['t' => 'r', 'v' => mb_substr($v, 0, $maxString, 'UTF-8'), 'cut' => $totalLen - $maxString, 'len' => $totalLen];
+        return true;
     }
 
     /**

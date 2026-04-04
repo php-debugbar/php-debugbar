@@ -5,9 +5,39 @@ declare(strict_types=1);
 namespace DebugBar\DataFormatter\VarDumper;
 
 use Symfony\Component\VarDumper\Cloner\Cursor;
+use Symfony\Component\VarDumper\Cloner\Data;
+use Symfony\Component\VarDumper\Cloner\VarCloner;
 
 class ReverseJsonDumper
 {
+    public function toCloneVarData(mixed $data): Data
+    {
+        $result = $this->wrapJsonDumps($data);
+
+        $cloner = new VarCloner();
+        $cloner->addCasters(DebugBarJsonCaster::getCasters());
+
+        return  $cloner->cloneVar($result);
+    }
+
+    private function wrapJsonDumps(mixed $data): mixed
+    {
+        if (!is_array($data)) {
+            return $data;
+        }
+
+        // Wrap the data in a special format that the DebugBarJsonCaster can understand
+        if (array_key_exists('_sd', $data)) {
+            return new DebugBarJsonVar($data);
+        }
+
+        foreach ($data as $key => $value) {
+            $data[$key] = $this->wrapJsonDumps($value);
+        }
+
+        return $data;
+    }
+
     public function reverseFormatVar(array $node): string
     {
         return $this->jsonToText($node, 0);
