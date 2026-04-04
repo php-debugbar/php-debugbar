@@ -46,6 +46,86 @@
             return data;
         }
 
+        renderPlain(value) {
+            const pre = document.createElement('pre');
+            pre.className = 'sf-dump';
+            const savedDepth = this.expandedDepth;
+            this.expandedDepth = 0;
+            pre.innerHTML = this.plainToHtml(value, 0) + '\n';
+            this.expandedDepth = savedDepth;
+            return pre;
+        }
+
+        plainToHtml(value, depth) {
+            if (value === null) return '<span class=sf-dump-const>null</span>';
+            switch (typeof value) {
+                case 'boolean':
+                    return '<span class=sf-dump-const>' + value + '</span>';
+                case 'number':
+                    return '<span class=sf-dump-num>' + this.esc(String(value)) + '</span>';
+                case 'string':
+                    return '"<span class=sf-dump-str>' + this.esc(value) + '</span>"';
+                case 'object': {
+                    const isIndexed = Array.isArray(value);
+                    const keys = isIndexed ? null : Object.keys(value);
+                    const len = isIndexed ? value.length : keys.length;
+
+                    if (len === 0) return '[]';
+
+                    const expanded = depth < this.expandedDepth;
+                    let html = '<span class=sf-dump-note>array:' + len + '</span> [';
+                    html += '<a class=sf-dump-toggle><span>' + (expanded ? '▼' : '▶') + '</span></a>';
+
+                    // Preview
+                    const previewParts = [];
+                    const maxPreview = Math.min(len, 8);
+                    for (let i = 0; i < maxPreview; i++) {
+                        const k = isIndexed ? i : keys[i];
+                        const v = isIndexed ? value[i] : value[keys[i]];
+                        const pv = v === null ? 'null'
+                            : typeof v === 'string' ? '"' + this.esc(v.length > 40 ? v.substring(0, 40) + '…' : v) + '"'
+                            : typeof v === 'boolean' ? String(v)
+                            : typeof v === 'number' ? String(v)
+                            : '[…]';
+                        previewParts.push(isIndexed ? pv : this.esc(String(k)) + ': ' + pv);
+                    }
+                    let preview = previewParts.join(', ');
+                    if (len > maxPreview) preview += ', …';
+                    html += '<span class="sf-dump-preview' + (expanded ? ' sf-dump-hidden' : '') + '"> ' + preview + ' ]</span>';
+
+                    if (expanded) {
+                        html += '<samp class=sf-dump-expanded>';
+                        html += this.plainChildrenToHtml(value, isIndexed, keys, depth);
+                        html += '</samp>';
+                    } else {
+                        const id = ++lazySeq;
+                        lazyStore.set(id, { plain: value, isArr: isIndexed, keys, depth, renderer: this, expandedDepth: this.expandedDepth });
+                        html += '<samp class=sf-dump-compact data-lazy=' + id + '></samp>';
+                    }
+                    html += '<span class="sf-dump-close' + (expanded ? '' : ' sf-dump-hidden') + '">]</span>';
+                    return html;
+                }
+                default:
+                    return this.esc(String(value));
+            }
+        }
+
+        plainChildrenToHtml(value, isIndexed, keys, depth) {
+            const len = isIndexed ? value.length : keys.length;
+            let html = '';
+            for (let i = 0; i < len; i++) {
+                if (i > 0) html += '\n';
+                if (isIndexed) {
+                    html += '<span class=sf-dump-index>' + i + '</span> => ';
+                    html += this.plainToHtml(value[i], depth + 1);
+                } else {
+                    html += '"<span class=sf-dump-key>' + this.esc(keys[i]) + '</span>" => ';
+                    html += this.plainToHtml(value[keys[i]], depth + 1);
+                }
+            }
+            return html;
+        }
+
         esc(s) {
             return String(s).replace(escRe, m => escMap[m]);
         }
@@ -301,7 +381,11 @@
         const savedDepth = renderer.expandedDepth;
         renderer.expandedDepth = data.expandedDepth;
 
-        samp.innerHTML = renderer.childrenToHtml(data.children, data.cut, data.depth, data.ht);
+        if (data.plain !== undefined) {
+            samp.innerHTML = renderer.plainChildrenToHtml(data.plain, data.isArr, data.keys, data.depth);
+        } else {
+            samp.innerHTML = renderer.childrenToHtml(data.children, data.cut, data.depth, data.ht);
+        }
 
         renderer.expandedDepth = savedDepth;
     }

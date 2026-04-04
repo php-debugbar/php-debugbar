@@ -6,8 +6,10 @@ namespace DebugBar\Tests\DataFormatter;
 
 use DebugBar\DataFormatter\JsonDataFormatter;
 use DebugBar\DataFormatter\VarDumper\DebugBarJsonDumper;
+use DebugBar\DataFormatter\VarDumper\ReverseJsonDumper;
 use DebugBar\Tests\DebugBarTestCase;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
+use Symfony\Component\VarDumper\Dumper\CliDumper;
 
 class JsonDataFormatterTest extends DebugBarTestCase
 {
@@ -46,11 +48,9 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $d = new JsonDataFormatter();
         $data = $d->formatVar([1, 2, 3]);
 
+        // Simple arrays pass through as raw PHP arrays
         $this->assertIsArray($data);
-        $this->assertEquals('h', $data['t']);
-        $this->assertEquals(2, $data['ht']); // HASH_INDEXED
-        $this->assertCount(3, $data['c']);
-        $this->assertArrayHasKey('_sd', $data);
+        $this->assertSame([1, 2, 3], $data);
     }
 
     public function testAssociativeArray(): void
@@ -58,13 +58,9 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $d = new JsonDataFormatter();
         $data = $d->formatVar(['foo' => 'bar', 'baz' => 42]);
 
+        // Simple assoc arrays pass through as raw PHP arrays
         $this->assertIsArray($data);
-        $this->assertEquals('h', $data['t']);
-        $this->assertEquals(1, $data['ht']); // HASH_ASSOC
-        $this->assertCount(2, $data['c']);
-        $this->assertEquals('foo', $data['c'][0]['k']);
-        // kt is omitted — inferrable from typeof k (string→'k')
-        $this->assertArrayNotHasKey('kt', $data['c'][0]);
+        $this->assertSame(['foo' => 'bar', 'baz' => 42], $data);
     }
 
     public function testNestedArray(): void
@@ -72,15 +68,9 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $d = new JsonDataFormatter();
         $data = $d->formatVar(['foo' => [1, 2], 'bar' => true]);
 
+        // Nested simple arrays pass through as raw PHP arrays
         $this->assertIsArray($data);
-        $this->assertEquals('h', $data['t']);
-        $this->assertCount(2, $data['c']);
-
-        // Nested array child
-        $inner = $data['c'][0]['n'];
-        $this->assertEquals('h', $inner['t']);
-        $this->assertEquals(2, $inner['ht']); // HASH_INDEXED
-        $this->assertCount(2, $inner['c']);
+        $this->assertSame(['foo' => [1, 2], 'bar' => true], $data);
     }
 
     public function testObject(): void
@@ -109,8 +99,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $data = $d->formatVar([]);
 
         $this->assertIsArray($data);
-        $this->assertEquals('h', $data['t']);
-        $this->assertArrayNotHasKey('c', $data);
+        $this->assertSame([], $data);
     }
 
     public function testDumpAsArray(): void
@@ -177,14 +166,34 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $d = new JsonDataFormatter();
         $d->resetClonerOptions(['max_string' => 5]);
 
-        // Long string exceeds max_string, so it falls through to Symfony dump
         $data = $d->formatVar('ABCDEFGHIJ');
 
-        $this->assertIsArray($data);
-        $this->assertEquals('r', $data['t']);
-        $this->assertEquals('ABCDE', $data['v']);
-        $this->assertEquals(5, $data['cut']);
-        $this->assertEquals(10, $data['len']);
+        $this->assertIsString($data);
+        $this->assertStringStartsWith('ABCDE', $data);
+        $this->assertStringContainsString('truncated', $data);
+        $this->assertStringContainsString('5 chars', $data);
+    }
+
+    public function testStringWithinLimit(): void
+    {
+        $d = new JsonDataFormatter();
+        $d->resetClonerOptions(['max_string' => 100]);
+
+        $data = $d->formatVar('short string');
+
+        $this->assertIsString($data);
+        $this->assertSame('short string', $data);
+    }
+
+    public function testStringExactlyAtLimit(): void
+    {
+        $d = new JsonDataFormatter();
+        $d->resetClonerOptions(['max_string' => 10]);
+
+        $data = $d->formatVar('ABCDEFGHIJ');
+
+        $this->assertIsString($data);
+        $this->assertSame('ABCDEFGHIJ', $data);
     }
 
     public function testObjectVisibility(): void
@@ -226,11 +235,10 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $this->assertNull($d->formatVar(null));
         $this->assertSame('hello', $d->formatVar('hello'));
 
-        // Arrays always go through dump to preserve type info
+        // Simple arrays pass through as raw arrays
         $data = $d->formatVar([1, 2, 3]);
         $this->assertIsArray($data);
-        $this->assertEquals('h', $data['t']);
-        $this->assertArrayHasKey('_sd', $data);
+        $this->assertSame([1, 2, 3], $data);
 
         // Objects use dump structure
         $obj = new \stdClass();
@@ -251,5 +259,80 @@ class JsonDataFormatterTest extends DebugBarTestCase
 
         $this->assertIsArray($data);
         $this->assertEquals('h', $data['t']);
+    }
+
+    /**
+     * Tests that formatVar output can be reversed via ReverseJsonDumper::toCloneVarData
+     * and dumped back to text, producing the same output as direct CliDumper.
+     *
+     * @dataProvider reverseRoundtripProvider
+     */
+    public function testReverseRoundtrip(mixed $value, string $description, bool $deep = true): void
+    {
+        $formatter = new JsonDataFormatter();
+        $cliDumper = new CliDumper();
+        $cliDumper->setColors(false);
+        $reverse = new ReverseJsonDumper();
+
+        $formatted = $formatter->formatVar($value, $deep);
+
+        // Reverse back to Data and dump as text
+        $data = $reverse->toCloneVarData($formatted);
+        $actual = rtrim($cliDumper->dump($data, true));
+
+        // Direct dump for comparison
+        $cloner = new VarCloner();
+        $directData = $cloner->cloneVar($value);
+        if (!$deep) {
+            $isObj = is_object($value) && !is_iterable($value);
+            $directData = $directData->withMaxDepth($isObj ? 0 : 1);
+        }
+        $expected = rtrim($cliDumper->dump($directData, true));
+
+        $this->assertEquals($expected, $actual, "Reverse roundtrip failed for: $description");
+    }
+
+    public static function reverseRoundtripProvider(): iterable
+    {
+        // Scalars (pass through as-is)
+        yield [42, 'integer'];
+        yield [3.14, 'float'];
+        yield [true, 'boolean true'];
+        yield [false, 'boolean false'];
+        yield [null, 'null'];
+        yield ['hello', 'short string'];
+
+        // Simple flat arrays (plain fast path)
+        yield [[], 'empty array'];
+        yield [[1, 2, 3], 'indexed array'];
+        yield [['foo' => 'bar', 'baz' => 42], 'assoc array'];
+        yield [['a' => true, 'b' => null, 'c' => 3.14], 'mixed scalar array'];
+
+        // Nested simple arrays (recursive fast path)
+        yield [['x' => [1, 2], 'y' => [3, 4]], 'nested indexed arrays'];
+        yield [['a' => ['b' => ['c' => 'd']]], 'deeply nested array'];
+        yield [[['one', 'two'], ['three', 'four']], 'array of arrays'];
+        yield [['l1' => ['l2' => ['l3' => ['l4' => 'deep']]]], '4 levels deep'];
+
+        // Objects (full dump path)
+        $obj = new \stdClass();
+        $obj->name = 'test';
+        $obj->value = 123;
+        yield [$obj, 'stdClass'];
+
+        // Nested object
+        $inner = new \stdClass();
+        $inner->x = 1;
+        $outer = new \stdClass();
+        $outer->child = $inner;
+        yield [$outer, 'nested object'];
+
+        // Array with objects (falls back to dump)
+        $obj = new \stdClass();
+        $obj->id = 1;
+        yield [['item' => $obj], 'array with object'];
+
+        // Shallow dump
+        yield [['a' => [1, 2, 3]], 'shallow nested array', false];
     }
 }
