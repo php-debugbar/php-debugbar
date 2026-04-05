@@ -718,7 +718,10 @@
                     } else if (item.message_html) {
                         message = item.message_html.replace(/<[^>]*>/g, '');
                     }
-                    if (caseless) message = message.toLowerCase();
+
+                    if (caseless) {
+                        message = message.toLowerCase();
+                    }
 
                     if (
                         !excludelabel.includes(item.label || undefined)
