@@ -185,7 +185,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
                 $formatted = $this->getDataFormatter()->formatVar($value);
                 if ($this->isJsonVarDumperUsed()) {
                     $contextJson[$key] = $formatted;
-                    unset($context[$key]);
+                    $context[$key] = null;
                 } else {
                     $context[$key] = $formatted;
                 }
