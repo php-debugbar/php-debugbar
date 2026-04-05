@@ -1,7 +1,7 @@
 # Rendering
 
 Rendering is performed using the `DebugBar\JavascriptRenderer` class. It contains
-all the useful functions to included the needed assets and generate a debug bar.
+all the useful functions to include the needed assets and generate a debug bar.
 ```php
 $renderer = $debugbar->getJavascriptRenderer();
 ```
@@ -69,7 +69,7 @@ using `$renderer->setIncludeVendors(false)`. Instead of false, *css* or *js* may
 to only include css or js assets of vendors.
 
 ### Minified dist files
-By default, the debug bar uses the minified files from the dist folder. These are generated automatically and include alle vendor and widget files.
+By default, the debug bar uses the minified files from the dist folder. These are generated automatically and include  all vendor and widget files.
 If you want to use the non-minified files, you can set `$renderer->useDistFiles(false)`.
 When using dist files, any additional scripts or inline scripts/styles will still be included.
 
