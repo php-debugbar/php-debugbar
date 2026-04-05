@@ -206,7 +206,7 @@ $totalHtml = 0;
 $totalJson = 0;
 
 foreach ($testData as $name => $data) {
-    $cliBench = benchmark(function () use ($cloner, $cliDumper, $data, $maxDepth) {
+    $cliBench = benchmark(function () use ($cloner, $cliDumper, $data, $maxDepth): void {
         $cliDumper->dump($cloner->cloneVar($data)->withMaxDepth($maxDepth), true);
     }, $iterations);
     $htmlBench = benchmark(fn() => $htmlFormatter->formatVar($data), $iterations);
