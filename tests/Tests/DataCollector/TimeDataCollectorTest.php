@@ -27,7 +27,7 @@ class TimeDataCollectorTest extends DebugBarTestCase
         $this->assertCount(1, $m);
         $this->assertEquals('foo', $m[0]['label']);
         $this->assertEquals(10, $m[0]['duration']);
-        $this->assertEquals(['a' => '"b"'], $m[0]['params']);
+        $this->assertEquals(['a' => 'b'], $m[0]['params']);
         $this->assertEquals('timer', $m[0]['collector']);
     }
 
@@ -40,7 +40,7 @@ class TimeDataCollectorTest extends DebugBarTestCase
         $this->assertCount(1, $m);
         $this->assertEquals('bar', $m[0]['label']);
         $this->assertEquals('baz', $m[0]['collector']);
-        $this->assertEquals(['bar' => '"baz"'], $m[0]['params']);
+        $this->assertEquals(['bar' => 'baz'], $m[0]['params']);
         $this->assertTrue($m[0]['start'] < $m[0]['end'], 'Start time should be before end time');
     }
 

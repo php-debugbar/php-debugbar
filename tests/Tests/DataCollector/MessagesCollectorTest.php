@@ -76,11 +76,8 @@ class MessagesCollectorTest extends DebugBarTestCase
         $this->assertTrue($c->isHtmlVarDumperUsed());
         $c->addMessage($var);
         $data = $c->collect();
-        $message_text = $data['messages'][0]['message'];
-        $this->assertStringContainsString('array', $message_text);
-        $this->assertStringContainsString('one', $message_text);
-        $this->assertStringContainsString('two', $message_text);
-        $this->assertStringNotContainsString('span', $message_text);
+        // When HTML dumper is used, message is empty — content is in message_html
+        $this->assertEmpty($data['messages'][0]['message']);
         $message_html = $data['messages'][0]['message_html'];
         $this->assertStringContainsString('array', $message_html);
         $this->assertStringContainsString('one', $message_html);
