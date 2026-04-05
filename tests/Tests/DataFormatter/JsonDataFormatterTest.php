@@ -150,15 +150,15 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $d = new JsonDataFormatter();
         $d->resetClonerOptions(['max_items' => 2]);
 
-        // With max_items=2, this exceeds the limit so it falls through to Symfony dump
         $data = $d->formatVar([['one', 'two', 'three', 'four', 'five']]);
 
         $this->assertIsArray($data);
-        // The inner array should be cut
-        $inner = $data['c'][0]['n'];
-        $this->assertEquals('h', $inner['t']);
-        $this->assertCount(2, $inner['c']);
-        $this->assertGreaterThan(0, $inner['cut']);
+        // Outer array has 1 item (within budget)
+        $inner = $data[0];
+        // Inner array should be truncated with _cut
+        $this->assertIsArray($inner);
+        $this->assertCount(2, array_filter(array_keys($inner), fn($k) => $k !== '_cut'));
+        $this->assertEquals(3, $inner['_cut']);
     }
 
     public function testStringTruncation(): void
@@ -248,17 +248,33 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $this->assertEquals('h', $data['t']);
     }
 
-    public function testArrayWithObjectFallsBackToDump(): void
+    public function testShallowArray(): void
     {
         $d = new JsonDataFormatter();
 
-        // Array containing an object should use Symfony dump
+        $data = $d->formatVar(['a' => [1, 2, 3], 'b' => 'hello'], deep: false);
+
+        $this->assertIsArray($data);
+        $this->assertSame('hello', $data['b']);
+        // Nested array is shown as cut summary in shallow mode
+        $this->assertSame(['_cut' => 3], $data['a']);
+    }
+
+    public function testArrayWithObjectInlinesDump(): void
+    {
+        $d = new JsonDataFormatter();
+
+        // Array stays plain, object value gets dump node format inline
         $obj = new \stdClass();
         $obj->x = 1;
         $data = $d->formatVar(['key' => $obj]);
 
         $this->assertIsArray($data);
-        $this->assertEquals('h', $data['t']);
+        $this->assertArrayHasKey('key', $data);
+        // The object value is a dump node
+        $this->assertEquals('h', $data['key']['t']);
+        $this->assertEquals(4, $data['key']['ht']); // HASH_OBJECT
+        $this->assertArrayHasKey('_sd', $data['key']);
     }
 
     /**
@@ -332,7 +348,5 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $obj->id = 1;
         yield [['item' => $obj], 'array with object'];
 
-        // Shallow dump
-        yield [['a' => [1, 2, 3]], 'shallow nested array', false];
     }
 }

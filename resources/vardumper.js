@@ -66,14 +66,19 @@
                 case 'string':
                     return '"<span class=sf-dump-str>' + this.esc(value) + '</span>"';
                 case 'object': {
-                    const isIndexed = Array.isArray(value);
-                    const keys = isIndexed ? null : Object.keys(value);
-                    const len = isIndexed ? value.length : keys.length;
+                    // Dump node (object/resource from PHP) — render via node path
+                    if ('_sd' in value) return this.nodeToHtml(value, depth);
 
-                    if (len === 0) return '[]';
+                    const isIndexed = Array.isArray(value);
+                    const cut = (!isIndexed && typeof value._cut === 'number') ? value._cut : 0;
+                    const keys = isIndexed ? null : Object.keys(value).filter(k => k !== '_cut');
+                    const len = isIndexed ? value.length : keys.length;
+                    const total = len + cut;
+
+                    if (total === 0) return '[]';
 
                     const expanded = depth < this.expandedDepth;
-                    let html = '<span class=sf-dump-note>array:' + len + '</span> [';
+                    let html = '<span class=sf-dump-note>array:' + total + '</span> [';
                     html += '<a class=sf-dump-toggle><span>' + (expanded ? '▼' : '▶') + '</span></a>';
 
                     // Preview
@@ -82,24 +87,19 @@
                     for (let i = 0; i < maxPreview; i++) {
                         const k = isIndexed ? i : keys[i];
                         const v = isIndexed ? value[i] : value[keys[i]];
-                        const pv = v === null ? 'null'
-                            : typeof v === 'string' ? '"' + this.esc(v.length > 40 ? v.substring(0, 40) + '…' : v) + '"'
-                            : typeof v === 'boolean' ? String(v)
-                            : typeof v === 'number' ? String(v)
-                            : '[…]';
-                        previewParts.push(isIndexed ? pv : this.esc(String(k)) + ': ' + pv);
+                        previewParts.push(isIndexed ? this.plainPreview(v) : this.esc(String(k)) + ': ' + this.plainPreview(v));
                     }
                     let preview = previewParts.join(', ');
-                    if (len > maxPreview) preview += ', …';
+                    if (len > maxPreview || cut > 0) preview += ', …';
                     html += '<span class="sf-dump-preview' + (expanded ? ' sf-dump-hidden' : '') + '"> ' + preview + ' ]</span>';
 
                     if (expanded) {
                         html += '<samp class=sf-dump-expanded>';
-                        html += this.plainChildrenToHtml(value, isIndexed, keys, depth);
+                        html += this.plainChildrenToHtml(value, isIndexed, keys, cut, depth);
                         html += '</samp>';
                     } else {
                         const id = ++lazySeq;
-                        lazyStore.set(id, { plain: value, isArr: isIndexed, keys, depth, renderer: this, expandedDepth: this.expandedDepth });
+                        lazyStore.set(id, { plain: value, isArr: isIndexed, keys, cut, depth, renderer: this, expandedDepth: this.expandedDepth });
                         html += '<samp class=sf-dump-compact data-lazy=' + id + '></samp>';
                     }
                     html += '<span class="sf-dump-close' + (expanded ? '' : ' sf-dump-hidden') + '">]</span>';
@@ -110,7 +110,19 @@
             }
         }
 
-        plainChildrenToHtml(value, isIndexed, keys, depth) {
+        plainPreview(v) {
+            if (v === null) return 'null';
+            if (typeof v === 'string') return '"' + this.esc(v.length > 40 ? v.substring(0, 40) + '…' : v) + '"';
+            if (typeof v === 'boolean') return String(v);
+            if (typeof v === 'number') return String(v);
+            if (typeof v === 'object' && '_sd' in v) {
+                if (v.ht === 1 || v.ht === 2) return '[…]';
+                return (v.cls || '') + ' {…}';
+            }
+            return '[…]';
+        }
+
+        plainChildrenToHtml(value, isIndexed, keys, cut, depth) {
             const len = isIndexed ? value.length : keys.length;
             let html = '';
             for (let i = 0; i < len; i++) {
@@ -122,6 +134,9 @@
                     html += '"<span class=sf-dump-key>' + this.esc(keys[i]) + '</span>" => ';
                     html += this.plainToHtml(value[keys[i]], depth + 1);
                 }
+            }
+            if (cut > 0) {
+                html += '\n…' + cut;
             }
             return html;
         }
@@ -382,7 +397,7 @@
         renderer.expandedDepth = data.expandedDepth;
 
         if (data.plain !== undefined) {
-            samp.innerHTML = renderer.plainChildrenToHtml(data.plain, data.isArr, data.keys, data.depth);
+            samp.innerHTML = renderer.plainChildrenToHtml(data.plain, data.isArr, data.keys, data.cut, data.depth);
         } else {
             samp.innerHTML = renderer.childrenToHtml(data.children, data.cut, data.depth, data.ht);
         }

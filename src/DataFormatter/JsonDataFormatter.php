@@ -45,19 +45,11 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
             return $data;
         }
 
-        $maxItems = $this->getClonerOptions()['max_items'] ?? 1000;
-        if ($deep && is_array($data) && $this->isSimpleArray($data, $maxItems)) {
-            return $data;
+        if (is_array($data)) {
+            return $this->formatArray($data, $deep);
         }
 
-        $dumper = $this->getDumper();
-        if ($dumper instanceof DebugBarJsonDumper) {
-            $result = $dumper->dumpAsArray($this->cloneVar($data, $deep));
-            $result['_sd'] = $this->getDumperOptions()['expanded_depth'] ?? 0;
-            return $result;
-        }
-
-        return parent::formatVar($data, $deep);
+        return $this->formatComplex($data, $deep);
     }
 
     protected function cloneVar(mixed $data, bool $deep): Data
@@ -76,24 +68,47 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     }
 
     /**
-     * Check if an array contains only simple values (scalars/strings)
-     * and can be passed through as plain JSON without the dump node structure.
+     * Format an array as plain JSON, recursing into nested arrays and
+     * formatting objects/complex values via the dumper inline.
+     * Adds '_cut' key if items exceed max_items.
      */
-    private function isSimpleArray(array $data, int &$budget = 1000): bool
+    private function formatArray(array $data, bool $deep): array
     {
-        foreach ($data as $v) {
-            if (--$budget < 0) {
-                return false;
+        $maxItems = $this->getClonerOptions()['max_items'] ?? 1000;
+        $result = [];
+        $count = 0;
+
+        foreach ($data as $k => $v) {
+            if ($count >= $maxItems) {
+                $result['_cut'] = count($data) - $count;
+                break;
             }
-            if (is_array($v)) {
-                if (!$this->isSimpleArray($v, $budget)) {
-                    return false;
-                }
-            } elseif (!$this->isSimpleValue($v)) {
-                return false;
+            if (!$deep && is_array($v)) {
+                // Shallow mode: show nested arrays as cut summary
+                $n = count($v);
+                $result[$k] = $n > 0 ? ['_cut' => $n] : [];
+            } else {
+                $result[$k] = $this->formatVar($v, $deep);
             }
+            $count++;
         }
-        return true;
+
+        return $result;
+    }
+
+    /**
+     * Format a non-array, non-scalar value (objects, resources, etc.) through the full dumper.
+     */
+    private function formatComplex(mixed $data, bool $deep): mixed
+    {
+        $dumper = $this->getDumper();
+        if ($dumper instanceof DebugBarJsonDumper) {
+            $result = $dumper->dumpAsArray($this->cloneVar($data, $deep));
+            $result['_sd'] = $this->getDumperOptions()['expanded_depth'] ?? 0;
+            return $result;
+        }
+
+        return parent::formatVar($data, $deep);
     }
 
     /**
