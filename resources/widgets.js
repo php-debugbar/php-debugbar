@@ -712,7 +712,13 @@
                 }
 
                 this.get('data').forEach((item) => {
-                    const message = caseless ? item.message.toLowerCase() : item.message;
+                    let message = item.message;
+                    if (item.message_json) {
+                        message = JSON.stringify(item.message_json);
+                    } else if (item.message_html) {
+                        message = item.message_html.replace(/<[^>]*>/g, '');
+                    }
+                    if (caseless) message = message.toLowerCase();
 
                     if (
                         !excludelabel.includes(item.label || undefined)
