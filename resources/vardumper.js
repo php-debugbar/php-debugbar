@@ -19,7 +19,7 @@
      * Sfdump continues to handle server-rendered HTML dumps (with IDs) unchanged.
      *
      * Usage:
-     *   const renderer = new PhpDebugBar.Widgets.VarDumpRenderer({ expandedDepth: 1 });
+     *   const renderer = new PhpDebugBar.Widgets.VarDumpRenderer({ expandedDepth: 0 });
      *   const el = renderer.render(jsonData);
      *   container.appendChild(el);
      */
