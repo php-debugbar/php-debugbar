@@ -44,9 +44,6 @@ class RequestDataCollector extends DataCollector implements Renderable
         $data = $this->hideMaskedValues($data);
 
         foreach ($data as $name => $global) {
-            if (is_string($global)) {
-                continue;
-            }
             $data[$name] = $this->getDataFormatter()->formatVar($global);
         }
 
