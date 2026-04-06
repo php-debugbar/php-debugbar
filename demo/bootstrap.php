@@ -59,7 +59,7 @@ if (isset($_GET['formatter'])) {
 
 $formatter = $_SESSION['formatter'] ?? 'json';
 
-$dataFormatter = match($formatter) {
+$dataFormatter = match ($formatter) {
     'json' => new \DebugBar\DataFormatter\JsonDataFormatter(),
     'html' => new \DebugBar\DataFormatter\HtmlDataFormatter(),
     'base' => new \DebugBar\DataFormatter\DataFormatter(),
