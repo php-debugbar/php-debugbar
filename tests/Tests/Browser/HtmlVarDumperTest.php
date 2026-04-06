@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DebugBar\Tests\Browser;
 
 use Facebook\WebDriver\WebDriverDimension;
-use Facebook\WebDriver\WebDriverElement;
+use Symfony\Component\Panther\Client;
 
 /**
  * Browser tests for the HTML VarDumper (HtmlDataFormatter).
@@ -15,10 +15,9 @@ use Facebook\WebDriver\WebDriverElement;
  */
 class HtmlVarDumperTest extends AbstractBrowserTestCase
 {
-    private function openMessages($client): \Symfony\Component\DomCrawler\Crawler
+    private function openMessages(Client $client): \Symfony\Component\Panther\DomCrawler\Crawler
     {
-        $size = new WebDriverDimension(1920, 800);
-        $client->manage()->window()->setSize($size);
+        $client->manage()->window()->setSize(new WebDriverDimension(1920, 800));
 
         $crawler = $client->request('GET', '/?formatter=html');
         $crawler = $client->waitFor('.phpdebugbar-body');
@@ -36,7 +35,6 @@ class HtmlVarDumperTest extends AbstractBrowserTestCase
         $client = static::createPantherClient();
         $crawler = $this->openMessages($client);
 
-        // HTML formatter renders dumps as <pre> with sf-dump class and an ID (Sfdump-managed)
         $dumps = $crawler->filter('.phpdebugbar-panel[data-collector=messages] pre.sf-dump');
         $this->assertGreaterThan(0, $dumps->count(), 'HTML dumps should render as <pre class="sf-dump">');
     }
@@ -68,12 +66,9 @@ class HtmlVarDumperTest extends AbstractBrowserTestCase
         $client = static::createPantherClient();
         $crawler = $this->openMessages($client);
 
-        // Expand first
         $toggle = $crawler->filter('.phpdebugbar-panel[data-collector=messages] pre.sf-dump a.sf-dump-toggle')->first();
         $toggle->click();
         usleep(500);
-
-        // Collapse
         $toggle->click();
         usleep(500);
 
@@ -87,7 +82,9 @@ class HtmlVarDumperTest extends AbstractBrowserTestCase
         $crawler = $this->openMessages($client);
 
         $messages = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-value')
-            ->each(fn(WebDriverElement $n): string => $n->getText());
+            ->each(function ($node): string {
+                return $node->getText();
+            });
 
         $this->assertNotEmpty($messages);
         $this->assertStringContainsString('Hello World!', $messages[0]);

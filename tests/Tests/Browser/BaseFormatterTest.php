@@ -6,7 +6,7 @@ namespace DebugBar\Tests\Browser;
 
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverDimension;
-use Facebook\WebDriver\WebDriverElement;
+use Symfony\Component\Panther\Client;
 
 /**
  * Browser tests for the base DataFormatter.
@@ -16,10 +16,9 @@ use Facebook\WebDriver\WebDriverElement;
  */
 class BaseFormatterTest extends AbstractBrowserTestCase
 {
-    private function openMessages($client): \Symfony\Component\DomCrawler\Crawler
+    private function openMessages(Client $client): \Symfony\Component\Panther\DomCrawler\Crawler
     {
-        $size = new WebDriverDimension(1920, 800);
-        $client->manage()->window()->setSize($size);
+        $client->manage()->window()->setSize(new WebDriverDimension(1920, 800));
 
         $crawler = $client->request('GET', '/?formatter=base');
         $crawler = $client->waitFor('.phpdebugbar-body');
@@ -47,7 +46,9 @@ class BaseFormatterTest extends AbstractBrowserTestCase
         $crawler = $this->openMessages($client);
 
         $messages = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-value')
-            ->each(fn(WebDriverElement $n): string => $n->getText());
+            ->each(function ($node): string {
+                return $node->getText();
+            });
 
         $this->assertNotEmpty($messages);
         $this->assertStringContainsString('Hello World!', $messages[0]);
@@ -61,9 +62,10 @@ class BaseFormatterTest extends AbstractBrowserTestCase
         $client->waitForElementToContain('.phpdebugbar-panel[data-collector=messages]', 'Lorem ipsum');
 
         // Find the truncated Lorem ipsum value
+        /** @var \Facebook\WebDriver\WebDriverElement|null $loremItem */
         $loremItem = null;
         $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-truncated')
-            ->each(function (WebDriverElement $el) use (&$loremItem): void {
+            ->each(function ($el) use (&$loremItem): void {
                 if ($loremItem === null && str_contains($el->getText(), 'Lorem ipsum')) {
                     $loremItem = $el;
                 }

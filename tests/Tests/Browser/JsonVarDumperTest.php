@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DebugBar\Tests\Browser;
 
 use Facebook\WebDriver\WebDriverDimension;
-use Facebook\WebDriver\WebDriverElement;
+use Symfony\Component\Panther\Client;
 
 /**
  * Browser tests for the JSON VarDumper (JsonDataFormatter).
@@ -14,10 +14,9 @@ use Facebook\WebDriver\WebDriverElement;
  */
 class JsonVarDumperTest extends AbstractBrowserTestCase
 {
-    private function openMessages($client): \Symfony\Component\DomCrawler\Crawler
+    private function openMessages(Client $client): \Symfony\Component\Panther\DomCrawler\Crawler
     {
-        $size = new WebDriverDimension(1920, 800);
-        $client->manage()->window()->setSize($size);
+        $client->manage()->window()->setSize(new WebDriverDimension(1920, 800));
 
         $crawler = $client->request('GET', '/?formatter=json');
         $crawler = $client->waitFor('.phpdebugbar-body');
@@ -54,7 +53,7 @@ class JsonVarDumperTest extends AbstractBrowserTestCase
         $crawler = $this->openMessages($client);
 
         $toggle = $crawler->filter('.phpdebugbar-panel[data-collector=messages] a.sf-dump-toggle')->first();
-        $this->assertGreaterThan(0, $toggle->count(), 'Should have at least one toggle');
+        $this->assertGreaterThan(0, $toggle->count());
 
         $toggle->click();
         usleep(500);
@@ -71,7 +70,6 @@ class JsonVarDumperTest extends AbstractBrowserTestCase
         $toggle = $crawler->filter('.phpdebugbar-panel[data-collector=messages] a.sf-dump-toggle')->first();
         $toggle->click();
         usleep(500);
-
         $toggle->click();
         usleep(500);
 
@@ -84,8 +82,10 @@ class JsonVarDumperTest extends AbstractBrowserTestCase
         $client = static::createPantherClient();
         $crawler = $this->openMessages($client);
 
-        $notes = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .sf-dump-note');
-        $noteTexts = $notes->each(fn(WebDriverElement $n): string => $n->getText());
+        $noteTexts = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .sf-dump-note')
+            ->each(function ($node): string {
+                return $node->getText();
+            });
 
         $hasClassName = false;
         foreach ($noteTexts as $text) {
@@ -112,7 +112,9 @@ class JsonVarDumperTest extends AbstractBrowserTestCase
         $crawler = $this->openMessages($client);
 
         $messages = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-value')
-            ->each(fn(WebDriverElement $n): string => $n->getText());
+            ->each(function ($node): string {
+                return $node->getText();
+            });
 
         $this->assertNotEmpty($messages);
         $this->assertEquals('Hello World!', $messages[0]);
@@ -124,7 +126,7 @@ class JsonVarDumperTest extends AbstractBrowserTestCase
         $crawler = $this->openMessages($client);
 
         $scripts = $crawler->filter('.phpdebugbar-panel[data-collector=messages] script');
-        $this->assertEquals(0, $scripts->count(), 'No <script> elements should be injected by dump content');
+        $this->assertEquals(0, $scripts->count(), 'No <script> elements should be injected');
     }
 
     public function testContextRendering(): void
@@ -139,8 +141,7 @@ class JsonVarDumperTest extends AbstractBrowserTestCase
     public function testRequestDataTab(): void
     {
         $client = static::createPantherClient();
-        $size = new WebDriverDimension(1920, 800);
-        $client->manage()->window()->setSize($size);
+        $client->manage()->window()->setSize(new WebDriverDimension(1920, 800));
 
         $crawler = $client->request('GET', '/?formatter=json');
         $crawler = $client->waitFor('.phpdebugbar-body');
@@ -156,8 +157,7 @@ class JsonVarDumperTest extends AbstractBrowserTestCase
     public function testExceptionsTab(): void
     {
         $client = static::createPantherClient();
-        $size = new WebDriverDimension(1920, 800);
-        $client->manage()->window()->setSize($size);
+        $client->manage()->window()->setSize(new WebDriverDimension(1920, 800));
 
         $crawler = $client->request('GET', '/?formatter=json');
         $crawler = $client->waitFor('.phpdebugbar-body');
