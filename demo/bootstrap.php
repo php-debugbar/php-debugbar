@@ -52,7 +52,19 @@ $debugbar->setStorage(new DebugBar\Storage\FileStorage(__DIR__ . '/profiles'));
 $debugbarRenderer->setOpenHandlerUrl('open.php');
 
 // configs
-\DebugBar\DataCollector\DataCollector::setDefaultDataFormatter(new \DebugBar\DataFormatter\JsonDataFormatter());
+if (isset($_GET['formatter'])) {
+    $formatter = $_GET['formatter'];
+    $_SESSION['formatter'] = $formatter;
+}
+
+$formatter = $_SESSION['formatter'] ?? 'json';
+
+$dataFormatter = match($formatter) {
+    'json' => new \DebugBar\DataFormatter\JsonDataFormatter(),
+    'html' => new \DebugBar\DataFormatter\HtmlDataFormatter(),
+    'base' => new \DebugBar\DataFormatter\DataFormatter(),
+};
+\DebugBar\DataCollector\DataCollector::setDefaultDataFormatter($dataFormatter);
 // $debugbar->setEditor('vscode');
 // $debugbar->setEditor('vscode');
 // $debugbar->setRemoteReplacements(['/remote/demo/' => '/home/demo/']);
