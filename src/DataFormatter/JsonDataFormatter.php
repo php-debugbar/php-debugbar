@@ -23,6 +23,10 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
 
     protected ?array $dumperOptions = null;
 
+    /** Resolved limits — cached on first formatVar call to avoid repeated lookups */
+    private ?int $maxString = null;
+    private ?int $maxItems = null;
+
     /**
      * Returns the raw value for scalars/short strings, or a dump node array for complex types.
      *
@@ -33,29 +37,39 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
      */
     public function formatVar(mixed $data, bool $deep = true): mixed
     {
+        // Resolve limits once (reset to null when cloner options change)
+        if ($this->maxString === null) {
+            $opts = $this->getClonerOptions();
+            $this->maxString = $opts['max_string'] ?? 10000;
+            $this->maxItems = $opts['max_items'] ?? 1000;
+        }
+
+        return $this->formatValue($data, $deep);
+    }
+
+    private function formatValue(mixed $data, bool $deep): mixed
+    {
         if (is_string($data)) {
-            $maxLength = $this->getClonerOptions()['max_string'] ?? 10000;
-            if (strlen($data) <= $maxLength) {
+            if (strlen($data) <= $this->maxString) {
                 return $data;
             }
-            return substr($data, 0, $maxLength) . '[..' . (strlen($data) - $maxLength) . ']';
+            return substr($data, 0, $this->maxString) . '[..' . (strlen($data) - $this->maxString) . ']';
         }
 
-        if ($this->isSimpleValue($data)) {
+        if ($data === null || is_bool($data) || is_int($data) || is_float($data)) {
             return $data;
         }
 
-        $maxItems = $this->getClonerOptions()['max_items'] ?? 1000;
-        if ($deep && is_array($data) && $this->isSimpleArray($data, $maxItems)) {
-            return $data;
+        if (is_array($data)) {
+            // Fast path: if all leaf values are scalars, return as-is (no per-element iteration)
+            // count() is O(1) — skip the walk entirely for oversized arrays
+            if ($deep && count($data) <= $this->maxItems && $this->isPlainArray($data)) {
+                return $data;
+            }
+            return $this->formatArray($data, $deep);
         }
 
-        $dumper = $this->getDumper();
-        if ($dumper instanceof DebugBarJsonDumper) {
-            return $dumper->dumpAsArray($this->cloneVar($data, $deep));
-        }
-
-        return parent::formatVar($data, $deep);
+        return $this->formatComplex($data, $deep);
     }
 
     protected function cloneVar(mixed $data, bool $deep): Data
@@ -74,20 +88,22 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     }
 
     /**
-     * Check if an array contains only simple values (scalars/strings)
-     * and can be passed through as plain JSON without the dump node structure.
+     * Fast check: returns true if the array (recursively) contains only scalar/null values.
+     * Uses foreach with early break — faster than array_walk_recursive for flat arrays
+     * (no closure overhead), and bails immediately on non-simple values.
      */
-    private function isSimpleArray(array $data, int &$budget = 1000): bool
+    private function isPlainArray(array $data, ?int &$budget = null): bool
     {
+        $budget ??= $this->maxItems;
         foreach ($data as $v) {
             if (--$budget < 0) {
                 return false;
             }
             if (is_array($v)) {
-                if (!$this->isSimpleArray($v, $budget)) {
+                if (!$this->isPlainArray($v, $budget)) {
                     return false;
                 }
-            } elseif (!$this->isSimpleValue($v)) {
+            } elseif (!is_scalar($v) && $v !== null) {
                 return false;
             }
         }
@@ -95,22 +111,44 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     }
 
     /**
-     * Check if a value can be represented as plain JSON without the Symfony dump structure.
-     * Only scalars, null, and short strings qualify — arrays always go through the dumper
-     * to preserve type info (array vs object) and element counts.
+     * Format an array as plain JSON, recursing into nested arrays and
+     * formatting objects/complex values via the dumper inline.
+     * Adds '_cut' key if items exceed max_items.
      */
-    private function isSimpleValue(mixed $data): bool
+    private function formatArray(array $data, bool $deep): array
     {
-        if ($data === null || is_bool($data) || is_int($data) || is_float($data)) {
-            return true;
+        $result = [];
+        $count = 0;
+
+        foreach ($data as $k => $v) {
+            if ($count >= $this->maxItems) {
+                $result['_cut'] = count($data) - $count;
+                break;
+            }
+            if (!$deep && is_array($v)) {
+                // Shallow mode: show nested arrays as cut summary
+                $n = count($v);
+                $result[$k] = $n > 0 ? ['_cut' => $n] : [];
+            } else {
+                $result[$k] = $this->formatValue($v, $deep);
+            }
+            $count++;
         }
 
-        if (is_string($data)) {
-            $maxString = $this->getClonerOptions()['max_string'] ?? 10000;
-            return strlen($data) <= $maxString;
+        return $result;
+    }
+
+    /**
+     * Format a non-array, non-scalar value (objects, resources, etc.) through the full dumper.
+     */
+    private function formatComplex(mixed $data, bool $deep): mixed
+    {
+        $dumper = $this->getDumper();
+        if ($dumper instanceof DebugBarJsonDumper) {
+            return $dumper->dumpAsArray($this->cloneVar($data, $deep));
         }
 
-        return false;
+        return parent::formatVar($data, $deep);
     }
 
     protected function getDumper(): DataDumperInterface
@@ -127,6 +165,18 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
             $this->dumperOptions = static::$defaultDumperOptions;
         }
         return $this->dumperOptions;
+    }
+
+    public function mergeClonerOptions(array $options): void
+    {
+        parent::mergeClonerOptions($options);
+        $this->maxString = null; // reset cache
+    }
+
+    public function resetClonerOptions(?array $options = null): void
+    {
+        parent::resetClonerOptions($options);
+        $this->maxString = null; // reset cache
     }
 
     public function mergeDumperOptions(array $options): void

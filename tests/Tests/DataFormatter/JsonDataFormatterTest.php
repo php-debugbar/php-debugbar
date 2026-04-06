@@ -153,7 +153,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
         // Inner array should be truncated with _cut
         $inner = $data[0];
         $this->assertIsArray($inner);
-        $this->assertArrayHasKey('_cut', $inner);
+        $this->assertCount(2, array_filter(array_keys($inner), fn($k) => $k !== '_cut'));
         $this->assertEquals(3, $inner['_cut']);
     }
 
@@ -242,6 +242,18 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $data = $d->formatVar($obj);
         $this->assertIsArray($data);
         $this->assertArrayHasKey('_vd', $data);
+    }
+
+    public function testShallowArray(): void
+    {
+        $d = new JsonDataFormatter();
+
+        $data = $d->formatVar(['a' => [1, 2, 3], 'b' => 'hello'], deep: false);
+
+        $this->assertIsArray($data);
+        $this->assertSame('hello', $data['b']);
+        // Nested array is shown as cut summary in shallow mode
+        $this->assertSame(['_cut' => 3], $data['a']);
     }
 
     public function testArrayWithObjectInlinesDump(): void

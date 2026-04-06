@@ -6,6 +6,7 @@ namespace DebugBar\Tests\DataCollector;
 
 use DebugBar\DataFormatter\DataFormatter;
 use DebugBar\DataFormatter\HtmlDataFormatter;
+use DebugBar\DataFormatter\JsonDataFormatter;
 use DebugBar\Tests\DebugBarTestCase;
 use DebugBar\DataCollector\MessagesCollector;
 
@@ -76,15 +77,58 @@ class MessagesCollectorTest extends DebugBarTestCase
         $this->assertTrue($c->isHtmlVarDumperUsed());
         $c->addMessage($var);
         $data = $c->collect();
-        $message_text = $data['messages'][0]['message'];
-        $this->assertStringContainsString('array', $message_text);
-        $this->assertStringContainsString('one', $message_text);
-        $this->assertStringContainsString('two', $message_text);
-        $this->assertStringNotContainsString('span', $message_text);
+        // When HTML dumper is used, message is empty — content is in message_html
+        $this->assertEmpty($data['messages'][0]['message']);
         $message_html = $data['messages'][0]['message_html'];
         $this->assertStringContainsString('array', $message_html);
         $this->assertStringContainsString('one', $message_html);
         $this->assertStringContainsString('two', $message_html);
         $this->assertStringContainsString('span', $message_html);
+    }
+
+    public function testJsonContextFormat(): void
+    {
+        $c = new MessagesCollector();
+        $c->setDataFormatter(new JsonDataFormatter());
+
+        $this->assertTrue($c->isJsonVarDumperUsed());
+
+        $c->addMessage('hello {name}', 'info', ['name' => 'Alice', 'extra' => [1, 2, 3]]);
+        $data = $c->collect();
+        $msg = $data['messages'][0];
+
+        // message_json holds the formatted message, message is empty
+        $this->assertNotNull($msg['message_json']);
+        $this->assertEmpty($msg['message']);
+
+        // context values are in context_json, context keys are null
+        $this->assertNotNull($msg['context_json']);
+        $this->assertArrayHasKey('name', $msg['context_json']);
+        $this->assertArrayHasKey('extra', $msg['context_json']);
+        $this->assertSame('Alice', $msg['context_json']['name']);
+        $this->assertSame([1, 2, 3], $msg['context_json']['extra']);
+
+        // context keys exist but are null (cleared for JSON path)
+        $this->assertArrayHasKey('name', $msg['context']);
+        $this->assertNull($msg['context']['name']);
+        $this->assertArrayHasKey('extra', $msg['context']);
+        $this->assertNull($msg['context']['extra']);
+    }
+
+    public function testPlainContextFormat(): void
+    {
+        $c = new MessagesCollector();
+        $c->setDataFormatter(new DataFormatter());
+
+        $this->assertFalse($c->isJsonVarDumperUsed());
+        $this->assertFalse($c->isHtmlVarDumperUsed());
+
+        $c->addMessage('test', 'info', ['key' => 'value']);
+        $data = $c->collect();
+        $msg = $data['messages'][0];
+
+        // Plain formatter: context holds formatted values, context_json is null
+        $this->assertNull($msg['context_json']);
+        $this->assertSame('value', $msg['context']['key']);
     }
 }

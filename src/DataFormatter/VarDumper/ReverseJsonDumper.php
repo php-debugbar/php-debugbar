@@ -17,7 +17,7 @@ class ReverseJsonDumper
         $cloner = new VarCloner();
         $cloner->addCasters(DebugBarJsonCaster::getCasters());
 
-        return  $cloner->cloneVar($result);
+        return $cloner->cloneVar($result);
     }
 
     private function wrapJsonDumps(mixed $data): mixed
