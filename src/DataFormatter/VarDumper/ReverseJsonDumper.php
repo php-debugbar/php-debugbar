@@ -53,9 +53,15 @@ class ReverseJsonDumper
     // ---------------------------------------------------------------
     private function valueToText(mixed $value, int $depth): string
     {
-        if ($value === null) return 'null';
-        if (is_bool($value)) return $value ? 'true' : 'false';
-        if (is_int($value)) return (string) $value;
+        if ($value === null) {
+            return 'null';
+        }
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+        if (is_int($value)) {
+            return (string) $value;
+        }
         if (is_float($value)) {
             $s = (string) $value;
             return !str_contains($s, '.') ? $s . '.0' : $s;
@@ -89,7 +95,9 @@ class ReverseJsonDumper
         $count = count($keys) + $cut;
         $isIndexed = array_is_list($data) || ($keys === [] && $cut > 0);
 
-        if ($count === 0) return '[]';
+        if ($count === 0) {
+            return '[]';
+        }
 
         $header = $count > 0 ? 'array:' . $count . ' [' : '[';
         if ($keys === [] && $cut > 0) {

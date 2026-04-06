@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace DebugBar\Tests\DataFormatter;
 
-use DebugBar\DataFormatter\VarDumper\DebugBarJsonCaster;
 use DebugBar\DataFormatter\VarDumper\DebugBarJsonDumper;
-use DebugBar\DataFormatter\VarDumper\DebugBarJsonVar;
 use DebugBar\DataFormatter\VarDumper\ReverseJsonDumper;
 use DebugBar\Tests\DebugBarTestCase;
 use Symfony\Component\VarDumper\Cloner\VarCloner;

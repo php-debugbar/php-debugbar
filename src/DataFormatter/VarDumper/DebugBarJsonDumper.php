@@ -223,6 +223,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
             case Cursor::HASH_RESOURCE:
                 $key = "\0~\0" . $key;
                 // fall through
+                // no break
             case Cursor::HASH_OBJECT:
                 if (!isset($key[0]) || $key[0] !== "\0") {
                     // Public property
