@@ -81,16 +81,12 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $obj->value = 123;
         $data = $d->formatVar($obj);
 
-        // Objects use the dump structure (returned as array)
+        // Objects use _vd format with natural key→value
         $this->assertIsArray($data);
-        $this->assertEquals('h', $data['t']);
-        $this->assertEquals(4, $data['ht']); // HASH_OBJECT
-        $this->assertArrayNotHasKey('cls', $data); // stdClass omitted like Symfony
-        $this->assertCount(2, $data['c']);
-
-        // Properties should be public (kt omitted — 'pub' is default for objects)
-        $this->assertEquals('name', $data['c'][0]['k']);
-        $this->assertArrayNotHasKey('kt', $data['c'][0]);
+        $this->assertArrayHasKey('_vd', $data);
+        $this->assertEquals(4, $data['_vd'][0]); // HASH_OBJECT
+        $this->assertSame('test', $data['name']);
+        $this->assertSame(123, $data['value']);
     }
 
     public function testEmptyArray(): void
@@ -109,7 +105,8 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $data = $cloner->cloneVar(['a' => 1]);
 
         $result = $dumper->dumpAsArray($data);
-        $this->assertEquals('h', $result['t']);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('a', $result);
     }
 
     public function testAssetProvider(): void
@@ -150,15 +147,14 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $d = new JsonDataFormatter();
         $d->resetClonerOptions(['max_items' => 2]);
 
-        // With max_items=2, this exceeds the limit so it falls through to Symfony dump
         $data = $d->formatVar([['one', 'two', 'three', 'four', 'five']]);
 
         $this->assertIsArray($data);
-        // The inner array should be cut
-        $inner = $data['c'][0]['n'];
-        $this->assertEquals('h', $inner['t']);
-        $this->assertCount(2, $inner['c']);
-        $this->assertGreaterThan(0, $inner['cut']);
+        // Inner array should be truncated with _cut
+        $inner = $data[0];
+        $this->assertIsArray($inner);
+        $this->assertArrayHasKey('_cut', $inner);
+        $this->assertEquals(3, $inner['_cut']);
     }
 
     public function testStringTruncation(): void
@@ -169,9 +165,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $data = $d->formatVar('ABCDEFGHIJ');
 
         $this->assertIsString($data);
-        $this->assertStringStartsWith('ABCDE', $data);
-        $this->assertStringContainsString('truncated', $data);
-        $this->assertStringContainsString('5 chars', $data);
+        $this->assertSame('ABCDE[..5]', $data);
     }
 
     public function testStringWithinLimit(): void
@@ -210,18 +204,20 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $data = $d->formatVar($obj);
 
         $this->assertIsArray($data);
-        $this->assertEquals('h', $data['t']);
-        $this->assertEquals(4, $data['ht']); // HASH_OBJECT
+        $this->assertArrayHasKey('_vd', $data);
+        $this->assertEquals(4, $data['_vd'][0]); // HASH_OBJECT
 
-        $prefixes = [];
-        foreach ($data['c'] as $child) {
-            // Public properties have no 'p' field; non-public use 'p' prefix
-            $prefixes[$child['k']] = $child['p'] ?? null;
-        }
+        // Values stored as native key→value
+        $this->assertSame('public_val', $data['pub']);
+        $this->assertSame('protected_val', $data['prot']);
+        $this->assertSame('private_val', $data['priv']);
 
-        $this->assertNull($prefixes['pub']);        // public: no prefix
-        $this->assertEquals('*', $prefixes['prot']); // protected
-        $this->assertNotNull($prefixes['priv']);     // private: declaring class name
+        // Prefixes in _vd[3]: null=public, *=protected, ClassName=private
+        $prefixes = $data['_vd'][3];
+        $this->assertNotNull($prefixes);
+        $this->assertNull($prefixes[0]);              // pub: public (no prefix)
+        $this->assertEquals('*', $prefixes[1]);        // prot: protected
+        $this->assertNotNull($prefixes[2]);            // priv: declaring class name
     }
 
     public function testSimpleValueFastPath(): void
@@ -240,25 +236,28 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $this->assertIsArray($data);
         $this->assertSame([1, 2, 3], $data);
 
-        // Objects use dump structure
+        // Objects use _vd format
         $obj = new \stdClass();
         $obj->x = 1;
         $data = $d->formatVar($obj);
         $this->assertIsArray($data);
-        $this->assertEquals('h', $data['t']);
+        $this->assertArrayHasKey('_vd', $data);
     }
 
-    public function testArrayWithObjectFallsBackToDump(): void
+    public function testArrayWithObjectInlinesDump(): void
     {
         $d = new JsonDataFormatter();
 
-        // Array containing an object should use Symfony dump
+        // Array stays plain, object value gets _vd format inline
         $obj = new \stdClass();
         $obj->x = 1;
         $data = $d->formatVar(['key' => $obj]);
 
         $this->assertIsArray($data);
-        $this->assertEquals('h', $data['t']);
+        $this->assertArrayHasKey('key', $data);
+        // The object value has _vd metadata
+        $this->assertArrayHasKey('_vd', $data['key']);
+        $this->assertEquals(4, $data['key']['_vd'][0]); // HASH_OBJECT
     }
 
     /**
@@ -332,7 +331,5 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $obj->id = 1;
         yield [['item' => $obj], 'array with object'];
 
-        // Shallow dump
-        yield [['a' => [1, 2, 3]], 'shallow nested array', false];
     }
 }

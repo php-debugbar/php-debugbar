@@ -17,6 +17,6 @@ namespace DebugBar\DataFormatter\VarDumper;
 class DebugBarJsonVar
 {
     public function __construct(
-        public readonly array $node,
+        public readonly mixed $node,
     ) {}
 }

@@ -66,40 +66,45 @@
                 case 'string':
                     return '"<span class=sf-dump-str>' + this.esc(value) + '</span>"';
                 case 'object': {
-                    const isIndexed = Array.isArray(value);
-                    const keys = isIndexed ? null : Object.keys(value);
-                    const len = isIndexed ? value.length : keys.length;
+                    // Legacy dump node format
+                    if ('_sd' in value) return this.nodeToHtml(value, depth);
 
-                    if (len === 0) return '[]';
+                    const isIndexed = Array.isArray(value);
+                    const vd = (!isIndexed && value._vd) || null;
+                    const cut = (!isIndexed && typeof value._cut === 'number') ? value._cut : 0;
+                    const metaKeys = ['_vd', '_cut', '_sd'];
+                    const keys = isIndexed ? null : Object.keys(value).filter(k => !metaKeys.includes(k));
+                    const len = isIndexed ? value.length : keys.length;
+                    const total = len + cut;
+
+                    // Object/resource (has _vd metadata)
+                    if (vd) return this.objectToHtml(value, keys, vd, cut, total, depth);
+
+                    // Plain array
+                    if (total === 0) return '[]';
 
                     const expanded = depth < this.expandedDepth;
-                    let html = '<span class=sf-dump-note>array:' + len + '</span> [';
+                    let html = '<span class=sf-dump-note>array:' + total + '</span> [';
                     html += '<a class=sf-dump-toggle><span>' + (expanded ? '▼' : '▶') + '</span></a>';
 
-                    // Preview
                     const previewParts = [];
                     const maxPreview = Math.min(len, 8);
                     for (let i = 0; i < maxPreview; i++) {
                         const k = isIndexed ? i : keys[i];
                         const v = isIndexed ? value[i] : value[keys[i]];
-                        const pv = v === null ? 'null'
-                            : typeof v === 'string' ? '"' + this.esc(v.length > 40 ? v.substring(0, 40) + '…' : v) + '"'
-                            : typeof v === 'boolean' ? String(v)
-                            : typeof v === 'number' ? String(v)
-                            : '[…]';
-                        previewParts.push(isIndexed ? pv : this.esc(String(k)) + ': ' + pv);
+                        previewParts.push(isIndexed ? this.plainPreview(v) : this.esc(String(k)) + ': ' + this.plainPreview(v));
                     }
                     let preview = previewParts.join(', ');
-                    if (len > maxPreview) preview += ', …';
+                    if (len > maxPreview || cut > 0) preview += ', …';
                     html += '<span class="sf-dump-preview' + (expanded ? ' sf-dump-hidden' : '') + '"> ' + preview + ' ]</span>';
 
                     if (expanded) {
                         html += '<samp class=sf-dump-expanded>';
-                        html += this.plainChildrenToHtml(value, isIndexed, keys, depth);
+                        html += this.plainChildrenToHtml(value, isIndexed, keys, cut, depth);
                         html += '</samp>';
                     } else {
                         const id = ++lazySeq;
-                        lazyStore.set(id, { plain: value, isArr: isIndexed, keys, depth, renderer: this, expandedDepth: this.expandedDepth });
+                        lazyStore.set(id, { plain: value, isArr: isIndexed, keys, cut, depth, renderer: this, expandedDepth: this.expandedDepth });
                         html += '<samp class=sf-dump-compact data-lazy=' + id + '></samp>';
                     }
                     html += '<span class="sf-dump-close' + (expanded ? '' : ' sf-dump-hidden') + '">]</span>';
@@ -110,7 +115,7 @@
             }
         }
 
-        plainChildrenToHtml(value, isIndexed, keys, depth) {
+        plainChildrenToHtml(value, isIndexed, keys, cut, depth) {
             const len = isIndexed ? value.length : keys.length;
             let html = '';
             for (let i = 0; i < len; i++) {
@@ -123,7 +128,90 @@
                     html += this.plainToHtml(value[keys[i]], depth + 1);
                 }
             }
+            if (cut > 0) html += '\n…' + cut;
             return html;
+        }
+
+        objectToHtml(value, keys, vd, cut, total, depth) {
+            const ref = vd[1] || 0;
+            const cls = vd[2] || null;
+            const prefixes = vd[3] || null;
+            const isResource = (vd[0] === 5);
+
+            if (total === 0 && !ref) return (cls ? this.esc(cls) + ' ' : '') + '{}';
+
+            const expanded = depth < this.expandedDepth;
+            let html = '';
+            let refHtml = '';
+
+            if (isResource) {
+                html += '<span class=sf-dump-note>' + this.esc(cls || 'resource') + '</span> {';
+            } else {
+                if (cls) html += '<span class=sf-dump-note>' + this.esc(cls) + '</span> ';
+                html += '{';
+                if (ref) refHtml = '<span class=sf-dump-ref>#' + ref + '</span> ';
+            }
+
+            if (total === 0) return html + refHtml + '}';
+
+            html += '<a class=sf-dump-toggle>' + refHtml + '<span>' + (expanded ? '▼' : '▶') + '</span></a>';
+
+            const previewParts = [];
+            const maxPreview = Math.min(keys.length, 8);
+            for (let i = 0; i < maxPreview; i++) {
+                previewParts.push(this.esc(keys[i]) + ': ' + this.plainPreview(value[keys[i]]));
+            }
+            let preview = previewParts.join(', ');
+            if (keys.length > maxPreview || cut > 0) preview += ', …';
+            html += '<span class="sf-dump-preview' + (expanded ? ' sf-dump-hidden' : '') + '"> ' + preview + ' }</span>';
+
+            if (expanded) {
+                html += '<samp class=sf-dump-expanded>';
+                html += this.objectChildrenToHtml(value, keys, prefixes, cut, depth);
+                html += '</samp>';
+            } else {
+                const id = ++lazySeq;
+                lazyStore.set(id, { plain: value, isObj: true, keys, prefixes, cut, depth, renderer: this, expandedDepth: this.expandedDepth });
+                html += '<samp class=sf-dump-compact data-lazy=' + id + '></samp>';
+            }
+            html += '<span class="sf-dump-close' + (expanded ? '' : ' sf-dump-hidden') + '">}</span>';
+            return html;
+        }
+
+        objectChildrenToHtml(value, keys, prefixes, cut, depth) {
+            let html = '';
+            for (let i = 0; i < keys.length; i++) {
+                if (i > 0) html += '\n';
+                const p = prefixes ? prefixes[i] : null;
+                const k = this.esc(keys[i]);
+                if (!p) {
+                    html += '+<span class=sf-dump-public title="Public property">' + k + '</span>: ';
+                } else if (p === '+') {
+                    html += '+"<span class=sf-dump-public title="Runtime added dynamic property">' + k + '</span>": ';
+                } else if (p === '~') {
+                    html += '<span class=sf-dump-meta>' + k + '</span>: ';
+                } else if (p === '*') {
+                    html += '#<span class=sf-dump-protected title="Protected property">' + k + '</span>: ';
+                } else {
+                    html += '-<span class=sf-dump-private title="Private property declared in ' + this.esc(p) + '">' + k + '</span>: ';
+                }
+                html += this.plainToHtml(value[keys[i]], depth + 1);
+            }
+            if (cut > 0) html += '\n…' + cut;
+            return html;
+        }
+
+        plainPreview(v) {
+            if (v === null) return 'null';
+            if (typeof v === 'string') return '"' + this.esc(v.length > 40 ? v.substring(0, 40) + '…' : v) + '"';
+            if (typeof v === 'boolean') return String(v);
+            if (typeof v === 'number') return String(v);
+            if (typeof v === 'object') {
+                if ('_vd' in v) return (v._vd[2] || '') + ' {…}';
+                if ('_sd' in v) return (v.cls || '') + ' {…}';
+                return Array.isArray(v) ? '[…]' : '{…}';
+            }
+            return '…';
         }
 
         esc(s) {
@@ -381,8 +469,10 @@
         const savedDepth = renderer.expandedDepth;
         renderer.expandedDepth = data.expandedDepth;
 
-        if (data.plain !== undefined) {
-            samp.innerHTML = renderer.plainChildrenToHtml(data.plain, data.isArr, data.keys, data.depth);
+        if (data.isObj) {
+            samp.innerHTML = renderer.objectChildrenToHtml(data.plain, data.keys, data.prefixes, data.cut, data.depth);
+        } else if (data.plain !== undefined) {
+            samp.innerHTML = renderer.plainChildrenToHtml(data.plain, data.isArr, data.keys, data.cut, data.depth);
         } else {
             samp.innerHTML = renderer.childrenToHtml(data.children, data.cut, data.depth, data.ht);
         }
