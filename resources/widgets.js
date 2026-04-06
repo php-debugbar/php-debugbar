@@ -26,20 +26,12 @@
      */
     let dumpRenderer;
     const renderValue = PhpDebugBar.Widgets.renderValue = function (value, prettify) {
-        // Dump node (from JsonDataFormatter via VarDumper)
-        if (value && typeof value === 'object' && '_sd' in value) {
-            if (!dumpRenderer) {
-                dumpRenderer = new PhpDebugBar.Widgets.VarDumpRenderer();
-            }
-            return dumpRenderer.render(value);
-        }
-
-        // Plain array/object (from JsonDataFormatter fast path) → render as tree
+        // Arrays and objects → render as interactive tree
         if (value && typeof value === 'object') {
             if (!dumpRenderer) {
                 dumpRenderer = new PhpDebugBar.Widgets.VarDumpRenderer();
             }
-            return dumpRenderer.renderPlain(value);
+            return dumpRenderer.render(value);
         }
 
         if (typeof value !== 'string') {

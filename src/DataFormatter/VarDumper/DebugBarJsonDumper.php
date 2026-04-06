@@ -10,31 +10,40 @@ use Symfony\Component\VarDumper\Cloner\DumperInterface;
 use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
 
 /**
- * Dumps variables as JSON-serializable arrays instead of HTML strings.
+ * Dumps variables as JSON-serializable structures using a natural tree format.
  *
- * Implements Symfony's DumperInterface (the callback interface used by Data::dump())
- * and DataDumperInterface (the high-level dump(Data) interface).
+ * Values are stored as native JSON types. Only objects/resources carry metadata
+ * in a `_vd` sidecar key: [ht, ref?, class?, prefixes?]
  *
- * The output is a tree of nodes with short keys for compactness:
- *  - Scalar: {t:"s", s:<subtype>, v:<value>, a:<attrs>}  (s: b=bool, i=int, d=double, n=null, l=label)
- *  - String: {t:"r", v:<string>, bin:true, cut:<n>, len:<n>}
- *  - Hash:   {t:"h", ht:<type>, cls:<class>, c:[...], cut:<n>, ref:<ref>}
- *  - Entry:  {n:<node>, k?:<key>, kt?:<keytype>, p?:<prefix>}
- *    For object properties, `p` encodes visibility: + (dynamic), ~ (meta), * (protected), ClassName (private).
+ * Format:
+ *  - Scalars: native JSON (null, bool, int, float)
+ *  - Strings: native JSON string, truncated with "[..N]" suffix
+ *  - Arrays:  native JSON arrays/objects (handled by JsonDataFormatter)
+ *  - Objects: {"_vd": [ht, ref?, class?, prefixes?], key: value, ...}
+ *  - Resources: {"_vd": [5, 0, class, prefixes?], key: value, ...}
+ *  - Cut collections: "_cut" key with remaining count
+ *
+ * Legacy format (with "t", "ht", "c", "_sd" keys) is still supported by the JS renderer.
  */
 class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
 {
-    /** @var array Stack of hash nodes being built */
+    /** @var array Stack of [parentResult, parentKeys, pendingCursor] */
     private array $stack = [];
 
-    /** @var array|null The root node after dumping */
-    private ?array $root = null;
+    /** @var mixed The root result after dumping */
+    private mixed $root = null;
 
-    /** @var array|null Current hash node being populated */
-    private ?array $currentHash = null;
+    /** @var array|null Current hash result being populated (the key→value object) */
+    private ?array $currentResult = null;
 
-    /** @var Cursor|null Cursor state for the current item (used to extract key info) */
+    /** @var list<string> Keys in insertion order for current hash */
+    private array $currentKeys = [];
+
+    /** @var Cursor|null Cursor state for the current item */
     private ?Cursor $pendingCursor = null;
+
+    /** @var int Current hash type */
+    private int $currentHt = 0;
 
     /**
      * Dump a Data object and return the JSON string.
@@ -46,185 +55,197 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
     }
 
     /**
-     * Dump a Data object and return the raw PHP array (avoids double-encoding).
-     *
-     * @return array{
-     *     t: 's', s: string, v: mixed, a?: array<string, mixed>
-     * }|array{
-     *     t: 'r', v: string, bin?: true, cut?: int, len?: int
-     * }|array{
-     *     t: 'h', ht: int, cls?: string, c?: list<array{
-     *         n: array<string, mixed>, k?: string|int, kt?: string, p?: string, ref?: int
-     *     }>, cut?: int, ref?: int
-     * }
+     * Dump a Data object and return the raw PHP value (avoids double-encoding).
      */
-    public function dumpAsArray(Data $data): array
+    public function dumpAsArray(Data $data): mixed
     {
         $this->stack = [];
         $this->root = null;
-        $this->currentHash = null;
+        $this->currentResult = null;
+        $this->currentKeys = [];
         $this->pendingCursor = null;
+        $this->currentHt = 0;
 
         $data->dump($this);
 
-        return $this->root ?? ['t' => 's', 'st' => 'NULL', 'v' => null];
+        return $this->root;
     }
-
-    private const SCALAR_TYPE_MAP = [
-        'boolean' => 'b',
-        'integer' => 'i',
-        'double' => 'd',
-        'NULL' => 'n',
-        'label' => 'l',
-    ];
 
     public function dumpScalar(Cursor $cursor, string $type, $value): void
     {
-        $node = [
-            't' => 's',
-            's' => self::SCALAR_TYPE_MAP[$type] ?? $type,
-            'v' => $value,
-        ];
+        // Scalars map directly to native JSON types
+        $native = match ($type) {
+            'boolean' => (bool) $value,
+            'integer' => (int) $value,
+            'double' => (float) $value,
+            'NULL' => null,
+            'label' => (string) ($value ?? ''),
+            default => $value,
+        };
 
-        if ($cursor->attr) {
-            $node['a'] = $cursor->attr;
-        }
-
-        $this->emitNode($cursor, $node);
+        $this->emitValue($cursor, $native);
     }
 
     public function dumpString(Cursor $cursor, string $str, bool $bin, int $cut): void
     {
-        $node = [
-            't' => 'r',
-            'v' => $str,
-        ];
-
-        if ($bin) {
-            $node['bin'] = true;
-        }
         if ($cut > 0) {
-            $node['cut'] = $cut;
-            $node['len'] = ($bin ? strlen($str) : mb_strlen($str, 'UTF-8')) + $cut;
+            $str .= '[..' . $cut . ']';
         }
 
-        $this->emitNode($cursor, $node);
+        $this->emitValue($cursor, $str);
     }
 
     public function enterHash(Cursor $cursor, int $type, $class, bool $hasChild): void
     {
-        $node = [
-            't' => 'h',
-            'ht' => $type,
-        ];
-
-        // Omit class for stdClass (matches Symfony's behavior)
-        if ($class !== null && $class !== 'stdClass') {
-            $node['cls'] = $class;
+        // Push current context onto stack
+        if ($this->currentResult !== null) {
+            $this->stack[] = [$this->currentResult, $this->currentKeys, $this->pendingCursor, $this->currentHt];
         }
 
-        // Track object/resource identity (softRefHandle is the display ID #N)
-        $handle = $cursor->softRefHandle ?: $cursor->softRefTo;
-        if ($handle > 0) {
-            $node['ref'] = $handle;
-        }
-
-        // Push current hash onto stack
-        if ($this->currentHash !== null) {
-            $this->stack[] = [$this->currentHash, $this->pendingCursor];
-        }
-
-        $this->currentHash = $node;
+        $this->currentResult = [];
+        $this->currentKeys = [];
+        $this->currentHt = $type;
         $this->pendingCursor = clone $cursor;
     }
 
     public function leaveHash(Cursor $cursor, int $type, $class, bool $hasChild, int $cut): void
     {
-        $node = $this->currentHash;
+        $result = $this->currentResult;
+        $keys = $this->currentKeys;
+        $isObject = ($type === Cursor::HASH_OBJECT);
+        $isResource = ($type === Cursor::HASH_RESOURCE);
 
+        // Build _vd metadata for objects/resources
+        if ($isObject || $isResource) {
+            $vd = [$type];
+
+            // ref (object handle)
+            $handle = $cursor->softRefHandle ?: $cursor->softRefTo;
+            $ref = ($handle > 0) ? $handle : 0;
+
+            // class
+            $cls = ($class !== null && $class !== 'stdClass') ? $class : null;
+
+            // prefixes array — only include if any non-public properties exist
+            $prefixes = $this->buildPrefixes($keys, $result);
+
+            // Build _vd with trailing omission: [ht] or [ht,ref] or [ht,ref,cls] or [ht,ref,cls,prefixes]
+            if ($prefixes !== null) {
+                $vd = [$type, $ref, $cls, $prefixes];
+            } elseif ($cls !== null) {
+                $vd = [$type, $ref, $cls];
+            } elseif ($ref > 0) {
+                $vd = [$type, $ref];
+            }
+
+            $result['_vd'] = $vd;
+        }
+
+        // Cut indicator
         if ($cut > 0) {
-            $node['cut'] = $cut;
+            $result['_cut'] = $cut;
         }
 
         // Pop from stack
         if ($this->stack !== []) {
-            [$this->currentHash, $this->pendingCursor] = array_pop($this->stack);
-            // Emit the completed hash node as a child of the parent
-            $this->emitNode($cursor, $node);
+            [$this->currentResult, $this->currentKeys, $this->pendingCursor, $this->currentHt] = array_pop($this->stack);
+            $this->emitValue($cursor, $result);
         } else {
-            $this->currentHash = null;
+            $this->currentResult = null;
+            $this->currentKeys = [];
             $this->pendingCursor = null;
-            $this->root = $node;
+            $this->root = $result;
         }
     }
 
     /**
-     * Emit a node: either add it as a child to the current hash, or set it as root.
+     * Build prefixes array from the temporary prefix markers stored in result.
+     * Returns null if all properties are public (no prefixes needed).
      */
-    private function emitNode(Cursor $cursor, array $node): void
+    private function buildPrefixes(array $keys, array &$result): ?array
     {
-        if ($this->currentHash !== null) {
-            $entry = $this->buildEntry($cursor, $node);
-            $this->currentHash['c'] ??= [];
-            $this->currentHash['c'][] = $entry;
+        $prefixes = [];
+        $hasNonPublic = false;
+
+        foreach ($keys as $key) {
+            $prefixKey = "\0_vd_p\0" . $key;
+            if (isset($result[$prefixKey])) {
+                $prefixes[] = $result[$prefixKey];
+                unset($result[$prefixKey]);
+                $hasNonPublic = true;
+            } else {
+                $prefixes[] = null; // public
+            }
+        }
+
+        return $hasNonPublic ? $prefixes : null;
+    }
+
+    /**
+     * Emit a value: either add it to the current hash, or set it as root.
+     */
+    private function emitValue(Cursor $cursor, mixed $value): void
+    {
+        if ($this->currentResult !== null) {
+            $this->addToCurrentHash($cursor, $value);
         } else {
-            $this->root = $node;
+            $this->root = $value;
         }
     }
 
     /**
-     * Build a child entry with key information extracted from the cursor.
-     * Key parsing follows the \0-encoded visibility pattern from CliDumper::dumpKey().
+     * Add a value to the current hash with key info from the cursor.
      */
-    private function buildEntry(Cursor $cursor, array $node): array
+    private function addToCurrentHash(Cursor $cursor, mixed $value): void
     {
-        $entry = ['n' => $node];
-
         $key = $cursor->hashKey;
 
         if ($key === null) {
-            return $entry;
+            // Indexed array — use numeric key
+            $this->currentResult[] = $value;
+            return;
         }
 
         if ($cursor->hashKeyIsBinary) {
             $key = mb_convert_encoding($key, 'UTF-8', 'ISO-8859-1');
         }
 
-        // Hard reference tracking
-        if ($cursor->hardRefTo) {
-            $entry['ref'] = $cursor->hardRefTo;
-        }
-
         switch ($cursor->hashType) {
             case Cursor::HASH_INDEXED:
-                // Both k and kt are inferrable (k from position, kt='i' from ht=2)
+                $this->currentResult[] = $value;
                 break;
 
             case Cursor::HASH_ASSOC:
-                // kt is inferrable from typeof k (int→'i', string→'k')
-                $entry['k'] = $key;
+                $this->currentResult[$key] = $value;
+                $this->currentKeys[] = $key;
                 break;
 
             case Cursor::HASH_RESOURCE:
                 $key = "\0~\0" . $key;
                 // fall through
-                // no break
             case Cursor::HASH_OBJECT:
                 if (!isset($key[0]) || $key[0] !== "\0") {
-                    // Public property — default, no prefix needed
-                    $entry['k'] = $key;
+                    // Public property
+                    $this->currentResult[$key] = $value;
+                    $this->currentKeys[] = $key;
                 } elseif (($pos = strpos($key, "\0", 1)) !== false && $pos > 0) {
-                    // Visibility prefix: + (dynamic), ~ (meta), * (protected), or ClassName (private)
-                    $entry['k'] = substr($key, $pos + 1);
-                    $entry['p'] = substr($key, 1, $pos - 1);
+                    $prefix = substr($key, 1, $pos - 1);
+                    $propName = substr($key, $pos + 1);
+                    $this->currentResult[$propName] = $value;
+                    $this->currentKeys[] = $propName;
+                    // Store prefix marker (cleaned up in buildPrefixes)
+                    $this->currentResult["\0_vd_p\0" . $propName] = $prefix;
                 } else {
-                    // Fallback: private with unknown class
-                    $entry['k'] = $key;
-                    $entry['p'] = '';
+                    $this->currentResult[$key] = $value;
+                    $this->currentKeys[] = $key;
+                    $this->currentResult["\0_vd_p\0" . $key] = '';
                 }
                 break;
-        }
 
-        return $entry;
+            default:
+                $this->currentResult[$key] = $value;
+                $this->currentKeys[] = $key;
+                break;
+        }
     }
 }

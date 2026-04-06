@@ -53,7 +53,7 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
             if (strlen($data) <= $this->maxString) {
                 return $data;
             }
-            return substr($data, 0, $this->maxString) . '[truncated ' . (strlen($data) - $this->maxString) . ' chars]';
+            return substr($data, 0, $this->maxString) . '[..' . (strlen($data) - $this->maxString) . ']';
         }
 
         if ($data === null || is_bool($data) || is_int($data) || is_float($data)) {
@@ -145,9 +145,7 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     {
         $dumper = $this->getDumper();
         if ($dumper instanceof DebugBarJsonDumper) {
-            $result = $dumper->dumpAsArray($this->cloneVar($data, $deep));
-            $result['_sd'] = $this->getDumperOptions()['expanded_depth'] ?? 0;
-            return $result;
+            return $dumper->dumpAsArray($this->cloneVar($data, $deep));
         }
 
         return parent::formatVar($data, $deep);

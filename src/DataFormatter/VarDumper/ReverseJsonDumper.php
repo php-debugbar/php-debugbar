@@ -26,7 +26,12 @@ class ReverseJsonDumper
             return $data;
         }
 
-        // Wrap the data in a special format that the DebugBarJsonCaster can understand
+        // New format: _vd metadata → wrap as DebugBarJsonVar
+        if (array_key_exists('_vd', $data)) {
+            return new DebugBarJsonVar($data);
+        }
+
+        // Legacy format: _sd marker → wrap as DebugBarJsonVar
         if (array_key_exists('_sd', $data)) {
             return new DebugBarJsonVar($data);
         }
@@ -38,14 +43,134 @@ class ReverseJsonDumper
         return $data;
     }
 
-    public function reverseFormatVar(array $node): string
+    public function reverseFormatVar(mixed $node): string
     {
-        return $this->jsonToText($node, 0);
+        return $this->valueToText($node, 0);
     }
 
     // ---------------------------------------------------------------
-    // JSON → Text reconstruction (mirrors CliDumper output format)
+    // Value → Text reconstruction (mirrors CliDumper output format)
     // ---------------------------------------------------------------
+    private function valueToText(mixed $value, int $depth): string
+    {
+        if ($value === null) return 'null';
+        if (is_bool($value)) return $value ? 'true' : 'false';
+        if (is_int($value)) return (string) $value;
+        if (is_float($value)) {
+            $s = (string) $value;
+            return !str_contains($s, '.') ? $s . '.0' : $s;
+        }
+        if (is_string($value)) {
+            if (str_contains($value, "\n")) {
+                $display = str_replace("\n", '\n' . "\n", $value);
+                return '"""' . "\n" . $display . "\n" . '"""';
+            }
+            return '"' . $value . '"';
+        }
+        if (is_array($value)) {
+            // New _vd format: object/resource
+            if (isset($value['_vd'])) {
+                return $this->vdHashToText($value, $depth);
+            }
+            // Legacy format
+            if (isset($value['t'])) {
+                return $this->jsonToText($value, $depth);
+            }
+            // Plain array
+            return $this->plainArrayToText($value, $depth);
+        }
+        return '';
+    }
+
+    private function plainArrayToText(array $data, int $depth): string
+    {
+        $cut = $data['_cut'] ?? 0;
+        $keys = array_keys(array_diff_key($data, array_flip(['_cut'])));
+        $count = count($keys) + $cut;
+        $isIndexed = array_is_list($data) || ($keys === [] && $cut > 0);
+
+        if ($count === 0) return '[]';
+
+        $header = $count > 0 ? 'array:' . $count . ' [' : '[';
+        if ($keys === [] && $cut > 0) {
+            return $header . ' …' . $cut . ']';
+        }
+
+        $indent = str_repeat('  ', $depth + 1);
+        $lines = [];
+        foreach ($keys as $i => $key) {
+            $line = $indent;
+            if ($isIndexed) {
+                $line .= $key . ' => ';
+            } else {
+                $line .= '"' . $key . '" => ';
+            }
+            $line .= $this->valueToText($data[$key], $depth + 1);
+            $lines[] = $line;
+        }
+        if ($cut > 0) {
+            $lines[] = $indent . '…' . $cut;
+        }
+        $closingIndent = str_repeat('  ', $depth);
+        return $header . "\n" . implode("\n", $lines) . "\n" . $closingIndent . ']';
+    }
+
+    private function vdHashToText(array $node, int $depth): string
+    {
+        $vd = $node['_vd'];
+        $ht = $vd[0];
+        $ref = $vd[1] ?? 0;
+        $cls = $vd[2] ?? null;
+        $prefixes = $vd[3] ?? null;
+        $cut = $node['_cut'] ?? 0;
+        $keys = array_keys(array_diff_key($node, array_flip(['_vd', '_cut', '_sd'])));
+
+        $isObject = ($ht === Cursor::HASH_OBJECT);
+        $isResource = ($ht === Cursor::HASH_RESOURCE);
+
+        // Header
+        if ($isObject) {
+            $header = ($cls ? $cls . ' ' : '') . '{';
+            if ($ref) {
+                $header .= '#' . $ref;
+            }
+        } elseif ($isResource) {
+            $header = ($cls ? $cls . ' ' : '') . '{';
+        } else {
+            $header = '[';
+        }
+        $closingChar = ($isObject || $isResource) ? '}' : ']';
+
+        if ($keys === [] && $cut === 0) {
+            return $header . $closingChar;
+        }
+        if ($keys === [] && $cut > 0) {
+            return $header . ' …' . $cut . $closingChar;
+        }
+
+        $indent = str_repeat('  ', $depth + 1);
+        $lines = [];
+        foreach ($keys as $i => $key) {
+            $line = $indent;
+            $prefix = $prefixes[$i] ?? null;
+            $line .= match ($prefix) {
+                null => '+' . $key . ': ',
+                '+' => '+"' . $key . '": ',
+                '~' => $key . ': ',
+                '*' => '#' . $key . ': ',
+                default => '-' . $key . ': ',
+            };
+            $line .= $this->valueToText($node[$key], $depth + 1);
+            $lines[] = $line;
+        }
+        if ($cut > 0) {
+            $lines[] = $indent . '…' . $cut;
+        }
+        $closingIndent = str_repeat('  ', $depth);
+        return $header . "\n" . implode("\n", $lines) . "\n" . $closingIndent . $closingChar;
+    }
+
+    // Legacy format support
     private function jsonToText(array $node, int $depth): string
     {
         return match ($node['t'] ?? null) {

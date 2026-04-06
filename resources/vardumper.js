@@ -1,62 +1,39 @@
 (function () {
     const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
 
-    // Enable sf-dump-compact CSS (hide collapsed nodes). Symfony's Sfdump sets
-    // this for HTML dumps; the JSON vardumper needs it too.
-    document.documentElement.classList.add('sf-js-enabled');
-
     const lazyStore = new Map();
     let lazySeq = 0;
     const escMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
     const escRe = /[&<>"]/g;
 
     /**
-     * Renders a JSON variable dump as HTML with lazy-rendered collapsed nodes.
+     * Renders JSON variable dumps as interactive HTML trees.
      *
-     * Generates HTML using Sfdump CSS classes for styling compatibility. Collapsed
-     * children are deferred until the user clicks to expand them. A document-level
-     * click handler manages toggle/expand for these id-less <pre> elements, while
-     * Sfdump continues to handle server-rendered HTML dumps (with IDs) unchanged.
+     * Handles three value types:
+     *  - Scalars/strings: rendered inline with syntax coloring
+     *  - Arrays (plain JSON): rendered as collapsible [ ] trees
+     *  - Objects/resources (_vd metadata): rendered as collapsible { } trees with visibility
      *
-     * Usage:
-     *   const renderer = new PhpDebugBar.Widgets.VarDumpRenderer({ expandedDepth: 0 });
-     *   const el = renderer.render(jsonData);
-     *   container.appendChild(el);
+     * Collapsed nodes are lazy-rendered on first expand.
      */
     class VarDumpRenderer {
         constructor(options) {
-            this.expandedDepth = (options && options.expandedDepth !== undefined) ? options.expandedDepth : 1;
+            this.expandedDepth = (options && options.expandedDepth !== undefined) ? options.expandedDepth : 0;
         }
 
-        render(data) {
-            if (data && typeof data === 'object' && '_sd' in data) {
-                const pre = document.createElement('pre');
-                pre.className = 'sf-dump';
-
-                const savedDepth = this.expandedDepth;
-                if (typeof data._sd === 'number') {
-                    this.expandedDepth = data._sd;
-                }
-                pre.innerHTML = this.nodeToHtml(data, 0) + '\n';
-                this.expandedDepth = savedDepth;
-
-                return pre;
-            }
-
-            return data;
-        }
-
-        renderPlain(value) {
+        render(value) {
             const pre = document.createElement('pre');
             pre.className = 'sf-dump';
             const savedDepth = this.expandedDepth;
             this.expandedDepth = 0;
-            pre.innerHTML = this.plainToHtml(value, 0) + '\n';
+            pre.innerHTML = this.toHtml(value, 0) + '\n';
             this.expandedDepth = savedDepth;
             return pre;
         }
 
-        plainToHtml(value, depth) {
+        // ── Main dispatcher ──────────────────────────────────────────
+
+        toHtml(value, depth) {
             if (value === null) return '<span class=sf-dump-const>null</span>';
             switch (typeof value) {
                 case 'boolean':
@@ -65,345 +42,203 @@
                     return '<span class=sf-dump-num>' + this.esc(String(value)) + '</span>';
                 case 'string':
                     return '"<span class=sf-dump-str>' + this.esc(value) + '</span>"';
-                case 'object': {
-                    // Dump node (object/resource from PHP) — render via node path
-                    if ('_sd' in value) return this.nodeToHtml(value, depth);
-
-                    const isIndexed = Array.isArray(value);
-                    const cut = (!isIndexed && typeof value._cut === 'number') ? value._cut : 0;
-                    const keys = isIndexed ? null : Object.keys(value).filter(k => k !== '_cut');
-                    const len = isIndexed ? value.length : keys.length;
-                    const total = len + cut;
-
-                    if (total === 0) return '[]';
-
-                    const expanded = depth < this.expandedDepth;
-                    let html = '<span class=sf-dump-note>array:' + total + '</span> [';
-                    html += '<a class=sf-dump-toggle><span>' + (expanded ? '▼' : '▶') + '</span></a>';
-
-                    // Preview
-                    const previewParts = [];
-                    const maxPreview = Math.min(len, 8);
-                    for (let i = 0; i < maxPreview; i++) {
-                        const k = isIndexed ? i : keys[i];
-                        const v = isIndexed ? value[i] : value[keys[i]];
-                        previewParts.push(isIndexed ? this.plainPreview(v) : this.esc(String(k)) + ': ' + this.plainPreview(v));
-                    }
-                    let preview = previewParts.join(', ');
-                    if (len > maxPreview || cut > 0) preview += ', …';
-                    html += '<span class="sf-dump-preview' + (expanded ? ' sf-dump-hidden' : '') + '"> ' + preview + ' ]</span>';
-
-                    if (expanded) {
-                        html += '<samp class=sf-dump-expanded>';
-                        html += this.plainChildrenToHtml(value, isIndexed, keys, cut, depth);
-                        html += '</samp>';
-                    } else {
-                        const id = ++lazySeq;
-                        lazyStore.set(id, { plain: value, isArr: isIndexed, keys, cut, depth, renderer: this, expandedDepth: this.expandedDepth });
-                        html += '<samp class=sf-dump-compact data-lazy=' + id + '></samp>';
-                    }
-                    html += '<span class="sf-dump-close' + (expanded ? '' : ' sf-dump-hidden') + '">]</span>';
-                    return html;
-                }
+                case 'object':
+                    return this.containerToHtml(value, depth);
                 default:
                     return this.esc(String(value));
             }
         }
 
-        plainPreview(v) {
-            if (v === null) return 'null';
-            if (typeof v === 'string') return '"' + this.esc(v.length > 40 ? v.substring(0, 40) + '…' : v) + '"';
-            if (typeof v === 'boolean') return String(v);
-            if (typeof v === 'number') return String(v);
-            if (typeof v === 'object' && '_sd' in v) {
-                if (v.ht === 1 || v.ht === 2) return '[…]';
-                return (v.cls || '') + ' {…}';
-            }
-            return '[…]';
+        containerToHtml(value, depth) {
+            const isIndexed = Array.isArray(value);
+            const vd = !isIndexed && value._vd;
+            const cut = !isIndexed && value._cut || 0;
+            const keys = isIndexed ? null : Object.keys(value);
+            // Filter meta keys for non-indexed — inline to avoid allocation when no meta
+            const propKeys = !isIndexed && (vd || cut) ? keys.filter(k => k !== '_vd' && k !== '_cut') : keys;
+            const len = isIndexed ? value.length : propKeys.length;
+            const total = len + cut;
+
+            if (vd) return this.objectToHtml(value, propKeys, vd, cut, total, depth);
+            return this.arrayToHtml(value, isIndexed, propKeys, cut, total, depth);
         }
 
-        plainChildrenToHtml(value, isIndexed, keys, cut, depth) {
+        // ── Array rendering ──────────────────────────────────────────
+
+        arrayToHtml(value, isIndexed, keys, cut, total, depth) {
+            if (total === 0) return '[]';
+
+            const expanded = depth < this.expandedDepth;
+            let html = '<span class=sf-dump-note>array:' + total + '</span> [';
+            html += '<a class=sf-dump-toggle><span>' + (expanded ? '▼' : '▶') + '</span></a>';
+
+            // Preview
+            html += '<span class="sf-dump-preview' + (expanded ? ' sf-dump-hidden' : '') + '"> ';
+            html += this.arrayPreview(value, isIndexed, keys, cut) + ' ]</span>';
+
+            if (expanded) {
+                html += '<samp class=sf-dump-expanded>';
+                html += this.arrayChildren(value, isIndexed, keys, cut, depth);
+                html += '</samp>';
+            } else {
+                const id = ++lazySeq;
+                lazyStore.set(id, { v: value, arr: isIndexed, k: keys, c: cut, d: depth, r: this, ed: this.expandedDepth });
+                html += '<samp class=sf-dump-compact data-lazy=' + id + '></samp>';
+            }
+            html += '<span class="sf-dump-close' + (expanded ? '' : ' sf-dump-hidden') + '">]</span>';
+            return html;
+        }
+
+        arrayPreview(value, isIndexed, keys, cut) {
+            const len = isIndexed ? value.length : keys.length;
+            const max = Math.min(len, 8);
+            const parts = [];
+            for (let i = 0; i < max; i++) {
+                const k = isIndexed ? i : keys[i];
+                const v = isIndexed ? value[i] : value[keys[i]];
+                parts.push(isIndexed ? this.previewValue(v) : this.esc(String(k)) + ': ' + this.previewValue(v));
+            }
+            let result = parts.join(', ');
+            if (len > max || cut > 0) result += ', …';
+            return result;
+        }
+
+        arrayChildren(value, isIndexed, keys, cut, depth) {
             const len = isIndexed ? value.length : keys.length;
             let html = '';
             for (let i = 0; i < len; i++) {
                 if (i > 0) html += '\n';
                 if (isIndexed) {
                     html += '<span class=sf-dump-index>' + i + '</span> => ';
-                    html += this.plainToHtml(value[i], depth + 1);
+                    html += this.toHtml(value[i], depth + 1);
                 } else {
                     html += '"<span class=sf-dump-key>' + this.esc(keys[i]) + '</span>" => ';
-                    html += this.plainToHtml(value[keys[i]], depth + 1);
+                    html += this.toHtml(value[keys[i]], depth + 1);
                 }
             }
-            if (cut > 0) {
-                html += '\n…' + cut;
-            }
+            if (cut > 0) html += '\n…' + cut;
             return html;
         }
+
+        // ── Object/resource rendering ────────────────────────────────
+
+        objectToHtml(value, keys, vd, cut, total, depth) {
+            const ref = vd[1] || 0;
+            const cls = vd[2] || null;
+            const prefixes = vd[3] || null;
+            const isResource = (vd[0] === 5);
+
+            if (total === 0 && !ref) return (cls ? this.esc(cls) + ' ' : '') + '{}';
+
+            const expanded = depth < this.expandedDepth;
+            let html = '';
+            let refHtml = '';
+
+            if (isResource) {
+                html += '<span class=sf-dump-note>' + this.esc(cls || 'resource') + '</span> {';
+            } else {
+                if (cls) html += '<span class=sf-dump-note>' + this.esc(cls) + '</span> ';
+                html += '{';
+                if (ref) refHtml = '<span class=sf-dump-ref>#' + ref + '</span> ';
+            }
+
+            if (total === 0) return html + refHtml + '}';
+
+            html += '<a class=sf-dump-toggle>' + refHtml + '<span>' + (expanded ? '▼' : '▶') + '</span></a>';
+
+            // Preview
+            html += '<span class="sf-dump-preview' + (expanded ? ' sf-dump-hidden' : '') + '"> ';
+            const max = Math.min(keys.length, 8);
+            const parts = [];
+            for (let i = 0; i < max; i++) {
+                parts.push(this.esc(keys[i]) + ': ' + this.previewValue(value[keys[i]]));
+            }
+            let preview = parts.join(', ');
+            if (keys.length > max || cut > 0) preview += ', …';
+            html += preview + ' }</span>';
+
+            if (expanded) {
+                html += '<samp class=sf-dump-expanded>';
+                html += this.objectChildren(value, keys, prefixes, cut, depth);
+                html += '</samp>';
+            } else {
+                const id = ++lazySeq;
+                lazyStore.set(id, { v: value, obj: true, k: keys, p: prefixes, c: cut, d: depth, r: this, ed: this.expandedDepth });
+                html += '<samp class=sf-dump-compact data-lazy=' + id + '></samp>';
+            }
+            html += '<span class="sf-dump-close' + (expanded ? '' : ' sf-dump-hidden') + '">}</span>';
+            return html;
+        }
+
+        objectChildren(value, keys, prefixes, cut, depth) {
+            let html = '';
+            for (let i = 0; i < keys.length; i++) {
+                if (i > 0) html += '\n';
+                const p = prefixes ? prefixes[i] : null;
+                const k = this.esc(keys[i]);
+                if (!p) {
+                    html += '+<span class=sf-dump-public title="Public property">' + k + '</span>: ';
+                } else if (p === '+') {
+                    html += '+"<span class=sf-dump-public title="Runtime added dynamic property">' + k + '</span>": ';
+                } else if (p === '~') {
+                    html += '<span class=sf-dump-meta>' + k + '</span>: ';
+                } else if (p === '*') {
+                    html += '#<span class=sf-dump-protected title="Protected property">' + k + '</span>: ';
+                } else {
+                    html += '-<span class=sf-dump-private title="Private property declared in ' + this.esc(p) + '">' + k + '</span>: ';
+                }
+                html += this.toHtml(value[keys[i]], depth + 1);
+            }
+            if (cut > 0) html += '\n…' + cut;
+            return html;
+        }
+
+        // ── Preview (collapsed inline summary) ──────────────────────
+
+        previewValue(v) {
+            if (v === null) return 'null';
+            if (typeof v === 'string') return '"' + this.esc(v.length > 40 ? v.substring(0, 40) + '…' : v) + '"';
+            if (typeof v === 'boolean') return String(v);
+            if (typeof v === 'number') return String(v);
+            if (typeof v === 'object') {
+                if (v._vd) return (v._vd[2] || '') + ' {…}';
+                return Array.isArray(v) ? '[…]' : '{…}';
+            }
+            return '…';
+        }
+
+        // ── Utilities ────────────────────────────────────────────────
 
         esc(s) {
             return String(s).replace(escRe, m => escMap[m]);
         }
-
-        nodeToHtml(node, depth) {
-            if (!node || typeof node !== 'object') {
-                return '<span class=sf-dump-const>null</span>';
-            }
-
-            switch (node.t) {
-                case 's':
-                    return this.scalarToHtml(node);
-                case 'r':
-                    return this.stringToHtml(node);
-                case 'h':
-                    return this.hashToHtml(node, depth);
-                default:
-                    return this.esc(JSON.stringify(node));
-            }
-        }
-
-        scalarToHtml(node) {
-            const s = node.s;
-            if (s === 'b') {
-                return '<span class=sf-dump-const>' + (node.v === true ? 'true' : 'false') + '</span>';
-            }
-            if (s === 'n') {
-                return '<span class=sf-dump-const>null</span>';
-            }
-            if (s === 'i' || s === 'd') {
-                return '<span class=sf-dump-num>' + this.esc(String(node.v)) + '</span>';
-            }
-            if (s === 'l') {
-                return node.v ? '<span class=sf-dump-note>' + this.esc(node.v) + '</span>' : '';
-            }
-            return this.esc(String(node.v));
-        }
-
-        stringToHtml(node) {
-            const totalLen = node.len || (node.v.length + (node.cut || 0));
-            let html = '"<span class=sf-dump-str title="' + totalLen + ' characters">' + this.esc(node.v) + '</span>';
-            if (node.cut > 0) {
-                html += '…';
-            }
-            html += '"';
-            return html;
-        }
-
-        hashToHtml(node, depth) {
-            const children = node.c || [];
-            const hasChildren = children.length > 0;
-            const ht = node.ht;
-            const isObject = (ht === 4);
-            const isResource = (ht === 5);
-            const isArray = (ht === 1 || ht === 2);
-            const closingChar = isArray ? ']' : '}';
-            const expanded = depth < this.expandedDepth;
-
-            let html = '';
-
-            // Header
-            let ref = '';
-            if (isObject) {
-                if (node.cls) {
-                    html += '<span class=sf-dump-note>' + this.esc(String(node.cls)) + '</span> ';
-                }
-                html += '{';
-                const refId = typeof node.ref === 'number' ? node.ref : node.ref?.s;
-                if (refId) {
-                    ref = '<span class=sf-dump-ref>#' + this.esc(String(refId)) + '</span> ';
-                }
-            } else if (isResource) {
-                html += '<span class=sf-dump-note>' + this.esc(String(node.cls || 'resource')) + '</span>';
-                html += ' {';
-            } else {
-                // Array
-                if (node.cls) {
-                    html += '<span class=sf-dump-note>array:' + this.esc(String(node.cls)) + '</span> [';
-                } else {
-                    html += '[';
-                }
-            }
-
-            // Empty hash
-            if (!hasChildren && !node.cut) {
-                if (ref) html += ref;
-                html += closingChar;
-                return html;
-            }
-
-            // Cut-only (no expandable children)
-            if (!hasChildren && node.cut > 0) {
-                if (ref) html += ref;
-                html += ' …' + node.cut + closingChar;
-                return html;
-            }
-
-            // Toggle anchor (includes ref if present)
-            html += '<a class=sf-dump-toggle>' + ref + '<span>' + (expanded ? '▼' : '▶') + '</span></a>';
-
-            // Inline preview (visible when collapsed)
-            const preview = this.previewHtml(children, node.cut, ht);
-            html += '<span class="sf-dump-preview' + (expanded ? ' sf-dump-hidden' : '') + '"> ' + preview + ' ' + closingChar + '</span>';
-
-            if (expanded) {
-                // Render children eagerly
-                html += '<samp class=sf-dump-expanded>';
-                html += this.childrenToHtml(children, node.cut, depth, ht);
-                html += '</samp>';
-            } else {
-                // Lazy placeholder — store data, emit empty samp
-                const id = ++lazySeq;
-                lazyStore.set(id, {
-                    children,
-                    cut: node.cut,
-                    depth,
-                    ht,
-                    renderer: this,
-                    expandedDepth: this.expandedDepth
-                });
-                html += '<samp class=sf-dump-compact data-lazy=' + id + '></samp>';
-            }
-
-            html += '<span class="sf-dump-close' + (expanded ? '' : ' sf-dump-hidden') + '">' + closingChar + '</span>';
-            return html;
-        }
-
-        previewHtml(children, cut, ht) {
-            const maxItems = 8;
-            const parts = [];
-            const isIndexed = (ht === 2);
-
-            for (let i = 0; i < Math.min(children.length, maxItems); i++) {
-                const entry = children[i];
-                const val = this.previewValue(entry.n);
-
-                if (isIndexed) {
-                    parts.push(val);
-                } else {
-                    const key = (entry.k !== undefined) ? entry.k : i;
-                    parts.push(this.esc(String(key)) + ': ' + val);
-                }
-            }
-
-            let result = parts.join(', ');
-            if (children.length > maxItems || cut > 0) {
-                result += ', …';
-            }
-            return result;
-        }
-
-        previewValue(node) {
-            if (!node || typeof node !== 'object') return '<span class=sf-dump-const>null</span>';
-
-            switch (node.t) {
-                case 's':
-                    return this.scalarToHtml(node);
-                case 'r': {
-                    const str = node.v.length > 40 ? node.v.substring(0, 40) + '…' : node.v;
-                    return '"<span class=sf-dump-str>' + this.esc(str) + '</span>"';
-                }
-                case 'h':
-                    if (node.ht === 1 || node.ht === 2) return '[…]';
-                    if (node.ht === 4 && node.cls) return this.esc(node.cls) + ' {…}';
-                    return '{…}';
-                default:
-                    return '…';
-            }
-        }
-
-        childrenToHtml(children, cut, depth, ht) {
-            // Compute default key type once for all children of this hash
-            const defaultKt = ht === 2 ? 'i' : ht === 5 ? 'meta' : ht === 4 ? 'pub' : undefined;
-            let html = '';
-
-            for (let i = 0; i < children.length; i++) {
-                const entry = children[i];
-                const kt = entry.kt ?? ((entry.k !== undefined || ht === 2) ? (defaultKt ?? ((typeof entry.k === 'number') ? 'i' : 'k')) : undefined);
-                const k = (entry.k !== undefined) ? entry.k : i;
-
-                if (i > 0) html += '\n';
-                if (kt !== undefined) {
-                    html += this.keyToHtml(kt, k, entry);
-                }
-                if (entry.ref) {
-                    html += '<span class=sf-dump-ref>&amp;' + this.esc(String(entry.ref)) + '</span> ';
-                }
-                html += this.nodeToHtml(entry.n, depth + 1);
-            }
-            if (cut > 0) {
-                html += '\n…' + cut;
-            }
-            return html;
-        }
-
-        keyToHtml(kt, key, entry) {
-            const k = this.esc(String(key));
-
-            // Compact format: single prefix field for object/resource visibility
-            if (entry.p !== undefined) {
-                switch (entry.p) {
-                    case '+':
-                        return '+"<span class=sf-dump-public title="Runtime added dynamic property">' + k + '</span>": ';
-                    case '~':
-                        return '<span class=sf-dump-meta>' + k + '</span>: ';
-                    case '*':
-                        return '#<span class=sf-dump-protected title="Protected property">' + k + '</span>: ';
-                    case '':
-                        return '-<span class=sf-dump-private title="Private property">' + k + '</span>: ';
-                    default:
-                        return '-<span class=sf-dump-private title="Private property declared in ' + this.esc(entry.p) + '">' + k + '</span>: ';
-                }
-            }
-
-            // Legacy format (deprecated: kt/kc/dyn fields)
-            switch (kt) {
-                case 'i':
-                    return '<span class=sf-dump-index>' + k + '</span> => ';
-                case 'k':
-                    return '"<span class=sf-dump-key>' + k + '</span>" => ';
-                case 'pub':
-                    if (entry.dyn) {
-                        return '+"<span class=sf-dump-public title="Runtime added dynamic property">' + k + '</span>": ';
-                    }
-                    return '+<span class=sf-dump-public title="Public property">' + k + '</span>: ';
-                case 'pro':
-                    return '#<span class=sf-dump-protected title="Protected property">' + k + '</span>: ';
-                case 'pri': {
-                    let title = 'Private property';
-                    if (entry.kc) {
-                        title += ' declared in ' + this.esc(entry.kc);
-                    }
-                    return '-<span class=sf-dump-private title="' + title + '">' + k + '</span>: ';
-                }
-                case 'meta':
-                    return '<span class=sf-dump-meta>' + k + '</span>: ';
-                default:
-                    return k + ': ';
-            }
-        }
     }
     PhpDebugBar.Widgets.VarDumpRenderer = VarDumpRenderer;
 
+    // ── Lazy expand ──────────────────────────────────────────────────
+
     function expandLazy(samp) {
-        const id = parseInt(samp.dataset.lazy, 10);
+        const id = +samp.dataset.lazy;
         delete samp.dataset.lazy;
 
         const data = lazyStore.get(id);
         if (!data) return;
         lazyStore.delete(id);
 
-        const renderer = data.renderer;
+        const renderer = data.r;
         const savedDepth = renderer.expandedDepth;
-        renderer.expandedDepth = data.expandedDepth;
+        renderer.expandedDepth = data.ed;
 
-        if (data.plain !== undefined) {
-            samp.innerHTML = renderer.plainChildrenToHtml(data.plain, data.isArr, data.keys, data.cut, data.depth);
+        if (data.obj) {
+            samp.innerHTML = renderer.objectChildren(data.v, data.k, data.p, data.c, data.d);
         } else {
-            samp.innerHTML = renderer.childrenToHtml(data.children, data.cut, data.depth, data.ht);
+            samp.innerHTML = renderer.arrayChildren(data.v, data.arr, data.k, data.c, data.d);
         }
 
         renderer.expandedDepth = savedDepth;
     }
+
+    // ── Toggle expand/collapse ───────────────────────────────────────
 
     function togglePreview(samp, expanding) {
         const preview = samp.previousElementSibling;
@@ -413,65 +248,49 @@
     }
 
     document.addEventListener('click', function (e) {
-        // Clicking the toggle or the preview triggers expand/collapse
         const toggle = e.target.closest('a.sf-dump-toggle') || e.target.closest('.sf-dump-preview')?.previousElementSibling;
         if (!toggle) return;
 
         const pre = toggle.closest('pre.sf-dump');
-        if (!pre || pre.id) return; // has id → belongs to Sfdump, skip
+        if (!pre || pre.id) return;
 
-        // Structure: toggle > preview > samp > close
         const samp = toggle.nextElementSibling?.nextElementSibling;
         if (!samp || samp.tagName !== 'SAMP') return;
 
         e.preventDefault();
         const isCompact = samp.classList.contains('sf-dump-compact');
 
-        // Lazy expand if needed
         if (isCompact && samp.dataset.lazy) expandLazy(samp);
 
-        // Ctrl/Meta+click → recursive
         if (e.ctrlKey || e.metaKey) {
             if (isCompact) {
-                // Expand all lazy descendants first
                 let pending;
                 while ((pending = samp.querySelectorAll('[data-lazy]')).length) {
                     pending.forEach(expandLazy);
                 }
-                // Then expand all compact children
                 samp.querySelectorAll('samp.sf-dump-compact').forEach(function (s) {
                     s.classList.replace('sf-dump-compact', 'sf-dump-expanded');
-                    const toggleEl = s.previousElementSibling && s.previousElementSibling.previousElementSibling;
-                    if (toggleEl && toggleEl.classList.contains('sf-dump-toggle')) toggleEl.lastElementChild.textContent = '▼';
+                    const t = s.previousElementSibling?.previousElementSibling;
+                    if (t && t.classList.contains('sf-dump-toggle')) t.lastElementChild.textContent = '▼';
                     togglePreview(s, true);
                 });
             } else {
-                // Collapse all expanded children
                 samp.querySelectorAll('samp.sf-dump-expanded').forEach(function (s) {
                     s.classList.replace('sf-dump-expanded', 'sf-dump-compact');
-                    const toggleEl = s.previousElementSibling && s.previousElementSibling.previousElementSibling;
-                    if (toggleEl && toggleEl.classList.contains('sf-dump-toggle')) toggleEl.lastElementChild.textContent = '▶';
+                    const t = s.previousElementSibling?.previousElementSibling;
+                    if (t && t.classList.contains('sf-dump-toggle')) t.lastElementChild.textContent = '▶';
                     togglePreview(s, false);
                 });
             }
         }
 
-        // Toggle current
         samp.classList.toggle('sf-dump-compact', !isCompact);
         samp.classList.toggle('sf-dump-expanded', isCompact);
         toggle.lastElementChild.textContent = isCompact ? '▼' : '▶';
         togglePreview(samp, isCompact);
     });
 
-    // ------------------------------------------------------------------
-
-    /**
-     * An extension of KVListWidget where values are rendered using VarDumpRenderer.
-     * Drop-in replacement for HtmlVariableListWidget when using JsonDataFormatter.
-     *
-     * Options:
-     *  - data
-     */
+    // ── JsonVariableListWidget ───────────────────────────────────────
 
     class JsonVariableListWidget extends PhpDebugBar.Widgets.KVListWidget {
         get className() {

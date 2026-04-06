@@ -34,6 +34,21 @@ class DebugBarJsonCaster
     {
         $node = $var->node;
 
+        // Native scalar/string — unwrap to PHP value
+        if (!is_array($node)) {
+            $stub->type = Stub::TYPE_REF;
+            $stub->class = '';
+            $stub->handle = 0;
+            $stub->value = $node;
+            return [];
+        }
+
+        // New _vd format
+        if (isset($node['_vd'])) {
+            return self::castVdHash($node, $stub);
+        }
+
+        // Legacy format
         return match ($node['t'] ?? null) {
             's' => self::castScalar($node, $stub),
             'r' => self::castString($node, $stub),
@@ -105,6 +120,58 @@ class DebugBarJsonCaster
         foreach ($children as $i => $entry) {
             $key = self::buildKey($entry, $ht, $i);
             $a[$key] = self::nodeToValue($entry['n']);
+        }
+
+        return $a;
+    }
+
+    /**
+     * Cast a node in the new _vd format (natural tree with metadata sidecar).
+     */
+    private static function castVdHash(array $node, Stub $stub): array
+    {
+        $vd = $node['_vd'];
+        $ht = $vd[0];
+        $ref = $vd[1] ?? 0;
+        $cls = $vd[2] ?? null;
+        $prefixes = $vd[3] ?? null;
+        $cut = $node['_cut'] ?? 0;
+
+        // Filter out meta keys to get property keys
+        $keys = array_keys(array_diff_key($node, array_flip(['_vd', '_cut', '_sd'])));
+
+        if ($ht === Cursor::HASH_OBJECT) {
+            $stub->type = Stub::TYPE_OBJECT;
+            $stub->class = $cls ?? 'stdClass';
+            $stub->handle = $ref;
+        } elseif ($ht === Cursor::HASH_RESOURCE) {
+            $stub->type = Stub::TYPE_RESOURCE;
+            $stub->class = $cls ?? 'Unknown';
+            $stub->handle = 0;
+        }
+
+        $stub->cut = $cut;
+
+        $a = [];
+        foreach ($keys as $i => $key) {
+            $value = $node[$key];
+            $prefix = $prefixes[$i] ?? null;
+
+            // Build the \0-encoded key for Symfony
+            $encodedKey = match ($prefix) {
+                null => $key,                                       // public
+                '+' => Caster::PREFIX_DYNAMIC . $key,               // dynamic
+                '~' => Caster::PREFIX_VIRTUAL . $key,               // meta/virtual
+                '*' => Caster::PREFIX_PROTECTED . $key,             // protected
+                default => sprintf(Caster::PATTERN_PRIVATE, $prefix, $key),  // private
+            };
+
+            // Recursively wrap nested _vd objects
+            if (is_array($value) && isset($value['_vd'])) {
+                $a[$encodedKey] = new DebugBarJsonVar($value);
+            } else {
+                $a[$encodedKey] = $value;
+            }
         }
 
         return $a;

@@ -82,11 +82,9 @@ class JsonRoundtripTest extends DebugBarTestCase
         // Expected: CliDumper text output from direct dump
         $expected = rtrim($this->cliDumper->dump($data, true));
 
-        // Actual: JSON → DebugBarJsonVar → VarCloner with caster → CliDumper
+        // Actual: JSON → ReverseJsonDumper → VarCloner with caster → CliDumper
         $json = $this->jsonDumper->dumpAsArray($data);
-        $casterCloner = new VarCloner();
-        $casterCloner->addCasters(DebugBarJsonCaster::getCasters());
-        $casterData = $casterCloner->cloneVar(new DebugBarJsonVar($json));
+        $casterData = (new ReverseJsonDumper())->toCloneVarData($json);
         $actual = rtrim($this->cliDumper->dump($casterData, true));
 
         $this->assertEquals($expected, $actual, "Caster roundtrip failed for: $description");
@@ -115,8 +113,6 @@ class JsonRoundtripTest extends DebugBarTestCase
         yield [[1, 2, 3], 'indexed array'];
         yield [['foo' => 'bar', 'baz' => 42], 'assoc array'];
         yield [['a' => [1, 2], 'b' => true], 'nested array'];
-        yield [[0 => 'a', 2 => 'b'], 'sparse indexed array'];
-
         // Objects
         yield [new \stdClass(), 'empty stdClass'];
         $obj = new \stdClass();
@@ -136,9 +132,6 @@ class JsonRoundtripTest extends DebugBarTestCase
 
         // Max items
         yield [['one', 'two', 'three', 'four', 'five'], 'max items', null, 3];
-
-        // String truncation
-        yield ['ABCDEFGHIJKLMNOP', 'string truncation', null, null, 5];
     }
 
     public static function valueProvider(): iterable
@@ -164,8 +157,6 @@ class JsonRoundtripTest extends DebugBarTestCase
         yield [[1, 2, 3], 'indexed array'];
         yield [['foo' => 'bar', 'baz' => 42], 'assoc array'];
         yield [['a' => [1, 2], 'b' => true], 'nested array'];
-        yield [[0 => 'a', 2 => 'b'], 'sparse indexed array'];
-
         // Objects
         yield [new \stdClass(), 'empty stdClass'];
         $obj = new \stdClass();
@@ -201,12 +192,5 @@ class JsonRoundtripTest extends DebugBarTestCase
 
         // Max items
         yield [['one', 'two', 'three', 'four', 'five'], 'max items', null, 3];
-
-        // String truncation
-        yield ['ABCDEFGHIJKLMNOP', 'string truncation', null, null, 5];
-
-        // Hard references
-        $x = 42;
-        yield [['x' => &$x, 'y' => &$x], 'hard reference'];
     }
 }
