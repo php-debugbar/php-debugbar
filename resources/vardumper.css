@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-.sf-js-enabled .phpdebugbar pre.sf-dump .sf-dump-compact {
+.phpdebugbar pre.sf-dump .sf-dump-compact {
     display: none;
 }
 

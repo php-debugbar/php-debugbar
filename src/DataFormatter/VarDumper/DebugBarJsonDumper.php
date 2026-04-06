@@ -89,8 +89,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
     public function dumpString(Cursor $cursor, string $str, bool $bin, int $cut): void
     {
         if ($cut > 0) {
-            $totalLen = ($bin ? strlen($str) : mb_strlen($str, 'UTF-8')) + $cut;
-            $str .= '[..' . ($totalLen - ($bin ? strlen($str) : mb_strlen($str, 'UTF-8'))) . ']';
+            $str .= '[..' . $cut . ']';
         }
 
         $this->emitValue($cursor, $str);
@@ -235,10 +234,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
                     $this->currentResult[$propName] = $value;
                     $this->currentKeys[] = $propName;
                     // Store prefix marker (cleaned up in buildPrefixes)
-                    if ($prefix !== '+' || true) {
-                        // Always store prefix for non-public; for dynamic (+), store too
-                        $this->currentResult["\0_vd_p\0" . $propName] = $prefix;
-                    }
+                    $this->currentResult["\0_vd_p\0" . $propName] = $prefix;
                 } else {
                     $this->currentResult[$key] = $value;
                     $this->currentKeys[] = $key;
@@ -250,11 +246,6 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
                 $this->currentResult[$key] = $value;
                 $this->currentKeys[] = $key;
                 break;
-        }
-
-        // Hard reference tracking
-        if ($cursor->hardRefTo) {
-            // Store as metadata — could be added to _vd later if needed
         }
     }
 }
