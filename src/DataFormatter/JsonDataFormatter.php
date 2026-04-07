@@ -26,6 +26,7 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     /** Resolved limits — cached on first formatVar call to avoid repeated lookups */
     private ?int $maxString = null;
     private ?int $maxItems = null;
+    private ?int $maxDepth = null;
 
     /**
      * Returns the raw value for scalars/short strings, or a dump node array for complex types.
@@ -42,6 +43,7 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
             $opts = $this->getClonerOptions();
             $this->maxString = $opts['max_string'] ?? 10000;
             $this->maxItems = $opts['max_items'] ?? 1000;
+            $this->maxDepth = $opts['max_depth'] ?? 5;
         }
 
         return $this->formatValue($data, $deep);
@@ -61,12 +63,20 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
         }
 
         if (is_array($data)) {
-            // Fast path: if all leaf values are scalars, return as-is (no per-element iteration)
-            // count() is O(1) — skip the walk entirely for oversized arrays
-            if ($deep && count($data) <= $this->maxItems && $this->isPlainArray($data)) {
+            $maxDepth = $deep ? $this->maxDepth : 1;
+            $result = $this->checkPlainArray($data, $maxDepth);
+
+            // All plain within limits → return as-is
+            if ($result === true) {
                 return $data;
             }
-            return $this->formatArray($data, $deep);
+
+            // Plain values only, but exceeded limits → use formatArray (no VarCloner needed)
+            if ($result === null) {
+                return $this->formatArray($data, $deep);
+            }
+
+            // Complex values detected → fall through to VarCloner
         }
 
         return $this->formatComplex($data, $deep);
@@ -88,26 +98,41 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     }
 
     /**
-     * Fast check: returns true if the array (recursively) contains only scalar/null values.
-     * Uses foreach with early break — faster than array_walk_recursive for flat arrays
-     * (no closure overhead), and bails immediately on non-simple values.
+     * Check if an array contains only plain values (scalars/strings/nested arrays).
+     *
+     * Returns:
+     *  - true:  all plain, within max_items and max_depth limits → return as-is
+     *  - null:  all plain, but limits exceeded → use formatArray (avoids VarCloner)
+     *  - false: contains objects/resources → must use VarCloner
      */
-    private function isPlainArray(array $data, ?int &$budget = null): bool
+    private function checkPlainArray(array $data, int $maxDepth, ?int &$budget = null, int $depth = 0): bool|null
     {
         $budget ??= $this->maxItems;
+        $limitExceeded = false;
+
         foreach ($data as $v) {
             if (--$budget < 0) {
-                return false;
+                $limitExceeded = true;
+                break;
             }
             if (is_array($v)) {
-                if (!$this->isPlainArray($v, $budget)) {
-                    return false;
+                if ($depth >= $maxDepth) {
+                    $limitExceeded = true;
+                    break;
+                }
+                $inner = $this->checkPlainArray($v, $maxDepth, $budget, $depth + 1);
+                if ($inner === false) {
+                    return false; // complex value found deep inside
+                }
+                if ($inner === null) {
+                    $limitExceeded = true;
                 }
             } elseif (!is_scalar($v) && $v !== null) {
-                return false;
+                return false; // object/resource/non-scalar
             }
         }
-        return true;
+
+        return $limitExceeded ? null : true;
     }
 
     /**
