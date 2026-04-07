@@ -26,6 +26,7 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     /** Resolved limits — cached on first formatVar call to avoid repeated lookups */
     private ?int $maxString = null;
     private ?int $maxItems = null;
+    private ?int $maxDepth = null;
 
     /**
      * Returns the raw value for scalars/short strings, or a dump node array for complex types.
@@ -42,6 +43,7 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
             $opts = $this->getClonerOptions();
             $this->maxString = $opts['max_string'] ?? 10000;
             $this->maxItems = $opts['max_items'] ?? 1000;
+            $this->maxDepth = $opts['max_depth'] ?? 5;
         }
 
         return $this->formatValue($data, $deep);
@@ -60,13 +62,12 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
             return $data;
         }
 
-        if (is_array($data)) {
-            // Fast path: if all leaf values are scalars, return as-is (no per-element iteration)
-            // count() is O(1) — skip the walk entirely for oversized arrays
-            if ($deep && count($data) <= $this->maxItems && $this->isPlainArray($data)) {
+        if (is_array($data) && count($data) <= $this->maxItems) {
+            // Fast path: if all leaf values are scalars within limits, return as-is
+            $maxDepth = $deep ? $this->maxDepth : 1;
+            if ($this->isPlainArray($data, maxDepth: $maxDepth)) {
                 return $data;
             }
-            return $this->formatArray($data, $deep);
         }
 
         return $this->formatComplex($data, $deep);
@@ -88,19 +89,22 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     }
 
     /**
-     * Fast check: returns true if the array (recursively) contains only scalar/null values.
-     * Uses foreach with early break — faster than array_walk_recursive for flat arrays
-     * (no closure overhead), and bails immediately on non-simple values.
+     * Fast check: returns true if the array (recursively) contains only scalar/null values
+     * within the configured max_items and max_depth limits.
      */
-    private function isPlainArray(array $data, ?int &$budget = null): bool
+    private function isPlainArray(array $data, ?int &$budget = null, int $depth = 0, ?int $maxDepth = null): bool
     {
         $budget ??= $this->maxItems;
+        $maxDepth ??= $this->maxDepth;
+        if ($depth > $maxDepth) {
+            return false;
+        }
         foreach ($data as $v) {
             if (--$budget < 0) {
                 return false;
             }
             if (is_array($v)) {
-                if (!$this->isPlainArray($v, $budget)) {
+                if (!$this->isPlainArray($v, $budget, $depth + 1, $maxDepth)) {
                     return false;
                 }
             } elseif (!is_scalar($v) && $v !== null) {
@@ -108,34 +112,6 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
             }
         }
         return true;
-    }
-
-    /**
-     * Format an array as plain JSON, recursing into nested arrays and
-     * formatting objects/complex values via the dumper inline.
-     * Adds '_cut' key if items exceed max_items.
-     */
-    private function formatArray(array $data, bool $deep): array
-    {
-        $result = [];
-        $count = 0;
-
-        foreach ($data as $k => $v) {
-            if ($count >= $this->maxItems) {
-                $result['_cut'] = count($data) - $count;
-                break;
-            }
-            if (!$deep && is_array($v)) {
-                // Shallow mode: show nested arrays as cut summary
-                $n = count($v);
-                $result[$k] = $n > 0 ? ['_cut' => $n] : [];
-            } else {
-                $result[$k] = $this->formatValue($v, $deep);
-            }
-            $count++;
-        }
-
-        return $result;
     }
 
     /**
