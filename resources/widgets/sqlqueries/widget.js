@@ -91,6 +91,12 @@
                         lineSpan.textContent = `:${value.line}`;
                         valueTd.append(lineSpan);
                     }
+
+                    if (value.xdebug_link?.url) {
+                        const link = PhpDebugBar.Widgets.editorLink(value.xdebug_link);
+                        valueTd.append(link.querySelector('a'));
+                    }
+
                     tr.append(valueTd);
                 } else {
                     const keyTd = document.createElement('td');
