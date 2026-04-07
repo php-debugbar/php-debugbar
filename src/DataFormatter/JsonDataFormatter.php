@@ -105,7 +105,7 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
      *  - null:  all plain, but limits exceeded → use formatArray (avoids VarCloner)
      *  - false: contains objects/resources → must use VarCloner
      */
-    private function checkPlainArray(array $data, int $maxDepth, ?int &$budget = null, int $depth = 0): bool|null
+    private function checkPlainArray(array $data, int $maxDepth, ?int &$budget = null, int $depth = 0): ?bool
     {
         $budget ??= $this->maxItems;
         $limitExceeded = false;
