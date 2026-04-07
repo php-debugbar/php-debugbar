@@ -62,12 +62,21 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
             return $data;
         }
 
-        if (is_array($data) && count($data) <= $this->maxItems) {
-            // Fast path: if all leaf values are scalars within limits, return as-is
+        if (is_array($data)) {
             $maxDepth = $deep ? $this->maxDepth : 1;
-            if ($this->isPlainArray($data, maxDepth: $maxDepth)) {
+            $result = $this->checkPlainArray($data, $maxDepth);
+
+            // All plain within limits → return as-is
+            if ($result === true) {
                 return $data;
             }
+
+            // Plain values only, but exceeded limits → use formatArray (no VarCloner needed)
+            if ($result === null) {
+                return $this->formatArray($data, $deep);
+            }
+
+            // Complex values detected → fall through to VarCloner
         }
 
         return $this->formatComplex($data, $deep);
@@ -89,26 +98,69 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     }
 
     /**
-     * Fast check: returns true if the array (recursively) contains only scalar/null values
-     * within the configured max_items and max_depth limits.
+     * Check if an array contains only plain values (scalars/strings/nested arrays).
+     *
+     * Returns:
+     *  - true:  all plain, within max_items and max_depth limits → return as-is
+     *  - null:  all plain, but limits exceeded → use formatArray (avoids VarCloner)
+     *  - false: contains objects/resources → must use VarCloner
      */
-    private function isPlainArray(array $data, ?int &$budget = null, int $depth = 0, ?int $maxDepth = null): bool
+    private function checkPlainArray(array $data, int $maxDepth, ?int &$budget = null, int $depth = 0): bool|null
     {
         $budget ??= $this->maxItems;
-        $maxDepth ??= $this->maxDepth;
+        $limitExceeded = false;
+
         foreach ($data as $v) {
             if (--$budget < 0) {
-                return false;
+                $limitExceeded = true;
+                break;
             }
             if (is_array($v)) {
-                if ($depth >= $maxDepth || !$this->isPlainArray($v, $budget, $depth + 1, $maxDepth)) {
-                    return false;
+                if ($depth >= $maxDepth) {
+                    $limitExceeded = true;
+                    break;
+                }
+                $inner = $this->checkPlainArray($v, $maxDepth, $budget, $depth + 1);
+                if ($inner === false) {
+                    return false; // complex value found deep inside
+                }
+                if ($inner === null) {
+                    $limitExceeded = true;
                 }
             } elseif (!is_scalar($v) && $v !== null) {
-                return false;
+                return false; // object/resource/non-scalar
             }
         }
-        return true;
+
+        return $limitExceeded ? null : true;
+    }
+
+    /**
+     * Format an array as plain JSON, recursing into nested arrays and
+     * formatting objects/complex values via the dumper inline.
+     * Adds '_cut' key if items exceed max_items.
+     */
+    private function formatArray(array $data, bool $deep): array
+    {
+        $result = [];
+        $count = 0;
+
+        foreach ($data as $k => $v) {
+            if ($count >= $this->maxItems) {
+                $result['_cut'] = count($data) - $count;
+                break;
+            }
+            if (!$deep && is_array($v)) {
+                // Shallow mode: show nested arrays as cut summary
+                $n = count($v);
+                $result[$k] = $n > 0 ? ['_cut' => $n] : [];
+            } else {
+                $result[$k] = $this->formatValue($v, $deep);
+            }
+            $count++;
+        }
+
+        return $result;
     }
 
     /**
