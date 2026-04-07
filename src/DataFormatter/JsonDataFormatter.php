@@ -26,7 +26,7 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     /** Resolved limits — cached on first formatVar call to avoid repeated lookups */
     private ?int $maxString = null;
     private ?int $maxItems = null;
-    private ?int $maxDepth = null;
+    private int $maxDepth = 5;
 
     /**
      * Returns the raw value for scalars/short strings, or a dump node array for complex types.
@@ -63,20 +63,11 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
         }
 
         if (is_array($data)) {
-            $maxDepth = $deep ? $this->maxDepth : 1;
-            $result = $this->checkPlainArray($data, $maxDepth);
-
-            // All plain within limits → return as-is
-            if ($result === true) {
-                return $data;
+            $result = $this->formatArray($data, $deep);
+            if ($result !== null) {
+                return $result;
             }
-
-            // Plain values only, but exceeded limits → use formatArray (no VarCloner needed)
-            if ($result === null) {
-                return $this->formatArray($data, $deep);
-            }
-
-            // Complex values detected → fall through to VarCloner
+            // Bail: complex value found — send entire array through VarCloner
         }
 
         return $this->formatComplex($data, $deep);
@@ -98,50 +89,20 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     }
 
     /**
-     * Check if an array contains only plain values (scalars/strings/nested arrays).
-     *
-     * Returns:
-     *  - true:  all plain, within max_items and max_depth limits → return as-is
-     *  - null:  all plain, but limits exceeded → use formatArray (avoids VarCloner)
-     *  - false: contains objects/resources → must use VarCloner
+     * Format an array in a single pass. Each element is formatted inline:
+     * scalars/strings pass through, nested arrays recurse, objects go through VarCloner.
+     * Adds '_cut' when max_items is exceeded.
      */
-    private function checkPlainArray(array $data, int $maxDepth, ?int &$budget = null, int $depth = 0): ?bool
-    {
-        $budget ??= $this->maxItems;
-        $limitExceeded = false;
-
-        foreach ($data as $v) {
-            if (--$budget < 0) {
-                $limitExceeded = true;
-                break;
-            }
-            if (is_array($v)) {
-                if ($depth >= $maxDepth) {
-                    $limitExceeded = true;
-                    break;
-                }
-                $inner = $this->checkPlainArray($v, $maxDepth, $budget, $depth + 1);
-                if ($inner === false) {
-                    return false; // complex value found deep inside
-                }
-                if ($inner === null) {
-                    $limitExceeded = true;
-                }
-            } elseif (!is_scalar($v) && $v !== null) {
-                return false; // object/resource/non-scalar
-            }
-        }
-
-        return $limitExceeded ? null : true;
-    }
-
     /**
-     * Format an array as plain JSON, recursing into nested arrays and
-     * formatting objects/complex values via the dumper inline.
-     * Adds '_cut' key if items exceed max_items.
+     * Format an array in a single pass. Scalars/strings/nested arrays are handled inline.
+     * If any complex value (object/resource) is encountered, bail and send the entire
+     * original array through VarCloner.
+     *
+     * @return array|null null signals a bail — caller should use formatComplex instead
      */
-    private function formatArray(array $data, bool $deep): array
+    private function formatArray(array $data, bool $deep, int $depth = 0): ?array
     {
+        $maxDepth = $deep ? $this->maxDepth : 1;
         $result = [];
         $count = 0;
 
@@ -150,12 +111,23 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
                 $result['_cut'] = count($data) - $count;
                 break;
             }
-            if (!$deep && is_array($v)) {
-                // Shallow mode: show nested arrays as cut summary
-                $n = count($v);
-                $result[$k] = $n > 0 ? ['_cut' => $n] : [];
+            if (is_string($v)) {
+                $result[$k] = strlen($v) <= $this->maxString ? $v : substr($v, 0, $this->maxString) . '[..' . (strlen($v) - $this->maxString) . ']';
+            } elseif (is_int($v) || is_float($v) || is_bool($v) || $v === null) {
+                $result[$k] = $v;
+            } elseif (is_array($v)) {
+                if ($depth >= $maxDepth) {
+                    $n = count($v);
+                    $result[$k] = $n > 0 ? ['_cut' => $n] : [];
+                } else {
+                    $inner = $this->formatArray($v, $deep, $depth + 1);
+                    if ($inner === null) {
+                        return null; // bail — complex value found deeper
+                    }
+                    $result[$k] = $inner;
+                }
             } else {
-                $result[$k] = $this->formatValue($v, $deep);
+                return null; // bail — object/resource encountered
             }
             $count++;
         }
