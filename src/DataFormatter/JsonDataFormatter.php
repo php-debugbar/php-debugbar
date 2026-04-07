@@ -96,15 +96,12 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     {
         $budget ??= $this->maxItems;
         $maxDepth ??= $this->maxDepth;
-        if ($depth > $maxDepth) {
-            return false;
-        }
         foreach ($data as $v) {
             if (--$budget < 0) {
                 return false;
             }
             if (is_array($v)) {
-                if (!$this->isPlainArray($v, $budget, $depth + 1, $maxDepth)) {
+                if ($depth >= $maxDepth || !$this->isPlainArray($v, $budget, $depth + 1, $maxDepth)) {
                     return false;
                 }
             } elseif (!is_scalar($v) && $v !== null) {
