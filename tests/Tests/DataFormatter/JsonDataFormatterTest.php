@@ -254,10 +254,10 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $this->assertSame('hello', $data['b']);
         $this->assertSame([1, 2, 3], $data['a']);
 
-        // Shallow with deeper nesting — exceeds depth 1, falls through to dumper which truncates
+        // Shallow with deeper nesting — depth 1 cuts nested arrays
         $data = $d->formatVar(['a' => ['b' => ['c' => 'd']]], deep: false);
         $this->assertIsArray($data);
-        $this->assertSame(['_cut' => 1], $data['a']);
+        $this->assertSame(['b' => ['_cut' => 1]], $data['a']);
     }
 
     public function testArrayWithObjectInlinesDump(): void
