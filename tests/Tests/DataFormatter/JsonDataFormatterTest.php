@@ -342,10 +342,137 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $outer->child = $inner;
         yield [$outer, 'nested object'];
 
-        // Array with objects (falls back to dump)
+        // Array with objects (bails to VarCloner)
         $obj = new \stdClass();
         $obj->id = 1;
         yield [['item' => $obj], 'array with object'];
+    }
 
+    // ── Additional coverage ──────────────────────────────────────────
+
+    public function testArrayWithObjectBailsToVarCloner(): void
+    {
+        $d = new JsonDataFormatter();
+        $obj = new \stdClass();
+        $obj->x = 1;
+
+        // Object at first position — bails immediately
+        $data = $d->formatVar([$obj, 'plain']);
+        $this->assertIsArray($data);
+        $this->assertArrayHasKey('_vd', $data[0]);
+    }
+
+    public function testArrayWithObjectAtEnd(): void
+    {
+        $d = new JsonDataFormatter();
+        $obj = new \stdClass();
+        $obj->x = 1;
+
+        // Object at last position — iterates scalars first, then bails
+        $data = $d->formatVar(['a' => 1, 'b' => 'two', 'obj' => $obj]);
+        $this->assertIsArray($data);
+        $this->assertArrayHasKey('_vd', $data['obj']);
+    }
+
+    public function testNestedArrayWithObjectAtLevel2(): void
+    {
+        $d = new JsonDataFormatter();
+        $obj = new \stdClass();
+        $obj->name = 'deep';
+
+        // Object nested 2 levels deep — bail bubbles up
+        $data = $d->formatVar(['users' => ['first' => $obj, 'count' => 1]]);
+        $this->assertIsArray($data);
+        // The entire thing went through VarCloner
+        $this->assertArrayHasKey('_vd', $data['users']['first']);
+    }
+
+    public function testNestedArrayWithObjectAtLevel3(): void
+    {
+        $d = new JsonDataFormatter();
+        $obj = new \stdClass();
+        $obj->id = 42;
+
+        $data = $d->formatVar(['level1' => ['level2' => ['obj' => $obj, 'n' => 1]]]);
+        $this->assertIsArray($data);
+        $this->assertArrayHasKey('_vd', $data['level1']['level2']['obj']);
+    }
+
+    public function testMixedArrayScalarsAndNestedArrays(): void
+    {
+        $d = new JsonDataFormatter();
+
+        $data = $d->formatVar([
+            'name' => 'test',
+            'tags' => ['a', 'b', 'c'],
+            'meta' => ['key' => 'value'],
+            'count' => 42,
+        ]);
+
+        // All plain — no VarCloner needed
+        $this->assertSame('test', $data['name']);
+        $this->assertSame(['a', 'b', 'c'], $data['tags']);
+        $this->assertSame(['key' => 'value'], $data['meta']);
+        $this->assertSame(42, $data['count']);
+        $this->assertArrayNotHasKey('_vd', $data);
+    }
+
+    public function testLargeArrayWithObjectBails(): void
+    {
+        $d = new JsonDataFormatter();
+        $obj = new \stdClass();
+        $obj->x = 1;
+
+        // 100 plain items + 1 object at the end
+        $input = [];
+        for ($i = 0; $i < 100; $i++) {
+            $input["k$i"] = "v$i";
+        }
+        $input['obj'] = $obj;
+
+        $data = $d->formatVar($input);
+        $this->assertIsArray($data);
+        // Object should still have _vd (entire array went through VarCloner on bail)
+        $this->assertArrayHasKey('_vd', $data['obj']);
+    }
+
+    public function testMaxDepthCutsNestedArrays(): void
+    {
+        $d = new JsonDataFormatter();
+        $d->resetClonerOptions(['max_depth' => 2]);
+
+        $data = $d->formatVar(['a' => ['b' => ['c' => ['d' => 'deep']]]]);
+
+        // depth 0: outer, depth 1: ['b'=>...], depth 2: ['c'=>...] entered,
+        // depth 2 >= maxDepth so ['d'=>'deep'] gets cut
+        $this->assertIsArray($data);
+        $this->assertSame(['_cut' => 1], $data['a']['b']['c']);
+    }
+
+    public function testEmptyNestedArray(): void
+    {
+        $d = new JsonDataFormatter();
+
+        $data = $d->formatVar(['a' => [], 'b' => [1, []]]);
+        $this->assertSame([], $data['a']);
+        $this->assertSame([1, []], $data['b']);
+    }
+
+    public function testMixedTypesInArray(): void
+    {
+        $d = new JsonDataFormatter();
+
+        $data = $d->formatVar([null, true, false, 0, 1.5, 'str', [1]]);
+        $this->assertSame([null, true, false, 0, 1.5, 'str', [1]], $data);
+    }
+
+    public function testStringTruncationInArray(): void
+    {
+        $d = new JsonDataFormatter();
+        $d->resetClonerOptions(['max_string' => 5]);
+
+        $data = $d->formatVar(['short', 'ABCDEFGHIJ']);
+        $this->assertSame('short', $data[0]);
+        $this->assertSame('ABCDE[..5]', $data[1]);
     }
 }

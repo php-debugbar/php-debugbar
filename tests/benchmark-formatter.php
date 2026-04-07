@@ -104,7 +104,28 @@ function buildTestData(): array
         $result["idx_depth$d"] = buildIndexedTree($d, 3);
     }
 
+    // Object tree
     $result['obj_depth4'] = buildObjectTree(4, 3);
+
+    // Mixed: plain array with object at level 1
+    $obj = new \stdClass();
+    $obj->name = 'Alice';
+    $obj->age = 30;
+    $result['mixed_obj_l1'] = ['name' => 'test', 'count' => 3, 'user' => $obj, 'tags' => ['a', 'b']];
+
+    // Mixed: plain array with object at level 2
+    $result['mixed_obj_l2'] = [
+        'data' => ['user' => $obj, 'status' => 'active'],
+        'meta' => ['version' => 1],
+    ];
+
+    // Mixed: large plain array with object at the end
+    $mixed = [];
+    for ($i = 0; $i < 50; $i++) {
+        $mixed["item_$i"] = "value_$i";
+    }
+    $mixed['obj'] = $obj;
+    $result['mixed_obj_end'] = $mixed;
 
     return $result;
 }
