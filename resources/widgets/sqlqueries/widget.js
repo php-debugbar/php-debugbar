@@ -91,6 +91,13 @@
                         lineSpan.textContent = `:${value.line}`;
                         valueTd.append(lineSpan);
                     }
+
+                    if (value.xdebug_link?.url) {
+                        const link = PhpDebugBar.Widgets.editorLink(value.xdebug_link);
+                        valueTd.append(link.querySelector('a'));
+                    }
+
+                    tr.append(valueTd);
                 } else {
                     const keyTd = document.createElement('td');
                     keyTd.classList.add('phpdebugbar-text-muted');
@@ -98,7 +105,6 @@
                     tr.append(keyTd);
 
                     const valueTd = document.createElement('td');
-                    valueTd.classList.add('phpdebugbar-text-muted');
                     valueTd.textContent = value;
                     tr.append(valueTd);
                 }
@@ -226,15 +232,7 @@
                 this.renderList(table, 'Params', stmt.params);
             }
             if (stmt.backtrace && Object.keys(stmt.backtrace).length > 0) {
-                const values = [];
-                for (const trace of stmt.backtrace.values()) {
-                    let text = trace.name || trace.file;
-                    if (trace.line) {
-                        text = `${text}:${trace.line}`;
-                    }
-                    values.push(text);
-                }
-                this.renderList(table, 'Backtrace', values);
+                this.renderList(table, 'Backtrace', stmt.backtrace);
             }
             if (!table.querySelectorAll('tr').length) {
                 table.style.display = 'none';
