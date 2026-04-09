@@ -101,7 +101,6 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     /**
      * Returns a simple plain-text representation of a variable for search/display fallback.
      *
-     * @deprecated not use anymore, is done client-side.
      */
     protected function getPlainTextFromVar(mixed $var): string
     {
@@ -158,25 +157,28 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
             $message = $this->interpolate($message, $context);
         }
 
+        $isString = is_string($message);
+        $formattedMessage = $this->getDataFormatter()->formatVar($message);
+        $messageText = null;
         $messageHtml = null;
         $messageJson = null;
-        if ($message instanceof MessageInterface) {
-            $messageText = $message->getText();
-            $messageHtml = $message->getHtml();
-        } else {
-            $messageText = $this->getDataFormatter()->formatVar($message);
-        }
 
-        $isString = is_string($message);
-        if ($this->isJsonVarDumperUsed()) {
-            $messageJson = $messageText;
-            $messageText = '';
-        } elseif ($this->isHtmlVarDumperUsed()) {
-            $messageHtml = $messageText;
-            if ($this->compactDumps) {
-                $messageHtml = $this->compactMessageDump($messageHtml);
+        if ($isString) {
+            $messageText = $formattedMessage;
+        } else {
+            if ($message instanceof MessageInterface) {
+                $messageText = $message->getText();
+                $messageHtml = $message->getHtml();
+            } elseif ($this->isJsonVarDumperUsed()) {
+                $messageJson = $formattedMessage;
+            } elseif ($this->isHtmlVarDumperUsed()) {
+                $messageHtml = $formattedMessage;
+                if ($this->compactDumps) {
+                    $messageHtml = $this->compactMessageDump($messageHtml);
+                }
+            } else {
+                $messageText = $formattedMessage;
             }
-            $messageText = '';
         }
 
         $contextJson = null;
@@ -212,7 +214,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         ];
 
         if ($this->hasTimeDataCollector()) {
-            $this->addTimeMeasure("[{$label}]: " . substr($messageText, 0, 100), microtime(true));
+            $this->addTimeMeasure("[{$label}]: " . substr($isString ? $message : $this->getPlainTextFromVar($message), 0, 100), microtime(true));
         }
 
     }
