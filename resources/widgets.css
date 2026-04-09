@@ -179,6 +179,9 @@ div.phpdebugbar-widgets-messages {
     padding-left: 0px;
     padding-bottom: 0px;
   }
+  dl.phpdebugbar-widgets-kvlist dd.phpdebugbar-widgets-value pre.sf-dump {
+    max-width: calc(100% - 5px); /* substract right padding */
+  }
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-collector,
   div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-label {
     float: right;
@@ -291,7 +294,7 @@ div.phpdebugbar-widgets-messages {
 dl.phpdebugbar-widgets-kvlist {
   margin: 0;
   display: grid;
-  grid-template-columns: minmax(160px, 15%) 1fr;
+  grid-template-columns: minmax(160px, 15%) minmax(0, 1fr);
 }
   dl.phpdebugbar-widgets-kvlist dt {
     grid-column: 1;
@@ -311,6 +314,7 @@ dl.phpdebugbar-widgets-kvlist {
     cursor: pointer;
     min-height: 17px;
     overflow-wrap: anywhere;
+    overflow-x: auto;
   }
 
 /* -------------------------------------- */
