@@ -98,9 +98,9 @@ class MessagesCollectorTest extends DebugBarTestCase
         $data = $c->collect();
         $msg = $data['messages'][0];
 
-        // message_json holds the formatted message, message is empty
-        $this->assertNotNull($msg['message_json']);
-        $this->assertEmpty($msg['message']);
+        // String messages are kept in message, not message_json
+        $this->assertNull($msg['message_json']);
+        $this->assertNotEmpty($msg['message']);
 
         // context values are in context_json, context keys are null
         $this->assertNotNull($msg['context_json']);

@@ -157,25 +157,28 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
             $message = $this->interpolate($message, $context);
         }
 
+        $isString = is_string($message);
+        $formattedMessage = $this->getDataFormatter()->formatVar($message);
+        $messageText = null;
         $messageHtml = null;
         $messageJson = null;
-        if ($message instanceof MessageInterface) {
-            $messageText = $message->getText();
-            $messageHtml = $message->getHtml();
-        } else {
-            $messageText = $this->getDataFormatter()->formatVar($message);
-        }
 
-        $isString = is_string($message);
-        if ($this->isJsonVarDumperUsed()) {
-            $messageJson = $messageText;
-            $messageText = '';
-        } elseif ($this->isHtmlVarDumperUsed()) {
-            $messageHtml = $messageText;
-            if ($this->compactDumps) {
-                $messageHtml = $this->compactMessageDump($messageHtml);
+        if ($isString) {
+            $messageText = $formattedMessage;
+        } else {
+            if ($message instanceof MessageInterface) {
+                $messageText = $message->getText();
+                $messageHtml = $message->getHtml();
+            } elseif ($this->isJsonVarDumperUsed()) {
+                $messageJson = $formattedMessage;
+            } elseif ($this->isHtmlVarDumperUsed()) {
+                $messageHtml = $formattedMessage;
+                if ($this->compactDumps) {
+                    $messageHtml = $this->compactMessageDump($messageHtml);
+                }
+            } else {
+                $messageText = $formattedMessage;
             }
-            $messageText = '';
         }
 
         $contextJson = null;
