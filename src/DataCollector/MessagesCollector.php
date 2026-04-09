@@ -101,7 +101,6 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     /**
      * Returns a simple plain-text representation of a variable for search/display fallback.
      *
-     * @deprecated not use anymore, is done client-side.
      */
     protected function getPlainTextFromVar(mixed $var): string
     {
@@ -212,7 +211,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         ];
 
         if ($this->hasTimeDataCollector()) {
-            $this->addTimeMeasure("[{$label}]: " . substr($messageText, 0, 100), microtime(true));
+            $this->addTimeMeasure("[{$label}]: " . substr($isString ? $message : $this->getPlainTextFromVar($message), 0, 100), microtime(true));
         }
 
     }

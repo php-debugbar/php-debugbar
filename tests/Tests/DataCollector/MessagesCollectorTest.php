@@ -9,6 +9,7 @@ use DebugBar\DataFormatter\HtmlDataFormatter;
 use DebugBar\DataFormatter\JsonDataFormatter;
 use DebugBar\Tests\DebugBarTestCase;
 use DebugBar\DataCollector\MessagesCollector;
+use DebugBar\DataCollector\TimeDataCollector;
 
 class MessagesCollectorTest extends DebugBarTestCase
 {
@@ -130,5 +131,59 @@ class MessagesCollectorTest extends DebugBarTestCase
         // Plain formatter: context holds formatted values, context_json is null
         $this->assertNull($msg['context_json']);
         $this->assertSame('value', $msg['context']['key']);
+    }
+
+    public function testTimeLabelForStringMessage(): void
+    {
+        $c = new MessagesCollector();
+        $t = new TimeDataCollector();
+        $c->setTimeDataCollector($t);
+
+        $c->addMessage('hello world', 'info');
+
+        $measures = $t->getMeasures();
+        $this->assertCount(1, $measures);
+        $this->assertEquals('[info]: hello world', $measures[0]['label']);
+    }
+
+    public function testTimeLabelForArrayMessage(): void
+    {
+        $c = new MessagesCollector();
+        $c->setDataFormatter(new DataFormatter());
+        $t = new TimeDataCollector();
+        $c->setTimeDataCollector($t);
+
+        $c->addMessage(['foo', 'bar', 'baz'], 'warning');
+
+        $measures = $t->getMeasures();
+        $this->assertCount(1, $measures);
+        $this->assertEquals('[warning]: array(3)', $measures[0]['label']);
+    }
+
+    public function testTimeLabelForObjectMessage(): void
+    {
+        $c = new MessagesCollector();
+        $c->setDataFormatter(new DataFormatter());
+        $t = new TimeDataCollector();
+        $c->setTimeDataCollector($t);
+
+        $c->addMessage(new \stdClass(), 'debug');
+
+        $measures = $t->getMeasures();
+        $this->assertCount(1, $measures);
+        $this->assertEquals('[debug]: stdClass', $measures[0]['label']);
+    }
+
+    public function testTimeLabelTruncatesLongMessages(): void
+    {
+        $c = new MessagesCollector();
+        $t = new TimeDataCollector();
+        $c->setTimeDataCollector($t);
+
+        $longMessage = str_repeat('a', 200);
+        $c->addMessage($longMessage, 'info');
+
+        $measures = $t->getMeasures();
+        $this->assertEquals('[info]: ' . str_repeat('a', 100), $measures[0]['label']);
     }
 }
