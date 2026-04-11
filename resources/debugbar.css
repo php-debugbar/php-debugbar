@@ -97,7 +97,7 @@ div.phpdebugbar.phpdebugbar-fullscreen[data-toolbarPosition="top"] {
 
 div.phpdebugbar.phpdebugbar-fullscreen .phpdebugbar-body {
   flex: 1;
-  height: auto !important;
+  height: calc(100% - 32px) !important
 }
 
 div.phpdebugbar.phpdebugbar-fullscreen .phpdebugbar-resize-handle {
