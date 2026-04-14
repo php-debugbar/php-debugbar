@@ -27,14 +27,11 @@ class QueryFormatter extends DataFormatter
         foreach ($bindings as &$binding) {
             if (is_string($binding) && !mb_check_encoding($binding, 'UTF-8')) {
                 $binding = '[BINARY DATA]';
-            }
-
-            if (is_array($binding)) {
-                $binding = $this->checkBindings($binding);
-                $binding = '[' . implode(',', $binding) . ']';
-            }
-
-            if (is_object($binding)) {
+            } elseif (is_array($binding)) {
+                $binding = '[' . implode(',', $this->checkBindings($binding)) . ']';
+            } elseif (is_resource($binding) || gettype($binding) === 'resource (closed)') {
+                $binding = '[RESOURCE]';
+            } elseif (is_object($binding)) {
                 if ($binding instanceof \Closure) {
                     $binding = '[CLOSURE]';
                 } else {
