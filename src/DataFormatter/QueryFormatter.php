@@ -126,6 +126,11 @@ class QueryFormatter extends DataFormatter
 
         }
 
+        return $this->emulateQuote($binding);
+    }
+
+    protected function emulateQuote(string $value): string
+    {
         $charMap = [
             "\\"   => "\\\\",
             "\x00" => "\\0",
@@ -136,14 +141,6 @@ class QueryFormatter extends DataFormatter
             "\x1a" => "\\Z",
         ];
 
-        return "'" . strtr($binding, $charMap) . "'";
-    }
-
-    protected function emulateQuote(string $value): string
-    {
-        $search = ["\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a"];
-        $replace = ["\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z"];
-
-        return "'" . str_replace($search, $replace, $value) . "'";
+        return "'" . strtr($value, $charMap) . "'";
     }
 }
