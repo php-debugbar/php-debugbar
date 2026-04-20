@@ -1081,7 +1081,7 @@ class JavascriptRenderer
             $url = $this->assetHandlerUrl;
             $assets = $this->getAssets(self::RELATIVE_PATH);
             $cssFiles = [$url . (str_contains($url, '?') ? '&' : '?') . 'type=css&mtime=' . $this->getFilesModifiedTime($assets['css'])];
-            $jsFiles = [$url . (str_contains($url, '?') ? '&' : '?') . 'type=js&hash=' . $this->getFilesModifiedTime($assets['js'])];
+            $jsFiles = [$url . (str_contains($url, '?') ? '&' : '?') . 'type=js&mtime=' . $this->getFilesModifiedTime($assets['js'])];
         }
         $html = '';
 
