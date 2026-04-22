@@ -37,6 +37,6 @@ trait HasTimeDataCollector
             throw new \RuntimeException('TimeDataCollector is not set');
         }
 
-        $collector->addMeasure($label, $start, $end, $params, $name, $group ?? $name);
+        $collector->addMeasure($label, $start, $end, $params, $name, $group ?? ucfirst($name));
     }
 }
