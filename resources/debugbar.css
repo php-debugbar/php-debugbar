@@ -590,9 +590,131 @@ div.phpdebugbar-panel {
   height: 100%;
   overflow: auto;
   width: 100%;
+  position: relative;
 }
 div.phpdebugbar-panel.phpdebugbar-active {
   display: block;
+}
+
+div.phpdebugbar-panel > div.phpdebugbar-panel-summary-float {
+  position: sticky;
+  top: 0;
+  right: 0;
+  height: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+div.phpdebugbar-panel > div.phpdebugbar-panel-summary-float button.phpdebugbar-panel-summary-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  pointer-events: auto;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--debugbar-text-muted);
+  background-color: var(--debugbar-background);
+  border: 1px solid var(--debugbar-border);
+  border-radius: 3px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, color 0.12s ease;
+}
+div.phpdebugbar-panel > div.phpdebugbar-panel-summary-float button.phpdebugbar-panel-summary-btn:hover {
+  color: var(--debugbar-text);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22);
+}
+div.phpdebugbar-panel > div.phpdebugbar-panel-summary-float button.phpdebugbar-panel-summary-btn.phpdebugbar-panel-summary-btn-active {
+  color: var(--debugbar-text);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.22) inset;
+}
+div.phpdebugbar-panel > div.phpdebugbar-panel-summary-float button.phpdebugbar-panel-summary-btn::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  -webkit-mask-image: var(--debugbar-icon-bookmark);
+  mask-image: var(--debugbar-icon-bookmark);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  background-color: currentColor;
+}
+
+div.phpdebugbar-panel > div.phpdebugbar-panel-summary-float div.phpdebugbar-panel-summary-popover {
+  position: absolute;
+  top: 44px;
+  right: 8px;
+  pointer-events: auto;
+  min-width: 260px;
+  max-width: min(480px, 90vw);
+  max-height: 60vh;
+  padding: 8px;
+  background-color: var(--debugbar-background);
+  border: 1px solid var(--debugbar-border);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
+}
+div.phpdebugbar-panel > div.phpdebugbar-panel-summary-float div.phpdebugbar-panel-summary-popover div.phpdebugbar-panel-summary-content {
+  flex: 1 1 auto;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--debugbar-font-mono);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--debugbar-text);
+  padding: 4px;
+  background-color: var(--debugbar-background-alt);
+  border-radius: 3px;
+}
+div.phpdebugbar-panel > div.phpdebugbar-panel-summary-float div.phpdebugbar-panel-summary-popover button.phpdebugbar-panel-summary-copy {
+  flex: 0 0 auto;
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-family: inherit;
+  color: var(--debugbar-text);
+  background-color: var(--debugbar-background-alt);
+  border: 1px solid var(--debugbar-border);
+  border-radius: 3px;
+  cursor: pointer;
+  line-height: 1.4;
+}
+div.phpdebugbar-panel > div.phpdebugbar-panel-summary-float div.phpdebugbar-panel-summary-popover button.phpdebugbar-panel-summary-copy:hover {
+  background-color: var(--debugbar-background);
+}
+div.phpdebugbar-panel > div.phpdebugbar-panel-summary-float div.phpdebugbar-panel-summary-popover button.phpdebugbar-panel-summary-copy::before {
+  content: "";
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  -webkit-mask-image: var(--debugbar-icon-copy);
+  mask-image: var(--debugbar-icon-copy);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  background-color: currentColor;
+}
+div.phpdebugbar-panel > div.phpdebugbar-panel-summary-float div.phpdebugbar-panel-summary-popover button.phpdebugbar-panel-summary-copy.phpdebugbar-panel-summary-copied {
+  color: var(--debugbar-success, #4caf50);
 }
 
 /* -------------------------------------- */

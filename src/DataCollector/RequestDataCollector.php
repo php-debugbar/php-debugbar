@@ -47,10 +47,15 @@ class RequestDataCollector extends DataCollector implements Renderable
             $data[$name] = $this->getDataFormatter()->formatVar($global);
         }
 
+        $summary = [
+            'uri' => $requestUri ?? '',
+        ];
+
         return [
             'data' => $data,
             'tooltip' => null,
             'badge' => null,
+            'summary' => $summary,
         ];
     }
 
@@ -93,6 +98,9 @@ class RequestDataCollector extends DataCollector implements Renderable
                 "map" => "request.badge",
                 "default" => "null",
             ],
+            'request:summary' => [
+                "map" => "request.summary",
+            ]
         ];
 
         if ($this->showUriIndicator) {
