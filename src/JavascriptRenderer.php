@@ -1369,8 +1369,8 @@ $js
                 );
             }
 
-            if (isset($options['map']) && isset($options['default'])) {
-                $dataMap[$name] = [$options['map'], $options['default']];
+            if (isset($options['map'])) {
+                $dataMap[$name] = [$options['map'], $options['default'] ?? 'null'];
             }
         }
 

@@ -247,6 +247,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
      *  - title
      *  - badge
      *  - widget
+     *  - summary: string (shown as-is) or object (rendered as "key = value"
+     *    per line). Shows a floating button with a popover + copy button.
      *  - data: forward data to widget data
      */
     class Tab extends Widget {
@@ -287,9 +289,123 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 }
             });
 
+            this.summaryFloat = document.createElement('div');
+            this.summaryFloat.classList.add(csscls('panel-summary-float'));
+            this.summaryFloat.hidden = true;
+
+            this.summaryBtn = document.createElement('button');
+            this.summaryBtn.type = 'button';
+            this.summaryBtn.classList.add(csscls('panel-summary-btn'));
+            this.summaryBtn.setAttribute('title', 'Show summary');
+            this.summaryBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this._toggleSummary();
+            });
+            this.summaryFloat.append(this.summaryBtn);
+
+            this.summaryPopover = document.createElement('div');
+            this.summaryPopover.classList.add(csscls('panel-summary-popover'));
+            this.summaryPopover.hidden = true;
+            this.summaryPopover.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            this.summaryContent = document.createElement('div');
+            this.summaryContent.classList.add(csscls('panel-summary-content'));
+            this.summaryPopover.append(this.summaryContent);
+
+            this.summaryCopyBtn = document.createElement('button');
+            this.summaryCopyBtn.type = 'button';
+            this.summaryCopyBtn.classList.add(csscls('panel-summary-copy'));
+            this.summaryCopyBtn.setAttribute('title', 'Copy to clipboard');
+            this.summaryCopyLabel = document.createElement('span');
+            this.summaryCopyLabel.textContent = 'Copy';
+            this.summaryCopyBtn.append(this.summaryCopyLabel);
+            this.summaryCopyBtn.addEventListener('click', () => {
+                const text = this._summaryText || '';
+                if (!text) {
+                    return;
+                }
+                const done = () => {
+                    const prev = this.summaryCopyLabel.textContent;
+                    this.summaryCopyBtn.classList.add(csscls('panel-summary-copied'));
+                    this.summaryCopyLabel.textContent = 'Copied!';
+                    setTimeout(() => {
+                        this.summaryCopyLabel.textContent = prev;
+                        this.summaryCopyBtn.classList.remove(csscls('panel-summary-copied'));
+                    }, 1500);
+                };
+                if (navigator.clipboard?.writeText) {
+                    navigator.clipboard.writeText(text).then(done, () => {});
+                } else {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.append(ta);
+                    ta.select();
+                    try {
+                        if (document.execCommand('copy')) {
+                            done();
+                        }
+                    } catch (e) {
+                        // ignore
+                    }
+                    ta.remove();
+                }
+            });
+            this.summaryPopover.append(this.summaryCopyBtn);
+            this.summaryFloat.append(this.summaryPopover);
+
+            this._closeSummaryOnDocClick = () => {
+                this.summaryPopover.hidden = true;
+                this.summaryBtn.classList.remove(csscls('panel-summary-btn-active'));
+            };
+            this._closeSummaryOnEsc = (e) => {
+                if (e.key === 'Escape') {
+                    this._closeSummaryOnDocClick();
+                }
+            };
+
+            this._toggleSummary = () => {
+                const wasHidden = this.summaryPopover.hidden;
+                this.summaryPopover.hidden = !wasHidden;
+                this.summaryBtn.classList.toggle(csscls('panel-summary-btn-active'), wasHidden);
+                if (wasHidden) {
+                    document.addEventListener('click', this._closeSummaryOnDocClick);
+                    document.addEventListener('keydown', this._closeSummaryOnEsc);
+                } else {
+                    document.removeEventListener('click', this._closeSummaryOnDocClick);
+                    document.removeEventListener('keydown', this._closeSummaryOnEsc);
+                }
+            };
+
             this.bindAttr('widget', function (widget) {
                 this.el.innerHTML = '';
+                this.el.append(this.summaryFloat);
                 this.el.append(widget.el);
+            });
+
+            this.bindAttr('summary', function (summary) {
+                let text = '';
+                if (typeof summary === 'string') {
+                    text = summary;
+                } else if (summary != null && typeof summary === 'object') {
+                    text = Object.entries(summary)
+                        .map(([k, v]) => {
+                            const val = v !== null && typeof v === 'object'
+                                ? JSON.stringify(v)
+                                : String(v);
+                            return `${k} = ${val}`;
+                        })
+                        .join('\n');
+                }
+                this._summaryText = text;
+                this.summaryContent.textContent = text;
+                this.summaryFloat.hidden = !text;
+                if (!text && !this.summaryPopover.hidden) {
+                    this._closeSummaryOnDocClick();
+                }
             });
 
             this.widgetRendered = false;
