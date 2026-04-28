@@ -59,7 +59,8 @@ Integrations with other frameworks:
   - [Joomla](https://github.com/joomla/joomla-cms/blob/4.0-dev/plugins/system/debug/debug.php)
   - [Drupal](https://www.drupal.org/project/debugbar)
   - [October CMS](https://github.com/rainlab/debugbar-plugin)
-[Winter CMS](https://packagist.org/packages/winter/wn-debugbar-plugin)
+  - [Winter CMS](https://packagist.org/packages/winter/wn-debugbar-plugin)
+  - [ZubZet Framework (From v1.2.0+)](https://zubzet.com/)
   - Framework-agnostic middleware and PSR-7 with [php-middleware/phpdebugbar](https://github.com/php-middleware/phpdebugbar)
   - [Dotkernel Frontend Application](https://github.com/dotkernel/dot-debugbar)
 
