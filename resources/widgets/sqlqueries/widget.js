@@ -330,12 +330,12 @@
                 if (data.nb_failed_statements) {
                     t.append(`, ${data.nb_failed_statements} of which failed`);
                 }
+                const duplicatedText = 'Show only duplicated';
                 if (duplicate) {
                     t.append(`, ${duplicate} of which were duplicates`);
                     t.append(`, ${data.nb_statements - duplicate} unique. `);
 
                     // add toggler for displaying only duplicated queries
-                    const duplicatedText = 'Show only duplicated';
                     const toggleLink = document.createElement('a');
                     toggleLink.classList.add(csscls('duplicates'));
                     toggleLink.textContent = duplicatedText;
@@ -383,6 +383,11 @@
                             }
                         }
                         this.list.set('data', data.statements);
+                        if (this.list.get('duplicate')) {
+                            const toggleLink = t.querySelector('a.' + csscls('duplicates'));
+                            toggleLink.textContent = duplicatedText;
+                            toggleLink.classList.remove('shown-duplicated');
+                        }
                     });
 
                     duration.append(sortIcon);
