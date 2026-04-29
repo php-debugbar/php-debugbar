@@ -340,8 +340,8 @@
                         toggleLink.classList.toggle('shown-duplicated');
                         toggleLink.textContent = toggleLink.classList.contains('shown-duplicated') ? 'Show All' : duplicatedText;
 
-                        const selector = `.${this.className} .${csscls('list-item')}:not(.${csscls('sql-duplicate')})`;
-                        const items = document.querySelectorAll(selector);
+                        const selector = `.${csscls('list-item')}:not(.${csscls('sql-duplicate')})`;
+                        const items = this.list.el.querySelectorAll(selector);
                         for (const item of items) {
                             item.hidden = !item.hidden;
                         }
