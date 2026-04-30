@@ -896,13 +896,20 @@ class JavascriptRenderer
                 $this->makeUriRelativeTo($basePath, $this->basePath),
                 $this->makeUriRelativeTo($baseUrl, $this->baseUrl),
             );
-            if (isset($assets['css']) && !($this->useDistFiles && $basePath === '' && in_array($assets['css'], $this->distIncludedAssets, true))) {
-                $cssFiles = array_merge($cssFiles, $this->makeUrisRelativeTo(is_string($assets['css']) ? [$assets['css']] : $assets['css'], $root));
+            if (isset($assets['css'])) {
+                foreach ((array) $assets['css'] as $asset) {
+                    if (!($this->useDistFiles && $basePath === '' && in_array($asset, $this->distIncludedAssets, true))) {
+                        $cssFiles = array_merge($cssFiles, $this->makeUrisRelativeTo([$asset], $root));
+                    }
+                }
             }
-            if (isset($assets['js']) && !($this->useDistFiles && $basePath === '' && in_array($assets['js'], $this->distIncludedAssets, true))) {
-                $jsFiles = array_merge($jsFiles, $this->makeUrisRelativeTo(is_string($assets['js']) ? [$assets['js']] : $assets['js'], $root));
+            if (isset($assets['js'])) {
+                foreach ((array) $assets['js'] as $asset) {
+                    if (!($this->useDistFiles && $basePath === '' && in_array($asset, $this->distIncludedAssets, true))) {
+                        $jsFiles = array_merge($jsFiles, $this->makeUrisRelativeTo([$asset], $root));
+                    }
+                }
             }
-
             if (isset($assets['inline_css'])) {
                 $inlineCss = array_merge($inlineCss, (array) $assets['inline_css']);
             }

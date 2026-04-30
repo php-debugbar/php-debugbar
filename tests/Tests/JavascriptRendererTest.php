@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace DebugBar\Tests;
 
+use DebugBar\DataCollector\AssetProvider;
+use DebugBar\DataCollector\DataCollector;
+use DebugBar\DataCollector\Renderable;
 use DebugBar\DataCollector\TemplateCollector;
 use DebugBar\JavascriptRenderer;
 
@@ -142,6 +145,149 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->debugbar->addCollector(new TemplateCollector());
         $js = $this->r->getAssets()['js'];
         $this->assertContains('/bpath/widgets/templates/widget.js', $js);
+    }
+
+    public function testCollectorAssetsAreDeduplicatedForStringAndArrayVariants(): void
+    {
+        // Collector returning a single asset per type as a string.
+        $stringAssetCollector = new class extends DataCollector implements AssetProvider, Renderable {
+            public function getName(): string
+            {
+                return 'string-assets';
+            }
+
+            public function getWidgets(): array
+            {
+                return [];
+            }
+
+            public function collect(): array
+            {
+                return [];
+            }
+
+            public function getAssets(): array
+            {
+                return [
+                    'css' => 'shared.css',
+                    'js' => 'shared.js',
+                ];
+            }
+        };
+
+        // Collector returning multiple assets per type as an array, including duplicates of the strings above.
+        $arrayAssetCollector = new class extends DataCollector implements AssetProvider, Renderable {
+            public function getName(): string
+            {
+                return 'array-assets';
+            }
+
+            public function getWidgets(): array
+            {
+                return [];
+            }
+
+            public function collect(): array
+            {
+                return [];
+            }
+
+            public function getAssets(): array
+            {
+                return [
+                    'css' => ['shared.css', 'extra.css', 'extra.css'],
+                    'js' => ['shared.js', 'extra.js', 'extra.js'],
+                ];
+            }
+        };
+
+        $this->debugbar->addCollector($stringAssetCollector);
+        $this->debugbar->addCollector($arrayAssetCollector);
+
+        $assets = $this->r->getAssets();
+
+        $this->assertContains('/bpath/shared.css', $assets['css']);
+        $this->assertContains('/bpath/extra.css', $assets['css']);
+        $this->assertContains('/bpath/shared.js', $assets['js']);
+        $this->assertContains('/bpath/extra.js', $assets['js']);
+
+        // Duplicates from across both string-form and array-form collectors are removed.
+        $this->assertCount(count(array_unique($assets['css'])), $assets['css']);
+        $this->assertCount(count(array_unique($assets['js'])), $assets['js']);
+    }
+
+    public function testCollectorAssetsAlreadyInDistFilesAreExcludedForStringAndArrayVariants(): void
+    {
+        $this->r->setUseDistFiles(true);
+
+        // String-form: the single asset is part of the bundled dist files and must be excluded.
+        $stringAssetCollector = new class extends DataCollector implements AssetProvider, Renderable {
+            public function getName(): string
+            {
+                return 'string-dist-assets';
+            }
+
+            public function getWidgets(): array
+            {
+                return [];
+            }
+
+            public function collect(): array
+            {
+                return [];
+            }
+
+            public function getAssets(): array
+            {
+                return [
+                    'css' => 'widgets/templates/widget.css',
+                    'js' => 'widgets/templates/widget.js',
+                ];
+            }
+        };
+
+        // Array-form: only the dist-included entries should be filtered out; the extras must remain.
+        $arrayAssetCollector = new class extends DataCollector implements AssetProvider, Renderable {
+            public function getName(): string
+            {
+                return 'array-dist-assets';
+            }
+
+            public function getWidgets(): array
+            {
+                return [];
+            }
+
+            public function collect(): array
+            {
+                return [];
+            }
+
+            public function getAssets(): array
+            {
+                return [
+                    'css' => ['widgets/mails/widget.css', 'custom-extra.css'],
+                    'js' => ['widgets/mails/widget.js', 'custom-extra.js'],
+                ];
+            }
+        };
+
+        $this->debugbar->addCollector($stringAssetCollector);
+        $this->debugbar->addCollector($arrayAssetCollector);
+
+        $assets = $this->r->getAssets();
+
+        // The string-form dist-included assets must not be re-added on top of the dist bundle.
+        $this->assertNotContains('/bpath/widgets/templates/widget.css', $assets['css']);
+        $this->assertNotContains('/bpath/widgets/templates/widget.js', $assets['js']);
+
+        // The array-form dist-included entries must be filtered out per-item, not the whole array.
+        $this->assertNotContains('/bpath/widgets/mails/widget.css', $assets['css']);
+        $this->assertNotContains('/bpath/widgets/mails/widget.js', $assets['js']);
+
+        // Non-dist entries from the array-form collector must still be included.
+        $this->assertContains('/bpath/custom-extra.css', $assets['css']);
+        $this->assertContains('/bpath/custom-extra.js', $assets['js']);
     }
 
     public function testGetDistAssets(): void
