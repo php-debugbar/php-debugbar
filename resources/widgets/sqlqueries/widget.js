@@ -23,34 +23,17 @@
         }
 
         onCopyToClipboard(el) {
-            const code = el.parentElement.querySelector('code');
-            const copy = function () {
-                try {
-                    if (document.execCommand('copy')) {
-                        el.classList.add(csscls('copy-clipboard-check'));
-                        setTimeout(() => {
-                            el.classList.remove(csscls('copy-clipboard-check'));
-                        }, 2000);
-                    }
-                } catch (err) {
+            PhpDebugBar.Widgets.copyToClipboard(el.parentElement.querySelector('code')).then(success => {
+                if (!success) {
                     console.log('Oops, unable to copy');
+                    return;
                 }
-            };
-            const select = function (node) {
-                if (document.selection) {
-                    const range = document.body.createTextRange();
-                    range.moveToElementText(node);
-                    range.select();
-                } else if (window.getSelection) {
-                    const range = document.createRange();
-                    range.selectNodeContents(node);
-                    window.getSelection().removeAllRanges();
-                    window.getSelection().addRange(range);
-                }
-                copy();
-                window.getSelection().removeAllRanges();
-            };
-            select(code);
+                el.classList.add(csscls('copy-clipboard-check'));
+                setTimeout(() => {
+                    el.classList.remove(csscls('copy-clipboard-check'));
+                }, 2000);
+                
+            });
         }
 
         renderList(table, caption, data) {
