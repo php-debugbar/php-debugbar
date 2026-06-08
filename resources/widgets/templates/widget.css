@@ -26,10 +26,7 @@ div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-status span.phpdebugba
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time:before,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-memory:before,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before,
-div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before,
-div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before,
-div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
-{
+div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before {
   content: "";
   display: inline-block;
   width: 1em;
@@ -43,10 +40,6 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
   mask-repeat: no-repeat;
   mask-position: center;
   background-color: currentColor;
-}
-div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:hover
-{
-    color: var(--debugbar-hover);
 }
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-render-time:before {
   -webkit-mask-image: var(--debugbar-icon-clock);
@@ -63,11 +56,6 @@ div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before {
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before {
   -webkit-mask-image: var(--debugbar-icon-code);
   mask-image: var(--debugbar-icon-code);
-}
-div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before {
-  -webkit-mask-image: var(--debugbar-icon-external-link);
-  mask-image: var(--debugbar-icon-external-link);
-  margin-left: 4px;
 }
 div.phpdebugbar[data-theme='dark'] div.phpdebugbar-widgets-templates div.phpdebugbar-widgets-callgraph > pre * {
   background-color: inherit !important;
