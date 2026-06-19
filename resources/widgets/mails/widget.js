@@ -42,6 +42,7 @@
                             const headersPre = document.createElement('pre');
                             headersPre.style.border = '1px solid #ddd';
                             headersPre.style.padding = '5px';
+                            headersPre.style.overflowX = 'scroll';
                             const headersCode = document.createElement('code');
                             headersCode.textContent = mail.headers;
                             headersPre.append(headersCode);
@@ -51,6 +52,7 @@
                         const bodyPre = document.createElement('pre');
                         bodyPre.style.border = '1px solid #ddd';
                         bodyPre.style.padding = '5px';
+                        bodyPre.style.overflowX = 'scroll';
                         bodyPre.textContent = mail.body;
 
                         let bodyHTML = bodyPre.outerHTML;
