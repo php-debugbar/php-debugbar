@@ -24,6 +24,12 @@
                 to.textContent = mail.to;
                 li.append(to);
 
+                if (mail.attachments && mail.attachments.length) {
+                    const attachments = '\nAttachments:\n  ' + mail.attachments.join('\n  ');
+                    mail.headers = (mail.headers || '') + attachments;
+                    delete mail.attachments;
+                }
+
                 if (mail.body || mail.html) {
                     const header = document.createElement('span');
                     header.classList.add(csscls('filename'));
