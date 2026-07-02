@@ -1772,7 +1772,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * @return {string}
          */
         newRequestId() {
-            return (crypto.randomUUID && crypto.randomUUID()) || (String(Date.now()) + Math.random().toString(16).slice(2));
+            return (globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function' && globalThis.crypto.randomUUID()) || (String(Date.now()) + Math.random().toString(16).slice(2));
         }
 
         /**
