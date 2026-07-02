@@ -1785,10 +1785,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * @param {string} rid
          * @param {number} [tries]
          */
-        loadFromRequestId(rid, tries = 5) {
             this.debugbar.openHandler.find({ rid }, 0, (data) => {
-                if (data && data[0] && data[0].id) {
-                    this.debugbar.loadDataSet(data[0].id, '(ajax)', undefined, this.autoShow);
+                const match = Array.isArray(data) ? data.find(m => m && m.rid === rid && m.id) : null;
+                if (match) {
+                    this.debugbar.loadDataSet(match.id, '(ajax)', undefined, this.autoShow);
                 } else if (tries > 0) {
                     setTimeout(() => this.loadFromRequestId(rid, tries - 1), 150);
                 }
