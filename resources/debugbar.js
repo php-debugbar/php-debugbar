@@ -1909,9 +1909,12 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                     rid = self.newRequestId();
                     const h = `${self.headerName}-request-id`;
                     if (resource instanceof Request) {
+                        init = { ...(init || {}) };
                         const headers = new Headers(resource.headers);
+                        new Headers(init.headers || {}).forEach((value, key) => headers.set(key, value));
                         headers.set(h, rid);
-                        resource = new Request(resource, { headers });
+                        resource = new Request(resource, { ...init, headers });
+                        init = undefined;
                     } else {
                         init = { ...(init || {}) };
                         const headers = new Headers(init.headers || {});
