@@ -1785,6 +1785,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * @param {string} rid
          * @param {number} [tries]
          */
+        loadFromRequestId(rid, tries = 5) {
             this.debugbar.openHandler.find({ rid }, 0, (data) => {
                 const match = Array.isArray(data) ? data.find(m => m && m.rid === rid && m.id) : null;
                 if (match) {
