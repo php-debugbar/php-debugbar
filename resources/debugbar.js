@@ -1661,6 +1661,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
         constructor(debugbar, headerName, autoShow) {
             this.debugbar = debugbar;
             this.headerName = headerName || 'phpdebugbar';
+            this.captureStreamed = false;
+            // Response Content-Types treated as streamed for the rid fallback.
+            // Set to null/[] to fall back on any response missing the id header.
+            this.streamedContentTypes = ['text/event-stream'];
             this.autoShow = autoShow === undefined ? true : autoShow;
             this.defaultAutoShow = this.autoShow;
             if (localStorage.getItem('phpdebugbar-ajaxhandler-autoshow') !== null) {
@@ -1675,9 +1679,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
          * Handles a Fetch API Response or an XMLHttpRequest
          *
          * @param {Response|XMLHttpRequest} response
+         * @param {string} [rid] Correlation id used as a fallback lookup when no response header is present
          * @return {boolean}
          */
-        handle(response) {
+        handle(response, rid) {
             const stack = this.getHeader(response, `${this.headerName}-stack`);
             if (stack) {
                 const stackIds = JSON.parse(stack);
@@ -1694,7 +1699,101 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 return true;
             }
 
+            if (rid && this.debugbar.openHandler && this.isStreamedResponse(response)) {
+                this.loadFromRequestId(rid);
+                return true;
+            }
+
             return false;
+        }
+
+        /**
+         * Whether a response should use the rid fallback lookup.
+         *
+         * Gated on the response Content-Type so we only query the open handler
+         * for responses that actually look streamed (by default SSE). Override
+         * `streamedContentTypes` to broaden this; set it to null/[] to fall back
+         * on any response missing the id header.
+         *
+         * @param {Response|XMLHttpRequest} response
+         * @return {boolean}
+         */
+        isStreamedResponse(response) {
+            const types = this.streamedContentTypes;
+            if (!types || !types.length) {
+                return true;
+            }
+            // Compare the base media type, ignoring any parameters such as
+            // "; charset=utf-8" (e.g. "text/event-stream; charset=utf-8").
+            const contentType = (this.getHeader(response, 'content-type') || '').split(';')[0].trim().toLowerCase();
+            return types.some(type => type.trim().toLowerCase() === contentType);
+        }
+
+        /**
+         * Checks whether a url is same-origin as the current page.
+         *
+         * @param {string} url
+         * @return {boolean}
+         */
+        sameOrigin(url) {
+            try {
+                return new URL(url, location.href).origin === location.origin;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        /**
+         * Whether a request may receive a correlation id.
+         *
+         * Excludes the open handler's own requests: injecting a rid there would
+         * make handle() fall back to loadFromRequestId() and re-query the open
+         * handler on every lookup, recursing indefinitely.
+         *
+         * @param {string} url
+         * @return {boolean}
+         */
+        canInjectRequestId(url) {
+            const oh = this.debugbar.openHandler;
+            if (oh && typeof oh.get === 'function') {
+                try {
+                    const ohUrl = oh.get('url');
+                    if (ohUrl && new URL(url, location.href).pathname === new URL(ohUrl, location.href).pathname) {
+                        return false;
+                    }
+                } catch (e) {}
+            }
+            return true;
+        }
+
+        /**
+         * Generates a new correlation id for a request.
+         *
+         * @return {string}
+         */
+        newRequestId() {
+            return (globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function' && globalThis.crypto.randomUUID()) || (String(Date.now()) + Math.random().toString(16).slice(2));
+        }
+
+        /**
+         * Looks up a stored dataset by its correlation id via the open handler.
+         *
+         * Used as a fallback for streamed responses where the phpdebugbar-id
+         * response header is lost. Retries because the dataset may be persisted
+         * after the response is flushed (e.g. fastcgi_finish_request).
+         *
+         * @param {string} rid
+         * @param {number} [tries]
+         */
+        loadFromRequestId(rid, tries = 5) {
+            this.debugbar.openHandler.find({ rid }, 0, (data) => {
+                const match = Array.isArray(data) ? data.find(m => m && m.rid === rid && m.id) : null;
+                if (match) {
+                    this.debugbar.loadDataSet(match.id, '(ajax)', undefined, this.autoShow);
+                } else if (tries > 0) {
+                    setTimeout(() => this.loadFromRequestId(rid, tries - 1), 150);
+                }
+            });
         }
 
         /**
@@ -1804,9 +1903,28 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             const proxied = window.fetch.__debugbar_original || window.fetch;
             const original = proxied.bind(window);
 
-            function wrappedFetch(...args) {
-                const p = original(...args);
-                p?.then?.(r => self.handle(r)).catch(() => {});
+            function wrappedFetch(resource, init) {
+                let rid = null;
+                const url = resource instanceof Request ? resource.url : resource;
+                if (self.captureStreamed && self.sameOrigin(url) && self.canInjectRequestId(url)) {
+                    rid = self.newRequestId();
+                    const h = `${self.headerName}-request-id`;
+                    if (resource instanceof Request) {
+                        init = { ...(init || {}) };
+                        const headers = new Headers(resource.headers);
+                        new Headers(init.headers || {}).forEach((value, key) => headers.set(key, value));
+                        headers.set(h, rid);
+                        resource = new Request(resource, { ...init, headers });
+                        init = undefined;
+                    } else {
+                        init = { ...(init || {}) };
+                        const headers = new Headers(init.headers || {});
+                        headers.set(h, rid);
+                        init.headers = headers;
+                    }
+                }
+                const p = original(resource, init);
+                p?.then?.(r => self.handle(r, rid)).catch(() => {});
                 return p;
             }
 
@@ -1834,12 +1952,19 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
                     this.addEventListener('readystatechange', () => {
                         if (this.readyState === 4) {
-                            self.handle(this);
+                            self.handle(this, this.__debugbar_rid);
                         }
                     });
                 }
 
-                return proxied.call(this, method, url, async, user, pass);
+                const r = proxied.call(this, method, url, async, user, pass);
+                if (self.captureStreamed && self.sameOrigin(url) && self.canInjectRequestId(url)) {
+                    this.__debugbar_rid = self.newRequestId();
+                    try {
+                        this.setRequestHeader(`${self.headerName}-request-id`, this.__debugbar_rid);
+                    } catch (e) {}
+                }
+                return r;
             }
 
             wrappedOpen.__debugbar_wrapped = true;
