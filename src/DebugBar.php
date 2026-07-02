@@ -240,12 +240,18 @@ class DebugBar implements ArrayAccess
             ];
         }
 
+        $rid = $_SERVER['HTTP_PHPDEBUGBAR_REQUEST_ID'] ?? null;
+        if (is_string($rid)) {
+            $rid = substr(preg_replace('/[^A-Za-z0-9\-_.]/', '', $rid), 0, 64);
+        }
+
         return array_merge(
             [
                 'id' => $this->getCurrentRequestId(),
                 'datetime' => date('Y-m-d H:i:s'),
                 'utime' => microtime(true),
             ],
+            is_string($rid) && $rid !== '' ? ['rid' => $rid] : [],
             $request_variables,
         );
     }

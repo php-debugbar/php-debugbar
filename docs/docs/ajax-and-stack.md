@@ -57,6 +57,41 @@ initializing your JavaScript client library (e.g. Apollo) before debugbar has
 loaded, try adding `defer` onto your script tags, or moving them after the
 injected debugbar JavaScript.
 
+## Streamed responses
+
+Debugbar normally attaches its data to a response through the `phpdebugbar-id`
+response header. Streamed responses (SSE, `StreamedResponse`, or anything that
+flushes output mid-request) commit their HTTP headers on the first flush, so
+that header is lost and the AJAX handler can't load the dataset.
+
+To work around this, the AJAX handler adds a `phpdebugbar-request-id`
+correlation header to every **same-origin** `fetch()`/`XMLHttpRequest` (a random
+id it generates client-side). PHP stores that id under the `rid` meta key, and
+when no `phpdebugbar-id` response header comes back, the client looks the stored
+dataset up through the open handler by its `rid`. This requires a storage +
+open handler to be configured (see above).
+
+A few notes:
+
+- Injection is gated on same-origin only. Adding a custom header to a
+  cross-origin request would trigger a CORS preflight and break third-party
+  API calls, so cross-origin requests are never touched.
+- Because the header is added to *every* same-origin request, every stored
+  request gains a `rid` in its `__meta`. This is harmless — it is only
+  *consumed* as a fallback when the response header is absent.
+- The behaviour is on by default but can be toggled off by setting
+  `captureStreamed = false` on the `PhpDebugBar.AjaxHandler` instance.
+- The fallback lookup only runs for responses whose `Content-Type` is in
+  `streamedContentTypes` (default `['text/event-stream']`), so normal responses
+  never trigger an extra open handler query. Broaden it for other streamed
+  responses (e.g. chunked HTML/JSON), or set it to `null`/`[]` to fall back on
+  any response missing the id header:
+  ```js
+  ajaxHandler.streamedContentTypes = ['text/event-stream', 'application/x-ndjson'];
+  ```
+- This only covers requests that can set a request header (`fetch`/
+  `XMLHttpRequest`). `EventSource`/SSE cannot set headers and is not correlated.
+
 ## Stacked data
 
 Some times you need to collect data about a request but the page won't actually
