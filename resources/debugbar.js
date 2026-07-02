@@ -1661,7 +1661,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
         constructor(debugbar, headerName, autoShow) {
             this.debugbar = debugbar;
             this.headerName = headerName || 'phpdebugbar';
-            this.captureStreamed = true;
+            this.captureStreamed = false;
             // Response Content-Types treated as streamed for the rid fallback.
             // Set to null/[] to fall back on any response missing the id header.
             this.streamedContentTypes = ['text/event-stream'];
@@ -1723,8 +1723,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             if (!types || !types.length) {
                 return true;
             }
-            const contentType = (this.getHeader(response, 'content-type') || '').toLowerCase();
-            return types.some(type => contentType.includes(type.toLowerCase()));
+            // Compare the base media type, ignoring any parameters such as
+            // "; charset=utf-8" (e.g. "text/event-stream; charset=utf-8").
+            const contentType = (this.getHeader(response, 'content-type') || '').split(';')[0].trim().toLowerCase();
+            return types.some(type => type.trim().toLowerCase() === contentType);
         }
 
         /**
@@ -1903,7 +1905,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             function wrappedFetch(resource, init) {
                 let rid = null;
                 const url = resource instanceof Request ? resource.url : resource;
-                if (self.captureStreamed !== false && self.sameOrigin(url) && self.canInjectRequestId(url)) {
+                if (self.captureStreamed && self.sameOrigin(url) && self.canInjectRequestId(url)) {
                     rid = self.newRequestId();
                     const h = `${self.headerName}-request-id`;
                     if (resource instanceof Request) {
@@ -1952,7 +1954,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 }
 
                 const r = proxied.call(this, method, url, async, user, pass);
-                if (self.captureStreamed !== false && self.sameOrigin(url) && self.canInjectRequestId(url)) {
+                if (self.captureStreamed && self.sameOrigin(url) && self.canInjectRequestId(url)) {
                     this.__debugbar_rid = self.newRequestId();
                     try {
                         this.setRequestHeader(`${self.headerName}-request-id`, this.__debugbar_rid);
