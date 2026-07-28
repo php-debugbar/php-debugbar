@@ -59,7 +59,7 @@
                         bodyPre.style.border = '1px solid #ddd';
                         bodyPre.style.padding = '5px';
                         bodyPre.style.overflowX = 'scroll';
-                        bodyPre.textContent = mail.body;
+                        bodyPre.textContent = mail.body || mail.html;
 
                         let bodyHTML = bodyPre.outerHTML;
                         let htmlIframeHTML = '';
