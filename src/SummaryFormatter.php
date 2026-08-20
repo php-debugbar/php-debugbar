@@ -47,11 +47,12 @@ class SummaryFormatter
         $blocks = ['# PHP DebugBar summary'];
 
         // The raw URI in __meta is unmasked, so it is deliberately not repeated here;
-        // the request collector contributes a masked one.
+        // the request collector contributes a masked one. The client IP is left out for
+        // the same reason: summaries are meant to be pasted into issues, chats and prompts.
         $header = array_filter([
             'id' => $meta['id'] ?? null,
             'datetime' => $meta['datetime'] ?? null,
-            'ip' => $meta['ip'] ?? null,
+            'method' => $meta['method'] ?? null,
         ], fn($value) => $value !== null && $value !== '');
 
         if ($header) {
@@ -170,6 +171,9 @@ class SummaryFormatter
                 }
                 // Hoist the first line of the nested block onto the bullet, YAML style.
                 $block = self::formatValue($item, $indent . '  ');
+                if (trim($block) === '') {
+                    continue;
+                }
                 $lines[] = substr_replace($block, '- ', strlen($indent), 2);
                 continue;
             }

@@ -2022,10 +2022,12 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             const blocks = ['# PHP DebugBar summary'];
 
             // The raw uri in __meta is unmasked, so the request collector's masked one is
-            // used instead; it shows up as part of its own section.
+            // used instead; it shows up as part of its own section. The client ip is left
+            // out for the same reason: summaries are made to be pasted elsewhere.
+            // Keep this list in sync with SummaryFormatter::format().
             const meta = this.datasets[datasetId ?? this.activeDatasetId].__meta || {};
             const header = {};
-            for (const key of ['id', 'datetime', 'ip']) {
+            for (const key of ['id', 'datetime', 'method']) {
                 if (meta[key]) {
                     header[key] = meta[key];
                 }

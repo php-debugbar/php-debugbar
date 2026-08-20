@@ -130,4 +130,29 @@ class SummaryFormatterTest extends DebugBarTestCase
 
         $this->assertStringEndsWith("\n\n(summary truncated)", $summary);
     }
+
+    public function testHeaderCarriesMethodButNeverTheClientIp(): void
+    {
+        $summary = $this->debugbar->getSummary([
+            '__meta' => [
+                'id' => 'abc',
+                'datetime' => '2026-08-20 14:34:29',
+                'method' => 'POST',
+                'uri' => '/checkout?token=secret',
+                'ip' => '203.0.113.4',
+            ],
+        ]);
+
+        $this->assertStringContainsString('method = POST', $summary);
+        $this->assertStringNotContainsString('203.0.113.4', $summary);
+        $this->assertStringNotContainsString('token=secret', $summary);
+    }
+
+    public function testNestedEmptyListItemDoesNotProduceABareBullet(): void
+    {
+        $formatted = SummaryFormatter::formatValue(['a', [], ['k' => 'v']]);
+
+        $this->assertStringNotContainsString("-\n", $formatted);
+        $this->assertSame("- a\n- k = v", $formatted);
+    }
 }

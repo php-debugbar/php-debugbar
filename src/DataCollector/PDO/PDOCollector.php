@@ -185,20 +185,23 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         }
 
         $statements = $data['statements'];
-        usort($statements, fn($a, $b) => $b['duration'] <=> $a['duration']);
+        usort($statements, fn($a, $b) => ($b['duration'] ?? 0) <=> ($a['duration'] ?? 0));
 
         $lines = [];
         foreach (array_slice($statements, 0, $slowest) as $statement) {
-            $lines[] = $this->summarizeText($statement['sql'], 120) . ' = ' . $statement['duration_str'];
+            $lines[] = $this->summarizeText($statement['sql'] ?? '', 120)
+                . ' = ' . ($statement['duration_str'] ?? '?');
         }
         if ($lines) {
             $summary['slowest'] = $lines;
         }
 
+        // Failed statements are the likeliest to be missing fields, so nothing is assumed.
         $errors = [];
         foreach ($data['statements'] as $statement) {
-            if (!$statement['is_success']) {
-                $errors[] = $this->summarizeText($statement['sql'], 120) . ' -> ' . $statement['error_message'];
+            if (!($statement['is_success'] ?? true)) {
+                $errors[] = $this->summarizeText($statement['sql'] ?? '', 120)
+                    . ' -> ' . ($statement['error_message'] ?? 'unknown error');
             }
         }
         if ($errors) {
@@ -210,7 +213,6 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
 
         return $summary;
     }
-
 
     /**
      * Collects data from a single TraceablePDO instance

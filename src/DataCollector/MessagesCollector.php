@@ -308,7 +308,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     }
 
     /** Levels whose message text is worth quoting verbatim in a summary. */
-    public static array $IMPORTANT_LABELS = ['emergency', 'alert', 'critical', 'error', 'warning'];
+    protected const IMPORTANT_LABELS = ['emergency', 'alert', 'critical', 'error', 'warning'];
 
     public function collect(): array
     {
@@ -344,7 +344,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
             $label = (string) ($message['label'] ?? 'info');
             $counts[$label] = ($counts[$label] ?? 0) + 1;
 
-            if (!in_array(strtolower($label), static::$IMPORTANT_LABELS, true)) {
+            if (!in_array(strtolower($label), static::IMPORTANT_LABELS, true)) {
                 continue;
             }
 
