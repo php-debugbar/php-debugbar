@@ -97,6 +97,8 @@ class QueryFormatter extends DataFormatter
 
             if ($binding === null) {
                 $binding = 'NULL';
+            } elseif (is_bool($binding)) {
+                $binding = $binding ? 'TRUE' : 'FALSE';
             } elseif (! is_int($binding) && ! is_float($binding)) {
                 $binding = $this->quoteBinding($binding, $pdo);
             }

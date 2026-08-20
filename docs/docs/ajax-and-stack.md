@@ -57,6 +57,50 @@ initializing your JavaScript client library (e.g. Apollo) before debugbar has
 loaded, try adding `defer` onto your script tags, or moving them after the
 injected debugbar JavaScript.
 
+## Streamed responses
+
+Debugbar normally attaches its data to a response through the `phpdebugbar-id`
+response header. Streamed responses (SSE, `StreamedResponse`, or anything that
+flushes output mid-request) commit their HTTP headers on the first flush, so
+that header is lost and the AJAX handler can't load the dataset.
+
+To work around this, the AJAX handler can add a `phpdebugbar-request-id`
+correlation header to every **same-origin** `fetch()`/`XMLHttpRequest` (a random
+id it generates client-side). PHP stores that id under the `rid` meta key, and
+when no `phpdebugbar-id` response header comes back, the client looks the stored
+dataset up through the open handler by its `rid`. This requires a storage +
+open handler to be configured (see above).
+
+The feature is **off by default**. Enable it through the `JavascriptRenderer`:
+```php
+$renderer = $debugbar->getJavascriptRenderer();
+$renderer->setAjaxHandlerCaptureStreamed(true);
+
+// optional: which response Content-Types are treated as streamed
+// (defaults to ['text/event-stream'])
+$renderer->setAjaxHandlerStreamedContentTypes(['text/event-stream', 'application/x-ndjson']);
+```
+Both are also available through `setOptions()` as
+`ajax_handler_capture_streamed` and `ajax_handler_streamed_content_types`.
+
+A few notes:
+
+- Injection is gated on same-origin only. Adding a custom header to a
+  cross-origin request would trigger a CORS preflight and break third-party
+  API calls, so cross-origin requests are never touched.
+- Because the header is added to *every* same-origin request, every stored
+  request gains a `rid` in its `__meta`. This is harmless — it is only
+  *consumed* as a fallback when the response header is absent.
+- The fallback lookup only runs for responses whose `Content-Type` is in
+  `streamedContentTypes` (default `['text/event-stream']`), so normal responses
+  never trigger an extra open handler query. Matching is on the base media type,
+  so `text/event-stream; charset=utf-8` is accepted. Set the list to `null`/`[]`
+  to fall back on any response missing the id header.
+- The client-side toggles map to `ajaxHandler.captureStreamed` and
+  `ajaxHandler.streamedContentTypes`, which can also be set directly in JS.
+- This only covers requests that can set a request header (`fetch`/
+  `XMLHttpRequest`). `EventSource`/SSE cannot set headers and is not correlated.
+
 ## Stacked data
 
 Some times you need to collect data about a request but the page won't actually

@@ -24,6 +24,12 @@
                 to.textContent = mail.to;
                 li.append(to);
 
+                if (mail.attachments && mail.attachments.length) {
+                    const attachments = '\nAttachments:\n  ' + mail.attachments.join('\n  ');
+                    mail.headers = (mail.headers || '') + attachments;
+                    delete mail.attachments;
+                }
+
                 if (mail.body || mail.html) {
                     const header = document.createElement('span');
                     header.classList.add(csscls('filename'));
@@ -42,6 +48,7 @@
                             const headersPre = document.createElement('pre');
                             headersPre.style.border = '1px solid #ddd';
                             headersPre.style.padding = '5px';
+                            headersPre.style.overflowX = 'scroll';
                             const headersCode = document.createElement('code');
                             headersCode.textContent = mail.headers;
                             headersPre.append(headersCode);
@@ -51,6 +58,7 @@
                         const bodyPre = document.createElement('pre');
                         bodyPre.style.border = '1px solid #ddd';
                         bodyPre.style.padding = '5px';
+                        bodyPre.style.overflowX = 'scroll';
                         bodyPre.textContent = mail.body;
 
                         let bodyHTML = bodyPre.outerHTML;

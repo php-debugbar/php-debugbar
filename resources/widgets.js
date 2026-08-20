@@ -65,6 +65,22 @@
         linkWrapper.textContent = value.filename + line;
         if (value.path) {
             linkWrapper.setAttribute('title', value.path + line);
+            linkWrapper.addEventListener('click', (event) => {
+                event.stopPropagation();
+                event.preventDefault();
+                if (window.getSelection().type === 'Range') {
+                    return '';
+                }
+                copyToClipboard(value.path).then(success => {
+                    if (!success) return;
+                    const icon = document.createElement('a');
+                    icon.classList.add(csscls('copy-clipboard-check'));
+                    linkWrapper.prepend(icon);
+                    setTimeout(() => {
+                        linkWrapper.removeChild(icon);
+                    }, 2000);
+                });
+            });
         }
 
         if (value.url) {
@@ -83,6 +99,34 @@
 
         return linkWrapper;
     };
+    
+    const copyToClipboard = PhpDebugBar.Widgets.copyToClipboard = async function (input) {
+        const text = input instanceof Element ? input.innerText : input;
+        if (navigator.clipboard && window.isSecureContext) {
+            try {
+              await navigator.clipboard.writeText(text);
+              return true;
+            } catch (err) {}
+        }
+
+        let success = false;        
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        textarea.style.top = "-9999px";
+
+        document.body.appendChild(textarea);
+        try {
+            textarea.focus();
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            success = document.execCommand("copy");
+        } catch (err) {}
+        
+        document.body.removeChild(textarea);
+        return success;
+    }
 
     /**
      * Highlights a block of code

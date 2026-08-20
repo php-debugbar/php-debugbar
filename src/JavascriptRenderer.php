@@ -147,6 +147,11 @@ class JavascriptRenderer
 
     protected bool $ajaxHandlerEnableTab = false;
 
+    protected bool $ajaxHandlerCaptureStreamed = false;
+
+    /** @var string[]|null */
+    protected ?array $ajaxHandlerStreamedContentTypes = null;
+
     protected bool $deferDatasets = false;
 
     protected string $openHandlerClass = 'PhpDebugBar.OpenHandler';
@@ -270,6 +275,12 @@ class JavascriptRenderer
         }
         if (array_key_exists('ajax_handler_enable_tab', $options)) {
             $this->setAjaxHandlerEnableTab($options['ajax_handler_enable_tab']);
+        }
+        if (array_key_exists('ajax_handler_capture_streamed', $options)) {
+            $this->setAjaxHandlerCaptureStreamed($options['ajax_handler_capture_streamed']);
+        }
+        if (array_key_exists('ajax_handler_streamed_content_types', $options)) {
+            $this->setAjaxHandlerStreamedContentTypes($options['ajax_handler_streamed_content_types']);
         }
         if (array_key_exists('defer_datasets', $options)) {
             $this->setDeferDatasets($options['defer_datasets']);
@@ -687,6 +698,58 @@ class JavascriptRenderer
     }
 
     /**
+     * Sets whether the ajax handler correlates streamed responses.
+     *
+     * When enabled, a correlation id is injected on same-origin fetch/XHR
+     * requests so datasets from responses that lose the phpdebugbar-id header
+     * (SSE, StreamedResponse, anything flushed mid-request) can be looked up
+     * through the open handler.
+     *
+     * @param boolean $capture
+     */
+    public function setAjaxHandlerCaptureStreamed(bool $capture = true): static
+    {
+        $this->ajaxHandlerCaptureStreamed = $capture;
+        return $this;
+    }
+
+    /**
+     * Checks whether the ajax handler correlates streamed responses
+     *
+     * @return boolean
+     */
+    public function isAjaxHandlerCaptureStreamed(): bool
+    {
+        return $this->ajaxHandlerCaptureStreamed;
+    }
+
+    /**
+     * Sets the response Content-Types treated as streamed for the correlation
+     * fallback lookup.
+     *
+     * Pass null to use the ajax handler default (SSE only). Pass an empty array
+     * to fall back on any response missing the phpdebugbar-id header.
+     *
+     * @param string[]|null $contentTypes
+     */
+    public function setAjaxHandlerStreamedContentTypes(?array $contentTypes): static
+    {
+        $this->ajaxHandlerStreamedContentTypes = $contentTypes;
+        return $this;
+    }
+
+    /**
+     * Returns the response Content-Types treated as streamed, or null when the
+     * ajax handler default is used
+     *
+     * @return string[]|null
+     */
+    public function getAjaxHandlerStreamedContentTypes(): ?array
+    {
+        return $this->ajaxHandlerStreamedContentTypes;
+    }
+
+    /**
      * Sets whether datasets are directly loaded or deferred
      *
      * @param boolean $defer
@@ -896,13 +959,20 @@ class JavascriptRenderer
                 $this->makeUriRelativeTo($basePath, $this->basePath),
                 $this->makeUriRelativeTo($baseUrl, $this->baseUrl),
             );
-            if (isset($assets['css']) && !($this->useDistFiles && $basePath === '' && in_array($assets['css'], $this->distIncludedAssets, true))) {
-                $cssFiles = array_merge($cssFiles, $this->makeUrisRelativeTo(is_string($assets['css']) ? [$assets['css']] : $assets['css'], $root));
+            if (isset($assets['css'])) {
+                foreach ((array) $assets['css'] as $asset) {
+                    if (!($this->useDistFiles && $basePath === '' && in_array($asset, $this->distIncludedAssets, true))) {
+                        $cssFiles = array_merge($cssFiles, $this->makeUrisRelativeTo([$asset], $root));
+                    }
+                }
             }
-            if (isset($assets['js']) && !($this->useDistFiles && $basePath === '' && in_array($assets['js'], $this->distIncludedAssets, true))) {
-                $jsFiles = array_merge($jsFiles, $this->makeUrisRelativeTo(is_string($assets['js']) ? [$assets['js']] : $assets['js'], $root));
+            if (isset($assets['js'])) {
+                foreach ((array) $assets['js'] as $asset) {
+                    if (!($this->useDistFiles && $basePath === '' && in_array($asset, $this->distIncludedAssets, true))) {
+                        $jsFiles = array_merge($jsFiles, $this->makeUrisRelativeTo([$asset], $root));
+                    }
+                }
             }
-
             if (isset($assets['inline_css'])) {
                 $inlineCss = array_merge($inlineCss, (array) $assets['inline_css']);
             }
@@ -1275,6 +1345,16 @@ $js
                 $this->variableName,
                 $this->ajaxHandlerAutoShow ? 'true' : 'false',
             );
+            if ($this->ajaxHandlerCaptureStreamed) {
+                $js .= sprintf("%s.ajaxHandler.captureStreamed = true;\n", $this->variableName);
+                if ($this->ajaxHandlerStreamedContentTypes !== null) {
+                    $js .= sprintf(
+                        "%s.ajaxHandler.streamedContentTypes = %s;\n",
+                        $this->variableName,
+                        json_encode(array_values($this->ajaxHandlerStreamedContentTypes)),
+                    );
+                }
+            }
             if ($this->ajaxHandlerBindToFetch) {
                 $js .= sprintf("%s.ajaxHandler.bindToFetch();\n", $this->variableName);
             }

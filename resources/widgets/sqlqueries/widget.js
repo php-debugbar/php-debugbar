@@ -23,34 +23,17 @@
         }
 
         onCopyToClipboard(el) {
-            const code = el.parentElement.querySelector('code');
-            const copy = function () {
-                try {
-                    if (document.execCommand('copy')) {
-                        el.classList.add(csscls('copy-clipboard-check'));
-                        setTimeout(() => {
-                            el.classList.remove(csscls('copy-clipboard-check'));
-                        }, 2000);
-                    }
-                } catch (err) {
+            PhpDebugBar.Widgets.copyToClipboard(el.parentElement.querySelector('code')).then(success => {
+                if (!success) {
                     console.log('Oops, unable to copy');
+                    return;
                 }
-            };
-            const select = function (node) {
-                if (document.selection) {
-                    const range = document.body.createTextRange();
-                    range.moveToElementText(node);
-                    range.select();
-                } else if (window.getSelection) {
-                    const range = document.createRange();
-                    range.selectNodeContents(node);
-                    window.getSelection().removeAllRanges();
-                    window.getSelection().addRange(range);
-                }
-                copy();
-                window.getSelection().removeAllRanges();
-            };
-            select(code);
+                el.classList.add(csscls('copy-clipboard-check'));
+                setTimeout(() => {
+                    el.classList.remove(csscls('copy-clipboard-check'));
+                }, 2000);
+                
+            });
         }
 
         renderList(table, caption, data) {
@@ -271,6 +254,38 @@
             this.list = new PhpDebugBar.Widgets.ListWidget({
                 itemRenderer: (li, stmt) => this.itemRenderer(li, stmt)
             });
+            this.list.bindAttr('data', function (data) {
+                const sql = {};
+                let duplicate = 0;
+                // Search for duplicate statements.
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].type && data[i].type !== 'query') {
+                        continue;
+                    }
+                    let stmt = data[i].sql;
+                    if (data[i].params && Object.keys(data[i].params).length > 0) {
+                        stmt += JSON.stringify(data[i].params);
+                    }
+                    if (data[i].connection) {
+                        stmt += `@${data[i].connection}`;
+                    }
+                    sql[stmt] = sql[stmt] || { keys: [] };
+                    sql[stmt].keys.push(i);
+                }
+                // Add classes to all duplicate SQL statements.
+                for (const stmt in sql) {
+                    if (sql[stmt].keys.length > 1) {
+                        duplicate += sql[stmt].keys.length;
+                        for (let i = 0; i < sql[stmt].keys.length; i++) {
+                            const listItems = this.el.querySelectorAll(`.${csscls('list-item')}`);
+                            if (listItems[sql[stmt].keys[i]]) {
+                                listItems[sql[stmt].keys[i]].classList.add(csscls('sql-duplicate'));
+                            }
+                        }
+                    }
+                }
+                this.set('duplicate', duplicate);
+            });
             this.el.append(this.list.el);
 
             this.bindAttr('data', function (data) {
@@ -285,37 +300,8 @@
                     filter.remove();
                 }
                 this.list.set('data', data.statements);
+                const duplicate = this.list.get('duplicate');
                 this.status.innerHTML = '';
-
-                // Search for duplicate statements.
-                const sql = {};
-                let duplicate = 0;
-                for (let i = 0; i < data.statements.length; i++) {
-                    if (data.statements[i].type && data.statements[i].type !== 'query') {
-                        continue;
-                    }
-                    let stmt = data.statements[i].sql;
-                    if (data.statements[i].params && Object.keys(data.statements[i].params).length > 0) {
-                        stmt += JSON.stringify(data.statements[i].params);
-                    }
-                    if (data.statements[i].connection) {
-                        stmt += `@${data.statements[i].connection}`;
-                    }
-                    sql[stmt] = sql[stmt] || { keys: [] };
-                    sql[stmt].keys.push(i);
-                }
-                // Add classes to all duplicate SQL statements.
-                for (const stmt in sql) {
-                    if (sql[stmt].keys.length > 1) {
-                        duplicate += sql[stmt].keys.length;
-                        for (let i = 0; i < sql[stmt].keys.length; i++) {
-                            const listItems = this.list.el.querySelectorAll(`.${csscls('list-item')}`);
-                            if (listItems[sql[stmt].keys[i]]) {
-                                listItems[sql[stmt].keys[i]].classList.add(csscls('sql-duplicate'));
-                            }
-                        }
-                    }
-                }
 
                 const t = document.createElement('span');
                 t.textContent = `${data.nb_statements} statements were executed`;
@@ -327,12 +313,12 @@
                 if (data.nb_failed_statements) {
                     t.append(`, ${data.nb_failed_statements} of which failed`);
                 }
+                const duplicatedText = 'Show only duplicated';
                 if (duplicate) {
                     t.append(`, ${duplicate} of which were duplicates`);
                     t.append(`, ${data.nb_statements - duplicate} unique. `);
 
                     // add toggler for displaying only duplicated queries
-                    const duplicatedText = 'Show only duplicated';
                     const toggleLink = document.createElement('a');
                     toggleLink.classList.add(csscls('duplicates'));
                     toggleLink.textContent = duplicatedText;
@@ -340,8 +326,8 @@
                         toggleLink.classList.toggle('shown-duplicated');
                         toggleLink.textContent = toggleLink.classList.contains('shown-duplicated') ? 'Show All' : duplicatedText;
 
-                        const selector = `.${this.className} .${csscls('list-item')}:not(.${csscls('sql-duplicate')})`;
-                        const items = document.querySelectorAll(selector);
+                        const selector = `.${csscls('list-item')}:not(.${csscls('sql-duplicate')})`;
+                        const items = this.list.el.querySelectorAll(selector);
                         for (const item of items) {
                             item.hidden = !item.hidden;
                         }
@@ -380,6 +366,11 @@
                             }
                         }
                         this.list.set('data', data.statements);
+                        if (this.list.get('duplicate')) {
+                            const toggleLink = t.querySelector('a.' + csscls('duplicates'));
+                            toggleLink.textContent = duplicatedText;
+                            toggleLink.classList.remove('shown-duplicated');
+                        }
                     });
 
                     duration.append(sortIcon);
