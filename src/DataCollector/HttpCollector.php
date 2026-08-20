@@ -41,6 +41,9 @@ class HttpCollector extends DataCollector implements Renderable, AssetProvider, 
                 'map' => $name . '.nb_requests',
                 'default' => 0,
             ],
+            "$name:summary" => [
+                'map' => $name . '.summary',
+            ],
         ];
     }
 
@@ -78,6 +81,52 @@ class HttpCollector extends DataCollector implements Renderable, AssetProvider, 
         return [
             'nb_requests' => count($this->requests),
             'requests' => $this->requests,
+            'summary' => $this->buildSummary(),
         ];
+    }
+
+    /**
+     * One line per outgoing call, failures first so they are not buried.
+     *
+     * @return array<string, mixed>
+     */
+    protected function buildSummary(int $max = 15): array
+    {
+        if (!$this->requests) {
+            return [];
+        }
+
+        $summary = ['requests' => count($this->requests)];
+
+        $failed = [];
+        $lines = [];
+        foreach ($this->requests as $request) {
+            $line = sprintf(
+                '%s %s -> %s%s',
+                $request['method'],
+                $this->summarizeText((string) $request['url'], 120),
+                $request['status'] ?? '?',
+                $request['duration'] ? ' (' . $request['duration'] . ')' : '',
+            );
+
+            if ($request['status'] === null || $request['status'] >= 400) {
+                $failed[] = $line;
+            } else {
+                $lines[] = $line;
+            }
+        }
+
+        if ($failed) {
+            $summary['failed'] = count($failed);
+        }
+
+        $calls = array_merge($failed, $lines);
+        $extra = count($calls) - $max;
+        $summary['calls'] = array_slice($calls, 0, $max);
+        if ($extra > 0) {
+            $summary['not_shown'] = $extra;
+        }
+
+        return $summary;
     }
 }

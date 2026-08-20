@@ -174,6 +174,35 @@ var LinkIndicator = PhpDebugBar.DebugBar.Indicator.extend({
 debugbar.addIndicator('phpdoc', new LinkIndicator({ href: 'http://doc.php.com', title: 'PHP doc' }));
 ```
 
+## Summaries
+
+A tab can carry a `summary` attribute: a string, or an object rendered as `key = value`
+lines.
+
+```js
+debugbar.getControl('mytab').set('summary', { queries: 8, duration: '135us' });
+```
+
+When any control has one, a summary button appears in the bar header. It opens a popover
+showing the summary of the tab currently in view, with a switch below it to see the whole
+request instead. **Copy** takes whatever is on screen.
+
+The chosen scope is remembered, so a preference for the whole request survives switching
+tabs. Tabs without a summary of their own show the whole request regardless, without
+changing that preference.
+
+Three methods back it, all reading the dataset currently shown unless given an id:
+
+ - `debugbar.getSummarySection(name)` - one control's summary as `{name, title, text}`, or
+   `null` when it has nothing to report
+ - `debugbar.getSummarySections()` - all of them, in the order the controls were declared
+ - `debugbar.getSummary()` - everything as one block of text; the whole-request context you
+   would paste into an issue, a chat or a prompt. It matches the text
+   `DebugBar::getSummary()` produces server side, byte for byte.
+
+Collectors normally set this through the data map rather than by hand, by declaring a
+`<control>:summary` widget (see [Data collectors](data-collectors.md)).
+
 ## OpenHandler
 
 An OpenHandler object can be provided using `setOpenHandler()`. The object is in charge

@@ -51,7 +51,49 @@ class RequestDataCollector extends DataCollector implements Renderable
             'data' => $data,
             'tooltip' => null,
             'badge' => null,
+            'summary' => $this->buildSummary($requestUri ?? null),
         ];
+    }
+
+    /**
+     * Builds the summary for this request.
+     *
+     * Summaries are meant to be copied out of the browser (into an issue, a chat or an
+     * LLM), so only parameter *names* are listed here; the values stay in the panel.
+     * The URI is the one exception, and its query string is masked.
+     *
+     * @return array<string, string|int>
+     */
+    protected function buildSummary(?string $requestUri): array
+    {
+        $status = http_response_code();
+
+        return array_filter([
+            'method' => $_SERVER['REQUEST_METHOD'] ?? (php_sapi_name() === 'cli' ? 'CLI' : null),
+            'uri' => $requestUri !== null ? $this->hideMaskedUri($requestUri) : null,
+            'status' => is_int($status) ? $status : null,
+            'get' => $this->summarizeKeys($_GET),
+            'post' => $this->summarizeKeys($_POST),
+            'cookie' => $this->summarizeKeys($_COOKIE),
+            'session' => $this->summarizeKeys($_SESSION ?? []),
+        ], fn($value) => $value !== null);
+    }
+
+    /**
+     * Lists the keys of a superglobal, capped so a large session doesn't flood the summary.
+     */
+    protected function summarizeKeys(array $values, int $max = 10): ?string
+    {
+        if (!$values) {
+            return null;
+        }
+
+        $keys = array_map('strval', array_keys($values));
+        $extra = count($keys) - $max;
+
+        return $extra > 0
+            ? implode(', ', array_slice($keys, 0, $max)) . " (+{$extra} more)"
+            : implode(', ', $keys);
     }
 
     public function setShowUriIndicator(bool $showUriIndicator = true): void
@@ -93,6 +135,9 @@ class RequestDataCollector extends DataCollector implements Renderable
                 "map" => "request.badge",
                 "default" => "null",
             ],
+            'request:summary' => [
+                "map" => "request.summary",
+            ]
         ];
 
         if ($this->showUriIndicator) {

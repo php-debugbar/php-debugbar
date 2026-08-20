@@ -86,6 +86,111 @@ window.PhpDebugBar = window.PhpDebugBar || {};
         }
     };
 
+    /**
+     * Formats a summary value as indented plain text.
+     *
+     * Lists become "- item" lines and objects become "key = value" lines. Mirrors
+     * DebugBar\SummaryFormatter::formatValue() so both sides produce the same text.
+     *
+     * @param {*} value
+     * @param {string} [indent]
+     * @returns {string}
+     */
+    const formatSummary = PhpDebugBar.utils.formatSummary = function (value, indent = '') {
+        const scalar = v => (v === null || v === undefined) ? 'null' : String(v);
+
+        if (value === null || value === undefined || typeof value !== 'object') {
+            return indent + scalar(value);
+        }
+
+        const lines = [];
+        const isList = Array.isArray(value);
+
+        for (const [key, item] of Object.entries(value)) {
+            const nested = item !== null && typeof item === 'object';
+
+            if (isList) {
+                if (!nested) {
+                    lines.push(`${indent}- ${scalar(item)}`);
+                    continue;
+                }
+                // Hoist the first line of the nested block onto the bullet, YAML style.
+                const block = formatSummary(item, `${indent}  `);
+                lines.push(`${block.slice(0, indent.length)}- ${block.slice(indent.length + 2)}`);
+                continue;
+            }
+
+            if (nested) {
+                lines.push(`${indent}${key}:`);
+                lines.push(formatSummary(item, `${indent}  `));
+                continue;
+            }
+
+            lines.push(`${indent}${key} = ${scalar(item)}`);
+        }
+
+        return lines.join('\n');
+    };
+
+    /**
+     * Normalizes a collector summary to text. Strings pass through untouched so
+     * collectors can supply their own formatting.
+     *
+     * @param {*} summary
+     * @returns {string}
+     */
+    const summaryText = PhpDebugBar.utils.summaryText = function (summary) {
+        if (summary === null || summary === undefined) {
+            return '';
+        }
+        return typeof summary === 'string' ? summary : formatSummary(summary);
+    };
+
+    /**
+     * Turns a control name into a display title, matching the PHP renderer.
+     *
+     * @param {string} name
+     * @returns {string}
+     */
+    const titleize = PhpDebugBar.utils.titleize = function (name) {
+        const label = String(name).replace(/[_-]/g, ' ');
+        return label.charAt(0).toUpperCase() + label.slice(1);
+    };
+
+    /**
+     * Copies text to the clipboard, falling back to execCommand on insecure origins
+     * where navigator.clipboard is unavailable.
+     *
+     * @param {string} text
+     * @returns {Promise<void>} rejects when the copy did not happen
+     */
+    PhpDebugBar.utils.copyToClipboard = function (text) {
+        if (!text) {
+            return Promise.reject(new Error('Nothing to copy'));
+        }
+
+        if (navigator.clipboard?.writeText) {
+            return navigator.clipboard.writeText(text);
+        }
+
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.append(ta);
+        ta.select();
+
+        let copied = false;
+        try {
+            copied = document.execCommand('copy');
+        } catch {
+            copied = false;
+        }
+        ta.remove();
+
+        return copied ? Promise.resolve() : Promise.reject(new Error('Copy failed'));
+    };
+
     PhpDebugBar.utils.schedule = function (cb) {
         if (window.requestIdleCallback) {
             return window.requestIdleCallback(cb, { timeout: 1000 });
@@ -235,6 +340,214 @@ window.PhpDebugBar = window.PhpDebugBar || {};
     // ------------------------------------------------------------------
 
     /**
+     * SummaryPopover
+     *
+     * The summary control in the bar header: a button revealing the summary of the tab
+     * being viewed, with buttons to copy that section or the whole request. The text is
+     * meant to be pasted into an issue, a chat or a prompt.
+     *
+     * Options:
+     *  - getSection: returns {title, text} for the tab in view, or null
+     *  - getAll: returns the whole-request summary as text
+     */
+    class SummaryPopover {
+        constructor(options = {}) {
+            this.section = null;
+
+            this.el = document.createElement('div');
+            this.el.classList.add(csscls('summary-float'));
+            this.el.hidden = true;
+
+            this.btn = document.createElement('a');
+            this.btn.classList.add(csscls('summary-btn'));
+            this.btn.setAttribute('title', 'Show summary');
+            this.btn.setAttribute('aria-haspopup', 'dialog');
+            this.btn.setAttribute('aria-expanded', 'false');
+            this.btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggle();
+            });
+            this.el.append(this.btn);
+
+            this.popover = document.createElement('div');
+            this.popover.classList.add(csscls('summary-popover'));
+            this.popover.setAttribute('role', 'dialog');
+            this.popover.hidden = true;
+            // Clicks inside must not reach the document handler that closes the popover
+            this.popover.addEventListener('click', e => e.stopPropagation());
+
+            this.content = document.createElement('div');
+            this.content.classList.add(csscls('summary-content'));
+            this.popover.append(this.content);
+
+            // Footer: which summary is in view on the left, copying it on the right
+            this.preferAll = localStorage.getItem('phpdebugbar-summary-all') === '1';
+            this.scope = document.createElement('div');
+            this.scope.classList.add(csscls('summary-scope'));
+            this.sectionBtn = this.createScopeButton('', false);
+            this.allBtn = this.createScopeButton('All', true);
+            this.scope.append(this.sectionBtn, this.allBtn);
+
+            this.copyBtn = this.createCopyButton('Copy', () => this.shownText);
+
+            const actions = document.createElement('div');
+            actions.classList.add(csscls('summary-actions'));
+            actions.append(this.scope, this.copyBtn);
+            this.popover.append(actions);
+            this.el.append(this.popover);
+
+            this.getSection = options.getSection || (() => null);
+            this.getAll = options.getAll || (() => '');
+
+            this.onDocumentClick = () => this.close();
+            this.onKeyDown = (e) => {
+                if (e.key === 'Escape') {
+                    this.close();
+                }
+            };
+        }
+
+        /**
+         * Builds one option of the scope switch.
+         *
+         * @param {string} label
+         * @param {boolean} all Whether this option shows the whole request
+         * @return {HTMLButtonElement}
+         */
+        createScopeButton(label, all) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.classList.add(csscls('summary-scope-btn'));
+            btn.textContent = label;
+            btn.addEventListener('click', () => {
+                if (this.preferAll === all) {
+                    return;
+                }
+                this.preferAll = all;
+                localStorage.setItem('phpdebugbar-summary-all', all ? '1' : '0');
+                this.refresh();
+            });
+
+            return btn;
+        }
+
+        /**
+         * Builds the copy button, which flashes a confirmation once the text is on the
+         * clipboard.
+         *
+         * @param {string} label
+         * @param {Function} getText Called on click, so the text is always current
+         * @return {HTMLButtonElement}
+         */
+        createCopyButton(label, getText) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.classList.add(csscls('summary-copy'));
+            this.copyLabel = document.createElement('span');
+            this.copyLabel.textContent = label;
+            this.copyLabelText = label;
+            btn.append(this.copyLabel);
+            btn.addEventListener('click', () => {
+                PhpDebugBar.utils.copyToClipboard(getText()).then(() => {
+                    this.resetCopied();
+                    btn.classList.add(csscls('summary-copied'));
+                    this.copyLabel.textContent = 'Copied!';
+                    this.copyTimer = setTimeout(() => this.resetCopied(), 1500);
+                }, () => {});
+            });
+
+            return btn;
+        }
+
+        /**
+         * Drops the "Copied!" confirmation.
+         *
+         * Called whenever the text behind the button changes, so it never claims to have
+         * copied something other than what is now in view.
+         */
+        resetCopied() {
+            clearTimeout(this.copyTimer);
+            this.copyTimer = null;
+            this.copyLabel.textContent = this.copyLabelText;
+            this.copyBtn.classList.remove(csscls('summary-copied'));
+        }
+
+        /**
+         * Shows or hides the whole control depending on whether there is anything to show.
+         *
+         * @param {boolean} available
+         */
+        setAvailable(available) {
+            this.el.hidden = !available;
+            if (!available) {
+                this.close();
+            }
+        }
+
+        /**
+         * Fills the popover with whichever scope is in view: the summary of the tab being
+         * viewed, or the whole request. Tabs with no summary of their own always show the
+         * whole request, without changing the remembered preference.
+         */
+        refresh() {
+            this.resetCopied();
+            this.section = this.getSection();
+            this.all = this.getAll();
+            this.showAll = this.preferAll || !this.section;
+
+            this.sectionBtn.hidden = !this.section;
+            this.sectionBtn.textContent = this.section ? this.section.title : '';
+            this.sectionBtn.classList.toggle(csscls('summary-scope-active'), !this.showAll);
+            this.allBtn.classList.toggle(csscls('summary-scope-active'), this.showAll);
+
+            this.content.textContent = this.shownText;
+            this.content.scrollTop = 0;
+        }
+
+        /**
+         * The text currently in view, which is also what the Copy button copies.
+         *
+         * @return {string}
+         */
+        get shownText() {
+            return this.showAll ? this.all : (this.section?.text ?? '');
+        }
+
+        open() {
+            this.refresh();
+            this.popover.hidden = false;
+            this.btn.setAttribute('aria-expanded', 'true');
+            this.btn.classList.add(csscls('summary-btn-active'));
+            document.addEventListener('click', this.onDocumentClick);
+            document.addEventListener('keydown', this.onKeyDown);
+        }
+
+        close() {
+            this.popover.hidden = true;
+            this.btn.setAttribute('aria-expanded', 'false');
+            this.btn.classList.remove(csscls('summary-btn-active'));
+            document.removeEventListener('click', this.onDocumentClick);
+            document.removeEventListener('keydown', this.onKeyDown);
+        }
+
+        toggle() {
+            if (this.popover.hidden) {
+                this.open();
+            } else {
+                this.close();
+            }
+        }
+
+        get isOpen() {
+            return !this.popover.hidden;
+        }
+    }
+
+    PhpDebugBar.SummaryPopover = SummaryPopover;
+
+    // ------------------------------------------------------------------
+
+    /**
      * Tab
      *
      * A tab is composed of a tab label which is always visible and
@@ -247,6 +560,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
      *  - title
      *  - badge
      *  - widget
+     *  - summary: string (shown as-is) or object (rendered as "key = value"
+     *    per line). Shown in the bar's summary popover while this tab is active.
      *  - data: forward data to widget data
      */
     class Tab extends Widget {
@@ -288,8 +603,13 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             });
 
             this.bindAttr('widget', function (widget) {
-                this.el.innerHTML = '';
-                this.el.append(widget.el);
+                this.el.replaceChildren(widget.el);
+            });
+
+            // Read back by DebugBar.getSummarySections(); the bar shows it in the header
+            this.summaryText = '';
+            this.bindAttr('summary', function (summary) {
+                this.summaryText = summaryText(summary);
             });
 
             this.widgetRendered = false;
@@ -980,6 +1300,14 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 self.restore();
             });
 
+            // summary control (children of header-right float right, so this sits with
+            // the other controls rather than among the indicators)
+            this.summaryControl = new SummaryPopover({
+                getSection: () => self.getSummarySection(self.activePanelName),
+                getAll: () => self.getSummary()
+            });
+            this.headerRight.append(this.summaryControl.el);
+
             // open button
             this.openbtn = document.createElement('a');
             this.openbtn.classList.add(csscls('open-btn'));
@@ -1272,6 +1600,11 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             }
 
             this.activePanelName = name;
+
+            // The popover shows the tab in view, so follow along while it is open
+            if (this.summaryControl?.isOpen) {
+                this.summaryControl.refresh();
+            }
 
             this.el.classList.remove(csscls('minimized'));
             localStorage.setItem('phpdebugbar-visible', '1');
@@ -1601,11 +1934,113 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 }
             }
 
+            if (this.summaryControl) {
+                this.summaryControl.setAvailable(this.getSummary() !== '');
+                if (this.summaryControl.isOpen) {
+                    this.summaryControl.refresh();
+                }
+            }
+
             if (!this.isMinimized()) {
                 this.showTab();
             }
 
             this.resize();
+        }
+
+        /**
+         * Returns the summary of a single control, or null when it has nothing to say.
+         *
+         * @this {DebugBar}
+         * @param {string} name Control name, e.g. the name of the tab being viewed
+         * @param {string} [datasetId] Defaults to the dataset currently shown
+         * @return {?{name: string, title: string, text: string}}
+         */
+        getSummarySection(name, datasetId) {
+            const control = name ? this.getControl(name) : undefined;
+
+            // Summaries set directly on a control win; the rest come from the data map,
+            // which also covers controls that are indicators rather than tabs.
+            let text = control?.summaryText || '';
+            if (!text) {
+                const def = this.dataMap[`${name}:summary`];
+                const dataset = this.datasets[datasetId ?? this.activeDatasetId];
+                text = def ? summaryText(getDictValue(dataset, def[0], null)) : '';
+            }
+
+            if (!text.trim()) {
+                return null;
+            }
+
+            return { name, title: control?.get('title') || titleize(name), text };
+        }
+
+        /**
+         * Returns every summary in a dataset, in the order the controls were declared.
+         *
+         * @this {DebugBar}
+         * @param {string} [datasetId] Defaults to the dataset currently shown
+         * @return {Array<{name: string, title: string, text: string}>}
+         */
+        getSummarySections(datasetId) {
+            if (!this.datasets[datasetId ?? this.activeDatasetId]) {
+                return [];
+            }
+
+            const suffix = ':summary';
+            const names = Object.keys(this.dataMap)
+                .filter(key => key.endsWith(suffix))
+                .map(key => key.slice(0, -suffix.length));
+
+            // Controls whose summary was set directly rather than through the data map
+            for (const [name, control] of Object.entries(this.controls)) {
+                if (control.summaryText && !names.includes(name)) {
+                    names.push(name);
+                }
+            }
+
+            return names.map(name => this.getSummarySection(name, datasetId)).filter(Boolean);
+        }
+
+        /**
+         * Returns every collector summary in a dataset as one block of plain text.
+         *
+         * This is the whole-request context you would paste into an issue, a chat or a
+         * prompt. Mirrors DebugBar::getSummary() in PHP, which serves the same text over
+         * the open handler for tooling that never renders the bar.
+         *
+         * @this {DebugBar}
+         * @param {string} [datasetId] Defaults to the dataset currently shown
+         * @return {string}
+         */
+        getSummary(datasetId) {
+            const sections = this.getSummarySections(datasetId);
+            if (!sections.length) {
+                return '';
+            }
+
+            const blocks = ['# PHP DebugBar summary'];
+
+            // The raw uri in __meta is unmasked, so the request collector's masked one is
+            // used instead; it shows up as part of its own section. The client ip is left
+            // out for the same reason: summaries are made to be pasted elsewhere.
+            // Keep this list in sync with SummaryFormatter::format().
+            const meta = this.datasets[datasetId ?? this.activeDatasetId].__meta || {};
+            const header = {};
+            for (const key of ['id', 'datetime', 'method']) {
+                if (meta[key]) {
+                    header[key] = meta[key];
+                }
+            }
+            if (Object.keys(header).length) {
+                blocks.push(formatSummary(header));
+            }
+
+            for (const section of sections) {
+                blocks.push(`## ${section.title}\n${section.text}`);
+            }
+
+            return blocks.join('\n\n');
         }
 
         /**

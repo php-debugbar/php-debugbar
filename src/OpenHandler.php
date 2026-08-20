@@ -59,24 +59,30 @@ class OpenHandler
             throw new DebugBarException("DebugBar must have a storage backend to use OpenHandler");
         }
 
-        try {
-            $response = match ($op) {
-                'find' => $this->find($request),
-                'get' => $this->get($request),
-                'clear' => $this->clear(),
-            };
-        } catch (\UnhandledMatchError $e) {
-            throw new DebugBarException("Invalid operation '{$request['op']}'");
-        }
+        if ($op === 'summary') {
+            $response = $this->summary($request);
+            $contentType = 'text/plain; charset=utf-8';
+        } else {
+            try {
+                $data = match ($op) {
+                    'find' => $this->find($request),
+                    'get' => $this->get($request),
+                    'clear' => $this->clear(),
+                };
+            } catch (\UnhandledMatchError $e) {
+                throw new DebugBarException("Invalid operation '{$request['op']}'");
+            }
 
-        $response = json_encode($response);
-        if ($response === false) {
-            throw new DebugBarException("Invalid JSON response");
+            $response = json_encode($data);
+            if ($response === false) {
+                throw new DebugBarException("Invalid JSON response");
+            }
+            $contentType = 'application/json';
         }
 
         if ($sendHeader) {
             $this->debugBar->getHttpDriver()->setHeaders([
-                'Content-Type' => 'application/json',
+                'Content-Type' => $contentType,
             ]);
         }
 
@@ -128,6 +134,44 @@ class OpenHandler
             throw new DebugBarException("Missing 'id' parameter in 'get' operation");
         }
         return $this->storage->get((string) $request['id']);
+    }
+
+    /**
+     * Summary operation
+     *
+     * Returns a stored dataset as plain text rather than JSON, so tooling that can't
+     * render the bar - a terminal, a CI job, an agent driving the app over HTTP - can
+     * read what happened during a request. Omit 'id' to summarize the latest dataset.
+     *
+     * @param array<string, mixed> $request
+     *
+     * @throws DebugBarException
+     */
+    protected function summary(array $request): string
+    {
+        $id = isset($request['id']) ? (string) $request['id'] : $this->getLatestId();
+        if ($id === null) {
+            throw new DebugBarException("No dataset to summarize");
+        }
+
+        return $this->debugBar->getSummary($this->storage->get($id));
+    }
+
+    /**
+     * Returns the id of the most recently stored dataset, if any.
+     */
+    protected function getLatestId(): ?string
+    {
+        $latest = $this->storage->find([], 1, 0);
+        $meta = reset($latest);
+        if (!is_array($meta)) {
+            return null;
+        }
+
+        // Storage backends return metadata rows, but some return whole datasets
+        $id = $meta['id'] ?? $meta['__meta']['id'] ?? null;
+
+        return $id !== null ? (string) $id : null;
     }
 
     /**

@@ -29,6 +29,34 @@ trait HidesMaskedValues
         return $data;
     }
 
+    /**
+     * Masks the values of sensitive query string parameters within a URI.
+     *
+     * Only the values are replaced; keys, ordering and encoding are preserved so
+     * the result stays recognisable as the original request.
+     */
+    public function hideMaskedUri(string $uri): string
+    {
+        $pos = strpos($uri, '?');
+        if ($pos === false || $pos === strlen($uri) - 1) {
+            return $uri;
+        }
+
+        $path = substr($uri, 0, $pos + 1);
+        $pairs = explode('&', substr($uri, $pos + 1));
+
+        foreach ($pairs as $i => $pair) {
+            [$key, $value] = array_pad(explode('=', $pair, 2), 2, null);
+            if ($value === null || !$this->isMaskedKey(urldecode($key))) {
+                continue;
+            }
+            // Not re-encoded: the mask is a display artifact, and %2A%2A%2A reads as noise
+            $pairs[$i] = $key . '=' . $this->maskValue(urldecode($value));
+        }
+
+        return $path . implode('&', $pairs);
+    }
+
     public function addMaskedKeys(array $keys): void
     {
         foreach ($keys as $key) {

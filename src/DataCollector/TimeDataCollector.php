@@ -246,7 +246,42 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
             'duration' => $this->getRequestDuration(),
             'duration_str' => $this->getDataFormatter()->formatDuration($this->getRequestDuration()),
             'measures' => $this->measures,
+            'summary' => $this->buildSummary(),
         ];
+    }
+
+    /**
+     * Where the time went: the total, and the handful of measures that account for it.
+     *
+     * @return array<string, mixed>
+     */
+    protected function buildSummary(int $slowest = 3): array
+    {
+        $duration = $this->getRequestDuration();
+
+        $summary = [
+            'duration' => $this->getDataFormatter()->formatDuration($duration),
+            'measures' => count($this->measures),
+        ];
+
+        $measures = $this->measures;
+        usort($measures, fn($a, $b) => $b['duration'] <=> $a['duration']);
+
+        $lines = [];
+        foreach (array_slice($measures, 0, $slowest) as $measure) {
+            // Measures added with an explicit start/end can outlast the request itself,
+            // and a share above 100% reads as a bug, so it is left off in that case
+            $share = $duration > 0 ? round($measure['duration'] / $duration * 100) : 0;
+            $lines[] = $share > 0 && $share <= 100
+                ? sprintf('%s = %s (%d%%)', $measure['label'], $measure['duration_str'], $share)
+                : sprintf('%s = %s', $measure['label'], $measure['duration_str']);
+        }
+
+        if ($lines) {
+            $summary['slowest'] = $lines;
+        }
+
+        return $summary;
     }
 
     public function getName(): string
@@ -269,6 +304,9 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
                 "widget" => "PhpDebugBar.Widgets.TimelineWidget",
                 "map" => "time",
                 "default" => "{}",
+            ],
+            "timeline:summary" => [
+                "map" => "time.summary",
             ],
         ];
     }

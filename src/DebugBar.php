@@ -310,6 +310,19 @@ class DebugBar implements ArrayAccess
         return $this->data;
     }
 
+    /**
+     * Returns the collected summaries as plain text, ready to paste into an issue,
+     * a chat or a prompt.
+     *
+     * Will collect the data if none have been collected yet.
+     *
+     * @param null|array<string, mixed> $data Dataset to summarize, defaults to the current one
+     */
+    public function getSummary(?array $data = null): string
+    {
+        return (new SummaryFormatter($this))->format($data ?? $this->getData());
+    }
+
     public function reset(): void
     {
         $this->requestId = null;

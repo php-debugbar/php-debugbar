@@ -28,6 +28,7 @@ const icons = [
     'inbox',
     'leaf',
     'list',
+    'list-details',
     'logs',
     'mobiledata',
     'search',

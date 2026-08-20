@@ -51,6 +51,9 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
                 'map' => $name . '.nb_templates',
                 'default' => 0,
             ],
+            "$name:summary" => [
+                'map' => $name . '.summary',
+            ],
         ];
     }
 
@@ -122,6 +125,40 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
             'count' => count($this->templates),
             'nb_templates' => count($this->templates),
             'templates' => $templates,
+            'summary' => $this->buildSummary(),
         ];
+    }
+
+    /**
+     * How many templates rendered, and which ones rendered more than once.
+     *
+     * @return array<string, mixed>
+     */
+    protected function buildSummary(int $max = 5): array
+    {
+        if (!$this->templates) {
+            return [];
+        }
+
+        $summary = ['rendered' => count($this->templates)];
+
+        $counts = [];
+        foreach ($this->templates as $template) {
+            $name = (string) $template['name'];
+            $counts[$name] = ($counts[$name] ?? 0) + 1;
+        }
+
+        $repeated = array_filter($counts, fn($count) => $count > 1);
+        arsort($repeated);
+
+        $lines = [];
+        foreach (array_slice($repeated, 0, $max, true) as $name => $count) {
+            $lines[] = $count . 'x ' . $name;
+        }
+        if ($lines) {
+            $summary['repeated'] = $lines;
+        }
+
+        return $summary;
     }
 }

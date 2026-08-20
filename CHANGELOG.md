@@ -1,4 +1,11 @@
 # Changelog
+2026-08-20
+
+ - Add request summaries: collectors can return a `summary`, the bar header shows the one
+   for the tab in view or the whole request and copies it, and `open.php?op=summary` serves
+   the same text for tooling that never renders the bar
+ - Fix widgets declaring a `map` without a `default` being dropped from the data map
+
 2025-11-25
 
  - Add Antigravity editor link template

@@ -81,6 +81,8 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
             $collect['badges'] = $this->classSummary;
         }
 
+        $collect['summary'] = $this->buildSummary();
+
         if (! $this->getXdebugLinkTemplate()) {
             return $collect;
         }
@@ -94,6 +96,35 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
         }
 
         return $collect;
+    }
+
+    /**
+     * The heaviest counts, which read as an N+1 signal next to the query count.
+     *
+     * @return array<string, mixed>
+     */
+    protected function buildSummary(int $max = 5): array
+    {
+        if (!$this->classList) {
+            return [];
+        }
+
+        $summary = ['count' => $this->classCount];
+
+        $lines = [];
+        foreach (array_slice($this->classList, 0, $max, true) as $class => $counts) {
+            $lines[] = $class . ' = ' . array_sum($counts);
+        }
+        if ($lines) {
+            $summary['top'] = $lines;
+        }
+
+        $extra = count($this->classList) - $max;
+        if ($extra > 0) {
+            $summary['not_shown'] = $extra;
+        }
+
+        return $summary;
     }
 
     public function getName(): string
@@ -115,6 +146,9 @@ class ObjectCountCollector extends DataCollector implements DataCollectorInterfa
             "$name:badge" => [
                 'map' => "$name.count",
                 'default' => 0,
+            ],
+            "$name:summary" => [
+                'map' => "$name.summary",
             ],
         ];
     }

@@ -6,6 +6,7 @@ namespace DebugBar\Tests;
 
 use DebugBar\DebugBarException;
 use DebugBar\OpenHandler;
+use DebugBar\Tests\DataCollector\MockCollector;
 use DebugBar\Tests\Storage\MockStorage;
 
 class OpenHandlerTest extends DebugBarTestCase
@@ -41,6 +42,35 @@ class OpenHandlerTest extends DebugBarTestCase
         $this->expectException(DebugBarException::class);
 
         $this->openHandler->handle(['op' => 'get'], false, false);
+    }
+
+    public function testSummary(): void
+    {
+        $this->debugbar->addCollector(new MockCollector(
+            ['summary' => ['answer' => 42]],
+            'mock',
+            ['mock' => ['widget' => 'Foo'], 'mock:summary' => ['map' => 'mock.summary']]
+        ));
+        $this->debugbar->getStorage()->save('bar', ['__meta' => ['id' => 'bar'], 'mock' => ['summary' => ['answer' => 42]]]);
+
+        $result = $this->openHandler->handle(['op' => 'summary', 'id' => 'bar'], false, false);
+
+        $this->assertStringContainsString('# PHP DebugBar summary', $result);
+        $this->assertStringContainsString("## Mock\nanswer = 42", $result);
+    }
+
+    public function testSummarySendsPlainText(): void
+    {
+        $this->openHandler->handle(['op' => 'summary', 'id' => 'foo'], false, true);
+
+        $this->assertEquals('text/plain; charset=utf-8', $this->httpDriver->headers['Content-Type']);
+    }
+
+    public function testSummaryWithoutIdUsesTheLatestDataset(): void
+    {
+        $result = $this->openHandler->handle(['op' => 'summary'], false, false);
+
+        $this->assertStringContainsString('id = foo', $result);
     }
 
     public function testClear(): void
