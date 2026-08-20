@@ -27,6 +27,7 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
     use HasDataFormatter;
     use HasXdebugLinks;
     use HasTimeDataCollector;
+    use SummarizesData;
 
     protected string $name;
 
@@ -306,13 +307,65 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         $this->messages = [];
     }
 
+    /** Levels whose message text is worth quoting verbatim in a summary. */
+    public static array $IMPORTANT_LABELS = ['emergency', 'alert', 'critical', 'error', 'warning'];
+
     public function collect(): array
     {
         $messages = $this->getMessages();
         return [
             'count' => count($messages),
             'messages' => $messages,
+            'summary' => $this->buildSummary($messages),
         ];
+    }
+
+    /**
+     * Counts per level, plus the text of everything at warning or above.
+     *
+     * Errors and warnings are few and are the reason anyone opens this tab, so they are
+     * quoted in full; debug/info noise is reduced to a count.
+     *
+     * @param array<int, array<string, mixed>> $messages
+     *
+     * @return array<string, mixed>
+     */
+    protected function buildSummary(array $messages, int $max = 10): array
+    {
+        if (!$messages) {
+            return [];
+        }
+
+        $summary = ['count' => count($messages)];
+
+        $counts = [];
+        $important = [];
+        foreach ($messages as $message) {
+            $label = (string) ($message['label'] ?? 'info');
+            $counts[$label] = ($counts[$label] ?? 0) + 1;
+
+            if (!in_array(strtolower($label), static::$IMPORTANT_LABELS, true)) {
+                continue;
+            }
+
+            $text = $message['message'] ?? null;
+            $important[] = strtoupper($label) . ': ' . ($text === null
+                ? '(non-string message, see the panel)'
+                : $this->summarizeText((string) $text));
+        }
+
+        arsort($counts);
+        $summary['by_label'] = $counts;
+
+        if ($important) {
+            $extra = count($important) - $max;
+            $summary['important'] = array_slice($important, 0, $max);
+            if ($extra > 0) {
+                $summary['not_shown'] = $extra;
+            }
+        }
+
+        return $summary;
     }
 
     public function getName(): string
@@ -333,6 +386,9 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
             "$name:badge" => [
                 "map" => "$name.count",
                 "default" => "null",
+            ],
+            "$name:summary" => [
+                "map" => "$name.summary",
             ],
         ];
     }

@@ -23,3 +23,39 @@ $renderer->setOpenHandlerUrl('open.php');
 
 This adds a button in the top right corner of the debug bar which allows you
 to browse and open previous sets of collected data.
+
+## Request summaries
+
+The open handler also serves a plain text summary of a stored dataset, for tooling that
+never renders the bar - a terminal, a CI job, or an agent driving the app over HTTP.
+
+```
+GET open.php?op=summary&id=<dataset id>
+```
+
+Omit `id` to summarize the most recently stored dataset. The response is
+`text/plain`, and contains the same text the bar's summary popover shows under "All":
+
+```
+# PHP DebugBar summary
+
+id = 01a01ecb81c6571ca7a79f91aae2ae9d
+datetime = 2026-01-30 10:50:48
+
+## Request
+method = GET
+uri = /checkout?page=2&api_token=ab***op
+status = 200
+
+## Database
+statements = 8
+duration = 135us
+duplicates = 2
+```
+
+The dataset id of the current request is also sent as the `phpdebugbar-id` response
+header (see [Ajax and stacked data](ajax-and-stack.md)), so a client can read the
+header and fetch the matching summary.
+
+The same text is available in PHP through `$debugbar->getSummary()`, and in the browser
+through `PhpDebugBar.instance.getSummary()`.

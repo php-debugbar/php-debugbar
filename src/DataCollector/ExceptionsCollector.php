@@ -141,10 +141,82 @@ class ExceptionsCollector extends DataCollector implements Renderable, Resettabl
 
     public function collect(): array
     {
+        $exceptions = array_map([$this, 'formatThrowableData'], $this->exceptions);
+
         return [
             'count' => count($this->exceptions),
-            'exceptions' => array_map([$this, 'formatThrowableData'], $this->exceptions),
+            'exceptions' => $exceptions,
+            'summary' => $this->buildSummary($exceptions),
         ];
+    }
+
+    /**
+     * What was thrown and where, with a few frames of context.
+     *
+     * Full traces are mostly vendor noise, so only the first application frames are kept.
+     *
+     * @param array<int, array<string, mixed>> $exceptions
+     *
+     * @return array<string, mixed>
+     */
+    protected function buildSummary(array $exceptions, int $max = 5, int $maxFrames = 5): array
+    {
+        if (!$exceptions) {
+            return [];
+        }
+
+        $summary = ['count' => count($exceptions)];
+
+        $items = [];
+        foreach (array_slice($exceptions, 0, $max) as $exception) {
+            $item = [
+                'type' => $exception['type'] ?? 'Unknown',
+                'message' => $exception['message'] ?? '',
+                'at' => ($exception['file'] ?? '?') . ':' . ($exception['line'] ?? '?'),
+            ];
+
+            if (($exception['count'] ?? 1) > 1) {
+                $item['occurrences'] = $exception['count'];
+            }
+
+            $trace = $this->summarizeTrace($exception['stack_trace'] ?? null, $maxFrames);
+            if ($trace) {
+                $item['trace'] = $trace;
+            }
+
+            $items[] = $item;
+        }
+
+        if ($items) {
+            $summary['exceptions'] = $items;
+        }
+
+        $extra = count($exceptions) - $max;
+        if ($extra > 0) {
+            $summary['not_shown'] = $extra;
+        }
+
+        return $summary;
+    }
+
+    /**
+     * Keeps the first application frames of a formatted stack trace, falling back to
+     * the raw frames when everything is vendor code.
+     *
+     * @return array<int, string>
+     */
+    protected function summarizeTrace(?string $stackTrace, int $maxFrames): array
+    {
+        if (!$stackTrace) {
+            return [];
+        }
+
+        $frames = array_values(array_filter(array_map('trim', explode("\n", $stackTrace))));
+        $app = array_values(array_filter($frames, function ($frame): bool {
+            return !str_contains($frame, '/vendor/') && !str_contains($frame, '\\vendor\\');
+        }));
+
+        return array_slice($app ?: $frames, 0, $maxFrames);
     }
 
     /**
@@ -268,6 +340,9 @@ class ExceptionsCollector extends DataCollector implements Renderable, Resettabl
             "$name:badge" => [
                 'map' => "$name.count",
                 'default' => 'null',
+            ],
+            "$name:summary" => [
+                'map' => "$name.summary",
             ],
         ];
     }

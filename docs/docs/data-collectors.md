@@ -76,6 +76,44 @@ class MyDataCollector extends DebugBar\DataCollector\DataCollector implements De
 
 This will have the result of adding a new indicator to the debug bar.
 
+## Summaries
+
+A collector can also return a `summary` from `collect()` and declare a `<control>:summary`
+widget pointing at it. The bar shows it in the summary popover in its header while that
+tab is in view, and collects every summary into the whole-request text the popover copies
+and the open handler serves (see [Open handler](openhandler.md)).
+
+```php
+public function collect()
+{
+    return array(
+        'queries' => $this->queries,
+        'summary' => array(
+            'queries' => count($this->queries),
+            'duration' => $this->getDataFormatter()->formatDuration($this->duration),
+            'slowest' => array('select * from users = 12ms'),
+        ),
+    );
+}
+
+public function getWidgets()
+{
+    return array(
+        'mycollector' => array('widget' => '...', 'map' => 'mycollector.queries', 'default' => '[]'),
+        'mycollector:summary' => array('map' => 'mycollector.summary'),
+    );
+}
+```
+
+A summary may be a string, which is used as-is, or an array, which is rendered as
+`key = value` lines with nested arrays indented and lists rendered as `- item`.
+
+Summaries are meant to be copied out of the browser, so keep them small and treat them as
+data that leaves the machine: report anomalies rather than volumes, quote values only when
+they matter, run anything sensitive through `hideMaskedValues()`/`hideMaskedUri()`, and mark
+anything you truncate (`(+12 more)`) rather than silently dropping it. Return an empty
+array when the collector has nothing to report, and it contributes no section at all.
+
 When implementing the `Renderable` interface, you may use widgets which are not provided
 with the default install. You can add new assets by implementing the `DebugBar\DataCollector\AssetProvider` interface.
 

@@ -124,6 +124,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         $data = [
             'nb_statements' => 0,
             'nb_failed_statements' => 0,
+            'nb_duplicate_statements' => 0,
             'accumulated_duration' => 0,
             'memory_usage' => 0,
             'peak_memory_usage' => 0,
@@ -134,6 +135,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
             $pdodata = $this->collectPDO($pdo, $name);
             $data['nb_statements'] += $pdodata['nb_statements'];
             $data['nb_failed_statements'] += $pdodata['nb_failed_statements'];
+            $data['nb_duplicate_statements'] += $pdodata['nb_duplicate_statements'];
             $data['accumulated_duration'] += $pdodata['accumulated_duration'];
             $data['memory_usage'] += $pdodata['memory_usage'];
             $data['peak_memory_usage'] = max($data['peak_memory_usage'], $pdodata['peak_memory_usage']);
@@ -149,9 +151,66 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         $data['accumulated_duration_str'] = $this->getDataFormatter()->formatDuration($data['accumulated_duration']);
         $data['memory_usage_str'] = $this->getDataFormatter()->formatBytes($data['memory_usage']);
         $data['peak_memory_usage_str'] = $this->getDataFormatter()->formatBytes($data['peak_memory_usage']);
+        $data['summary'] = $this->buildSummary($data);
 
         return $data;
     }
+
+    /**
+     * The query story in a handful of lines: how many, how long, what repeated and what failed.
+     *
+     * Duplicate counting happens per connection on the raw SQL (see collectPDO), so it still
+     * spots N+1 patterns when statements are rendered with their bindings inlined.
+     *
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
+    protected function buildSummary(array $data, int $slowest = 3, int $maxErrors = 5): array
+    {
+        if ($data['nb_statements'] === 0) {
+            return [];
+        }
+
+        $summary = [
+            'statements' => $data['nb_statements'],
+            'duration' => $data['accumulated_duration_str'],
+        ];
+
+        if ($data['nb_duplicate_statements'] > 0) {
+            $summary['duplicates'] = $data['nb_duplicate_statements'];
+        }
+        if ($data['nb_failed_statements'] > 0) {
+            $summary['failed'] = $data['nb_failed_statements'];
+        }
+
+        $statements = $data['statements'];
+        usort($statements, fn($a, $b) => $b['duration'] <=> $a['duration']);
+
+        $lines = [];
+        foreach (array_slice($statements, 0, $slowest) as $statement) {
+            $lines[] = $this->summarizeText($statement['sql'], 120) . ' = ' . $statement['duration_str'];
+        }
+        if ($lines) {
+            $summary['slowest'] = $lines;
+        }
+
+        $errors = [];
+        foreach ($data['statements'] as $statement) {
+            if (!$statement['is_success']) {
+                $errors[] = $this->summarizeText($statement['sql'], 120) . ' -> ' . $statement['error_message'];
+            }
+        }
+        if ($errors) {
+            $extra = count($errors) - $maxErrors;
+            $summary['errors'] = $extra > 0
+                ? array_merge(array_slice($errors, 0, $maxErrors), ["(+{$extra} more)"])
+                : $errors;
+        }
+
+        return $summary;
+    }
+
 
     /**
      * Collects data from a single TraceablePDO instance
@@ -164,9 +223,11 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
             $connectionName = 'pdo ' . $connectionName;
         }
         $stmts = [];
+        $sqlCounts = [];
         foreach ($pdo->getExecutedStatements() as $stmt) {
 
             $sql = $stmt->getSql();
+            $sqlCounts[$sql] = ($sqlCounts[$sql] ?? 0) + 1;
             $params = $stmt->getParameters();
             if ($this->renderSqlWithParams) {
                 $sql = $this->getQueryFormatter()->formatSqlWithBindings($sql, $params, $pdo);
@@ -217,6 +278,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
         return [
             'nb_statements' => count($stmts),
             'nb_failed_statements' => count($pdo->getFailedExecutedStatements()),
+            'nb_duplicate_statements' => array_sum($sqlCounts) - count($sqlCounts),
             'accumulated_duration' => $totalTime,
             'accumulated_duration_str' => $this->getDataFormatter()->formatDuration($totalTime),
             'memory_usage' => $pdo->getMemoryUsage(),
@@ -244,6 +306,9 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
             "database:badge" => [
                 "map" => "pdo.nb_statements",
                 "default" => 0,
+            ],
+            "database:summary" => [
+                "map" => "pdo.summary",
             ],
         ];
     }

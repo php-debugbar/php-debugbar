@@ -85,7 +85,47 @@ class MemoryCollector extends DataCollector implements Renderable
         return [
             'peak_usage' => $this->getPeakUsage(),
             'peak_usage_str' => $this->getDataFormatter()->formatBytes($this->getPeakUsage(), $this->precision),
+            'summary' => $this->buildSummary(),
         ];
+    }
+
+    /**
+     * Peak usage on its own says little; relative to the limit it is actionable.
+     *
+     * @return array<string, string>
+     */
+    protected function buildSummary(): array
+    {
+        $peak = $this->getPeakUsage();
+        $summary = [
+            'peak_usage' => $this->getDataFormatter()->formatBytes($peak, $this->precision),
+        ];
+
+        $limit = $this->getMemoryLimit();
+        if ($limit > 0) {
+            $summary['limit'] = $this->getDataFormatter()->formatBytes($limit);
+            $summary['limit_used'] = round($peak / $limit * 100) . '%';
+        }
+
+        return $summary;
+    }
+
+    /**
+     * Returns the memory_limit in bytes, or -1 when unlimited or unparseable.
+     */
+    protected function getMemoryLimit(): int
+    {
+        $limit = trim((string) ini_get('memory_limit'));
+        if ($limit === '' || !preg_match('/^(\d+)\s*([KMG])?$/i', $limit, $matches)) {
+            return -1;
+        }
+
+        return (int) $matches[1] * match (strtoupper($matches[2] ?? '')) {
+            'G' => 1024 ** 3,
+            'M' => 1024 ** 2,
+            'K' => 1024,
+            default => 1,
+        };
     }
 
     public function getName(): string
@@ -101,6 +141,9 @@ class MemoryCollector extends DataCollector implements Renderable
                 "tooltip" => "Memory Usage",
                 "map" => "memory.peak_usage_str",
                 "default" => "'0B'",
+            ],
+            "memory:summary" => [
+                "map" => "memory.summary",
             ],
         ];
     }
