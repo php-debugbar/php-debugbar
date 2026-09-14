@@ -44,6 +44,45 @@ class TimeDataCollectorTest extends DebugBarTestCase
         $this->assertTrue($m[0]['start'] < $m[0]['end'], 'Start time should be before end time');
     }
 
+    public function testStartStopNestedMeasuresWithTheSameName(): void
+    {
+        $this->c->startMeasure('foo', 'outer');
+        usleep(1000);
+        $this->c->startMeasure('foo', 'inner');
+        usleep(1000);
+        $this->c->stopMeasure('foo');
+        $this->assertTrue($this->c->hasStartedMeasure('foo'), 'The enclosing measure should still be pending');
+        $this->c->stopMeasure('foo');
+        $this->assertFalse($this->c->hasStartedMeasure('foo'));
+
+        $m = $this->c->getMeasures();
+        $this->assertCount(2, $m);
+        $this->assertEquals('inner', $m[0]['label']);
+        $this->assertEquals('outer', $m[1]['label']);
+        $this->assertGreaterThan($m[0]['duration'], $m[1]['duration'], 'The enclosing measure should span the nested one');
+    }
+
+    public function testCollectStopsEveryPendingNestedMeasure(): void
+    {
+        $this->c->startMeasure('foo');
+        $this->c->startMeasure('foo');
+
+        $data = $this->c->collect();
+
+        $this->assertCount(2, $data['measures']);
+        $this->assertFalse($this->c->hasStartedMeasure('foo'));
+    }
+
+    public function testMeasureCanRecurse(): void
+    {
+        $recurse = function (int $depth) use (&$recurse) {
+            return $depth > 0 ? $this->c->measure('rec', fn() => $recurse($depth - 1)) : 'done';
+        };
+
+        $this->assertSame('done', $this->c->measure('rec', fn() => $recurse(2)));
+        $this->assertCount(3, $this->c->getMeasures());
+    }
+
     public function testCollect(): void
     {
         $this->c->addMeasure('foo', 0, 10);

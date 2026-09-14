@@ -25,6 +25,7 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
 
     protected ?float $requestEndTime = null;
 
+    /** @var array<string, list<array{label: string, start: float, memory: int|null, collector: string|null, group: string|null}>> */
     protected array $startedMeasures = [];
 
     protected array $measures = [];
@@ -81,7 +82,7 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
     public function startMeasure(string $name, ?string $label = null, ?string $collector = null, ?string $group = null): void
     {
         $start = microtime(true);
-        $this->startedMeasures[$name] = [
+        $this->startedMeasures[$name][] = [
             'label' => $label ?: $name,
             'start' => $start,
             'memory' => $this->memoryMeasure ? memory_get_usage(false) : null,
@@ -95,7 +96,7 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
      */
     public function hasStartedMeasure(string $name): bool
     {
-        return isset($this->startedMeasures[$name]);
+        return ! empty($this->startedMeasures[$name]);
     }
 
     /**
@@ -109,18 +110,25 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
         if (!$this->hasStartedMeasure($name)) {
             throw new DebugBarException("Failed stopping measure '$name' because it hasn't been started");
         }
-        if (! is_null($this->startedMeasures[$name]['memory'])) {
-            $params['memoryUsage'] = memory_get_usage(false) - $this->startedMeasures[$name]['memory'];
+
+        // Measures of the same name can nest, so the most recently started one is the one
+        // being stopped here. The enclosing measure stays pending until its own stop call.
+        $measure = array_pop($this->startedMeasures[$name]);
+        if ($this->startedMeasures[$name] === []) {
+            unset($this->startedMeasures[$name]);
+        }
+
+        if (! is_null($measure['memory'])) {
+            $params['memoryUsage'] = memory_get_usage(false) - $measure['memory'];
         }
         $this->addMeasure(
-            $this->startedMeasures[$name]['label'],
-            $this->startedMeasures[$name]['start'],
+            $measure['label'],
+            $measure['start'],
             $end,
             $params,
-            $this->startedMeasures[$name]['collector'],
-            $this->startedMeasures[$name]['group'],
+            $measure['collector'],
+            $measure['group'],
         );
-        unset($this->startedMeasures[$name]);
     }
 
     /**
@@ -229,7 +237,9 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
     {
         $this->requestEndTime = microtime(true);
         foreach (array_keys($this->startedMeasures) as $name) {
-            $this->stopMeasure($name);
+            while ($this->hasStartedMeasure($name)) {
+                $this->stopMeasure($name);
+            }
         }
 
         usort($this->measures, function ($a, $b): int {
