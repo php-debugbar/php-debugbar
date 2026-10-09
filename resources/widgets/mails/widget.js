@@ -59,7 +59,7 @@
                         bodyPre.style.border = '1px solid #ddd';
                         bodyPre.style.padding = '5px';
                         bodyPre.style.overflowX = 'scroll';
-                        bodyPre.textContent = mail.body || mail.html;
+                        bodyPre.textContent = mail.body;
 
                         let bodyHTML = bodyPre.outerHTML;
                         let htmlIframeHTML = '';
@@ -69,6 +69,10 @@
                             summary.textContent = 'Text version';
                             details.append(summary);
                             details.append(bodyPre);
+
+                            if (!mail.body) {
+                                details.style.display = 'none';
+                            }
                             bodyHTML = details.outerHTML;
 
                             const htmlIframe = document.createElement('iframe');
