@@ -51,7 +51,7 @@ class JsonRoundtripTest extends DebugBarTestCase
         }
 
         // Expected: CliDumper text output
-        $expected = rtrim($this->cliDumper->dump($data, true));
+        $expected = rtrim($this->cliDumper->dump($data, true) ?? '');
 
         // Actual: JSON → text reconstruction
         $json = $this->jsonDumper->dumpAsArray($data);
@@ -78,12 +78,12 @@ class JsonRoundtripTest extends DebugBarTestCase
         }
 
         // Expected: CliDumper text output from direct dump
-        $expected = rtrim($this->cliDumper->dump($data, true));
+        $expected = rtrim($this->cliDumper->dump($data, true) ?? '');
 
         // Actual: JSON → ReverseJsonDumper → VarCloner with caster → CliDumper
         $json = $this->jsonDumper->dumpAsArray($data);
         $casterData = (new ReverseJsonDumper())->toCloneVarData($json);
-        $actual = rtrim($this->cliDumper->dump($casterData, true));
+        $actual = rtrim($this->cliDumper->dump($casterData, true) ?? '');
 
         $this->assertEquals($expected, $actual, "Caster roundtrip failed for: $description");
     }

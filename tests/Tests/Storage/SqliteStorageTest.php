@@ -378,6 +378,7 @@ class SqliteStorageTest extends DebugBarTestCase
 
         $pdo = $storage->getPdo();
         $result = $pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name='custom_table'");
+        $this->assertNotFalse($result);
 
         $this->assertNotFalse($result->fetch());
     }
@@ -396,6 +397,7 @@ class SqliteStorageTest extends DebugBarTestCase
         $pdo = $this->storage->getPdo();
 
         $result = $pdo->query("SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='phpdebugbar'");
+        $this->assertNotFalse($result);
         $indexes = $result->fetchAll(\PDO::FETCH_COLUMN);
 
         $expectedIndexes = [

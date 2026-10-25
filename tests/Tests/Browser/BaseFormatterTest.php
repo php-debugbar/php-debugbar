@@ -78,7 +78,7 @@ class BaseFormatterTest extends AbstractBrowserTestCase
         $listItem->click();
         usleep(500);
 
-        $classes = $loremItem->getAttribute('class');
+        $classes = (string) $loremItem->getAttribute('class');
         $this->assertTrue(
             str_contains($classes, 'phpdebugbar-widgets-pretty'),
             'After click, value should have pretty class'
@@ -88,7 +88,7 @@ class BaseFormatterTest extends AbstractBrowserTestCase
         $listItem->click();
         usleep(500);
 
-        $classes = $loremItem->getAttribute('class');
+        $classes = (string) $loremItem->getAttribute('class');
         $this->assertTrue(
             str_contains($classes, 'phpdebugbar-widgets-truncated'),
             'After second click, value should be truncated again'

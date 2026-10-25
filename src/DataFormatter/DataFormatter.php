@@ -68,9 +68,9 @@ class DataFormatter implements DataFormatterInterface
     {
         $dumper = $this->getDumper();
         if ($dumper instanceof CliDumper) {
-            return $dumper->dump($data, true);
+            return $dumper->dump($data, true) ?? '';
         }
-        return $dumper->dump($data);
+        return $dumper->dump($data) ?? '';
 
     }
 

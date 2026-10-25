@@ -273,9 +273,9 @@ $totalHtmlSize = 0;
 $totalJsonSize = 0;
 
 foreach ($testData as $name => $data) {
-    $cliSize = strlen(json_encode($cliDumper->dump($cloner->cloneVar($data)->withMaxDepth($maxDepth), true)));
-    $htmlSize = strlen(json_encode($htmlFormatter->formatVar($data)));
-    $jsonSize = strlen(json_encode($jsonFormatter->formatVar($data)));
+    $cliSize = strlen(json_encode($cliDumper->dump($cloner->cloneVar($data)->withMaxDepth($maxDepth), true), JSON_THROW_ON_ERROR));
+    $htmlSize = strlen(json_encode($htmlFormatter->formatVar($data), JSON_THROW_ON_ERROR));
+    $jsonSize = strlen(json_encode($jsonFormatter->formatVar($data), JSON_THROW_ON_ERROR));
 
     $totalCliSize += $cliSize;
     $totalHtmlSize += $htmlSize;
@@ -352,9 +352,9 @@ foreach ($testData as $name => $data) {
     $htmlCollected[$name] = $htmlFormatter->formatVar($data);
     $jsonCollected[$name] = $jsonFormatter->formatVar($data);
 }
-$cliPayload = json_encode($cliCollected);
-$htmlPayload = json_encode($htmlCollected);
-$jsonPayload = json_encode($jsonCollected);
+$cliPayload = json_encode($cliCollected, JSON_THROW_ON_ERROR);
+$htmlPayload = json_encode($htmlCollected, JSON_THROW_ON_ERROR);
+$jsonPayload = json_encode($jsonCollected, JSON_THROW_ON_ERROR);
 
 printf("$batchFmt\n", 'Payload size', '', 'vs CLI');
 echo "$separator\n";
@@ -380,10 +380,10 @@ if (isset($htmlAssets['inline_js']['html_var_dumper'])) {
     printf("HTML: inline_js (Sfdump JS):      %s  (inline, sent every page)\n", formatBytes(strlen($htmlAssets['inline_js']['html_var_dumper'])));
 }
 
-$cssFile = __DIR__ . '/../resources/' . ($jsonAssets['css'] ?? 'vardumper.css');
-$jsFile = __DIR__ . '/../resources/' . ($jsonAssets['js'] ?? 'vardumper.js');
-printf("JSON: vardumper.css:               %s  (static, cached by browser)\n", file_exists($cssFile) ? formatBytes(filesize($cssFile)) : 'n/a');
-printf("JSON: vardumper.js:                %s  (static, cached by browser)\n", file_exists($jsFile) ? formatBytes(filesize($jsFile)) : 'n/a');
+$cssFile = __DIR__ . '/../resources/' . (is_string($jsonAssets['css'] ?? null) ? $jsonAssets['css'] : 'vardumper.css');
+$jsFile = __DIR__ . '/../resources/' . (is_string($jsonAssets['js'] ?? null) ? $jsonAssets['js'] : 'vardumper.js');
+printf("JSON: vardumper.css:               %s  (static, cached by browser)\n", file_exists($cssFile) ? formatBytes((int) filesize($cssFile)) : 'n/a');
+printf("JSON: vardumper.js:                %s  (static, cached by browser)\n", file_exists($jsFile) ? formatBytes((int) filesize($jsFile)) : 'n/a');
 
 echo "\n$separator\n";
 echo "Done.\n";

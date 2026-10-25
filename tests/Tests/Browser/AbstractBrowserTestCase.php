@@ -15,7 +15,7 @@ abstract class AbstractBrowserTestCase extends PantherTestCase
     {
         $node = $crawler->filter('a.phpdebugbar-tab[data-collector="' . $tab . '"]');
 
-        return str_contains($node->attr('class'), 'phpdebugbar-active')  ;
+        return str_contains($node->attr('class') ?? '', 'phpdebugbar-active');
     }
 
     public function getTabLink(Crawler $crawler, string $tab): Link|\Symfony\Component\DomCrawler\Link

@@ -69,7 +69,7 @@ class FileStorage extends AbstractStorage
 
         $files = new \FilesystemIterator($this->dirname, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::CURRENT_AS_PATHNAME);
         foreach ($files as $path) {
-            if (str_ends_with($path, '.json')) {
+            if (is_string($path) && str_ends_with($path, '.json')) {
                 $ids[] = basename($path, '.json');
             }
         }
@@ -135,7 +135,7 @@ class FileStorage extends AbstractStorage
     public function clear(): void
     {
         foreach (new \FilesystemIterator($this->dirname, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS) as $path) {
-            if (is_file($path) && str_ends_with($path, '.json')) {
+            if (is_string($path) && is_file($path) && str_ends_with($path, '.json')) {
                 unlink($path);
             }
         }

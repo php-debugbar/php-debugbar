@@ -141,7 +141,7 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
             'start' => $start,
             'relative_start' => $start - $this->requestStartTime,
             'end' => $end,
-            'relative_end' => $end - $this->requestEndTime,
+            'relative_end' => $end - $this->requestStartTime,
             'duration' => $end - $start,
             'duration_str' => $this->getDataFormatter()->formatDuration($end - $start),
             'memory' => $memory ?? 0,

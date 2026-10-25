@@ -117,14 +117,14 @@ class TraceablePDOStatement extends PDOStatement
         $trace->start();
 
         $ex = null;
-        $result = null;
+        $result = false;
         try {
             $result = parent::execute($input_parameters);
         } catch (PDOException $e) {
             $ex = $e;
         }
 
-        if ($this->pdo->getAttribute(PDO::ATTR_ERRMODE) !== PDO::ERRMODE_EXCEPTION && $result === false) {
+        if ($ex === null && $result === false && $this->pdo->getAttribute(PDO::ATTR_ERRMODE) !== PDO::ERRMODE_EXCEPTION) {
             $error = $this->errorInfo();
             $ex = new PDOException($error[2], (int) $error[0]);
         }

@@ -24,8 +24,9 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     protected ?array $dumperOptions = null;
 
     /** Resolved limits — cached on first formatVar call to avoid repeated lookups */
-    private ?int $maxString = null;
-    private ?int $maxItems = null;
+    private bool $limitsResolved = false;
+    private int $maxString = 10000;
+    private int $maxItems = 1000;
     private int $maxDepth = 5;
 
     /**
@@ -39,7 +40,8 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     public function formatVar(mixed $data, bool $deep = true): mixed
     {
         // Resolve limits once (reset to null when cloner options change)
-        if ($this->maxString === null) {
+        if (!$this->limitsResolved) {
+            $this->limitsResolved = true;
             $opts = $this->getClonerOptions();
             $this->maxString = $opts['max_string'] ?? 10000;
             $this->maxItems = $opts['max_items'] ?? 1000;
@@ -168,13 +170,13 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
     public function mergeClonerOptions(array $options): void
     {
         parent::mergeClonerOptions($options);
-        $this->maxString = null; // reset cache
+        $this->limitsResolved = false; // reset cache
     }
 
     public function resetClonerOptions(?array $options = null): void
     {
         parent::resetClonerOptions($options);
-        $this->maxString = null; // reset cache
+        $this->limitsResolved = false; // reset cache
     }
 
     public function mergeDumperOptions(array $options): void

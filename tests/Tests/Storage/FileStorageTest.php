@@ -44,7 +44,7 @@ class FileStorageTest extends DebugBarTestCase
     {
         $this->s->save('foo', $this->data);
         $this->assertFileExists($this->dirname . '/foo.json');
-        $this->assertJsonStringEqualsJsonFile($this->dirname . '/foo.json', json_encode($this->data));
+        $this->assertJsonStringEqualsJsonFile($this->dirname . '/foo.json', (string) json_encode($this->data));
     }
 
     public function testGet(): void
