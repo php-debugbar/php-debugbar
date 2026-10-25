@@ -1807,7 +1807,15 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             if (response instanceof Response) {
                 return response.headers.get(header);
             } else if (response instanceof XMLHttpRequest) {
-                return response.getResponseHeader(header);
+                // Reading a header that a cross-origin response does not expose makes
+                // the browser log "Refused to get unsafe header", so only read headers
+                // that getAllResponseHeaders() reports as available.
+                const name = `${header.toLowerCase()}:`;
+                const exposed = response.getAllResponseHeaders()
+                    .toLowerCase()
+                    .split('\r\n')
+                    .some(line => line.startsWith(name));
+                return exposed ? response.getResponseHeader(header) : null;
             }
             return null;
         }
