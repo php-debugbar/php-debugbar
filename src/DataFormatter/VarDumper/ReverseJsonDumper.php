@@ -36,11 +36,12 @@ class ReverseJsonDumper
             return new DebugBarJsonVar($data);
         }
 
+        $result = [];
         foreach ($data as $key => $value) {
-            $data[$key] = $this->wrapJsonDumps($value);
+            $result[DebugBarJsonDumper::unescapeKey($key)] = $this->wrapJsonDumps($value);
         }
 
-        return $data;
+        return $result;
     }
 
     public function reverseFormatVar(mixed $node): string
@@ -111,7 +112,7 @@ class ReverseJsonDumper
             if ($isIndexed) {
                 $line .= $key . ' => ';
             } else {
-                $line .= '"' . $key . '" => ';
+                $line .= '"' . DebugBarJsonDumper::unescapeKey($key) . '" => ';
             }
             $line .= $this->valueToText($data[$key], $depth + 1);
             $lines[] = $line;
@@ -161,12 +162,13 @@ class ReverseJsonDumper
         foreach ($keys as $i => $key) {
             $line = $indent;
             $prefix = $prefixes[$i] ?? null;
+            $name = DebugBarJsonDumper::unescapeKey($key);
             $line .= match ($prefix) {
-                null => '+' . $key . ': ',
-                '+' => '+"' . $key . '": ',
-                '~' => $key . ': ',
-                '*' => '#' . $key . ': ',
-                default => '-' . $key . ': ',
+                null => '+' . $name . ': ',
+                '+' => '+"' . $name . '": ',
+                '~' => $name . ': ',
+                '*' => '#' . $name . ': ',
+                default => '-' . $name . ': ',
             };
             $line .= $this->valueToText($node[$key], $depth + 1);
             $lines[] = $line;

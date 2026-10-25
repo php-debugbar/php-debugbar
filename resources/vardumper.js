@@ -5,6 +5,11 @@
     let lazySeq = 0;
     const escMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
     const escRe = /[&<>"]/g;
+    const metaKeyRe = /^\\(\\*_(?:vd|cut|sd|link))$/;
+
+    // Metadata comes from the same JSON as user data, so only accept well-formed values
+    const toCount = v => (Number.isInteger(v) && v > 0 ? v : 0);
+    const toVd = v => (Array.isArray(v) && Number.isInteger(v[0]) ? v : null);
 
     /**
      * Renders JSON variable dumps as interactive HTML trees.
@@ -51,11 +56,11 @@
 
         containerToHtml(value, depth) {
             const isIndexed = Array.isArray(value);
-            const vd = !isIndexed && value._vd;
-            const cut = !isIndexed && value._cut || 0;
+            const vd = !isIndexed && toVd(value._vd);
+            const cut = isIndexed ? 0 : toCount(value._cut);
             const keys = isIndexed ? null : Object.keys(value);
             // Filter meta keys for non-indexed — inline to avoid allocation when no meta
-            const propKeys = !isIndexed && (vd || cut) ? keys.filter(k => k !== '_vd' && k !== '_cut') : keys;
+            const propKeys = !isIndexed && ('_vd' in value || '_cut' in value) ? keys.filter(k => k !== '_vd' && k !== '_cut') : keys;
             const len = isIndexed ? value.length : propKeys.length;
             const total = len + cut;
 
@@ -96,7 +101,7 @@
             for (let i = 0; i < max; i++) {
                 const k = isIndexed ? i : keys[i];
                 const v = isIndexed ? value[i] : value[keys[i]];
-                parts.push(isIndexed ? this.previewValue(v) : this.esc(String(k)) + ': ' + this.previewValue(v));
+                parts.push(isIndexed ? this.previewValue(v) : this.key(k) + ': ' + this.previewValue(v));
             }
             let result = parts.join(', ');
             if (len > max || cut > 0) result += ', …';
@@ -112,7 +117,7 @@
                     html += '<span class=sf-dump-index>' + i + '</span> => ';
                     html += this.toHtml(value[i], depth + 1);
                 } else {
-                    html += '"<span class=sf-dump-key>' + this.esc(keys[i]) + '</span>" => ';
+                    html += '"<span class=sf-dump-key>' + this.key(keys[i]) + '</span>" => ';
                     html += this.toHtml(value[keys[i]], depth + 1);
                 }
             }
@@ -123,9 +128,9 @@
         // ── Object/resource rendering ────────────────────────────────
 
         objectToHtml(value, keys, vd, cut, total, depth) {
-            const ref = vd[1] || 0;
-            const cls = vd[2] || null;
-            const prefixes = vd[3] || null;
+            const ref = toCount(vd[1]);
+            const cls = typeof vd[2] === 'string' ? vd[2] : null;
+            const prefixes = Array.isArray(vd[3]) ? vd[3] : null;
             const isResource = (vd[0] === 5);
 
             if (total === 0 && !ref) return (cls ? this.esc(cls) + ' ' : '') + '{}';
@@ -151,7 +156,7 @@
             const max = Math.min(keys.length, 8);
             const parts = [];
             for (let i = 0; i < max; i++) {
-                parts.push(this.esc(keys[i]) + ': ' + this.previewValue(value[keys[i]]));
+                parts.push(this.key(keys[i]) + ': ' + this.previewValue(value[keys[i]]));
             }
             let preview = parts.join(', ');
             if (keys.length > max || cut > 0) preview += ', …';
@@ -175,7 +180,7 @@
             for (let i = 0; i < keys.length; i++) {
                 if (i > 0) html += '\n';
                 const p = prefixes ? prefixes[i] : null;
-                const k = this.esc(keys[i]);
+                const k = this.key(keys[i]);
                 if (!p) {
                     html += '+<span class=sf-dump-public title="Public property">' + k + '</span>: ';
                 } else if (p === '+') {
@@ -201,7 +206,8 @@
             if (typeof v === 'boolean') return String(v);
             if (typeof v === 'number') return String(v);
             if (typeof v === 'object') {
-                if (v._vd) return (v._vd[2] || '') + ' {…}';
+                const vd = toVd(v._vd);
+                if (vd) return (typeof vd[2] === 'string' ? this.esc(vd[2]) : '') + ' {…}';
                 return Array.isArray(v) ? '[…]' : '{…}';
             }
             return '…';
@@ -211,6 +217,11 @@
 
         esc(s) {
             return String(s).replace(escRe, m => escMap[m]);
+        }
+
+        // Escaped HTML for a key, undoing the backslash escaping of user keys named like meta keys
+        key(k) {
+            return this.esc(String(k).replace(metaKeyRe, '$1'));
         }
     }
     PhpDebugBar.Widgets.VarDumpRenderer = VarDumpRenderer;
@@ -302,6 +313,12 @@
             span.setAttribute('title', key);
             span.textContent = key;
             dt.appendChild(span);
+
+            const link = PhpDebugBar.Widgets.externalLink(value);
+            if (link) {
+                dd.appendChild(link);
+                return;
+            }
 
             const rawValue = (value && value.value !== undefined) ? value.value : value;
             PhpDebugBar.Widgets.renderValueInto(dd, rawValue);

@@ -39,6 +39,20 @@ class HtmlDataFormatter extends DataFormatter implements AssetProvider
     ];
     protected ?array $dumperOptions = null;
 
+    /**
+     * Scalars are returned as-is by the parent, so escape them to always return safe HTML.
+     */
+    public function formatVar(mixed $data, bool $deep = true): mixed
+    {
+        $formatted = parent::formatVar($data, $deep);
+
+        if ($data === null || is_scalar($data)) {
+            return htmlspecialchars((string) $formatted, ENT_QUOTES, 'UTF-8');
+        }
+
+        return $formatted;
+    }
+
     protected function dumpClonedVar(Data $data): string
     {
         $dumper = $this->getDumper();

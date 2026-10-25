@@ -141,6 +141,13 @@ Generic widgets:
  - `VariablesListWidget`: an extension of `KVListWidget` to display a list of variables
  - `IFrameWidget`: renders an iframe
 
+String values are rendered as text, not HTML. To show a link in a `KVListWidget` (or one of the
+variable list widgets), set the value to an array with the link text and url:
+
+```php
+$data['telescope'] = ['value' => 'View in Telescope', '_link' => $url];
+```
+
 Data collectors related widgets:
 
  - `MessagesWidget`: for the `MessagesCollector`

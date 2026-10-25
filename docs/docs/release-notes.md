@@ -32,7 +32,7 @@ Debugbar 3.x brings a lot of new features and improvements:
 
 ### Changes to DataCollectors
 - TimeDataCollector is removed from the constructors, but a setTimeDataCollector method is added.
-- useHtmlVarDumper is removed. The HtmlDataFormatter is used by default. To use plain-text, the the default formatter to DataFormatter.
+- useHtmlVarDumper is removed. The HtmlDataFormatter is used by default. To use plain-text, set the default formatter to DataFormatter.
 
 ### Remove obsolete methods
 - Removed get/setBindAjaxHandlerToJquery (Use bind to fetch/xhr instead)

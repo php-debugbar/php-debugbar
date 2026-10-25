@@ -14,12 +14,19 @@
      * @return {string}
      */
     const htmlize = PhpDebugBar.Widgets.htmlize = function (text) {
-        return text.replace(/\n/g, '<br>').replace(/\s/g, '&nbsp;');
+        return String(text)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;')
+            .replace(/\n/g, '<br>')
+            .replace(/\s/g, '&nbsp;');
     };
 
     /**
      * Renders any value as a DOM element. Handles dump objects (with "_sd"
-     * marker), and plain HTML/scalar strings.
+     * marker) and scalars. Strings are always rendered as text.
      *
      * @param {string|object} value
      * @return {HTMLElement|string}
@@ -41,16 +48,59 @@
             return JSON.stringify(value);
         }
 
-        return value;
+        return document.createTextNode(value);
     };
 
-    PhpDebugBar.Widgets.renderValueInto = function (el, value, prettify) {
+    /**
+     * Renders a value into an element. Pass html=true only for strings that are known to be
+     * safe HTML, such as the output of the HtmlDataFormatter.
+     *
+     * @param {HTMLElement} el
+     * @param {string|object} value
+     * @param {boolean} [prettify]
+     * @param {boolean} [html]
+     */
+    PhpDebugBar.Widgets.renderValueInto = function (el, value, prettify, html) {
+        if (html && typeof value === 'string') {
+            el.insertAdjacentHTML('beforeend', value);
+            return;
+        }
         const rendered = renderValue(value, prettify);
         if (rendered instanceof Node) {
             el.append(rendered);
         } else {
             el.insertAdjacentHTML('beforeend', rendered);
         }
+    };
+
+    /**
+     * Checks that a url can not execute script when used as a link
+     *
+     * @param  {string} url
+     * @return {boolean}
+     */
+    const isSafeUrl = PhpDebugBar.Widgets.isSafeUrl = function (url) {
+        return typeof url === 'string' && !/^\s*(?:javascript|data|vbscript):/i.test(url);
+    };
+
+    /**
+     * Creates an external link for a {value, _link} item, as set by a collector.
+     * The text is rendered as text, so only the url is needed to be safe.
+     *
+     * @param  {object} value
+     * @return {HTMLElement|null}
+     */
+    const externalLink = PhpDebugBar.Widgets.externalLink = function (value) {
+        if (!value || !isSafeUrl(value._link)) {
+            return null;
+        }
+        const link = document.createElement('a');
+        link.classList.add(csscls('external-link'));
+        link.href = value._link;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = typeof value.value === 'string' ? value.value : value._link;
+        return link;
     };
 
     /**
@@ -83,14 +133,14 @@
             });
         }
 
-        if (value.url) {
+        if (value.url && isSafeUrl(value.url)) {
             const link = document.createElement('a');
             link.classList.add(csscls('editor-link'));
-            link.setAttribute(link.ajax ? 'title' : 'href', value.url);
+            link.setAttribute(value.ajax ? 'title' : 'href', value.url);
             link.addEventListener('click', (event) => {
                 event.stopPropagation();
                 if (value.ajax) {
-                    fetch(stmt.xdebug_link.url);
+                    fetch(value.url);
                     event.preventDefault();
                 }
             });
@@ -248,7 +298,8 @@
          * @param {object} value An item from the data array
          */
         itemRenderer(li, value) {
-            li.innerHTML = renderValue(value);
+            li.replaceChildren();
+            PhpDebugBar.Widgets.renderValueInto(li, value);
         }
     }
     PhpDebugBar.Widgets.ListWidget = ListWidget;
@@ -302,6 +353,11 @@
          */
         itemRenderer(dt, dd, key, value) {
             dt.textContent = key;
+            const link = externalLink(value);
+            if (link) {
+                dd.append(link);
+                return;
+            }
             dd.innerHTML = htmlize(value);
         }
     }
@@ -367,12 +423,16 @@
         }
 
         itemRenderer(dt, dd, key, value) {
-            const tempElement = document.createElement('i');
-            tempElement.innerHTML = key ?? '';
             const span = document.createElement('span');
-            span.setAttribute('title', tempElement.textContent);
-            span.innerHTML = key ?? '';
+            span.setAttribute('title', key ?? '');
+            span.textContent = key ?? '';
             dt.append(span);
+
+            const link = externalLink(value);
+            if (link) {
+                dd.append(link);
+                return;
+            }
 
             dd.innerHTML = value && value.value || value;
 
@@ -898,7 +958,7 @@
 
                                     const valueTd = document.createElement('td');
                                     valueTd.className = csscls('value');
-                                    PhpDebugBar.Widgets.renderValueInto(valueTd, measure.params[key]);
+                                    PhpDebugBar.Widgets.renderValueInto(valueTd, measure.params[key], false, measure.params_html);
                                     tr.append(valueTd);
                                     table.append(tr);
                                 }

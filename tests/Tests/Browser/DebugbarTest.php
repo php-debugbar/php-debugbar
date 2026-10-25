@@ -35,7 +35,7 @@ class DebugbarTest extends AbstractBrowserTestCase
         $this->assertEquals('Hello World!', $messages[0]);
 
         $items = $crawler->filter('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-list-item');
-        $this->assertCount(10, $items);
+        $this->assertCount(11, $items);
 
         // Close it again
         $client->click($this->getTabLink($crawler, 'messages'));

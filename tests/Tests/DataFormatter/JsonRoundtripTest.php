@@ -111,6 +111,11 @@ class JsonRoundtripTest extends DebugBarTestCase
         yield [[1, 2, 3], 'indexed array'];
         yield [['foo' => 'bar', 'baz' => 42], 'assoc array'];
         yield [['a' => [1, 2], 'b' => true], 'nested array'];
+        yield [['_cut' => '<b>x</b>', '_vd' => [0, '<b>x</b>'], '_sd' => 1, '\\_cut' => 2], 'array with meta-like keys'];
+        $metaObj = new \stdClass();
+        $metaObj->_vd = 'x';
+        $metaObj->_cut = 5;
+        yield [['obj' => $metaObj], 'object with meta-like properties'];
         // Objects
         yield [new \stdClass(), 'empty stdClass'];
         $obj = new \stdClass();

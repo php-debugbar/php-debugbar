@@ -147,6 +147,7 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
             'memory' => $memory ?? 0,
             'memory_str' => $this->getDataFormatter()->formatBytes($memory ?? 0),
             'params' => array_map([$this->getDataFormatter(), 'formatVar'], $params),
+            'params_html' => $this->isHtmlVarDumperUsed(),
             'collector' => $collector,
             'group' => $group,
         ];

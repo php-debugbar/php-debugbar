@@ -1,5 +1,18 @@
 # Data Formatter
 
+## Choosing a formatter
+
+The default formatter is `DebugBar\DataFormatter\HtmlDataFormatter`, which renders values as HTML using
+Symfony's VarDumper. Scalar values are escaped, so the output is always safe HTML.
+
+`DebugBar\DataFormatter\JsonDataFormatter` returns scalars as-is and complex values as a JSON dump tree
+that is rendered (and escaped) by the widgets. Strings are always displayed as text.
+You can change the formatter with `DataCollector::setDefaultDataFormatter()`:
+
+```php
+DebugBar\DataCollector\DataCollector::setDefaultDataFormatter(new DebugBar\DataFormatter\DataFormatter()); // Plain text
+```
+
 ## HTML variable formatting
 
 PHP Debug Bar integrates with Symfony's

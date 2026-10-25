@@ -64,6 +64,7 @@ class HttpCollector extends DataCollector implements Renderable, AssetProvider, 
             'status' => $status,
             'duration' => $duration ? $this->getDataFormatter()->formatDuration($duration) : null,
             'details' => $details,
+            'details_html' => $this->isHtmlVarDumperUsed(),
         ];
 
         if ($this->hasTimeDataCollector()) {

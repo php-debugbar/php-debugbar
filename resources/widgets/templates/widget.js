@@ -87,7 +87,7 @@
 
                             const valueTd = document.createElement('td');
                             valueTd.className = csscls('value');
-                            PhpDebugBar.Widgets.renderValueInto(valueTd, tpl.params[key]);
+                            PhpDebugBar.Widgets.renderValueInto(valueTd, tpl.params[key], false, tpl.params_html);
                             row.append(valueTd);
                             tbody.append(row);
                         }

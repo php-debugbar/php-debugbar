@@ -156,6 +156,7 @@ class DebugBarJsonCaster
         foreach ($keys as $i => $key) {
             $value = $node[$key];
             $prefix = $prefixes[$i] ?? null;
+            $key = DebugBarJsonDumper::unescapeKey($key);
 
             // Build the \0-encoded key for Symfony
             $encodedKey = match ($prefix) {
@@ -166,15 +167,30 @@ class DebugBarJsonCaster
                 default => sprintf(Caster::PATTERN_PRIVATE, $prefix, $key),  // private
             };
 
-            // Recursively wrap nested _vd objects
-            if (is_array($value) && isset($value['_vd'])) {
-                $a[$encodedKey] = new DebugBarJsonVar($value);
-            } else {
-                $a[$encodedKey] = $value;
-            }
+            $a[$encodedKey] = self::wrapValue($value);
         }
 
         return $a;
+    }
+
+    /**
+     * Recursively wrap nested _vd objects and unescape the keys of plain arrays.
+     */
+    private static function wrapValue(mixed $value): mixed
+    {
+        if (!is_array($value)) {
+            return $value;
+        }
+        if (isset($value['_vd'])) {
+            return new DebugBarJsonVar($value);
+        }
+
+        $result = [];
+        foreach ($value as $k => $v) {
+            $result[DebugBarJsonDumper::unescapeKey($k)] = self::wrapValue($v);
+        }
+
+        return $result;
     }
 
     private static function buildKey(array $entry, int $ht, int $index): string|int

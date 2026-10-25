@@ -107,6 +107,7 @@ class JsonDataFormatter extends DataFormatter implements AssetProvider
         $count = 0;
 
         foreach ($data as $k => $v) {
+            $k = DebugBarJsonDumper::escapeKey($k);
             if ($count >= $this->maxItems) {
                 $result['_cut'] = count($data) - $count;
                 break;

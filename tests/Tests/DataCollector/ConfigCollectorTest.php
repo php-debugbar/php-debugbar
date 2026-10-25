@@ -31,8 +31,9 @@ class ConfigCollectorTest extends DebugBarTestCase
 
     public function testHtmlRendering(): void
     {
-        $c = new ConfigCollector(['k' => ['one', 'two']]);
+        $c = new ConfigCollector();
         $c->setDataFormatter(new HtmlDataFormatter());
+        $c->setData(['k' => ['one', 'two']]);
 
         $data = $c->collect();
         $this->assertEquals(['k'], array_keys($data));
