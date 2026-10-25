@@ -175,6 +175,41 @@ class DebugbarTest extends AbstractBrowserTestCase
         $this->assertEquals('hello from ajax', $messages[0]);
     }
 
+    public function testDebugbarCrossOriginXhr(): void
+    {
+        $client = static::createPantherClient();
+        $client->request('GET', '/');
+        $client->waitFor('.phpdebugbar-body');
+
+        // Drop log entries from the page load
+        $client->manage()->getLog('browser');
+
+        // The page runs on 127.0.0.1, so requests to localhost are cross-origin
+        $client->executeAsyncScript(<<<'JS'
+            const done = arguments[arguments.length - 1];
+            const send = (url) => new Promise((resolve) => {
+                const xhr = new XMLHttpRequest();
+                xhr.onloadend = resolve;
+                xhr.open('GET', url);
+                xhr.send();
+            });
+            const origin = 'http://localhost:' + location.port;
+            send(origin + '/ajax_cors.php')
+                .then(() => send(origin + '/ajax_cors.php?expose=1'))
+                .then(done);
+            JS);
+
+        // Only the response that exposes the debugbar headers is loaded
+        $client->waitForElementToContain('.phpdebugbar-widgets-datasets-badge', 'ajax_cors.php?expose=1');
+        $this->assertStringContainsString('2', $client->getCrawler()->filter('.phpdebugbar-widgets-datasets-badge')->text());
+
+        $errors = array_filter(
+            $client->manage()->getLog('browser'),
+            fn(array $entry) => str_contains($entry['message'], 'unsafe header'),
+        );
+        $this->assertSame([], array_values($errors));
+    }
+
     public function testDebugbarAjaxRender(): void
     {
         $client = static::createPantherClient();
