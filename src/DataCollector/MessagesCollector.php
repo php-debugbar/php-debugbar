@@ -188,8 +188,11 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
                 if ($this->isJsonVarDumperUsed()) {
                     $contextJson[$key] = $formatted;
                     $context[$key] = null;
-                } else {
+                } elseif ($this->isHtmlVarDumperUsed()) {
                     $context[$key] = $formatted;
+                } else {
+                    // Context is rendered as HTML, so escape plain text output
+                    $context[$key] = htmlspecialchars((string) $formatted, ENT_QUOTES, 'UTF-8');
                 }
             }
         } else {

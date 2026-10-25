@@ -54,7 +54,7 @@ trait HasDataFormatter
     public static function getDefaultDataFormatter(): DataFormatterInterface
     {
         if (DataCollector::$defaultDataFormatter === null) {
-            DataCollector::$defaultDataFormatter = new HtmlDataFormatter();
+            DataCollector::$defaultDataFormatter = new JsonDataFormatter();
         }
         return DataCollector::$defaultDataFormatter;
     }

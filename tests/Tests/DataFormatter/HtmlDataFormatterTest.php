@@ -27,6 +27,25 @@ class HtmlDataFormatterTest extends DebugBarTestCase
         $this->assertStringNotContainsString(self::STYLE_STRING, $out); // make sure there's no dump header
     }
 
+    public function testScalarsAreEscaped(): void
+    {
+        $d = new HtmlDataFormatter();
+
+        $this->assertSame('&lt;img src=x onerror=alert(1)&gt;', $d->formatVar('<img src=x onerror=alert(1)>'));
+        $this->assertSame('&quot;a&quot; &amp; &#039;b&#039;', $d->formatVar('"a" & \'b\''));
+        $this->assertSame('123', $d->formatVar(123));
+        $this->assertSame('NULL', $d->formatVar(null));
+    }
+
+    public function testNestedStringsAreEscaped(): void
+    {
+        $d = new HtmlDataFormatter();
+        $out = $d->formatVar(['<script>alert(1)</script>']);
+
+        $this->assertStringNotContainsString('<script>', $out);
+        $this->assertStringContainsString('&lt;script&gt;', $out);
+    }
+
     public function testAssetProvider(): void
     {
         $d = new HtmlDataFormatter();

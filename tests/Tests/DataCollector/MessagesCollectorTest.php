@@ -8,6 +8,7 @@ use DebugBar\DataFormatter\DataFormatter;
 use DebugBar\DataFormatter\HtmlDataFormatter;
 use DebugBar\DataFormatter\JsonDataFormatter;
 use DebugBar\Tests\DebugBarTestCase;
+use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\MessagesCollector;
 use DebugBar\DataCollector\TimeDataCollector;
 
@@ -131,6 +132,36 @@ class MessagesCollectorTest extends DebugBarTestCase
         // Plain formatter: context holds formatted values, context_json is null
         $this->assertNull($msg['context_json']);
         $this->assertSame('value', $msg['context']['key']);
+    }
+
+    public function testPlainContextIsEscaped(): void
+    {
+        $c = new MessagesCollector();
+        $c->setDataFormatter(new DataFormatter());
+
+        $c->addMessage('test', 'info', ['key' => '<img src=x onerror=alert(1)>']);
+        $msg = $c->collect()['messages'][0];
+
+        $this->assertSame('&lt;img src=x onerror=alert(1)&gt;', $msg['context']['key']);
+    }
+
+    public function testHtmlContextIsEscaped(): void
+    {
+        $c = new MessagesCollector();
+        $c->setDataFormatter(new HtmlDataFormatter());
+
+        $c->addMessage('test', 'info', ['key' => '<img src=x onerror=alert(1)>']);
+        $msg = $c->collect()['messages'][0];
+
+        $this->assertSame('&lt;img src=x onerror=alert(1)&gt;', $msg['context']['key']);
+    }
+
+    public function testDefaultFormatterIsJson(): void
+    {
+        DataCollector::$defaultDataFormatter = null;
+        $c = new MessagesCollector();
+
+        $this->assertTrue($c->isJsonVarDumperUsed());
     }
 
     public function testTimeLabelForStringMessage(): void

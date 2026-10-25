@@ -33,6 +33,7 @@ $debugbar['messages']->addMessage($debugbar);
 $debugbar['messages']->addMessage('welcome!', 'success');
 $debugbar['messages']->addMessage('panic!', 'critical');
 $debugbar["messages"]->addMessage("<!--<script>");
+$debugbar['messages']->addMessage('Context with HTML', 'info', ['html' => '<img class="xss-probe" src="x">']);
 $debugbar["messages"]->addMessage("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et nibh non est ultrices suscipit a non arcu. Sed sit amet est vel mi facilisis varius. Pellentesque vitae rutrum massa. Praesent magna diam, viverra eu nibh a, commodo aliquam mi. Morbi placerat tortor nec efficitur vestibulum. Nunc imperdiet feugiat massa, eu ornare dui tincidunt eget. Suspendisse accumsan hendrerit ex a iaculis. Nullam molestie sapien sed sapien feugiat tempor. Vivamus mollis vitae arcu vel commodo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sollicitudin purus vitae mi rutrum, sit amet molestie felis pellentesque. Vivamus in pellentesque nisl, ut lobortis metus. In hac habitasse platea dictumst.");
 
 require __DIR__ . '/collectors/counter.php';

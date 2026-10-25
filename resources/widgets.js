@@ -14,12 +14,19 @@
      * @return {string}
      */
     const htmlize = PhpDebugBar.Widgets.htmlize = function (text) {
-        return text.replace(/\n/g, '<br>').replace(/\s/g, '&nbsp;');
+        return String(text)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;')
+            .replace(/\n/g, '<br>')
+            .replace(/\s/g, '&nbsp;');
     };
 
     /**
      * Renders any value as a DOM element. Handles dump objects (with "_sd"
-     * marker), and plain HTML/scalar strings.
+     * marker) and scalars. Strings are always rendered as text.
      *
      * @param {string|object} value
      * @return {HTMLElement|string}
@@ -41,7 +48,7 @@
             return JSON.stringify(value);
         }
 
-        return value;
+        return document.createTextNode(value);
     };
 
     PhpDebugBar.Widgets.renderValueInto = function (el, value, prettify) {
@@ -83,14 +90,14 @@
             });
         }
 
-        if (value.url) {
+        if (value.url && !/^\s*(?:javascript|data|vbscript):/i.test(value.url)) {
             const link = document.createElement('a');
             link.classList.add(csscls('editor-link'));
-            link.setAttribute(link.ajax ? 'title' : 'href', value.url);
+            link.setAttribute(value.ajax ? 'title' : 'href', value.url);
             link.addEventListener('click', (event) => {
                 event.stopPropagation();
                 if (value.ajax) {
-                    fetch(stmt.xdebug_link.url);
+                    fetch(value.url);
                     event.preventDefault();
                 }
             });
@@ -248,7 +255,8 @@
          * @param {object} value An item from the data array
          */
         itemRenderer(li, value) {
-            li.innerHTML = renderValue(value);
+            li.replaceChildren();
+            PhpDebugBar.Widgets.renderValueInto(li, value);
         }
     }
     PhpDebugBar.Widgets.ListWidget = ListWidget;
@@ -367,11 +375,9 @@
         }
 
         itemRenderer(dt, dd, key, value) {
-            const tempElement = document.createElement('i');
-            tempElement.innerHTML = key ?? '';
             const span = document.createElement('span');
-            span.setAttribute('title', tempElement.textContent);
-            span.innerHTML = key ?? '';
+            span.setAttribute('title', key ?? '');
+            span.textContent = key ?? '';
             dt.append(span);
 
             dd.innerHTML = value && value.value || value;
