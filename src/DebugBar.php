@@ -221,16 +221,11 @@ class DebugBar implements ArrayAccess
     public function collectMetaData(): array
     {
         if (php_sapi_name() === 'cli') {
-            $ip = gethostname();
-            if ($ip) {
-                $ip = gethostbyname($ip);
-            } else {
-                $ip = '127.0.0.1';
-            }
+            // Don't resolve gethostname(), the DNS lookup can block for a long time
             $request_variables = [
                 'method' => 'CLI',
                 'uri' => isset($_SERVER['SCRIPT_FILENAME']) ? realpath($_SERVER['SCRIPT_FILENAME']) : null,
-                'ip' => $ip,
+                'ip' => '127.0.0.1',
             ];
         } else {
             $request_variables = [
@@ -242,7 +237,7 @@ class DebugBar implements ArrayAccess
 
         $rid = $_SERVER['HTTP_PHPDEBUGBAR_REQUEST_ID'] ?? null;
         if (is_string($rid)) {
-            $rid = substr(preg_replace('/[^A-Za-z0-9\-_.]/', '', $rid), 0, 64);
+            $rid = substr(preg_replace('/[^A-Za-z0-9\-_.]/', '', $rid) ?? '', 0, 64);
         }
 
         return array_merge(
@@ -304,10 +299,7 @@ class DebugBar implements ArrayAccess
      */
     public function getData(): array
     {
-        if ($this->data === null) {
-            $this->collect();
-        }
-        return $this->data;
+        return $this->data ?? $this->collect();
     }
 
     public function reset(): void
@@ -332,13 +324,21 @@ class DebugBar implements ArrayAccess
      */
     public function getDataAsHeaders(string $headerName = 'phpdebugbar', int $maxHeaderLength = 4096, int $maxTotalHeaderLength = 250000): array
     {
-        $data = rawurlencode(json_encode([
+        $json = json_encode([
             'id' => $this->getCurrentRequestId(),
             'data' => $this->getData(),
-        ]));
+        ], JSON_INVALID_UTF8_IGNORE);
+
+        if ($json === false) {
+            $data = rawurlencode((string) json_encode([
+                'error' => 'Unable to encode data: ' . json_last_error_msg(),
+            ]));
+        } else {
+            $data = rawurlencode($json);
+        }
 
         if (strlen($data) > $maxTotalHeaderLength) {
-            $data = rawurlencode(json_encode([
+            $data = rawurlencode((string) json_encode([
                 'error' => 'Maximum header size exceeded',
             ]));
         }
@@ -380,7 +380,7 @@ class DebugBar implements ArrayAccess
             if (!$this->stackAlwaysUseSessionStorage && $this->hasStackedData()) {
                 $stackIds = $this->getStackedIds();
                 if (count($stackIds) > 0) {
-                    $headers["{$headerName}-stack"] = json_encode($stackIds);
+                    $headers["{$headerName}-stack"] = (string) json_encode($stackIds);
                 }
             }
         } else {
@@ -457,9 +457,10 @@ class DebugBar implements ArrayAccess
         $stackedData = $this->getStackedValue($delete);
 
         $datasets = [];
-        if ($this->isDataPersisted() && !$this->stackAlwaysUseSessionStorage) {
+        $storage = $this->getStorage();
+        if ($storage !== null && !$this->stackAlwaysUseSessionStorage) {
             foreach ($stackedData as $id => $data) {
-                $datasets[$id] = $this->getStorage()->get($id);
+                $datasets[$id] = $storage->get($id);
             }
         } else {
             $datasets = $stackedData;

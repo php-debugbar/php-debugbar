@@ -124,7 +124,11 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
 
     protected function compactMessageDump(?string $messageHtml): ?string
     {
-        $pos = strpos((string) $messageHtml, 'sf-dump-expanded');
+        if ($messageHtml === null) {
+            return null;
+        }
+
+        $pos = strpos($messageHtml, 'sf-dump-expanded');
         if ($pos !== false) {
             $messageHtml = substr_replace($messageHtml, 'sf-dump-compact', $pos, 16);
         }

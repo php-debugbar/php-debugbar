@@ -206,7 +206,7 @@ class JavascriptRenderer
      *     map?: string,
      *     default?: string,
      *     indicator?: string,
-     *     position?: string,
+     *     position?: 'left'|'right',
      *     order?: int
      *   }>,
      *   disable_controls?: string[],
@@ -214,6 +214,8 @@ class JavascriptRenderer
      *   ajax_handler_classname?: string,
      *   ajax_handler_auto_show?: bool,
      *   ajax_handler_enable_tab?: bool,
+     *   ajax_handler_capture_streamed?: bool,
+     *   ajax_handler_streamed_content_types?: string[]|null,
      *   defer_datasets?: bool,
      *   open_handler_classname?: string,
      *   open_handler_url?: string,

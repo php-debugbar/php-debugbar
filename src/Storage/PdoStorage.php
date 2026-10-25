@@ -71,7 +71,7 @@ class PdoStorage extends AbstractStorage
         $stmt = $this->pdo->prepare($this->getSqlQuery('get'));
         $stmt->execute([$id]);
 
-        if (($data = $stmt->fetchColumn(0)) !== false) {
+        if (is_string($data = $stmt->fetchColumn(0))) {
             return json_decode($data, true) ?: [];
         }
 
@@ -140,7 +140,7 @@ class PdoStorage extends AbstractStorage
     public function count(): int
     {
         $result = $this->pdo->query("SELECT COUNT(*) FROM {$this->tableName}");
-        return (int) $result->fetchColumn(0);
+        return $result === false ? 0 : (int) $result->fetchColumn(0);
     }
 
     public function prune(int $hours = 24): void

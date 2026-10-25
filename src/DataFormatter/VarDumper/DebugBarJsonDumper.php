@@ -39,7 +39,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
     /** @var array|null Current hash result being populated (the key→value object) */
     private ?array $currentResult = null;
 
-    /** @var list<string> Keys in insertion order for current hash */
+    /** @var list<int|string> Keys in insertion order for current hash */
     private array $currentKeys = [];
 
     /** @var Cursor|null Cursor state for the current item */
@@ -81,7 +81,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
     public function dump(Data $data): ?string
     {
         $array = $this->dumpAsArray($data);
-        return json_encode($array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        return json_encode($array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: null;
     }
 
     /**
@@ -140,7 +140,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
 
     public function leaveHash(Cursor $cursor, int $type, $class, bool $hasChild, int $cut): void
     {
-        $result = $this->currentResult;
+        $result = $this->currentResult ?? [];
         $keys = $this->currentKeys;
         $isObject = ($type === Cursor::HASH_OBJECT);
         $isResource = ($type === Cursor::HASH_RESOURCE);
@@ -237,7 +237,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
         }
 
         if ($cursor->hashKeyIsBinary) {
-            $key = mb_convert_encoding($key, 'UTF-8', 'ISO-8859-1');
+            $key = mb_convert_encoding((string) $key, 'UTF-8', 'ISO-8859-1');
         }
         $key = self::escapeKey($key);
 

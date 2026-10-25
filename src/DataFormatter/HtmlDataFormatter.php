@@ -58,7 +58,7 @@ class HtmlDataFormatter extends DataFormatter implements AssetProvider
         $dumper = $this->getDumper();
         if ($dumper instanceof HtmlDumper) {
             $dumper->setDumpHeader('');
-            return $dumper->dump($data, true, $this->getDisplayOptions());
+            return $dumper->dump($data, true, $this->getDisplayOptions()) ?? '';
         }
         return parent::dumpClonedVar($data);
 

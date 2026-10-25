@@ -18,7 +18,7 @@ class RedisStorage extends AbstractStorage
 
     public function getExpiration(): ?int
     {
-        return $this->autoPrune ? $this->autoPruneProbability * 3600 : null;
+        return $this->autoPrune ? $this->autoPrune * 3600 : null;
     }
 
     private function entryKey(string $id): string
@@ -53,13 +53,13 @@ class RedisStorage extends AbstractStorage
         if ($this->isPhpRedis()) {
             /** @var \Redis|\RedisCluster $r */
             $r = $this->redis;
-            $r->multi(\Redis::PIPELINE)
-                ->hMSet($entryKey, ['meta' => $metaJson, 'data' => $dataJson]);
+            $pipe = $r->multi(\Redis::PIPELINE);
+            $pipe->hMSet($entryKey, ['meta' => $metaJson, 'data' => $dataJson]);
             if ($expiration = $this->getExpiration()) {
-                $r->expire($entryKey, $expiration);
+                $pipe->expire($entryKey, $expiration);
             }
-            $r->zAdd($this->idxKey(), (float) $utime, $id)
-                ->exec();
+            $pipe->zAdd($this->idxKey(), (float) $utime, $id);
+            $pipe->exec();
             return;
         }
 
@@ -83,8 +83,8 @@ class RedisStorage extends AbstractStorage
             /** @var \Redis|\RedisCluster $r */
             $r = $this->redis;
             $res = $r->hMGet($entryKey, ['meta', 'data']);
-            $metaJson = $res['meta'] ?? null;
-            $dataJson = $res['data'] ?? null;
+            $metaJson = is_array($res) ? ($res['meta'] ?? null) : null;
+            $dataJson = is_array($res) ? ($res['data'] ?? null) : null;
         } else {
             /** @var \Predis\Client $r */
             $r = $this->redis;
@@ -337,6 +337,9 @@ class RedisStorage extends AbstractStorage
                 $pipe->hGet($this->entryKey($id), $field);
             }
             $vals = $pipe->exec();
+            if (!is_array($vals)) {
+                $vals = [];
+            }
 
             $out = [];
             foreach ($ids as $i => $id) {
@@ -358,6 +361,9 @@ class RedisStorage extends AbstractStorage
                 $pipe->hget($this->entryKey($id), $field);
             }
         });
+        if (!is_array($vals)) {
+            $vals = [];
+        }
 
         $out = [];
         foreach ($ids as $i => $id) {

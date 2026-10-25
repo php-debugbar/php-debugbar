@@ -104,6 +104,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $obj = new \stdClass();
         $obj->_cut = '<b>x</b>';
         $data = $d->formatVar(['obj' => $obj, '_vd' => 1]);
+        $this->assertIsArray($data);
 
         $this->assertArrayNotHasKey('_vd', $data);
         $this->assertSame(1, $data['\\_vd']);
@@ -315,7 +316,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
 
         // Reverse back to Data and dump as text
         $data = $reverse->toCloneVarData($formatted);
-        $actual = rtrim($cliDumper->dump($data, true));
+        $actual = rtrim($cliDumper->dump($data, true) ?? '');
 
         // Direct dump for comparison
         $cloner = new VarCloner();
@@ -324,7 +325,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
             $isObj = is_object($value) && !is_iterable($value);
             $directData = $directData->withMaxDepth($isObj ? 0 : 1);
         }
-        $expected = rtrim($cliDumper->dump($directData, true));
+        $expected = rtrim($cliDumper->dump($directData, true) ?? '');
 
         $this->assertEquals($expected, $actual, "Reverse roundtrip failed for: $description");
     }
@@ -432,6 +433,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
         ]);
 
         // All plain — no VarCloner needed
+        $this->assertIsArray($data);
         $this->assertSame('test', $data['name']);
         $this->assertSame(['a', 'b', 'c'], $data['tags']);
         $this->assertSame(['key' => 'value'], $data['meta']);
@@ -476,6 +478,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $d = new JsonDataFormatter();
 
         $data = $d->formatVar(['a' => [], 'b' => [1, []]]);
+        $this->assertIsArray($data);
         $this->assertSame([], $data['a']);
         $this->assertSame([1, []], $data['b']);
     }
@@ -494,6 +497,7 @@ class JsonDataFormatterTest extends DebugBarTestCase
         $d->resetClonerOptions(['max_string' => 5]);
 
         $data = $d->formatVar(['short', 'ABCDEFGHIJ']);
+        $this->assertIsArray($data);
         $this->assertSame('short', $data[0]);
         $this->assertSame('ABCDE[..5]', $data[1]);
     }

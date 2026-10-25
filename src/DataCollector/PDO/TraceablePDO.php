@@ -361,6 +361,6 @@ class TraceablePDO extends PDO
 
     public function __call(string $name, array $args): mixed
     {
-        return call_user_func_array([$this->pdo, $name], $args);
+        return $this->pdo->$name(...$args);
     }
 }

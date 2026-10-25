@@ -19,7 +19,7 @@ trait HidesMaskedValues
             $prefixed = is_null($prefix) ? null : "$prefix.$key";
             if (is_string($key) && $this->isMaskedKey($key)) {
                 $data[$key] = $this->maskValue($value);
-            } elseif (!is_null($prefix) && $this->isMaskedKey($prefixed)) {
+            } elseif ($prefixed !== null && $this->isMaskedKey($prefixed)) {
                 $data[$key] = $this->maskValue($value);
             } elseif (is_array($value)) {
                 $data[$key] = $this->hideMaskedValues($value, $prefixed ?? "$key");

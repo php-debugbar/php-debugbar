@@ -19,7 +19,7 @@ abstract class AbstractStorage implements StorageInterface
 
     public function getAutoPrune(): ?int
     {
-        return $this->autoPrune;
+        return $this->autoPrune === false ? null : $this->autoPrune;
     }
 
     public function autoPrune(): void
