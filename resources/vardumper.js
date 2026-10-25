@@ -5,7 +5,7 @@
     let lazySeq = 0;
     const escMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
     const escRe = /[&<>"]/g;
-    const metaKeyRe = /^\\(\\*_(?:vd|cut|sd))$/;
+    const metaKeyRe = /^\\(\\*_(?:vd|cut|sd|link))$/;
 
     // Metadata comes from the same JSON as user data, so only accept well-formed values
     const toCount = v => (Number.isInteger(v) && v > 0 ? v : 0);
@@ -313,6 +313,12 @@
             span.setAttribute('title', key);
             span.textContent = key;
             dt.appendChild(span);
+
+            const link = PhpDebugBar.Widgets.externalLink(value);
+            if (link) {
+                dd.appendChild(link);
+                return;
+            }
 
             const rawValue = (value && value.value !== undefined) ? value.value : value;
             PhpDebugBar.Widgets.renderValueInto(dd, rawValue);

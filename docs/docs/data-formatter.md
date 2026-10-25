@@ -2,11 +2,11 @@
 
 ## Choosing a formatter
 
-The default formatter is `DebugBar\DataFormatter\JsonDataFormatter`, which returns scalars as-is and
-complex values as a JSON dump tree that is rendered (and escaped) by the widgets. Strings are always
-displayed as text.
+The default formatter is `DebugBar\DataFormatter\HtmlDataFormatter`, which renders values as HTML using
+Symfony's VarDumper. Scalar values are escaped, so the output is always safe HTML.
 
-`HtmlDataFormatter` is deprecated. When used, scalar values are escaped, so the output is always safe HTML.
+`DebugBar\DataFormatter\JsonDataFormatter` returns scalars as-is and complex values as a JSON dump tree
+that is rendered (and escaped) by the widgets. Strings are always displayed as text.
 You can change the formatter with `DataCollector::setDefaultDataFormatter()`:
 
 ```php
@@ -117,7 +117,7 @@ $html = $this->getVarDumper()->renderCapturedVar($cloned_variable, array(1));
 An instance of `DebugBar\DataFormatter\DataFormatterInterface` is used by collectors to
 format variables into a text-only format.
 
-The default instance is `DebugBar\DataFormatter\JsonDataFormatter`. This can be modified
+The default instance is `DebugBar\DataFormatter\DataFormatter`. This can be modified
 using `DebugBar\DataCollector\DataCollector::setDefaultDataFormatter()`.
 
 You can use a custom formatter for each collector using `DataCollector::setDataFormatter()`.

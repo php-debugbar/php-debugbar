@@ -164,7 +164,8 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
         $messageJson = null;
 
         if ($isString) {
-            $messageText = $formattedMessage;
+            // Shown as text, so use the unescaped string when the formatter returns HTML
+            $messageText = $this->isHtmlVarDumperUsed() ? $message : $formattedMessage;
         } else {
             if ($message instanceof MessageInterface) {
                 $messageText = $message->getText();

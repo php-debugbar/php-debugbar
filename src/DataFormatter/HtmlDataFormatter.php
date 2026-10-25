@@ -15,8 +15,6 @@ use Symfony\Component\VarDumper\Dumper\HtmlDumper;
  *
  * Cloning is decoupled from rendering, so that dumper users can have the fastest possible cloning
  * performance, while delaying rendering until it is actually needed.
- *
- * @deprecated Use JsonDataFormatter instead
  */
 class HtmlDataFormatter extends DataFormatter implements AssetProvider
 {

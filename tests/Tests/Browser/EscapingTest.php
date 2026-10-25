@@ -68,4 +68,28 @@ class EscapingTest extends AbstractBrowserTestCase
         $this->assertStringContainsString('<span class="sf-dump-key">_cut</span>', $html, 'User _cut key should be shown as a regular key');
         $this->assertStringContainsString('&lt;img class="xss-probe" src="x"&gt;', $html, 'Payload should be shown as text');
     }
+
+    public function testCollectorLinksAreRendered(): void
+    {
+        $client = static::createPantherClient();
+        $client->request('GET', '/?formatter=json');
+        $client->waitFor('.phpdebugbar-body');
+
+        $html = $client->executeScript(<<<'JS'
+            const data = {
+                link: {value: 'View <b>details</b>', _link: 'https://example.com/?a=1&b=2'},
+                bad: {value: 'Bad', _link: 'javascript:alert(1)'},
+            };
+            return ['KVListWidget', 'HtmlVariableListWidget', 'JsonVariableListWidget'].map(name => {
+                const widget = new PhpDebugBar.Widgets[name]();
+                widget.set('data', data);
+                return widget.el.innerHTML;
+            });
+            JS);
+
+        foreach ($html as $widgetHtml) {
+            $this->assertStringContainsString('<a class="phpdebugbar-widgets-external-link" href="https://example.com/?a=1&amp;b=2" target="_blank" rel="noopener">View &lt;b&gt;details&lt;/b&gt;</a>', $widgetHtml);
+            $this->assertStringNotContainsString('javascript:', $widgetHtml);
+        }
+    }
 }

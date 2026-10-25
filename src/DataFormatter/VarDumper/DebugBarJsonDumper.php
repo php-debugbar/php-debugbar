@@ -23,7 +23,7 @@ use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
  *  - Resources: {"_vd": [5, 0, class, prefixes?], key: value, ...}
  *  - Cut collections: "_cut" key with remaining count
  *
- * User keys that collide with meta keys ("_vd", "_cut", "_sd") are escaped with a
+ * User keys that collide with meta keys ("_vd", "_cut", "_sd", "_link") are escaped with a
  * leading backslash, see escapeKey() / unescapeKey().
  *
  * Legacy format (with "t", "ht", "c", "_sd" keys) is still supported by the JS renderer.
@@ -48,7 +48,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
     /** @var int Current hash type */
     private int $currentHt = 0;
 
-    private const META_KEY_PATTERN = '/^\\\\*_(?:vd|cut|sd)$/';
+    private const META_KEY_PATTERN = '/^\\\\*_(?:vd|cut|sd|link)$/';
 
     /**
      * Escape a user key that would be mistaken for a meta key, by prepending a backslash.

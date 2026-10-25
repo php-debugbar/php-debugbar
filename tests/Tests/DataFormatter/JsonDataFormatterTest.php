@@ -92,10 +92,10 @@ class JsonDataFormatterTest extends DebugBarTestCase
     public function testMetaLikeKeysAreEscaped(): void
     {
         $d = new JsonDataFormatter();
-        $data = $d->formatVar(['_cut' => '<b>x</b>', '_vd' => [0, 1], '\\_sd' => 1, 'x_cut' => 2]);
+        $data = $d->formatVar(['_cut' => '<b>x</b>', '_vd' => [0, 1], '\\_sd' => 1, 'x_cut' => 2, '_link' => 'https://example.com']);
 
         // User keys must never be read back as _cut/_vd metadata
-        $this->assertSame(['\\_cut' => '<b>x</b>', '\\_vd' => [0, 1], '\\\\_sd' => 1, 'x_cut' => 2], $data);
+        $this->assertSame(['\\_cut' => '<b>x</b>', '\\_vd' => [0, 1], '\\\\_sd' => 1, 'x_cut' => 2, '\\_link' => 'https://example.com'], $data);
     }
 
     public function testMetaLikeKeysAreEscapedForObjects(): void

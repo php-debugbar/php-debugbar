@@ -156,12 +156,24 @@ class MessagesCollectorTest extends DebugBarTestCase
         $this->assertSame('&lt;img src=x onerror=alert(1)&gt;', $msg['context']['key']);
     }
 
-    public function testDefaultFormatterIsJson(): void
+    public function testDefaultFormatterIsHtml(): void
     {
         DataCollector::$defaultDataFormatter = null;
         $c = new MessagesCollector();
 
-        $this->assertTrue($c->isJsonVarDumperUsed());
+        $this->assertTrue($c->isHtmlVarDumperUsed());
+    }
+
+    public function testStringMessageIsNotEscapedTwiceWithHtmlFormatter(): void
+    {
+        $c = new MessagesCollector();
+        $c->setDataFormatter(new HtmlDataFormatter());
+
+        $c->addMessage('a <b> & c');
+        $msg = $c->collect()['messages'][0];
+
+        // Message text is rendered with textContent, so it must not be HTML escaped
+        $this->assertSame('a <b> & c', $msg['message']);
     }
 
     public function testTimeLabelForStringMessage(): void

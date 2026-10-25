@@ -82,6 +82,7 @@ class TemplateCollector extends DataCollector implements Renderable, AssetProvid
             'name' => $name,
             'param_count' => $this->collect_data ? count($params) : null,
             'params' => $params,
+            'params_html' => $this->collect_data !== 'keys' && $this->isHtmlVarDumperUsed(),
             'start' => microtime(true),
             'type' => $type,
             'hash' => $hash,
