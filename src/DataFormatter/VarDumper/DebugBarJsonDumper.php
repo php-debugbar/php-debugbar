@@ -23,6 +23,9 @@ use Symfony\Component\VarDumper\Dumper\DataDumperInterface;
  *  - Resources: {"_vd": [5, 0, class, prefixes?], key: value, ...}
  *  - Cut collections: "_cut" key with remaining count
  *
+ * User keys that collide with meta keys ("_vd", "_cut", "_sd") are escaped with a
+ * leading backslash, see escapeKey() / unescapeKey().
+ *
  * Legacy format (with "t", "ht", "c", "_sd" keys) is still supported by the JS renderer.
  */
 class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
@@ -44,6 +47,33 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
 
     /** @var int Current hash type */
     private int $currentHt = 0;
+
+    private const META_KEY_PATTERN = '/^\\\\*_(?:vd|cut|sd)$/';
+
+    /**
+     * Escape a user key that would be mistaken for a meta key, by prepending a backslash.
+     * Keys that already look like escaped meta keys get an extra backslash, so this is reversible.
+     */
+    public static function escapeKey(int|string $key): int|string
+    {
+        if (is_string($key) && preg_match(self::META_KEY_PATTERN, $key)) {
+            return '\\' . $key;
+        }
+
+        return $key;
+    }
+
+    /**
+     * Reverse escapeKey() for display.
+     */
+    public static function unescapeKey(int|string $key): int|string
+    {
+        if (is_string($key) && $key !== '' && $key[0] === '\\' && preg_match(self::META_KEY_PATTERN, $key)) {
+            return substr($key, 1);
+        }
+
+        return $key;
+    }
 
     /**
      * Dump a Data object and return the JSON string.
@@ -209,6 +239,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
         if ($cursor->hashKeyIsBinary) {
             $key = mb_convert_encoding($key, 'UTF-8', 'ISO-8859-1');
         }
+        $key = self::escapeKey($key);
 
         switch ($cursor->hashType) {
             case Cursor::HASH_INDEXED:
@@ -231,7 +262,7 @@ class DebugBarJsonDumper implements DumperInterface, DataDumperInterface
                     $this->currentKeys[] = $key;
                 } elseif (($pos = strpos($key, "\0", 1)) !== false && $pos > 0) {
                     $prefix = substr($key, 1, $pos - 1);
-                    $propName = substr($key, $pos + 1);
+                    $propName = self::escapeKey(substr($key, $pos + 1));
                     $this->currentResult[$propName] = $value;
                     $this->currentKeys[] = $propName;
                     // Store prefix marker (cleaned up in buildPrefixes)
