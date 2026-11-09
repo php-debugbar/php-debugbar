@@ -1332,6 +1332,7 @@ $js
 
         if (($this->initialization & self::INITIALIZE_CONSTRUCTOR) === self::INITIALIZE_CONSTRUCTOR) {
             $initializeOptions = $this->getInitializeOptions();
+            $js .= "window.PhpDebugBar.instance?.destroy?.();\n";
             $js .= sprintf("const %s = new %s(%s);\n", $this->variableName, $this->javascriptClass, $initializeOptions ? json_encode((object) $initializeOptions) : '');
         }
 

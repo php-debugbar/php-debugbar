@@ -722,6 +722,8 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             } catch (_error) {
                 this.isIframe = false;
             }
+            // Aborted by destroy(), which removes every listener this instance adds outside its own element
+            this.listeners = new AbortController();
             this.registerResizeHandler();
             this.registerMediaListener();
             this.registerNavigationListener();
@@ -744,7 +746,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
 
             const f = this.resize.bind(this);
             this.respCSSSize = 0;
-            window.addEventListener('resize', f);
+            window.addEventListener('resize', f, { signal: this.listeners.signal });
             setTimeout(f, 20);
         }
 
@@ -754,7 +756,7 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 if (this.options.theme === 'auto') {
                     this.setTheme('auto');
                 }
-            });
+            }, { signal: this.listeners.signal });
         }
 
         /**
@@ -772,8 +774,19 @@ window.PhpDebugBar = window.PhpDebugBar || {};
             for (const eventName of events) {
                 document.addEventListener(eventName, () => {
                     this.recalculateBodyPadding();
-                });
+                }, { signal: this.listeners.signal });
             }
+        }
+
+        /**
+         * Removes the listeners this instance added to window and document.
+         *
+         * Those listeners outlive the page, so without this a page that renders the debugbar again
+         * (an SPA navigation swapping in a new body) keeps the previous instance, its element and the
+         * whole previous page in memory.
+         */
+        destroy() {
+            this.listeners.abort();
         }
 
         /**
