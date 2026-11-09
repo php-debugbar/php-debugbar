@@ -1296,7 +1296,7 @@
                 if (!this.badge.contains(e.target) && !this.panel.contains(e.target)) {
                     this.panel.hidden = true;
                 }
-            });
+            }, { signal: debugbar.listeners?.signal });
         }
 
         render() {
