@@ -1289,7 +1289,6 @@ class JavascriptRenderer
                     $js .= $this->getLoadDatasetCode($id, '(stacked)', false);
                 } else {
                     $js .= $this->getAddDatasetCode($id, $data, '(stacked)', false);
-
                 }
             }
         }
@@ -1303,15 +1302,10 @@ class JavascriptRenderer
         }
 
         $nonce = $this->getNonceAttribute();
-        $varName = $this->getVariableName();
 
         return "<script type=\"text/javascript\"{$nonce}>
 (function () {
-    const renderDebugbar = function () {
-$js
-    window.PhpDebugBar.instance = {$varName};
-    window.{$varName} = {$varName};
-    };
+    const renderDebugbar = function () {\n{$js}    };
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', renderDebugbar, { once: true });
@@ -1328,51 +1322,55 @@ $js
      */
     protected function getJsInitializationCode(): string
     {
+        $varName = $this->getVariableName();
         $js = '';
 
         if (($this->initialization & self::INITIALIZE_CONSTRUCTOR) === self::INITIALIZE_CONSTRUCTOR) {
             $initializeOptions = $this->getInitializeOptions();
-            $js .= sprintf("const %s = new %s(%s);\n", $this->variableName, $this->javascriptClass, $initializeOptions ? json_encode((object) $initializeOptions) : '');
+            $js .= sprintf("const %s = new %s(%s);\n", $varName, $this->javascriptClass, $initializeOptions ? json_encode((object) $initializeOptions) : '');
         }
 
         if (($this->initialization & self::INITIALIZE_CONTROLS) === self::INITIALIZE_CONTROLS) {
-            $js .= $this->getJsControlsDefinitionCode($this->variableName);
+            $js .= $this->getJsControlsDefinitionCode($varName);
         }
 
         if ($this->ajaxHandlerClass) {
             $js .= sprintf(
                 "%s.ajaxHandler = new %s(%s, undefined, %s);\n",
-                $this->variableName,
+                $varName,
                 $this->ajaxHandlerClass,
-                $this->variableName,
+                $varName,
                 $this->ajaxHandlerAutoShow ? 'true' : 'false',
             );
             if ($this->ajaxHandlerCaptureStreamed) {
-                $js .= sprintf("%s.ajaxHandler.captureStreamed = true;\n", $this->variableName);
+                $js .= sprintf("%s.ajaxHandler.captureStreamed = true;\n", $varName);
                 if ($this->ajaxHandlerStreamedContentTypes !== null) {
                     $js .= sprintf(
                         "%s.ajaxHandler.streamedContentTypes = %s;\n",
-                        $this->variableName,
+                        $varName,
                         json_encode(array_values($this->ajaxHandlerStreamedContentTypes)),
                     );
                 }
             }
             if ($this->ajaxHandlerBindToFetch) {
-                $js .= sprintf("%s.ajaxHandler.bindToFetch();\n", $this->variableName);
+                $js .= sprintf("%s.ajaxHandler.bindToFetch();\n", $varName);
             }
             if ($this->ajaxHandlerBindToXHR) {
-                $js .= sprintf("%s.ajaxHandler.bindToXHR();\n", $this->variableName);
+                $js .= sprintf("%s.ajaxHandler.bindToXHR();\n", $varName);
             }
         }
 
         if ($this->openHandlerUrl !== null) {
             $js .= sprintf(
                 "%s.setOpenHandler(new %s(%s));\n",
-                $this->variableName,
+                $varName,
                 $this->openHandlerClass,
                 json_encode(["url" => $this->openHandlerUrl]),
             );
         }
+
+        $js .= sprintf("window.PhpDebugBar.instance = %s;\n", $varName);
+        $js .= sprintf("window.%s = %s;\n", $varName, $varName);
 
         return $js;
     }
@@ -1481,7 +1479,7 @@ $js
     {
         $js = sprintf(
             "%s.addDataSet(%s, %s, %s, %s);\n",
-            $this->variableName,
+            $this->getVariableName(),
             json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_INVALID_UTF8_IGNORE),
             json_encode($requestId),
             json_encode($suffix ?: ''),
@@ -1499,7 +1497,7 @@ $js
     {
         $js = sprintf(
             "%s.loadDataSet(%s, %s, null, %s);\n",
-            $this->variableName,
+            $this->getVariableName(),
             json_encode($requestId),
             json_encode($suffix ?: ''),
             json_encode($show),
