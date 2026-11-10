@@ -1282,13 +1282,14 @@ class JavascriptRenderer
     public function render(bool $initialize = true, bool $renderStackedData = true): string
     {
         $js = $initialize ? $this->getJsInitializationCode() : '';
+        $loadJs = '';
 
         if ($renderStackedData && $this->debugBar->hasStackedData()) {
             foreach ($this->debugBar->getStackedData() as $id => $data) {
                 if ($this->areDatasetsDeferred()) {
-                    $js .= $this->getLoadDatasetCode($id, '(stacked)', false);
+                    $loadJs .= $this->getLoadDatasetCode($id, '(stacked)', false);
                 } else {
-                    $js .= $this->getAddDatasetCode($id, $data, '(stacked)', false);
+                    $loadJs .= $this->getAddDatasetCode($id, $data, '(stacked)', false);
                 }
             }
         }
@@ -1296,18 +1297,22 @@ class JavascriptRenderer
         $suffix = !$initialize ? '(ajax)' : null;
         if ($this->areDatasetsDeferred()) {
             $this->debugBar->getData();
-            $js .= $this->getLoadDatasetCode($this->debugBar->getCurrentRequestId(), $suffix);
+            $loadJs .= $this->getLoadDatasetCode($this->debugBar->getCurrentRequestId(), $suffix);
         } else {
-            $js .= $this->getAddDatasetCode($this->debugBar->getCurrentRequestId(), $this->debugBar->getData(), $suffix);
+            $loadJs .= $this->getAddDatasetCode($this->debugBar->getCurrentRequestId(), $this->debugBar->getData(), $suffix);
         }
 
         $nonce = $this->getNonceAttribute();
 
         return "<script type=\"text/javascript\"{$nonce}>
 (function () {
-    const renderDebugbar = function () {\n{$js}    };
+    const renderDebugbar = function () {\n{$js}loadDebugbarData();\n    };
+    const loadDebugbarData = function () {\n{$loadJs}    }
 
-    if (document.readyState === 'loading') {
+    if (window.PhpDebugBar.instance) {
+        document.body.appendChild(window.PhpDebugBar.instance.el);
+        loadDebugbarData();
+    } else if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', renderDebugbar, { once: true });
     } else {
         renderDebugbar();
@@ -1479,7 +1484,7 @@ class JavascriptRenderer
     {
         $js = sprintf(
             "%s.addDataSet(%s, %s, %s, %s);\n",
-            $this->getVariableName(),
+            'window.'.$this->getVariableName(),
             json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_INVALID_UTF8_IGNORE),
             json_encode($requestId),
             json_encode($suffix ?: ''),
@@ -1497,7 +1502,7 @@ class JavascriptRenderer
     {
         $js = sprintf(
             "%s.loadDataSet(%s, %s, null, %s);\n",
-            $this->getVariableName(),
+            'window.'.$this->getVariableName(),
             json_encode($requestId),
             json_encode($suffix ?: ''),
             json_encode($show),

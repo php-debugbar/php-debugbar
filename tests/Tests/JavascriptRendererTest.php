@@ -385,7 +385,7 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->r->setJavascriptClass('Foobar');
         $this->r->setVariableName('foovar');
         $this->r->setAjaxHandlerClass(null);
-        $this->assertStringStartsWith("<script type=\"text/javascript\">\n(function () {\n    const renderDebugbar = function () {\nconst foovar = new Foobar({\"spaNavigationEvents\":[\"livewire:navigated\",\"turbo:load\",\"htmx:afterSettle\"]});\nfoovar.addDataSet(", $this->r->render());
+        $this->assertStringStartsWith("<script type=\"text/javascript\">\n(function () {\n    const renderDebugbar = function () {\nconst foovar = new Foobar({\"spaNavigationEvents\":[\"livewire:navigated\",\"turbo:load\",\"htmx:afterSettle\"]});\nwindow.PhpDebugBar.instance = foovar;\nwindow.foovar = foovar;\nloadDebugbarData();\n    };\n    const loadDebugbarData = function () {\nwindow.foovar.addDataSet(", $this->r->render());
     }
 
     public function testRenderConstructorWithNonce(): void
