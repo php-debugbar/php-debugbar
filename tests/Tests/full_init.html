@@ -13,4 +13,9 @@ phpdebugbar.restoreState();
 phpdebugbar.ajaxHandler = new PhpDebugBar.AjaxHandler(phpdebugbar, undefined, true);
 phpdebugbar.ajaxHandler.bindToFetch();
 phpdebugbar.ajaxHandler.bindToXHR();
-phpdebugbar.addDataSet(
+window.PhpDebugBar.instance = phpdebugbar;
+window.phpdebugbar = phpdebugbar;
+loadDebugbarData();
+    };
+    const loadDebugbarData = function () {
+window.phpdebugbar.addDataSet(
