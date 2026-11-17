@@ -779,14 +779,19 @@ window.PhpDebugBar = window.PhpDebugBar || {};
         }
 
         /**
-         * Removes the listeners this instance added to window and document.
+         * Removes the listeners this instance added to window and document, and stops the dataset
+         * switcher's auto-scan.
          *
-         * Those listeners outlive the page, so without this a page that renders the debugbar again
-         * (an SPA navigation swapping in a new body) keeps the previous instance, its element and the
-         * whole previous page in memory.
+         * Those listeners and the scan's timer outlive the page, so without this a page that renders
+         * the debugbar again (an SPA navigation swapping in a new body) keeps the previous instance,
+         * its element and the whole previous page in memory, and a scan left on keeps polling the
+         * open handler every second.
          */
         destroy() {
             this.listeners.abort();
+            if (this.datasetSwitcherWidget) {
+                this.datasetSwitcherWidget.isScanning = false;
+            }
         }
 
         /**

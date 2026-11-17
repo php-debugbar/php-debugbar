@@ -80,6 +80,37 @@ class ReinitializeTest extends AbstractBrowserTestCase
         $this->assertSame(0, $calls);
     }
 
+    public function testPreviousDatasetSwitcherStopsScanning(): void
+    {
+        $client = static::createPantherClient();
+        $client->manage()->window()->setSize(new WebDriverDimension(1920, 800));
+        $client->request('GET', '/');
+        $client->waitFor('.phpdebugbar-body');
+
+        // Turns auto-scan on, then counts the open handler requests the previous instance makes
+        // once the initialization script has run again.
+        $client->executeScript(<<<'JS'
+            const previous = window.PhpDebugBar.instance;
+            window.previousDebugBar = previous;
+            window.previousScans = 0;
+            const find = previous.openHandler.find.bind(previous.openHandler);
+            previous.openHandler.find = (...args) => { window.previousScans++; return find(...args); };
+            previous.datasetSwitcherWidget.refreshBtn.click();
+            previous.el.remove();
+
+            const init = [...document.scripts].find((script) => script.textContent.includes('renderDebugbar'));
+            const again = document.createElement('script');
+            again.textContent = init.textContent;
+            document.body.append(again);
+            window.scansAtReinit = window.previousScans;
+        JS);
+
+        $client->waitFor('.phpdebugbar-body');
+        usleep(2500000);
+
+        $this->assertSame(0, $client->executeScript('return window.previousScans - window.scansAtReinit;'));
+    }
+
     public function testPreviousDatasetSwitcherIgnoresDocumentClicks(): void
     {
         $client = static::createPantherClient();
