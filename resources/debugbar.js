@@ -1409,6 +1409,22 @@ window.PhpDebugBar = window.PhpDebugBar || {};
         }
 
         /**
+         * Attach the debug bar to an element
+         *
+         * @this {DebugBar}
+         */
+        appendTo(el) {
+            el.appendChild(this.el);
+            if (this.openHandler) {
+                el.appendChild(this.openHandler.el);
+                el.appendChild(this.openHandler.overlay);
+            }
+            if (this.datasetSwitcherWidget) {
+                el.appendChild(this.datasetSwitcherWidget.panel);
+            }
+        }
+
+        /**
          * Recomputes the margin-bottom css property of the body so
          * that the debug bar never hides any content
          */

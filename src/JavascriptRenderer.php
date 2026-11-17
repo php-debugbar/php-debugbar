@@ -1306,11 +1306,11 @@ class JavascriptRenderer
 
         return "<script type=\"text/javascript\"{$nonce}>
 (function () {
-    const renderDebugbar = function () {\n{$js}loadDebugbarData();\n    };
-    const loadDebugbarData = function () {\n{$loadJs}    }
+    function renderDebugbar() {\n{$js}loadDebugbarData();\n    };
+    function loadDebugbarData() {\n{$loadJs}    };
 
-    if (window.PhpDebugBar.instance) {
-        document.body.appendChild(window.PhpDebugBar.instance.el);
+    if (window.PhpDebugBar?.instance) {
+        window.PhpDebugBar.instance.appendTo(document.body);
         loadDebugbarData();
     } else if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', renderDebugbar, { once: true });
