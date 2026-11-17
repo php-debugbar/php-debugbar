@@ -4,6 +4,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
     const PhpDebugBar = window.PhpDebugBar;
     PhpDebugBar.utils = PhpDebugBar.utils || {};
 
+    if (PhpDebugBar.instance) {
+        return;
+    }
+
     /**
      * Returns the value from an object property.
      * Using dots in the key, it is possible to retrieve nested property values.

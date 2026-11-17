@@ -1,5 +1,9 @@
 /* global phpdebugbar_hljs */
 (function () {
+    if (PhpDebugBar.Widgets) {
+        return;
+    }
+
     /**
      * @namespace
      */
