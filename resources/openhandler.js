@@ -3,7 +3,7 @@
         return PhpDebugBar.utils.csscls(cls, 'phpdebugbar-openhandler-');
     };
 
-    PhpDebugBar.OpenHandler = PhpDebugBar.Widget.extend({
+    PhpDebugBar.OpenHandler = PhpDebugBar.OpenHandler || PhpDebugBar.Widget.extend({
 
         className: 'phpdebugbar-openhandler',
 

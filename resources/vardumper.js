@@ -1,4 +1,8 @@
 (function () {
+    if (PhpDebugBar.Widgets?.VarDumpRenderer) {
+        return;
+    }
+
     const csscls = PhpDebugBar.utils.makecsscls('phpdebugbar-widgets-');
 
     const lazyStore = new Map();
