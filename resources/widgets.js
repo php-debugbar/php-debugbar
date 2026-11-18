@@ -153,7 +153,7 @@
 
         return linkWrapper;
     };
-    
+
     const copyToClipboard = PhpDebugBar.Widgets.copyToClipboard = async function (input) {
         const text = input instanceof Element ? input.innerText : input;
         if (navigator.clipboard && window.isSecureContext) {
@@ -163,7 +163,7 @@
             } catch (err) {}
         }
 
-        let success = false;        
+        let success = false;
         const textarea = document.createElement("textarea");
         textarea.value = text;
         textarea.style.position = "fixed";
@@ -177,7 +177,7 @@
             textarea.setSelectionRange(0, 99999);
             success = document.execCommand("copy");
         } catch (err) {}
-        
+
         document.body.removeChild(textarea);
         return success;
     }

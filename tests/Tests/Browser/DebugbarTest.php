@@ -213,7 +213,7 @@ class DebugbarTest extends AbstractBrowserTestCase
     public function testDebugbarAjaxRender(): void
     {
         $client = static::createPantherClient();
-        $size = new WebDriverDimension(1920, 800);
+        $size = new WebDriverDimension(1920, 900);
         $client->manage()->window()->setSize($size);
 
         $crawler = $client->request('GET', '/');
@@ -319,5 +319,32 @@ class DebugbarTest extends AbstractBrowserTestCase
 
         $client->takeScreenshot(__DIR__ . '/../../screenshots/iframe.png');
 
+    }
+
+    /**
+     * Loads the demo, then runs its initialization script a second time the way an SPA navigation
+     * does, after taking the first toolbar off the page.
+     */
+    public function testReuseInstance(): void
+    {
+        $client = static::createPantherClient();
+        $client->manage()->window()->setSize(new WebDriverDimension(1920, 800));
+        $client->request('GET', '/');
+        $client->waitFor('.phpdebugbar-body');
+
+        $client->executeScript(<<<EOTXT
+            const previous = window.PhpDebugBar.instance;
+            window.previousDebugBar = previous;
+            previous.el.remove();
+
+            const init = [...document.scripts].find((script) => script.textContent.includes('renderDebugbar'));
+            const again = document.createElement('script');
+            again.textContent = init.textContent;
+            document.body.append(again);
+            EOTXT);
+
+        $client->waitFor('.phpdebugbar-body');
+
+        $this->assertTrue($client->executeScript('return window.PhpDebugBar.instance === window.previousDebugBar;'));
     }
 }

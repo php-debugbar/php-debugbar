@@ -1484,7 +1484,7 @@ class JavascriptRenderer
     {
         $js = sprintf(
             "%s.addDataSet(%s, %s, %s, %s);\n",
-            'window.'.$this->getVariableName(),
+            'window.' . $this->getVariableName(),
             json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_INVALID_UTF8_IGNORE),
             json_encode($requestId),
             json_encode($suffix ?: ''),
@@ -1502,7 +1502,7 @@ class JavascriptRenderer
     {
         $js = sprintf(
             "%s.loadDataSet(%s, %s, null, %s);\n",
-            'window.'.$this->getVariableName(),
+            'window.' . $this->getVariableName(),
             json_encode($requestId),
             json_encode($suffix ?: ''),
             json_encode($show),
