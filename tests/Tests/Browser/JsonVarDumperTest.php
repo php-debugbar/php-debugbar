@@ -175,4 +175,60 @@ class JsonVarDumperTest extends AbstractBrowserTestCase
         $traces = $crawler->filter('.phpdebugbar-panel[data-collector=exceptions] pre.sf-dump');
         $this->assertGreaterThan(0, $traces->count(), 'Stack traces should render as dump trees');
     }
+
+    /**
+     * Loads the demo, then runs the asset bundle and the initialization script again, the way an SPA
+     * navigation does, after taking the first toolbar off the page. Leaves the messages panel open.
+     */
+    public function testExpandOnClickAfterRerun(): void
+    {
+        $client = static::createPantherClient();
+
+        $client->manage()->window()->setSize(new WebDriverDimension(1920, 800));
+        $client->request('GET', '/?formatter=json');
+        $client->waitFor('.phpdebugbar-body');
+
+        $client->executeScript(<<<'JS'
+            window.PhpDebugBar.instance.el.remove();
+
+            const bundle = [...document.scripts].find((script) => script.src.includes('assets.php') && script.src.includes('js'));
+            const init = [...document.scripts].find((script) => script.textContent.includes('renderDebugbar'));
+
+            const bundleAgain = document.createElement('script');
+            bundleAgain.src = bundle.src;
+            bundleAgain.onload = () => {
+                const initAgain = document.createElement('script');
+                initAgain.textContent = init.textContent;
+                document.body.append(initAgain);
+            };
+            document.body.append(bundleAgain);
+        JS);
+
+        $crawler = $client->waitFor('.phpdebugbar-body');
+        usleep(1000);
+
+        if (!$this->isTabActive($crawler, 'messages')) {
+            $client->click($this->getTabLink($crawler, 'messages'));
+        }
+
+        $crawler = $client->waitForVisibility('.phpdebugbar-panel[data-collector=messages] .phpdebugbar-widgets-list');
+
+        // Marks the toggle of the first collapsed node, so the assertion reads that node alone.
+        $marked = $client->executeScript(<<<'JS'
+            const panel = document.querySelector('.phpdebugbar-panel[data-collector=messages]');
+            const toggle = [...panel.querySelectorAll('a.sf-dump-toggle')]
+                .find((a) => a.nextElementSibling?.nextElementSibling?.classList.contains('sf-dump-compact'));
+            toggle?.setAttribute('data-rerun-toggle', '');
+            return !! toggle;
+        JS);
+        $this->assertTrue($marked, 'The demo should render a collapsed node');
+
+        $crawler->filter('a[data-rerun-toggle]')->click();
+        usleep(500);
+
+        $state = $client->executeScript(
+            "return document.querySelector('a[data-rerun-toggle]').nextElementSibling.nextElementSibling.className;"
+        );
+        $this->assertStringContainsString('sf-dump-expanded', $state, 'One click should expand the node after the bundle ran again');
+    }
 }
