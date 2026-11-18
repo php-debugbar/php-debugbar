@@ -333,15 +333,15 @@ class DebugbarTest extends AbstractBrowserTestCase
         $client->waitFor('.phpdebugbar-body');
 
         $client->executeScript(<<<'JS'
-            const previous = window.PhpDebugBar.instance;
-            window.previousDebugBar = previous;
-            previous.el.remove();
+                const previous = window.PhpDebugBar.instance;
+                window.previousDebugBar = previous;
+                previous.el.remove();
 
-            const init = [...document.scripts].find((script) => script.textContent.includes('renderDebugbar'));
-            const again = document.createElement('script');
-            again.textContent = init.textContent;
-            document.body.append(again);
-        JS);
+                const init = [...document.scripts].find((script) => script.textContent.includes('renderDebugbar'));
+                const again = document.createElement('script');
+                again.textContent = init.textContent;
+                document.body.append(again);
+            JS);
 
         $client->waitFor('.phpdebugbar-body');
 

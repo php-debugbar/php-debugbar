@@ -189,20 +189,20 @@ class JsonVarDumperTest extends AbstractBrowserTestCase
         $client->waitFor('.phpdebugbar-body');
 
         $client->executeScript(<<<'JS'
-            window.PhpDebugBar.instance.el.remove();
+                window.PhpDebugBar.instance.el.remove();
 
-            const bundle = [...document.scripts].find((script) => script.src.includes('assets.php') && script.src.includes('js'));
-            const init = [...document.scripts].find((script) => script.textContent.includes('renderDebugbar'));
+                const bundle = [...document.scripts].find((script) => script.src.includes('assets.php') && script.src.includes('js'));
+                const init = [...document.scripts].find((script) => script.textContent.includes('renderDebugbar'));
 
-            const bundleAgain = document.createElement('script');
-            bundleAgain.src = bundle.src;
-            bundleAgain.onload = () => {
-                const initAgain = document.createElement('script');
-                initAgain.textContent = init.textContent;
-                document.body.append(initAgain);
-            };
-            document.body.append(bundleAgain);
-        JS);
+                const bundleAgain = document.createElement('script');
+                bundleAgain.src = bundle.src;
+                bundleAgain.onload = () => {
+                    const initAgain = document.createElement('script');
+                    initAgain.textContent = init.textContent;
+                    document.body.append(initAgain);
+                };
+                document.body.append(bundleAgain);
+            JS);
 
         $crawler = $client->waitFor('.phpdebugbar-body');
         usleep(1000);
@@ -215,12 +215,12 @@ class JsonVarDumperTest extends AbstractBrowserTestCase
 
         // Marks the toggle of the first collapsed node, so the assertion reads that node alone.
         $marked = $client->executeScript(<<<'JS'
-            const panel = document.querySelector('.phpdebugbar-panel[data-collector=messages]');
-            const toggle = [...panel.querySelectorAll('a.sf-dump-toggle')]
-                .find((a) => a.nextElementSibling?.nextElementSibling?.classList.contains('sf-dump-compact'));
-            toggle?.setAttribute('data-rerun-toggle', '');
-            return !! toggle;
-        JS);
+                const panel = document.querySelector('.phpdebugbar-panel[data-collector=messages]');
+                const toggle = [...panel.querySelectorAll('a.sf-dump-toggle')]
+                    .find((a) => a.nextElementSibling?.nextElementSibling?.classList.contains('sf-dump-compact'));
+                toggle?.setAttribute('data-rerun-toggle', '');
+                return !! toggle;
+            JS);
         $this->assertTrue($marked, 'The demo should render a collapsed node');
 
         $crawler->filter('a[data-rerun-toggle]')->click();

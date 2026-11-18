@@ -23,7 +23,8 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->r->setUseDistFiles(false);
     }
 
-    public function render() {
+    public function render()
+    {
         return str_replace("\r\n", "\n", $this->r->render());
     }
 
