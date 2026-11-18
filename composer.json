@@ -68,8 +68,8 @@
             "Composer\\Config::disableProcessTimeout",
             "@php -t demo -S localhost:8000"
         ],
-        "unit-test": "@php vendor/bin/phpunit --testsuite=Unit",
-        "browser-test": "@php vendor/bin/phpunit --testsuite=Browser",
+        "unit-test": "@php vendor/bin/phpunit --testsuite=Unit --display-warnings --display-deprecations --display-notices",
+        "browser-test": "@php vendor/bin/phpunit --testsuite=Browser --display-warnings --display-deprecations --display-notices",
         "check-style": "vendor/bin/php-cs-fixer check -v --diff",
         "fix-style": "vendor/bin/php-cs-fixer fix -v --diff",
         "browser-debug": [

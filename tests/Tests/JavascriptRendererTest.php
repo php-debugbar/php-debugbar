@@ -23,6 +23,10 @@ class JavascriptRendererTest extends DebugBarTestCase
         $this->r->setUseDistFiles(false);
     }
 
+    public function render() {
+        return str_replace("\r\n", "\n", $this->r->render());
+    }
+
     public function testConstructWithOldPackage(): void
     {
         $oldBasePath = '/some/dir/vendor/maximebf/debugbar/resources';
@@ -358,84 +362,63 @@ class JavascriptRendererTest extends DebugBarTestCase
 
     public function testRenderFullInitialization(): void
     {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $this->markTestSkipped('Skipping on Windows');
-        }
         $this->debugbar->addCollector(new \DebugBar\DataCollector\MessagesCollector());
         $this->r->addControl('time', ['icon' => 'time', 'map' => 'time', 'default' => '"0s"']);
         $contents = file_get_contents(__DIR__ . '/full_init.html');
         $this->assertNotFalse($contents);
         $expected = str_replace("\r\n", "\n", rtrim($contents));
         $this->assertNotSame('', $expected);
-        $this->assertStringStartsWith($expected, $this->r->render());
+        $this->assertStringStartsWith($expected, $this->render());
     }
 
     public function testRenderFullWithCsp(): void
     {
         $this->r->setCspNonce('mynonce');
-        $this->assertStringStartsWith('<script type="text/javascript" nonce="mynonce">', $this->r->render());
+        $this->assertStringStartsWith('<script type="text/javascript" nonce="mynonce">', $this->render());
     }
 
     public function testRenderConstructorOnly(): void
     {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $this->markTestSkipped('Skipping on Windows');
-        }
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setJavascriptClass('Foobar');
         $this->r->setVariableName('foovar');
         $this->r->setAjaxHandlerClass(null);
-        $this->assertStringStartsWith("<script type=\"text/javascript\">\n(function () {\n    function renderDebugbar() {\nconst foovar = new Foobar({\"spaNavigationEvents\":[\"livewire:navigated\",\"turbo:load\",\"htmx:afterSettle\"]});\nwindow.PhpDebugBar.instance = foovar;\nwindow.foovar = foovar;\nloadDebugbarData();\n    };\n    function loadDebugbarData() {\nwindow.foovar.addDataSet(", $this->r->render());
+        $this->assertStringStartsWith("<script type=\"text/javascript\">\n(function () {\n    function renderDebugbar() {\nconst foovar = new Foobar({\"spaNavigationEvents\":[\"livewire:navigated\",\"turbo:load\",\"htmx:afterSettle\"]});\nwindow.PhpDebugBar.instance = foovar;\nwindow.foovar = foovar;\nloadDebugbarData();\n    };\n    function loadDebugbarData() {\nwindow.foovar.addDataSet(", $this->render());
     }
 
     public function testRenderConstructorWithNonce(): void
     {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $this->markTestSkipped('Skipping on Windows');
-        }
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setCspNonce('mynonce');
-        $this->assertStringStartsWith("<script type=\"text/javascript\" nonce=\"mynonce\">\n(function () {\n    function renderDebugbar() {\nconst phpdebugbar = new PhpDebugBar.DebugBar({\"spaNavigationEvents\":[\"livewire:navigated\",\"turbo:load\",\"htmx:afterSettle\"]});", $this->r->render());
+        $this->assertStringStartsWith("<script type=\"text/javascript\" nonce=\"mynonce\">\n(function () {\n    function renderDebugbar() {\nconst phpdebugbar = new PhpDebugBar.DebugBar({\"spaNavigationEvents\":[\"livewire:navigated\",\"turbo:load\",\"htmx:afterSettle\"]});", $this->render());
     }
 
     public function testRenderConstructorWithEmptyTabsHidden(): void
     {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $this->markTestSkipped('Skipping on Windows');
-        }
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setHideEmptyTabs(true);
-        $this->assertStringStartsWith("<script type=\"text/javascript\">\n(function () {\n    function renderDebugbar() {\nconst phpdebugbar = new PhpDebugBar.DebugBar({\"hideEmptyTabs\":true,\"spaNavigationEvents\":[\"livewire:navigated\",\"turbo:load\",\"htmx:afterSettle\"]});\n", $this->r->render());
+        $this->assertStringStartsWith("<script type=\"text/javascript\">\n(function () {\n    function renderDebugbar() {\nconst phpdebugbar = new PhpDebugBar.DebugBar({\"hideEmptyTabs\":true,\"spaNavigationEvents\":[\"livewire:navigated\",\"turbo:load\",\"htmx:afterSettle\"]});\n", $this->render());
     }
 
     public function testRenderConstructorWithTheme(): void
     {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $this->markTestSkipped('Skipping on Windows');
-        }
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setTheme('dark');
-        $this->assertStringStartsWith("<script type=\"text/javascript\">\n(function () {\n    function renderDebugbar() {\nconst phpdebugbar = new PhpDebugBar.DebugBar({\"theme\":\"dark\",\"spaNavigationEvents\":[\"livewire:navigated\",\"turbo:load\",\"htmx:afterSettle\"]});", $this->r->render());
+        $this->assertStringStartsWith("<script type=\"text/javascript\">\n(function () {\n    function renderDebugbar() {\nconst phpdebugbar = new PhpDebugBar.DebugBar({\"theme\":\"dark\",\"spaNavigationEvents\":[\"livewire:navigated\",\"turbo:load\",\"htmx:afterSettle\"]});", $this->render());
     }
 
     public function testRenderConstructorWithCustomSpaNavigationEvents(): void
     {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $this->markTestSkipped('Skipping on Windows');
-        }
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setSpaNavigationEvents(['custom:navigated']);
-        $this->assertStringStartsWith("<script type=\"text/javascript\">\n(function () {\n    function renderDebugbar() {\nconst phpdebugbar = new PhpDebugBar.DebugBar({\"spaNavigationEvents\":[\"custom:navigated\"]});", $this->r->render());
+        $this->assertStringStartsWith("<script type=\"text/javascript\">\n(function () {\n    function renderDebugbar() {\nconst phpdebugbar = new PhpDebugBar.DebugBar({\"spaNavigationEvents\":[\"custom:navigated\"]});", $this->render());
     }
 
     public function testRenderConstructorWithEmptySpaNavigationEvents(): void
     {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $this->markTestSkipped('Skipping on Windows');
-        }
         $this->r->setInitialization(JavascriptRenderer::INITIALIZE_CONSTRUCTOR);
         $this->r->setSpaNavigationEvents([]);
-        $this->assertStringStartsWith("<script type=\"text/javascript\">\n(function () {\n    function renderDebugbar() {\nconst phpdebugbar = new PhpDebugBar.DebugBar({\"spaNavigationEvents\":[]});", $this->r->render());
+        $this->assertStringStartsWith("<script type=\"text/javascript\">\n(function () {\n    function renderDebugbar() {\nconst phpdebugbar = new PhpDebugBar.DebugBar({\"spaNavigationEvents\":[]});", $this->render());
     }
 
     public function testCanDisableSpecificVendors(): void

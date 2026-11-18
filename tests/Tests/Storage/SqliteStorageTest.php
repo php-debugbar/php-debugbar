@@ -10,13 +10,13 @@ use DebugBar\Storage\SqliteStorage;
 class SqliteStorageTest extends DebugBarTestCase
 {
     private string $filepath;
-    private SqliteStorage $storage;
+    private ?SqliteStorage $storage;
     private array $testData;
 
     public function setUp(): void
     {
         // Create a temporary SQLite database file
-        $this->filepath = tempnam(sys_get_temp_dir(), 'debugbar_') . '.sqlite';
+        $this->filepath = tempnam(sys_get_temp_dir(), 'debugbar_');
         if (file_exists($this->filepath)) {
             unlink($this->filepath);
         }
@@ -41,6 +41,7 @@ class SqliteStorageTest extends DebugBarTestCase
 
     public function tearDown(): void
     {
+        $this->storage = null;
         // Clean up the database file
         if (file_exists($this->filepath)) {
             unlink($this->filepath);
@@ -63,6 +64,7 @@ class SqliteStorageTest extends DebugBarTestCase
         $this->assertFileExists($filepath);
 
         // Cleanup
+        $storage = null;
         unlink($filepath);
         rmdir($dir);
     }
