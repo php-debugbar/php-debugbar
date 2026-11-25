@@ -8,6 +8,7 @@ use DebugBar\DataFormatter\JsonDataFormatter;
 use DebugBar\DataFormatter\VarDumper\DebugBarJsonDumper;
 use DebugBar\DataFormatter\VarDumper\ReverseJsonDumper;
 use DebugBar\Tests\DebugBarTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 
@@ -302,9 +303,8 @@ class JsonDataFormatterTest extends DebugBarTestCase
     /**
      * Tests that formatVar output can be reversed via ReverseJsonDumper::toCloneVarData
      * and dumped back to text, producing the same output as direct CliDumper.
-     *
-     * @dataProvider reverseRoundtripProvider
      */
+    #[DataProvider('reverseRoundtripProvider')]
     public function testReverseRoundtrip(mixed $value, string $description, bool $deep = true): void
     {
         $formatter = new JsonDataFormatter();
