@@ -58,4 +58,4 @@ jobs:
         with:
             max_attempts: 3
             timeout_seconds: 30
-            command: vendor/bin/phpunit --testsuite=Browser
+            command: vendor/bin/phpunit --testsuite=Browser --display-warnings --display-deprecations

@@ -49,7 +49,7 @@ jobs:
         php-version: ${{ matrix.php }}
         coverage: none
         tools: composer:v2
-        extensions: pdo_sqlite, zip
+        extensions: pdo_sqlite, zip, redis
 
     - name: Require specific Symfony version
       if: matrix.symfony != '*'
@@ -61,4 +61,4 @@ jobs:
       run: composer update --prefer-dist --no-progress
 
     - name: Execute Unit Tests
-      run: vendor/bin/phpunit --testsuite=Unit
+      run: vendor/bin/phpunit --testsuite=Unit --display-warnings --display-deprecations

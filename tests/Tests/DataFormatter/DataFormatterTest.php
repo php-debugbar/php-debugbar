@@ -17,42 +17,39 @@ class DataFormatterTest extends DebugBarTestCase
 
     public function testFormatVarArray(): void
     {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $this->markTestSkipped('Skipping on Windows');
-        }
         $f = new DataFormatter();
-        $expected = <<<EOTXT
+        $expected = str_replace("\r\n", "\n", <<<EOTXT
             array:1 [
               "foo" => "bar"
             ]
-            EOTXT;
+            EOTXT);
 
         $simpleArray = ['foo' => 'bar'];
         $this->assertEquals($expected, $f->formatVar($simpleArray));
         $this->assertEquals($expected, $f->formatVar($simpleArray, false));
 
-        $expected = <<<EOTXT
+        $expected = str_replace("\r\n", "\n", <<<EOTXT
             array:1 [
               "foo" => array:1 [
                 "bar" => "baz"
               ]
             ]
-            EOTXT;
+            EOTXT);
 
         $deeperArray = ['foo' => ['bar' => 'baz']];
         $this->assertEquals($expected, $f->formatVar($deeperArray));
 
-        $expected = <<<EOTXT
+        $expected = str_replace("\r\n", "\n", <<<EOTXT
             array:1 [
               "foo" => array:1 [ …1]
             ]
-            EOTXT;
+            EOTXT);
         $this->assertEquals($expected, $f->formatVar($deeperArray, false));
 
         $f->mergeClonerOptions(['max_depth' => 0]);
-        $expected = <<<EOTXT
+        $expected = str_replace("\r\n", "\n", <<<EOTXT
             array:1 [ …1]
-            EOTXT;
+            EOTXT);
         $this->assertEquals($expected, $f->formatVar($deeperArray));
         $this->assertEquals($expected, $f->formatVar($deeperArray, false));
 

@@ -7,6 +7,7 @@ namespace DebugBar\Tests\DataFormatter;
 use DebugBar\DataFormatter\VarDumper\DebugBarJsonDumper;
 use DebugBar\DataFormatter\VarDumper\ReverseJsonDumper;
 use DebugBar\Tests\DebugBarTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 
@@ -33,9 +34,7 @@ class JsonRoundtripTest extends DebugBarTestCase
         $this->jsonDumper = new DebugBarJsonDumper();
     }
 
-    /**
-     * @dataProvider valueProvider
-     */
+    #[DataProvider('valueProvider')]
     public function testRoundtrip(mixed $value, string $description, ?int $maxDepth = null, ?int $maxItems = null, ?int $maxString = null): void
     {
         if ($maxItems !== null) {
@@ -60,9 +59,7 @@ class JsonRoundtripTest extends DebugBarTestCase
         $this->assertEquals($expected, $actual, "Roundtrip failed for: $description");
     }
 
-    /**
-     * @dataProvider casterValueProvider
-     */
+    #[DataProvider('casterValueProvider')]
     public function testCasterRoundtrip(mixed $value, string $description, ?int $maxDepth = null, ?int $maxItems = null, ?int $maxString = null): void
     {
         if ($maxItems !== null) {
