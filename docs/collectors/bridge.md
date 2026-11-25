@@ -76,7 +76,7 @@ $eventDispatcher->addListener(SentMessageEvent::class, function (SentMessageEven
 
 ## Twig
 
-http://twig.sensiolabs.org/
+https://twig.symfony.com/
 
 > Requires https://github.com/php-debugbar/twig-bridge
 
