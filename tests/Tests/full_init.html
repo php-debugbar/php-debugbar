@@ -1,6 +1,6 @@
 <script type="text/javascript">
 (function () {
-    const renderDebugbar = function () {
+    function renderDebugbar() {
 const phpdebugbar = new PhpDebugBar.DebugBar({"spaNavigationEvents":["livewire:navigated","turbo:load","htmx:afterSettle"]});
 phpdebugbar.addTab("messages", new PhpDebugBar.DebugBar.Tab({"icon":"logs","title":"Messages", "widget": new PhpDebugBar.Widgets.MessagesWidget()}));
 phpdebugbar.addIndicator("time", new PhpDebugBar.DebugBar.Indicator({"icon":"time"}), "right");
@@ -13,4 +13,9 @@ phpdebugbar.restoreState();
 phpdebugbar.ajaxHandler = new PhpDebugBar.AjaxHandler(phpdebugbar, undefined, true);
 phpdebugbar.ajaxHandler.bindToFetch();
 phpdebugbar.ajaxHandler.bindToXHR();
-phpdebugbar.addDataSet(
+window.PhpDebugBar.instance = phpdebugbar;
+window.phpdebugbar = phpdebugbar;
+loadDebugbarData();
+    };
+    function loadDebugbarData() {
+window.phpdebugbar.addDataSet(

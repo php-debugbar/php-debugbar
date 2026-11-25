@@ -4,6 +4,10 @@ window.PhpDebugBar = window.PhpDebugBar || {};
     const PhpDebugBar = window.PhpDebugBar;
     PhpDebugBar.utils = PhpDebugBar.utils || {};
 
+    if (PhpDebugBar.instance) {
+        return;
+    }
+
     /**
      * Returns the value from an object property.
      * Using dots in the key, it is possible to retrieve nested property values.
@@ -1405,6 +1409,22 @@ window.PhpDebugBar = window.PhpDebugBar || {};
                 this.showTab(tab);
             } else {
                 this.showTab();
+            }
+        }
+
+        /**
+         * Attach the debug bar to an element
+         *
+         * @this {DebugBar}
+         */
+        appendTo(el) {
+            el.appendChild(this.el);
+            if (this.openHandler) {
+                el.appendChild(this.openHandler.el);
+                el.appendChild(this.openHandler.overlay);
+            }
+            if (this.datasetSwitcherWidget) {
+                el.appendChild(this.datasetSwitcherWidget.panel);
             }
         }
 
