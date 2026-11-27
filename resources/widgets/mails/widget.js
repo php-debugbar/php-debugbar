@@ -69,6 +69,10 @@
                             summary.textContent = 'Text version';
                             details.append(summary);
                             details.append(bodyPre);
+
+                            if (!mail.body) {
+                                details.style.display = 'none';
+                            }
                             bodyHTML = details.outerHTML;
 
                             const htmlIframe = document.createElement('iframe');
