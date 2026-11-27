@@ -100,7 +100,7 @@ class PDOCollector extends DataCollector implements Renderable, AssetProvider
     public function addConnection(\PDO $pdo, ?string $name = null): void
     {
         if ($name === null) {
-            $name = spl_object_hash($pdo);
+            $name = '#' . spl_object_id($pdo);
         }
         if (!($pdo instanceof TraceablePDO)) {
             $pdo = new TraceablePDO($pdo);

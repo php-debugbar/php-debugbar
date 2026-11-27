@@ -66,4 +66,36 @@ class TimeDataCollectorTest extends DebugBarTestCase
         $this->assertLessThan($m[0]['end'], $m[0]['start']);
         $this->assertSame('returnedValue', $returned);
     }
+
+    public function testNestedMeasures(): void
+    {
+        $returned = $this->c->measure('outer', fn(): string => $this->c->measure('inner', fn(): string => 'innerValue'));
+
+        $this->assertSame('innerValue', $returned);
+        $labels = array_column($this->c->getMeasures(), 'label');
+        sort($labels);
+        $this->assertSame(['inner', 'outer'], $labels);
+
+        $data = $this->c->collect();
+        $this->assertCount(2, $data['measures']);
+    }
+
+    public function testCollectsMeasureAfterClosureThrows(): void
+    {
+        $expected = new \RuntimeException('Expected failure');
+
+        try {
+            $this->c->measure('failed', static function () use ($expected): never {
+                throw $expected;
+            });
+            $this->fail('The closure exception should propagate.');
+        } catch (\RuntimeException $exception) {
+            $this->assertSame($expected, $exception);
+        }
+
+        $data = $this->c->collect();
+
+        $this->assertCount(1, $data['measures']);
+        $this->assertSame('failed', $data['measures'][0]['label']);
+    }
 }

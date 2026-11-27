@@ -107,7 +107,7 @@ class TraceablePDOStatement extends PDOStatement
      */
     public function execute(?array $input_parameters = null): bool
     {
-        $preparedId = spl_object_hash($this);
+        $preparedId = '#' . spl_object_id($this);
         $boundParameters = $this->boundParameters;
         if (is_array($input_parameters)) {
             $boundParameters = array_merge($boundParameters, $input_parameters);
