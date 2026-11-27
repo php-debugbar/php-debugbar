@@ -180,7 +180,7 @@ class TimeDataCollector extends DataCollector implements Renderable, Resettable
      */
     public function measure(string $label, \Closure $closure, ?string $collector = null, ?string $group = null): mixed
     {
-        $name = spl_object_hash($closure);
+        $name = '#' . spl_object_id($closure);
         $this->startMeasure($name, $label, $collector, $group);
         $result = $closure();
         $params = is_array($result) ? $result : [];
